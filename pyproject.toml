@@ -15,6 +15,7 @@ dependencies = [
 [project.scripts]
 actionstream-preflight = "actionstream.preflight:main"
 actionstream-benchmark = "actionstream.benchmark:main"
+actionstream-results = "actionstream.results:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

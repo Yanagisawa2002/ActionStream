@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import importlib.metadata
 import json
 import subprocess
 import time
@@ -68,6 +69,10 @@ def _git_commit() -> str:
     return completed.stdout.strip() if completed.returncode == 0 else "uncommitted"
 
 
+def _lerobot_version() -> str:
+    return importlib.metadata.version("lerobot")
+
+
 def _trace_path(output: Path, mode: str, delay_ms: int, task_id: int, episode_index: int) -> Path:
     return (
         output.parent
@@ -92,6 +97,32 @@ def _write_trace(
     )
 
 
+def _make_async_worker(
+    backend: LeRobotBackend,
+    *,
+    injected_delay_ms: int,
+) -> LatestRequestWorker:
+    def infer(request: InferenceRequest) -> InferencePayload:
+        worker_observation = thaw_observation_snapshot(request.observation)
+        output_chunk = backend.infer_action_chunk(
+            worker_observation,
+            request.task_instruction,
+        )
+        return InferencePayload(
+            actions=output_chunk.actions,
+            model_inference_latency_seconds=output_chunk.model_latency_seconds,
+            metadata={
+                "raw_shape": list(output_chunk.raw_shape),
+                "raw_dtype": output_chunk.raw_dtype,
+            },
+        )
+
+    return LatestRequestWorker(
+        infer,
+        delivery_delay_seconds=injected_delay_ms / 1000.0,
+    )
+
+
 def _run_sync_episode(
     backend: LeRobotBackend,
     *,
@@ -105,10 +136,13 @@ def _run_sync_episode(
     realtime: bool,
     replan_interval_steps: int,
     mode: str,
+    inference_worker: LatestRequestWorker | None,
     output: Path,
 ) -> dict[str, Any]:
     if mode != "sync":
         raise ValueError(f"Synchronous runner received mode={mode!r}")
+    if inference_worker is not None:
+        raise ValueError("Synchronous runner received an asynchronous worker")
     observation, _, instruction = backend.reset_episode(
         task_id=task_id,
         seed=seed,
@@ -212,7 +246,7 @@ def _run_sync_episode(
     return {
         "run_id": run_id,
         "git_commit": git_commit,
-        "lerobot_version": "0.6.0",
+        "lerobot_version": _lerobot_version(),
         "model_id": backend.model_id,
         "model_revision_sha": backend.model_revision,
         "suite": backend.suite,
@@ -267,6 +301,7 @@ def _run_async_episode(
     realtime: bool,
     replan_interval_steps: int,
     mode: str,
+    inference_worker: LatestRequestWorker | None,
     output: Path,
 ) -> dict[str, Any]:
     if mode not in {"async_naive", "async_aligned"}:
@@ -275,6 +310,8 @@ def _run_async_episode(
         raise ValueError("Asynchronous modes require --realtime")
     if replan_interval_steps <= 0:
         raise ValueError("replan_interval_steps must be positive")
+    if inference_worker is None:
+        raise ValueError("Asynchronous runner requires a persistent inference worker")
 
     observation, _, instruction = backend.reset_episode(
         task_id=task_id,
@@ -289,25 +326,7 @@ def _run_async_episode(
     queue = ActionQueue()
     queue.reset_episode(episode_id)
 
-    def infer(request: InferenceRequest) -> InferencePayload:
-        worker_observation = thaw_observation_snapshot(request.observation)
-        output_chunk = backend.infer_action_chunk(
-            worker_observation,
-            request.task_instruction,
-        )
-        return InferencePayload(
-            actions=output_chunk.actions,
-            model_inference_latency_seconds=output_chunk.model_latency_seconds,
-            metadata={
-                "raw_shape": list(output_chunk.raw_shape),
-                "raw_dtype": output_chunk.raw_dtype,
-            },
-        )
-
-    worker = LatestRequestWorker(
-        infer,
-        delivery_delay_seconds=injected_delay_ms / 1000.0,
-    )
+    worker = inference_worker
     worker.reset_episode(episode_id)
 
     episode_started = time.monotonic()
@@ -374,62 +393,66 @@ def _run_async_episode(
         inference_events.append(event)
 
     submit_request(0, observation)
-    try:
-        if not worker.wait_for_result(timeout=120):
-            raise TimeoutError("Timed out waiting for the first asynchronous action chunk")
+    if not worker.wait_for_result(timeout=120):
+        raise TimeoutError("Timed out waiting for the first asynchronous action chunk")
+    for result in worker.drain_results():
+        record_result(result, merge=True)
+    if not queue.has_safe_action:
+        raise RuntimeError("Initial inference completed without a safe final action")
+
+    control_epoch = time.monotonic()
+    scheduled = control_epoch
+    while step_count < backend.episode_length:
+        scheduled, missed_ticks = _coalesce_missed_control_ticks(
+            scheduled,
+            time.monotonic(),
+            period,
+        )
+        deadline_misses += missed_ticks
+        remaining = scheduled - time.monotonic()
+        if remaining > 0:
+            time.sleep(remaining)
+
         for result in worker.drain_results():
             record_result(result, merge=True)
-        if not queue.has_safe_action:
-            raise RuntimeError("Initial inference completed without a safe final action")
 
-        control_epoch = time.monotonic()
-        scheduled = control_epoch
-        while step_count < backend.episode_length:
-            scheduled, missed_ticks = _coalesce_missed_control_ticks(
-                scheduled,
-                time.monotonic(),
-                period,
-            )
-            deadline_misses += missed_ticks
-            remaining = scheduled - time.monotonic()
-            if remaining > 0:
-                time.sleep(remaining)
+        action, _ = queue.next_action()
+        if action.shape != (7,) or not np.isfinite(action).all():
+            raise RuntimeError(f"Invalid queued environment action: {action}")
 
-            for result in worker.drain_results():
-                record_result(result, merge=True)
+        dispatched = time.monotonic()
+        dispatch_lateness.append(max(0.0, dispatched - scheduled))
+        if time_to_first_action is None:
+            time_to_first_action = dispatched - episode_started
+        step_output = backend.step(task_id, action)
 
-            action, _ = queue.next_action()
-            if action.shape != (7,) or not np.isfinite(action).all():
-                raise RuntimeError(f"Invalid queued environment action: {action}")
+        actions_executed.append(action.copy())
+        dispatch_timestamps.append(dispatched)
+        if previous_action is not None:
+            discontinuities.append(float(np.linalg.norm(action - previous_action)))
+        previous_action = action
 
-            dispatched = time.monotonic()
-            dispatch_lateness.append(max(0.0, dispatched - scheduled))
-            if time_to_first_action is None:
-                time_to_first_action = dispatched - episode_started
-            step_output = backend.step(task_id, action)
-
-            actions_executed.append(action.copy())
-            dispatch_timestamps.append(dispatched)
-            if previous_action is not None:
-                discontinuities.append(float(np.linalg.norm(action - previous_action)))
-            previous_action = action
-
-            step_count += 1
-            observation = step_output.observation
-            success = success or step_output.success
-            if success or step_output.terminated or step_output.truncated:
-                break
-            if step_count % replan_interval_steps == 0:
-                submit_request(step_count, observation)
-            scheduled += period
-        episode_finished = time.monotonic()
-    finally:
-        worker.close()
+        step_count += 1
+        observation = step_output.observation
+        success = success or step_output.success
+        if success or step_output.terminated or step_output.truncated:
+            break
+        if step_count % replan_interval_steps == 0:
+            submit_request(step_count, observation)
+        scheduled += period
+    episode_finished = time.monotonic()
 
     # Count completed requests that arrived after the terminal environment step,
     # but never merge them into a completed episode's queue.
+    worker.cancel_pending()
+    if not worker.wait_idle(timeout=120):
+        raise TimeoutError("Timed out draining the episode's final inference")
     for result in worker.drain_all_results():
-        record_result(result, merge=False, delivered=False)
+        record_result(
+            result,
+            merge=False,
+            delivered=result.delivery_timestamp <= episode_finished,
+        )
 
     if episode_finished is None:
         raise RuntimeError("Asynchronous episode ended without a completion timestamp")
@@ -445,7 +468,7 @@ def _run_async_episode(
     return {
         "run_id": run_id,
         "git_commit": git_commit,
-        "lerobot_version": "0.6.0",
+        "lerobot_version": _lerobot_version(),
         "model_id": backend.model_id,
         "model_revision_sha": backend.model_revision,
         "suite": backend.suite,
@@ -489,6 +512,7 @@ def _run_async_episode(
         "policy_rng_reset_per_episode": True,
         "queue_replacements": queue.replacements,
         "pending_requests_replaced": worker.pending_requests_replaced,
+        "pending_requests_cancelled": worker.pending_requests_cancelled,
         "old_episode_chunks_rejected": queue.old_episode_chunks_rejected,
         "old_episode_results_discarded": worker.old_episode_results_discarded,
         "action_trace_path": str(trace_path),
@@ -519,6 +543,11 @@ def run(args: argparse.Namespace) -> list[dict[str, Any]]:
         model_id=args.model_id,
         model_revision=args.model_revision,
     )
+    inference_worker = (
+        _make_async_worker(backend, injected_delay_ms=args.injected_delay_ms)
+        if args.mode != "sync"
+        else None
+    )
 
     records: list[dict[str, Any]] = []
     try:
@@ -538,6 +567,7 @@ def run(args: argparse.Namespace) -> list[dict[str, Any]]:
                         realtime=args.realtime,
                         replan_interval_steps=args.replan_interval_steps,
                         mode=args.mode,
+                        inference_worker=inference_worker,
                         output=args.output,
                     )
                     stream.write(json.dumps(record, sort_keys=True) + "\n")
@@ -548,7 +578,11 @@ def run(args: argparse.Namespace) -> list[dict[str, Any]]:
                         f"success={record['success']} steps={record['environment_steps']}"
                     )
     finally:
-        backend.close()
+        try:
+            if inference_worker is not None:
+                inference_worker.close()
+        finally:
+            backend.close()
     return records
 
 

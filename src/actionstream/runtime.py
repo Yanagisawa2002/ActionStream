@@ -208,6 +208,7 @@ class LatestRequestWorker:
         self.calls_started = 0
         self.calls_completed = 0
         self.pending_requests_replaced = 0
+        self.pending_requests_cancelled = 0
         self.old_episode_results_discarded = 0
         self._thread = threading.Thread(target=self._run, name="actionstream-inference", daemon=True)
         self._thread.start()
@@ -222,6 +223,7 @@ class LatestRequestWorker:
             self.calls_started = 0
             self.calls_completed = 0
             self.pending_requests_replaced = 0
+            self.pending_requests_cancelled = 0
             self.old_episode_results_discarded = 0
             self._condition.notify_all()
 
@@ -250,14 +252,25 @@ class LatestRequestWorker:
             return results
 
     def drain_all_results(self) -> list[InferenceResult]:
-        """Drain completed results regardless of scheduled delivery, after shutdown."""
+        """Drain completed results regardless of scheduled delivery while idle."""
         with self._condition:
             self._raise_if_failed_locked()
-            if not self._closed or self._active:
-                raise RuntimeError("drain_all_results requires a closed, idle worker")
+            if self._active or self._pending is not None:
+                raise RuntimeError("drain_all_results requires an idle worker")
             results = list(self._results)
             self._results.clear()
             return results
+
+    def cancel_pending(self) -> bool:
+        """Cancel a mailbox request that has not started inference."""
+        with self._condition:
+            self._raise_if_failed_locked()
+            cancelled = self._pending is not None
+            if cancelled:
+                self._pending = None
+                self.pending_requests_cancelled += 1
+                self._condition.notify_all()
+            return cancelled
 
     def wait_for_result(self, timeout: float | None = None) -> bool:
         """Wait until at least one completed result reaches its delivery time."""
