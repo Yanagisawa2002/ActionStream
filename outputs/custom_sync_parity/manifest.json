@@ -1,0 +1,104 @@
+{
+  "generated_at_utc": "2026-07-30T06:56:41Z",
+  "official_manifest": "outputs/xvla_baseline/manifest.json",
+  "custom_episode_metrics": "outputs/custom_sync_parity/episodes.jsonl",
+  "git_commit": "ea3b63b0d1424780a20be1ebdd8c9371c08b421c",
+  "model_revision_sha": "12e8783e996944f5c97e490d37d4c145484ed70a",
+  "run_id": "sync-1785394224-d4d68373",
+  "protocol": {
+    "suite": "libero_object",
+    "task_ids": [
+      0,
+      1,
+      2
+    ],
+    "episodes_per_task": 10,
+    "initial_state_indices": [
+      0,
+      2,
+      4,
+      6,
+      8,
+      10,
+      12,
+      14,
+      16,
+      18
+    ],
+    "seeds": [
+      142,
+      143,
+      144,
+      145,
+      146,
+      147,
+      148,
+      149,
+      150,
+      151
+    ],
+    "runtime_mode": "sync",
+    "chunk_size": 30,
+    "realtime_control": false,
+    "policy_rng_reset_per_episode": true
+  },
+  "per_task": {
+    "0": {
+      "success_count": 10,
+      "episode_count": 10,
+      "successes": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    "1": {
+      "success_count": 10,
+      "episode_count": 10,
+      "successes": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    "2": {
+      "success_count": 10,
+      "episode_count": 10,
+      "successes": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ]
+    }
+  },
+  "overall": {
+    "official_success_count": 30,
+    "custom_success_count": 30,
+    "absolute_difference": 0,
+    "max_allowed_difference": 2
+  },
+  "gate": {
+    "passed": true
+  }
+}
