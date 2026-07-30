@@ -6,6 +6,7 @@ import time
 import numpy as np
 import pytest
 
+from actionstream.benchmark import _coalesce_missed_control_ticks
 from actionstream.lerobot_backend import (
     immutable_observation_snapshot,
     thaw_observation_snapshot,
@@ -146,3 +147,39 @@ def test_worker_has_one_inference_in_flight_and_discards_old_episode_result() ->
         assert delivered[0].episode_id == "new"
     finally:
         worker.close()
+
+
+def test_delivery_delay_does_not_occupy_inference_worker() -> None:
+    observed_steps: list[int] = []
+
+    def infer(request: InferenceRequest) -> InferencePayload:
+        observed_steps.append(request.observation_control_step)
+        return InferencePayload(
+            actions=np.ones((2, 7), dtype=np.float32),
+            model_inference_latency_seconds=0.001,
+        )
+
+    worker = LatestRequestWorker(infer, delivery_delay_seconds=1.0)
+    worker.reset_episode("episode")
+    worker.submit(InferenceRequest({}, "task", "episode", 0, time.monotonic()))
+    assert worker.wait_idle(timeout=1)
+    worker.submit(InferenceRequest({}, "task", "episode", 10, time.monotonic()))
+    assert worker.wait_idle(timeout=1)
+    assert observed_steps == [0, 10]
+    assert worker.drain_results() == []
+    worker.close()
+    assert len(worker.drain_all_results()) == 2
+
+
+def test_control_clock_skips_only_whole_missed_ticks() -> None:
+    scheduled, missed = _coalesce_missed_control_ticks(10.0, 10.12, 0.05)
+    assert missed == 2
+    assert scheduled == pytest.approx(10.1)
+
+    next_scheduled, next_missed = _coalesce_missed_control_ticks(
+        scheduled + 0.05,
+        10.16,
+        0.05,
+    )
+    assert next_missed == 0
+    assert next_scheduled == pytest.approx(10.15)

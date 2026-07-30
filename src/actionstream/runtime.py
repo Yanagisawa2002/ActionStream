@@ -243,9 +243,47 @@ class LatestRequestWorker:
     def drain_results(self) -> list[InferenceResult]:
         with self._condition:
             self._raise_if_failed_locked()
+            now = time.monotonic()
+            results: list[InferenceResult] = []
+            while self._results and self._results[0].delivery_timestamp <= now:
+                results.append(self._results.popleft())
+            return results
+
+    def drain_all_results(self) -> list[InferenceResult]:
+        """Drain completed results regardless of scheduled delivery, after shutdown."""
+        with self._condition:
+            self._raise_if_failed_locked()
+            if not self._closed or self._active:
+                raise RuntimeError("drain_all_results requires a closed, idle worker")
             results = list(self._results)
             self._results.clear()
             return results
+
+    def wait_for_result(self, timeout: float | None = None) -> bool:
+        """Wait until at least one completed result reaches its delivery time."""
+        deadline = None if timeout is None else time.monotonic() + timeout
+        with self._condition:
+            while True:
+                self._raise_if_failed_locked()
+                now = time.monotonic()
+                if self._results and self._results[0].delivery_timestamp <= now:
+                    return True
+                if self._closed and not self._active and self._pending is None:
+                    return False
+
+                wait_seconds: float | None = None
+                if self._results:
+                    wait_seconds = max(0.0, self._results[0].delivery_timestamp - now)
+                if deadline is not None:
+                    timeout_remaining = deadline - now
+                    if timeout_remaining <= 0:
+                        return False
+                    wait_seconds = (
+                        timeout_remaining
+                        if wait_seconds is None
+                        else min(wait_seconds, timeout_remaining)
+                    )
+                self._condition.wait(wait_seconds)
 
     def wait_idle(self, timeout: float | None = None) -> bool:
         deadline = None if timeout is None else time.monotonic() + timeout
@@ -291,9 +329,7 @@ class LatestRequestWorker:
             try:
                 payload = self._infer_fn(request)
                 end_timestamp = time.monotonic()
-                if self._delivery_delay_seconds:
-                    time.sleep(self._delivery_delay_seconds)
-                delivery_timestamp = time.monotonic()
+                delivery_timestamp = end_timestamp + self._delivery_delay_seconds
                 result = InferenceResult(
                     actions=payload.actions,
                     episode_id=request.episode_id,

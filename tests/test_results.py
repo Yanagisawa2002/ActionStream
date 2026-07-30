@@ -66,6 +66,8 @@ def test_custom_parity_manifest_enforces_fixed_protocol(tmp_path) -> None:
                     "initial_state_index": initial_state_index,
                     "seed": 142 + episode_index,
                     "realtime_control": False,
+                    "policy_rng_seed": 142 + episode_index,
+                    "policy_rng_reset_per_episode": True,
                     "environment_steps": 100,
                     "success": True,
                     "git_commit": "commit-sha",

@@ -128,6 +128,7 @@ class LeRobotBackend:
         torch.backends.cudnn.benchmark = True
         torch.backends.cuda.matmul.allow_tf32 = True
         self.seed = seed
+        self._set_seed = set_seed
         self.suite = suite
         self.task_ids = list(task_ids)
         self.episode_length = episode_length
@@ -201,6 +202,10 @@ class LeRobotBackend:
     ) -> tuple[dict[str, Any], dict[str, Any], str]:
         sub_env = self._sub_env(task_id)
         sub_env.init_state_id = int(initial_state_index)
+        # X-VLA samples its action chunk from torch.randn. Reset all policy RNG
+        # sources per paired episode so differing call counts in one mode cannot
+        # shift the random stream of later episodes in another mode.
+        self._set_seed(int(seed))
         self.reset_runtime()
         observation, info = self._env(task_id).reset(seed=[int(seed)])
         instruction = str(sub_env.task_description)

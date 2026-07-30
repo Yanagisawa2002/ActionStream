@@ -46,6 +46,18 @@ def _percentile(values: list[float], percentile: float) -> float | None:
     return float(np.percentile(np.asarray(values, dtype=np.float64), percentile))
 
 
+def _coalesce_missed_control_ticks(
+    scheduled_timestamp: float,
+    current_timestamp: float,
+    period_seconds: float,
+) -> tuple[float, int]:
+    """Skip wall-clock ticks that are already a full period in the past."""
+    if current_timestamp <= scheduled_timestamp:
+        return scheduled_timestamp, 0
+    missed_ticks = int((current_timestamp - scheduled_timestamp) // period_seconds)
+    return scheduled_timestamp + missed_ticks * period_seconds, missed_ticks
+
+
 def _git_commit() -> str:
     completed = subprocess.run(
         ["git", "rev-parse", "HEAD"],
@@ -108,6 +120,7 @@ def _run_sync_episode(
 
     episode_started = time.monotonic()
     control_epoch: float | None = None
+    scheduled: float | None = None
     pending_actions: deque[np.ndarray] = deque()
     model_latencies: list[float] = []
     delivery_latencies: list[float] = []
@@ -118,6 +131,7 @@ def _run_sync_episode(
     previous_action: np.ndarray | None = None
     time_to_first_action: float | None = None
     deadline_misses = 0
+    dispatch_lateness: list[float] = []
     success = False
     step_count = 0
 
@@ -147,11 +161,17 @@ def _run_sync_episode(
             pending_actions.extend(output_chunk.actions)
             if control_epoch is None:
                 control_epoch = delivery_timestamp
+                scheduled = control_epoch
 
-        if control_epoch is None:
+        if control_epoch is None or scheduled is None:
             raise RuntimeError("Synchronous runner reached control without a first chunk")
-        scheduled = control_epoch + step_count * period
         if realtime:
+            scheduled, missed_ticks = _coalesce_missed_control_ticks(
+                scheduled,
+                time.monotonic(),
+                period,
+            )
+            deadline_misses += missed_ticks
             remaining = scheduled - time.monotonic()
             if remaining > 0:
                 time.sleep(remaining)
@@ -161,12 +181,11 @@ def _run_sync_episode(
             raise RuntimeError(f"Invalid queued environment action: {action}")
 
         dispatched = time.monotonic()
+        if realtime:
+            dispatch_lateness.append(max(0.0, dispatched - scheduled))
         if time_to_first_action is None:
             time_to_first_action = dispatched - episode_started
         step_output = backend.step(task_id, action)
-        completed = time.monotonic()
-        if realtime and completed > scheduled + period:
-            deadline_misses += 1
 
         actions_executed.append(action.copy())
         dispatch_timestamps.append(dispatched)
@@ -179,6 +198,7 @@ def _run_sync_episode(
         success = success or step_output.success
         if success or step_output.terminated or step_output.truncated:
             break
+        scheduled += period
 
     episode_finished = time.monotonic()
     trace_path = _trace_path(output, "sync", injected_delay_ms, task_id, episode_index)
@@ -216,6 +236,8 @@ def _run_sync_episode(
         "stale_prefix_mean_steps": 0.0,
         "stale_prefix_max_steps": 0,
         "control_deadline_misses": deadline_misses if realtime else None,
+        "control_dispatch_lateness_p50_seconds": _percentile(dispatch_lateness, 50),
+        "control_dispatch_lateness_p95_seconds": _percentile(dispatch_lateness, 95),
         "action_discontinuity_mean_l2": (
             float(np.mean(np.asarray(discontinuities, dtype=np.float64)))
             if discontinuities
@@ -226,6 +248,8 @@ def _run_sync_episode(
         "controller_frequency_hz": controller_hz,
         "realtime_control": realtime,
         "replan_interval_steps": 30,
+        "policy_rng_seed": seed,
+        "policy_rng_reset_per_episode": True,
         "action_trace_path": str(trace_path),
     }
 
@@ -296,6 +320,7 @@ def _run_async_episode(
     previous_action: np.ndarray | None = None
     time_to_first_action: float | None = None
     deadline_misses = 0
+    dispatch_lateness: list[float] = []
     success = False
     step_count = 0
     episode_finished: float | None = None
@@ -311,9 +336,15 @@ def _run_async_episode(
             )
         )
 
-    def record_result(result: InferenceResult, *, merge: bool) -> None:
+    def record_result(
+        result: InferenceResult,
+        *,
+        merge: bool,
+        delivered: bool = True,
+    ) -> None:
         model_latencies.append(result.model_inference_latency_seconds)
-        delivery_latencies.append(result.delivery_timestamp - result.request_timestamp)
+        if delivered:
+            delivery_latencies.append(result.delivery_timestamp - result.request_timestamp)
         event: dict[str, Any] = {
             "observation_control_step": result.observation_control_step,
             "request_timestamp": result.request_timestamp,
@@ -324,6 +355,7 @@ def _run_async_episode(
             "raw_shape": list(result.metadata.get("raw_shape", [])),
             "raw_dtype": result.metadata.get("raw_dtype"),
             "merged": merge,
+            "published_before_episode_end": delivered,
         }
         if merge:
             outcome = queue.replace(
@@ -343,7 +375,7 @@ def _run_async_episode(
 
     submit_request(0, observation)
     try:
-        if not worker.wait_idle(timeout=120):
+        if not worker.wait_for_result(timeout=120):
             raise TimeoutError("Timed out waiting for the first asynchronous action chunk")
         for result in worker.drain_results():
             record_result(result, merge=True)
@@ -351,8 +383,14 @@ def _run_async_episode(
             raise RuntimeError("Initial inference completed without a safe final action")
 
         control_epoch = time.monotonic()
+        scheduled = control_epoch
         while step_count < backend.episode_length:
-            scheduled = control_epoch + step_count * period
+            scheduled, missed_ticks = _coalesce_missed_control_ticks(
+                scheduled,
+                time.monotonic(),
+                period,
+            )
+            deadline_misses += missed_ticks
             remaining = scheduled - time.monotonic()
             if remaining > 0:
                 time.sleep(remaining)
@@ -365,12 +403,10 @@ def _run_async_episode(
                 raise RuntimeError(f"Invalid queued environment action: {action}")
 
             dispatched = time.monotonic()
+            dispatch_lateness.append(max(0.0, dispatched - scheduled))
             if time_to_first_action is None:
                 time_to_first_action = dispatched - episode_started
             step_output = backend.step(task_id, action)
-            completed = time.monotonic()
-            if completed > scheduled + period:
-                deadline_misses += 1
 
             actions_executed.append(action.copy())
             dispatch_timestamps.append(dispatched)
@@ -385,14 +421,15 @@ def _run_async_episode(
                 break
             if step_count % replan_interval_steps == 0:
                 submit_request(step_count, observation)
+            scheduled += period
         episode_finished = time.monotonic()
     finally:
         worker.close()
 
     # Count completed requests that arrived after the terminal environment step,
     # but never merge them into a completed episode's queue.
-    for result in worker.drain_results():
-        record_result(result, merge=False)
+    for result in worker.drain_all_results():
+        record_result(result, merge=False, delivered=False)
 
     if episode_finished is None:
         raise RuntimeError("Asynchronous episode ended without a completion timestamp")
@@ -436,6 +473,8 @@ def _run_async_episode(
         ),
         "stale_prefix_max_steps": max(stale_prefixes, default=0),
         "control_deadline_misses": deadline_misses,
+        "control_dispatch_lateness_p50_seconds": _percentile(dispatch_lateness, 50),
+        "control_dispatch_lateness_p95_seconds": _percentile(dispatch_lateness, 95),
         "action_discontinuity_mean_l2": (
             float(np.mean(np.asarray(discontinuities, dtype=np.float64)))
             if discontinuities
@@ -446,6 +485,8 @@ def _run_async_episode(
         "controller_frequency_hz": controller_hz,
         "realtime_control": True,
         "replan_interval_steps": replan_interval_steps,
+        "policy_rng_seed": seed,
+        "policy_rng_reset_per_episode": True,
         "queue_replacements": queue.replacements,
         "pending_requests_replaced": worker.pending_requests_replaced,
         "old_episode_chunks_rejected": queue.old_episode_chunks_rejected,

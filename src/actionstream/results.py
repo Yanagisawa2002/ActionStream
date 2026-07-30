@@ -215,6 +215,8 @@ def build_custom_parity_manifest(
                 "initial_state_index": EXPECTED_INITIAL_STATE_INDICES[episode_index],
                 "seed": 142 + episode_index,
                 "realtime_control": False,
+                "policy_rng_seed": 142 + episode_index,
+                "policy_rng_reset_per_episode": True,
             }
             for field, expected in expected_fields.items():
                 if row.get(field) != expected:
@@ -261,6 +263,7 @@ def build_custom_parity_manifest(
             "runtime_mode": "sync",
             "chunk_size": 30,
             "realtime_control": False,
+            "policy_rng_reset_per_episode": True,
         },
         "per_task": per_task,
         "overall": {
