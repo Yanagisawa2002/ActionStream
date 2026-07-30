@@ -1,0 +1,59 @@
+{
+  "per_task": [
+    {
+      "task_group": "libero_object",
+      "task_id": 0,
+      "metrics": {
+        "sum_rewards": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "max_rewards": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "successes": [
+          true,
+          true,
+          true
+        ],
+        "video_paths": [
+          "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/xvla_smoke/videos/libero_object_0/eval_episode_0.mp4",
+          "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/xvla_smoke/videos/libero_object_0/eval_episode_1.mp4",
+          "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/xvla_smoke/videos/libero_object_0/eval_episode_2.mp4"
+        ],
+        "predicted_video_paths": []
+      }
+    }
+  ],
+  "per_group": {
+    "libero_object": {
+      "avg_sum_reward": 1.0,
+      "avg_max_reward": 1.0,
+      "pc_success": 100.0,
+      "n_episodes": 3,
+      "video_paths": [
+        "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/xvla_smoke/videos/libero_object_0/eval_episode_0.mp4",
+        "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/xvla_smoke/videos/libero_object_0/eval_episode_1.mp4",
+        "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/xvla_smoke/videos/libero_object_0/eval_episode_2.mp4"
+      ],
+      "predicted_video_paths": []
+    }
+  },
+  "overall": {
+    "avg_sum_reward": 1.0,
+    "avg_max_reward": 1.0,
+    "pc_success": 100.0,
+    "n_episodes": 3,
+    "eval_s": 72.73865818977356,
+    "eval_ep_s": 24.246219555536907,
+    "video_paths": [
+      "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/xvla_smoke/videos/libero_object_0/eval_episode_0.mp4",
+      "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/xvla_smoke/videos/libero_object_0/eval_episode_1.mp4",
+      "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/xvla_smoke/videos/libero_object_0/eval_episode_2.mp4"
+    ],
+    "predicted_video_paths": []
+  }
+}

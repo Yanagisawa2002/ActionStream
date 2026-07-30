@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.venv/
+*.egg-info/
+
+# Large or replaceable runtime outputs.
+outputs/**/videos/
+outputs/**/recordings/
+outputs/**/*.mp4
+outputs/**/*.avi
+outputs/**/*.npz
+outputs/**/*.log

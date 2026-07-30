@@ -1,0 +1,422 @@
+{
+  "status": "passed",
+  "generated_at_utc": "2026-07-30T05:38:49Z",
+  "environment": {
+    "os": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "lerobot": "0.6.0",
+    "torch": "2.11.0+cu130",
+    "torch_cuda_runtime": "13.0",
+    "gpu_name": "NVIDIA GeForce RTX 4090",
+    "disk": {
+      "path": "/",
+      "free_bytes": 947497279488,
+      "total_bytes": 1081101176832
+    },
+    "packages": {
+      "hf-libero": "0.1.4",
+      "mujoco": "3.8.1",
+      "robosuite": "1.4.0",
+      "transformers": "5.5.4"
+    },
+    "headless": {
+      "MUJOCO_GL": "egl",
+      "PYOPENGL_PLATFORM": "egl"
+    },
+    "libero_config_file": "/home/cgliu/.cache/actionstream/libero-config/config.yaml",
+    "memory_before_model": {
+      "free_bytes": 24104665088,
+      "total_bytes": 25756696576,
+      "free_mib": 22988.0,
+      "total_mib": 24563.5,
+      "allocated_mib": 0.0,
+      "reserved_mib": 0.0,
+      "peak_allocated_mib": 0.0
+    },
+    "memory_after_inference": {
+      "free_bytes": 20168310784,
+      "total_bytes": 25756696576,
+      "free_mib": 19234.0,
+      "total_mib": 24563.5,
+      "allocated_mib": 3368.21826171875,
+      "reserved_mib": 3682.0,
+      "peak_allocated_mib": 3524.02099609375
+    }
+  },
+  "checkpoint": {
+    "model_id": "lerobot/xvla-libero",
+    "revision_sha": "12e8783e996944f5c97e490d37d4c145484ed70a",
+    "config": {
+      "type": "xvla",
+      "chunk_size": 30,
+      "n_action_steps": 30,
+      "action_mode": "ee6d",
+      "dtype": "float32",
+      "input_features": {
+        "observation.images.image": {
+          "type": "FeatureType.VISUAL",
+          "shape": [
+            3,
+            256,
+            256
+          ]
+        },
+        "observation.images.image2": {
+          "type": "FeatureType.VISUAL",
+          "shape": [
+            3,
+            256,
+            256
+          ]
+        },
+        "observation.state": {
+          "type": "FeatureType.STATE",
+          "shape": [
+            8
+          ]
+        },
+        "observation.images.empty_camera_0": {
+          "type": "FeatureType.VISUAL",
+          "shape": [
+            3,
+            224,
+            224
+          ]
+        }
+      },
+      "output_features": {
+        "action": {
+          "type": "FeatureType.ACTION",
+          "shape": [
+            20
+          ]
+        }
+      },
+      "num_image_views": 3,
+      "empty_cameras": 1,
+      "resize_imgs_with_padding": [
+        224,
+        224
+      ],
+      "max_state_dim": 20
+    },
+    "model_load_seconds": 145.6117941160046
+  },
+  "libero_smoke": {
+    "suite": "libero_object",
+    "task_id": 0,
+    "seed": 142,
+    "control_mode": "absolute",
+    "episode_length": 800,
+    "observation": {
+      "pixels": {
+        "image": {
+          "shape": [
+            1,
+            360,
+            360,
+            3
+          ],
+          "dtype": "uint8",
+          "finite": true
+        },
+        "image2": {
+          "shape": [
+            1,
+            360,
+            360,
+            3
+          ],
+          "dtype": "uint8",
+          "finite": true
+        }
+      },
+      "robot_state": {
+        "eef": {
+          "mat": {
+            "shape": [
+              1,
+              3,
+              3
+            ],
+            "dtype": "float64",
+            "finite": true
+          },
+          "pos": {
+            "shape": [
+              1,
+              3
+            ],
+            "dtype": "float64",
+            "finite": true
+          },
+          "quat": {
+            "shape": [
+              1,
+              4
+            ],
+            "dtype": "float64",
+            "finite": true
+          }
+        },
+        "gripper": {
+          "qpos": {
+            "shape": [
+              1,
+              2
+            ],
+            "dtype": "float64",
+            "finite": true
+          },
+          "qvel": {
+            "shape": [
+              1,
+              2
+            ],
+            "dtype": "float64",
+            "finite": true
+          }
+        },
+        "joints": {
+          "pos": {
+            "shape": [
+              1,
+              7
+            ],
+            "dtype": "float64",
+            "finite": true
+          },
+          "vel": {
+            "shape": [
+              1,
+              7
+            ],
+            "dtype": "float64",
+            "finite": true
+          }
+        }
+      }
+    },
+    "action_space_shape": [
+      7
+    ],
+    "safe_hold_shape": [
+      1,
+      7
+    ],
+    "safe_hold_all_zero": false,
+    "reward": [
+      0.0
+    ],
+    "terminated": [
+      false
+    ],
+    "truncated": [
+      false
+    ],
+    "reset_info_keys": [
+      "_is_success",
+      "is_success"
+    ],
+    "step_info_keys": [
+      "_done",
+      "_is_success",
+      "_task",
+      "_task_id",
+      "done",
+      "is_success",
+      "task",
+      "task_id"
+    ]
+  },
+  "processor_contract": {
+    "ordered_stages": [
+      "preprocess_observation",
+      "task_description_insertion",
+      "xvla_libero_env_preprocessor",
+      "checkpoint_policy_preprocessor",
+      "predict_action_chunk",
+      "checkpoint_policy_postprocessor_per_timestep",
+      "xvla_libero_env_postprocessor_per_timestep"
+    ],
+    "after_env_preprocessor": {
+      "action": {
+        "shape": [],
+        "dtype": "object"
+      },
+      "next.reward": {
+        "shape": [],
+        "dtype": "float64",
+        "finite": true
+      },
+      "next.done": {
+        "shape": [],
+        "dtype": "bool"
+      },
+      "next.truncated": {
+        "shape": [],
+        "dtype": "bool"
+      },
+      "info": {},
+      "task": {
+        "shape": [
+          1
+        ],
+        "dtype": "<U52"
+      },
+      "domain_id": {
+        "shape": [
+          1
+        ],
+        "dtype": "torch.int64",
+        "device": "cpu"
+      },
+      "observation.images.image": {
+        "shape": [
+          1,
+          3,
+          360,
+          360
+        ],
+        "dtype": "torch.float32",
+        "device": "cpu",
+        "finite": true
+      },
+      "observation.images.image2": {
+        "shape": [
+          1,
+          3,
+          360,
+          360
+        ],
+        "dtype": "torch.float32",
+        "device": "cpu",
+        "finite": true
+      },
+      "observation.state": {
+        "shape": [
+          1,
+          20
+        ],
+        "dtype": "torch.float32",
+        "device": "cpu",
+        "finite": true
+      }
+    },
+    "model_observation": {
+      "action": {
+        "shape": [],
+        "dtype": "object"
+      },
+      "next.reward": {
+        "shape": [],
+        "dtype": "float64",
+        "finite": true
+      },
+      "next.done": {
+        "shape": [],
+        "dtype": "bool"
+      },
+      "next.truncated": {
+        "shape": [],
+        "dtype": "bool"
+      },
+      "info": {},
+      "task": {
+        "shape": [
+          1
+        ],
+        "dtype": "<U52"
+      },
+      "domain_id": {
+        "shape": [
+          1
+        ],
+        "dtype": "torch.int64",
+        "device": "cuda:0"
+      },
+      "observation.images.image": {
+        "shape": [
+          1,
+          3,
+          360,
+          360
+        ],
+        "dtype": "torch.float32",
+        "device": "cuda:0",
+        "finite": true
+      },
+      "observation.images.image2": {
+        "shape": [
+          1,
+          3,
+          360,
+          360
+        ],
+        "dtype": "torch.float32",
+        "device": "cuda:0",
+        "finite": true
+      },
+      "observation.state": {
+        "shape": [
+          1,
+          20
+        ],
+        "dtype": "torch.float32",
+        "device": "cuda:0",
+        "finite": true
+      },
+      "observation.language.tokens": {
+        "shape": [
+          1,
+          50
+        ],
+        "dtype": "torch.int64",
+        "device": "cuda:0"
+      },
+      "observation.language.attention_mask": {
+        "shape": [
+          1,
+          50
+        ],
+        "dtype": "torch.bool",
+        "device": "cuda:0"
+      }
+    },
+    "policy_postprocessor_chunk_probe": {
+      "accepted": true,
+      "shape": [
+        1,
+        30,
+        20
+      ],
+      "dtype": "torch.float32",
+      "device": "cpu"
+    },
+    "raw_chunk": {
+      "shape": [
+        1,
+        30,
+        20
+      ],
+      "dtype": "torch.float32",
+      "device": "cuda:0",
+      "finite": true
+    },
+    "inference_latency_seconds": 1.231311982992338,
+    "final_chunk": {
+      "shape": [
+        1,
+        30,
+        7
+      ],
+      "dtype": "torch.float32",
+      "device": "cpu",
+      "finite": true
+    },
+    "final_per_step_shape": [
+      1,
+      7
+    ]
+  }
+}
