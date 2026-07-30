@@ -1,0 +1,148 @@
+{
+  "generated_at_utc": "2026-07-30T09:00:02Z",
+  "episode_metric_paths": [
+    "outputs/m3/async_aligned_delay0/episodes.jsonl",
+    "outputs/m3/async_aligned_delay200/episodes.jsonl",
+    "outputs/m3/async_naive_delay0/episodes.jsonl",
+    "outputs/m3/async_naive_delay200/episodes.jsonl",
+    "outputs/m3/sync_delay0/episodes.jsonl",
+    "outputs/m3/sync_delay200/episodes.jsonl"
+  ],
+  "git_commit": "9f0be1055d4216ca5a60702dd75f6f5a4e1c8fcc",
+  "model_revision_sha": "12e8783e996944f5c97e490d37d4c145484ed70a",
+  "episode_count": 180,
+  "action_trace_count_verified": 180,
+  "total_final_7d_actions_verified": 29073,
+  "protocol": {
+    "suite": "libero_object",
+    "task_ids": [
+      0,
+      1,
+      2
+    ],
+    "episodes_per_task": 10,
+    "delays_ms": [
+      0,
+      200
+    ],
+    "runtime_modes": [
+      "sync",
+      "async_naive",
+      "async_aligned"
+    ],
+    "initial_state_indices": [
+      0,
+      2,
+      4,
+      6,
+      8,
+      10,
+      12,
+      14,
+      16,
+      18
+    ],
+    "seeds": [
+      142,
+      143,
+      144,
+      145,
+      146,
+      147,
+      148,
+      149,
+      150,
+      151
+    ],
+    "controller_frequency_hz": 20.0,
+    "chunk_size": 30,
+    "async_replan_interval_steps": 10,
+    "policy_rng_reset_per_episode": true
+  },
+  "conditions": {
+    "async_aligned/delay0": {
+      "run_id": "async_aligned-1785399647-b29fbc43",
+      "success_count": 30,
+      "episode_count": 30,
+      "per_task_success": {
+        "0": "10/10",
+        "1": "10/10",
+        "2": "10/10"
+      },
+      "hold_steps_total": 0,
+      "fully_stale_chunks_total": 0,
+      "old_episode_leak_count": 0
+    },
+    "async_aligned/delay200": {
+      "run_id": "async_aligned-1785401003-6f3689c4",
+      "success_count": 30,
+      "episode_count": 30,
+      "per_task_success": {
+        "0": "10/10",
+        "1": "10/10",
+        "2": "10/10"
+      },
+      "hold_steps_total": 0,
+      "fully_stale_chunks_total": 0,
+      "old_episode_leak_count": 0
+    },
+    "async_naive/delay0": {
+      "run_id": "async_naive-1785399186-daf2404a",
+      "success_count": 30,
+      "episode_count": 30,
+      "per_task_success": {
+        "0": "10/10",
+        "1": "10/10",
+        "2": "10/10"
+      },
+      "hold_steps_total": 0,
+      "fully_stale_chunks_total": 0,
+      "old_episode_leak_count": 0
+    },
+    "async_naive/delay200": {
+      "run_id": "async_naive-1785400432-b919c707",
+      "success_count": 30,
+      "episode_count": 30,
+      "per_task_success": {
+        "0": "10/10",
+        "1": "10/10",
+        "2": "10/10"
+      },
+      "hold_steps_total": 0,
+      "fully_stale_chunks_total": 0,
+      "old_episode_leak_count": 0
+    },
+    "sync/delay0": {
+      "run_id": "sync-1785398823-190f7bff",
+      "success_count": 30,
+      "episode_count": 30,
+      "per_task_success": {
+        "0": "10/10",
+        "1": "10/10",
+        "2": "10/10"
+      },
+      "hold_steps_total": 0,
+      "fully_stale_chunks_total": 0,
+      "old_episode_leak_count": 0
+    },
+    "sync/delay200": {
+      "run_id": "sync-1785400017-915c6d42",
+      "success_count": 30,
+      "episode_count": 30,
+      "per_task_success": {
+        "0": "10/10",
+        "1": "10/10",
+        "2": "10/10"
+      },
+      "hold_steps_total": 0,
+      "fully_stale_chunks_total": 0,
+      "old_episode_leak_count": 0
+    }
+  },
+  "gate": {
+    "all_expected_rows_present": true,
+    "all_action_traces_safe": true,
+    "no_cross_episode_leaks": true,
+    "passed": true
+  }
+}

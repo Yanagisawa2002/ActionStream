@@ -3,6 +3,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 VENV="${ACTIONSTREAM_VENV:-$HOME/.venvs/actionstream}"
+OUTPUT_ROOT="${ACTIONSTREAM_OUTPUT_ROOT:-$ROOT/outputs}"
 export LIBERO_CONFIG_PATH="${LIBERO_CONFIG_PATH:-$HOME/.cache/actionstream/libero-config}"
 export MUJOCO_GL="${MUJOCO_GL:-egl}"
 export PYOPENGL_PLATFORM="${PYOPENGL_PLATFORM:-egl}"
@@ -16,4 +17,4 @@ export PYOPENGL_PLATFORM="${PYOPENGL_PLATFORM:-egl}"
   --seed=142 \
   --episode-length=800 \
   --injected-delay-ms=0 \
-  --output="$ROOT/outputs/custom_sync_smoke/episodes.jsonl"
+  --output="$OUTPUT_ROOT/custom_sync_smoke/episodes.jsonl"

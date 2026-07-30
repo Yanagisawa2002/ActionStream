@@ -5,12 +5,29 @@ import json
 import pytest
 
 from actionstream.results import (
+    _resolve_action_trace_path,
     aggregate_episode_records,
     build_custom_parity_manifest,
     build_official_manifest,
     reconstruct_all_success_initial_states,
     render_summary_markdown,
 )
+
+
+def test_action_trace_path_falls_back_to_portable_condition_directory(tmp_path) -> None:
+    condition = ("async_aligned", 200)
+    condition_dir = tmp_path / "async_aligned_delay200"
+    trace = condition_dir / "traces" / "task1_episode8.npz"
+    trace.parent.mkdir(parents=True)
+    trace.write_bytes(b"trace")
+
+    resolved = _resolve_action_trace_path(
+        "/obsolete/workspace/outputs/m3/async_aligned_delay200/traces/task1_episode8.npz",
+        condition=condition,
+        condition_episode_dirs={condition: condition_dir},
+    )
+
+    assert resolved == trace
 
 
 def test_official_all_success_manifest_and_initial_states(tmp_path) -> None:

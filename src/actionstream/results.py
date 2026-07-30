@@ -529,6 +529,33 @@ def write_actionstream_summary(
     return aggregates
 
 
+def _resolve_action_trace_path(
+    trace_path_value: str,
+    *,
+    condition: tuple[str, int],
+    condition_episode_dirs: dict[tuple[str, int], Path],
+) -> Path:
+    if os.name == "nt" and re.match(r"^/mnt/[A-Za-z]/", trace_path_value):
+        parts = trace_path_value.split("/")
+        trace_path = Path(f"{parts[2].upper()}:\\", *parts[3:])
+    else:
+        trace_path = Path(trace_path_value)
+    if trace_path.is_file():
+        return trace_path
+
+    condition_dir = condition_episode_dirs.get(condition)
+    portable_path = (
+        condition_dir / "traces" / Path(trace_path_value).name
+        if condition_dir is not None
+        else trace_path
+    )
+    if portable_path.is_file():
+        return portable_path
+    raise ValueError(
+        f"Missing action trace: {trace_path}; portable fallback: {portable_path}"
+    )
+
+
 def validate_m3_matrix(
     episode_paths: list[Path | str],
     *,
@@ -543,6 +570,16 @@ def validate_m3_matrix(
         grouped[(str(row["runtime_mode"]), int(row["injected_delay_ms"]))].append(row)
     if set(grouped) != EXPECTED_M3_CONDITIONS:
         raise ValueError(f"M3 conditions are {sorted(grouped)}, expected {sorted(EXPECTED_M3_CONDITIONS)}")
+
+    condition_episode_dirs: dict[tuple[str, int], Path] = {}
+    for episode_path_value in episode_paths:
+        episode_path = Path(episode_path_value)
+        match = re.fullmatch(
+            r"(sync|async_naive|async_aligned)_delay(\d+)",
+            episode_path.parent.name,
+        )
+        if match:
+            condition_episode_dirs[(match.group(1), int(match.group(2)))] = episode_path.parent
 
     commits: set[str] = set()
     revisions: set[str] = set()
@@ -619,13 +656,11 @@ def validate_m3_matrix(
             total_action_steps += int(row["environment_steps"])
             if verify_action_traces:
                 trace_path_value = str(row["action_trace_path"])
-                if os.name == "nt" and re.match(r"^/mnt/[A-Za-z]/", trace_path_value):
-                    parts = trace_path_value.split("/")
-                    trace_path = Path(f"{parts[2].upper()}:\\", *parts[3:])
-                else:
-                    trace_path = Path(trace_path_value)
-                if not trace_path.is_file():
-                    raise ValueError(f"Missing action trace: {trace_path}")
+                trace_path = _resolve_action_trace_path(
+                    trace_path_value,
+                    condition=condition,
+                    condition_episode_dirs=condition_episode_dirs,
+                )
                 with np.load(trace_path, allow_pickle=False) as trace:
                     actions = trace["actions"]
                     dispatch_timestamps = trace["dispatch_timestamps"]

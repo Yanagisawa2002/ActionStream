@@ -22,6 +22,7 @@ from actionstream.libero_config import ensure_isolated_libero_config
 
 
 MODEL_ID = "lerobot/xvla-libero"
+MODEL_REVISION = "12e8783e996944f5c97e490d37d4c145484ed70a"
 EXPECTED_CHUNK_SIZE = 30
 EXPECTED_ACTION_STEPS = 30
 EXPECTED_MODEL_ACTION_DIM = 20
@@ -93,7 +94,11 @@ def _safe_absolute_pose_hold(observation: dict[str, Any], env_postprocessor: Any
     return final_action.cpu().numpy()
 
 
-def run_preflight(output: Path, model_id: str = MODEL_ID) -> dict[str, Any]:
+def run_preflight(
+    output: Path,
+    model_id: str = MODEL_ID,
+    model_revision: str = MODEL_REVISION,
+) -> dict[str, Any]:
     config_file = ensure_isolated_libero_config()
 
     # Imports below this point may import libero.libero, so the isolated config
@@ -119,12 +124,24 @@ def run_preflight(output: Path, model_id: str = MODEL_ID) -> dict[str, Any]:
     if os.environ.get("MUJOCO_GL") != "egl" or os.environ.get("PYOPENGL_PLATFORM") != "egl":
         raise RuntimeError("Headless preflight requires MUJOCO_GL=egl and PYOPENGL_PLATFORM=egl")
 
-    model_info = HfApi().model_info(model_id, files_metadata=True)
-    model_revision = model_info.sha
-    if not model_revision:
+    model_info = HfApi().model_info(
+        model_id,
+        revision=model_revision,
+        files_metadata=True,
+    )
+    resolved_model_revision = model_info.sha
+    if not resolved_model_revision:
         raise RuntimeError(f"Could not resolve a revision SHA for {model_id}")
+    if resolved_model_revision != model_revision:
+        raise RuntimeError(
+            f"Checkpoint revision resolved to {resolved_model_revision}, "
+            f"expected pinned SHA {model_revision}"
+        )
 
-    checkpoint_cfg = PreTrainedConfig.from_pretrained(model_id, revision=model_revision)
+    checkpoint_cfg = PreTrainedConfig.from_pretrained(
+        model_id,
+        revision=resolved_model_revision,
+    )
     checkpoint_snapshot = {
         "type": checkpoint_cfg.type,
         "chunk_size": checkpoint_cfg.chunk_size,
@@ -156,7 +173,7 @@ def run_preflight(output: Path, model_id: str = MODEL_ID) -> dict[str, Any]:
     policy_cfg = copy.deepcopy(checkpoint_cfg)
     policy_cfg.device = "cuda"
     policy_cfg.pretrained_path = Path(model_id)
-    policy_cfg.pretrained_revision = model_revision
+    policy_cfg.pretrained_revision = resolved_model_revision
 
     env_preprocessor, env_postprocessor = make_env_pre_post_processors(
         env_cfg=env_cfg,
@@ -184,7 +201,7 @@ def run_preflight(output: Path, model_id: str = MODEL_ID) -> dict[str, Any]:
         preprocessor, postprocessor = make_pre_post_processors(
             policy_cfg=policy_cfg,
             pretrained_path=model_id,
-            pretrained_revision=model_revision,
+            pretrained_revision=resolved_model_revision,
             preprocessor_overrides={
                 "device_processor": {"device": str(policy.config.device)},
                 "rename_observations_processor": {"rename_map": {}},
@@ -260,7 +277,7 @@ def run_preflight(output: Path, model_id: str = MODEL_ID) -> dict[str, Any]:
             },
             "checkpoint": {
                 "model_id": model_id,
-                "revision_sha": model_revision,
+                "revision_sha": resolved_model_revision,
                 "config": checkpoint_snapshot,
                 "model_load_seconds": model_load_seconds,
             },
@@ -313,8 +330,13 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output", type=Path, default=Path("outputs/preflight/preflight.json"))
     parser.add_argument("--model-id", default=MODEL_ID)
+    parser.add_argument("--model-revision", default=MODEL_REVISION)
     args = parser.parse_args()
-    result = run_preflight(args.output, model_id=args.model_id)
+    result = run_preflight(
+        args.output,
+        model_id=args.model_id,
+        model_revision=args.model_revision,
+    )
     print(json.dumps(result, indent=2))
 
 

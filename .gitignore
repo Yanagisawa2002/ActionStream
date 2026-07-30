@@ -12,3 +12,7 @@ outputs/**/*.mp4
 outputs/**/*.avi
 outputs/**/*.npz
 outputs/**/*.log
+
+# Keep the compact final action evidence needed by the M2/M3 validators.
+!outputs/custom_sync_parity/traces/*.npz
+!outputs/m3/**/traces/*.npz
