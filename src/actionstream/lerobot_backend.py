@@ -5,8 +5,10 @@ from __future__ import annotations
 import copy
 import os
 import time
+from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
+from types import MappingProxyType
 from typing import Any
 
 import numpy as np
@@ -38,19 +40,36 @@ class StepOutput:
     info: dict[str, Any]
 
 
-def immutable_observation_snapshot(observation: dict[str, Any]) -> dict[str, Any]:
-    """Deep-copy a vector observation and mark copied NumPy arrays read-only."""
-    snapshot = copy.deepcopy(observation)
+def immutable_observation_snapshot(observation: Mapping[str, Any]) -> Mapping[str, Any]:
+    """Deep-copy and recursively freeze an observation request payload."""
 
-    def freeze(value: Any) -> None:
-        if isinstance(value, dict):
-            for child in value.values():
-                freeze(child)
-        elif isinstance(value, np.ndarray):
-            value.setflags(write=False)
+    def freeze(value: Any) -> Any:
+        if isinstance(value, Mapping):
+            return MappingProxyType({key: freeze(child) for key, child in value.items()})
+        if isinstance(value, np.ndarray):
+            copied = value.copy()
+            copied.setflags(write=False)
+            return copied
+        if isinstance(value, list | tuple):
+            return tuple(freeze(child) for child in value)
+        return copy.deepcopy(value)
 
-    freeze(snapshot)
-    return snapshot
+    return freeze(observation)
+
+
+def thaw_observation_snapshot(observation: Mapping[str, Any]) -> dict[str, Any]:
+    """Make a worker-local writable observation from an immutable request."""
+
+    def thaw(value: Any) -> Any:
+        if isinstance(value, Mapping):
+            return {key: thaw(child) for key, child in value.items()}
+        if isinstance(value, np.ndarray):
+            return value.copy()
+        if isinstance(value, tuple):
+            return [thaw(child) for child in value]
+        return copy.deepcopy(value)
+
+    return thaw(observation)
 
 
 def _bool_at_zero(value: Any) -> bool:

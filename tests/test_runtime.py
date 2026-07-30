@@ -6,6 +6,10 @@ import time
 import numpy as np
 import pytest
 
+from actionstream.lerobot_backend import (
+    immutable_observation_snapshot,
+    thaw_observation_snapshot,
+)
 from actionstream.runtime import (
     ActionQueue,
     InferencePayload,
@@ -14,6 +18,22 @@ from actionstream.runtime import (
     LatestRequestWorker,
     QueueNotReady,
 )
+
+
+def test_observation_request_is_independent_and_immutable() -> None:
+    source = {"pixels": np.ones((1, 2), dtype=np.float32), "nested": {"values": [1, 2]}}
+    snapshot = immutable_observation_snapshot(source)
+    source["pixels"][0, 0] = 9
+    assert snapshot["pixels"][0, 0] == 1
+    with pytest.raises(ValueError):
+        snapshot["pixels"][0, 0] = 3
+    with pytest.raises(TypeError):
+        snapshot["new"] = "unsafe"
+
+    thawed = thaw_observation_snapshot(snapshot)
+    thawed["pixels"][0, 0] = 4
+    assert thawed["pixels"].flags.writeable
+    assert snapshot["pixels"][0, 0] == 1
 
 
 def result(episode: str, observation_step: int, rows: int = 6) -> InferenceResult:

@@ -6,6 +6,7 @@ import pytest
 
 from actionstream.results import (
     aggregate_episode_records,
+    build_custom_parity_manifest,
     build_official_manifest,
     reconstruct_all_success_initial_states,
     render_summary_markdown,
@@ -22,7 +23,7 @@ def test_official_all_success_manifest_and_initial_states(tmp_path) -> None:
             }
             for task_id in (0, 1, 2)
         ],
-        "overall": {"eval_s": 123.0},
+        "overall": {"eval_s": 123.0, "n_episodes": 30, "pc_success": 100.0},
     }
     source = tmp_path / "eval_info.json"
     source.write_text(json.dumps(payload), encoding="utf-8")
@@ -31,6 +32,7 @@ def test_official_all_success_manifest_and_initial_states(tmp_path) -> None:
         model_revision_sha="sha",
         git_commit="commit",
         command="lerobot-eval ...",
+        contract_audit={"exit_code": 0, "contract_error_matches": []},
     )
     assert manifest["overall"]["success_count"] == 30
     assert manifest["gate"]["passed"]
@@ -40,6 +42,47 @@ def test_official_all_success_manifest_and_initial_states(tmp_path) -> None:
 def test_failed_official_episode_makes_init_sequence_ambiguous() -> None:
     with pytest.raises(ValueError, match="terminal/reset provenance"):
         reconstruct_all_success_initial_states([True, False])
+
+
+def test_custom_parity_manifest_enforces_fixed_protocol(tmp_path) -> None:
+    official = {
+        "model_revision_sha": "model-sha",
+        "overall": {"success_count": 30},
+        "gate": {"passed": True},
+    }
+    official_path = tmp_path / "official.json"
+    official_path.write_text(json.dumps(official), encoding="utf-8")
+    episode_path = tmp_path / "episodes.jsonl"
+    records = []
+    for task_id in (0, 1, 2):
+        for episode_index, initial_state_index in enumerate(range(0, 20, 2)):
+            records.append(
+                {
+                    "runtime_mode": "sync",
+                    "injected_delay_ms": 0,
+                    "suite": "libero_object",
+                    "task_id": task_id,
+                    "episode_index": episode_index,
+                    "initial_state_index": initial_state_index,
+                    "seed": 142 + episode_index,
+                    "realtime_control": False,
+                    "environment_steps": 100,
+                    "success": True,
+                    "git_commit": "commit-sha",
+                    "model_revision_sha": "model-sha",
+                    "run_id": "run",
+                }
+            )
+    episode_path.write_text(
+        "\n".join(json.dumps(record) for record in records) + "\n",
+        encoding="utf-8",
+    )
+
+    manifest = build_custom_parity_manifest(official_path, episode_path)
+
+    assert manifest["gate"]["passed"]
+    assert manifest["overall"]["absolute_difference"] == 0
+    assert manifest["per_task"]["2"]["success_count"] == 10
 
 
 def test_episode_aggregation_and_markdown() -> None:
@@ -54,8 +97,9 @@ def test_episode_aggregation_and_markdown() -> None:
             "inference_latency_p50_seconds": 0.1,
             "observation_to_delivery_p50_seconds": 0.3,
             "queue_underrun_hold_steps": holds,
-            "stale_chunks_discarded": 0,
-            "stale_prefix_mean_steps": 4,
+                "stale_chunks_discarded": 0,
+                "stale_prefix_mean_steps": 4,
+                "stale_prefix_max_steps": 5,
             "control_deadline_misses": 1,
             "action_discontinuity_mean_l2": 0.2,
             "peak_cuda_memory_mib": 3500,

@@ -1,9 +1,15 @@
 {
-  "generated_at_utc": "2026-07-30T06:11:33Z",
+  "generated_at_utc": "2026-07-30T06:33:26Z",
   "source_eval_info": "outputs/xvla_baseline/eval_info.json",
   "git_commit": "34269b4529860a440827c8d818c8459c190921a9",
   "model_revision_sha": "12e8783e996944f5c97e490d37d4c145484ed70a",
   "command": "bash scripts/run_official_baseline.sh",
+  "contract_audit": {
+    "source_log": "outputs/logs/xvla_baseline.log",
+    "sha256": "4f8e413ce466f61a1112aa224dcef30a984a0c1db04505f7a11abcd47e2f98a1",
+    "exit_code": 0,
+    "contract_error_matches": []
+  },
   "protocol": {
     "suite": "libero_object",
     "task_ids": [
