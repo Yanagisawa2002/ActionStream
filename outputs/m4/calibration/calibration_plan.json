@@ -1,17 +1,17 @@
 {
   "status": "planned",
-  "generated_at_utc": "2026-07-30T09:29:44Z",
-  "git_commit": "8972f16c6e4f7e24a1711df81285b309f1677960",
+  "generated_at_utc": "2026-07-30T09:52:49Z",
+  "git_commit": "e33c7d127fddfa069ca8dbcb2ce9049ed58aa132",
   "source": {
-    "m3_manifest": "outputs/summary/manifest.json",
+    "m3_manifest": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/summary/manifest.json",
     "m3_manifest_sha256": "ac1f222e7d763b0ae2a7750887ea055762edffa8bbb4083cbf053345f47de5d8",
     "episode_paths": [
-      "outputs/m3/async_aligned_delay0/episodes.jsonl",
-      "outputs/m3/async_aligned_delay200/episodes.jsonl",
-      "outputs/m3/async_naive_delay0/episodes.jsonl",
-      "outputs/m3/async_naive_delay200/episodes.jsonl",
-      "outputs/m3/sync_delay0/episodes.jsonl",
-      "outputs/m3/sync_delay200/episodes.jsonl"
+      "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m3/async_aligned_delay0/episodes.jsonl",
+      "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m3/async_aligned_delay200/episodes.jsonl",
+      "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m3/async_naive_delay0/episodes.jsonl",
+      "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m3/async_naive_delay200/episodes.jsonl",
+      "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m3/sync_delay0/episodes.jsonl",
+      "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m3/sync_delay200/episodes.jsonl"
     ],
     "trace_count": 120
   },

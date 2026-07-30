@@ -17,3 +17,6 @@ outputs/**/*.log
 !outputs/custom_sync_parity/traces/*.npz
 !outputs/m3/**/traces/*.npz
 !outputs/m4/**/traces/*.npz
+
+# One-off M4 development smoke; final evidence is under the named matrices.
+outputs/m4/smoke/
