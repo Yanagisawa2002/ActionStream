@@ -104,6 +104,10 @@ class LeRobotBackend:
         from lerobot.utils.random_utils import set_seed
 
         set_seed(seed)
+        # Match the CUDA math settings enabled by LeRobot 0.6.0
+        # ``lerobot_eval.eval_main`` before it creates the policy.
+        torch.backends.cudnn.benchmark = True
+        torch.backends.cuda.matmul.allow_tf32 = True
         self.seed = seed
         self.suite = suite
         self.task_ids = list(task_ids)

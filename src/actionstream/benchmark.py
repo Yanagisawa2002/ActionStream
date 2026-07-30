@@ -180,8 +180,8 @@ def _run_sync_episode(
         "run_id": run_id,
         "git_commit": git_commit,
         "lerobot_version": "0.6.0",
-        "model_id": MODEL_ID,
-        "model_revision_sha": MODEL_REVISION,
+        "model_id": backend.model_id,
+        "model_revision_sha": backend.model_revision,
         "suite": backend.suite,
         "task_id": task_id,
         "episode_index": episode_index,
@@ -282,7 +282,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--initial-state-indices",
         type=_parse_int_csv,
-        default=list(range(10)),
+        default=list(range(0, 20, 2)),
         help="Comma-separated fixed LIBERO init-state indices, reused for every task.",
     )
     parser.add_argument("--suite", default="libero_object")
