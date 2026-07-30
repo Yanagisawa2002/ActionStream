@@ -14,8 +14,8 @@ for delay_ms in 0 200; do
     "$VENV/bin/python" -m actionstream.benchmark \
       --mode="$mode" \
       --task-ids=0 \
-      --episodes-per-task=1 \
-      --initial-state-indices=0 \
+      --episodes-per-task=2 \
+      --initial-state-indices=0,2 \
       --seed=142 \
       --episode-length=800 \
       --injected-delay-ms="$delay_ms" \
