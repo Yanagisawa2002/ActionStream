@@ -12,7 +12,7 @@ from typing import Any, Literal
 import numpy as np
 
 
-RuntimeMode = Literal["async_naive", "async_aligned"]
+RuntimeMode = Literal["sync_hold", "async_naive", "async_aligned"]
 
 
 class QueueNotReady(RuntimeError):
@@ -26,10 +26,18 @@ class InferenceRequest:
     episode_id: str
     observation_control_step: int
     request_timestamp: float
+    queue_depth_at_request_steps: int | None = None
+    queue_headroom_at_request_steps: int | None = None
 
     def __post_init__(self) -> None:
         if self.observation_control_step < 0:
             raise ValueError("observation_control_step must be non-negative")
+        for name, value in (
+            ("queue_depth_at_request_steps", self.queue_depth_at_request_steps),
+            ("queue_headroom_at_request_steps", self.queue_headroom_at_request_steps),
+        ):
+            if value is not None and value < 0:
+                raise ValueError(f"{name} must be non-negative")
 
 
 @dataclass(frozen=True)
@@ -50,11 +58,15 @@ class InferenceResult:
     delivery_timestamp: float
     model_inference_latency_seconds: float
     metadata: Mapping[str, Any] = field(default_factory=dict)
+    queue_depth_at_request_steps: int | None = None
+    queue_headroom_at_request_steps: int | None = None
 
     def __post_init__(self) -> None:
         actions = np.asarray(self.actions, dtype=np.float32)
         if actions.ndim != 2 or actions.shape[1] != 7:
             raise ValueError(f"Inference result must contain [T,7] final actions, got {actions.shape}")
+        if actions.shape[0] == 0:
+            raise ValueError("Inference result must contain at least one final action")
         if not np.isfinite(actions).all():
             raise ValueError("Inference result contains non-finite final actions")
         immutable = actions.copy()
@@ -68,6 +80,12 @@ class InferenceResult:
             <= self.delivery_timestamp
         ):
             raise ValueError("Inference timestamps are not monotonic")
+        for name, value in (
+            ("queue_depth_at_request_steps", self.queue_depth_at_request_steps),
+            ("queue_headroom_at_request_steps", self.queue_headroom_at_request_steps),
+        ):
+            if value is not None and value < 0:
+                raise ValueError(f"{name} must be non-negative")
 
 
 @dataclass(frozen=True)
@@ -78,6 +96,33 @@ class MergeOutcome:
     dropped_prefix_steps: int
     fully_stale: bool
     queue_length: int
+    incoming_chunk_steps: int
+    stale_fraction: float
+    replacement_position_l2: float | None
+    replacement_rotation_geodesic_radians: float | None
+    replacement_gripper_switch: bool | None
+
+
+def _rotation_geodesic_radians(first: np.ndarray, second: np.ndarray) -> float:
+    """Return the SO(3) geodesic angle between two axis-angle rotations."""
+
+    def quaternion(axis_angle: np.ndarray) -> np.ndarray:
+        vector = np.asarray(axis_angle, dtype=np.float64)
+        angle = float(np.linalg.norm(vector))
+        if angle <= 1e-12:
+            return np.asarray([1.0, 0.0, 0.0, 0.0], dtype=np.float64)
+        half_angle = angle / 2.0
+        return np.concatenate(
+            (
+                np.asarray([np.cos(half_angle)], dtype=np.float64),
+                vector / angle * np.sin(half_angle),
+            )
+        )
+
+    first_quaternion = quaternion(first)
+    second_quaternion = quaternion(second)
+    cosine_half_angle = float(abs(np.dot(first_quaternion, second_quaternion)))
+    return float(2.0 * np.arccos(np.clip(cosine_half_angle, 0.0, 1.0)))
 
 
 class ActionQueue:
@@ -91,6 +136,10 @@ class ActionQueue:
         self.stale_chunks_discarded = 0
         self.old_episode_chunks_rejected = 0
         self.replacements = 0
+        self.accepted_chunks = 0
+        self.rejected_chunks = 0
+        self.stale_actions_discarded = 0
+        self.incoming_actions = 0
         self.stale_prefix_lengths: list[int] = []
 
     def reset_episode(self, episode_id: str) -> None:
@@ -101,6 +150,10 @@ class ActionQueue:
         self.stale_chunks_discarded = 0
         self.old_episode_chunks_rejected = 0
         self.replacements = 0
+        self.accepted_chunks = 0
+        self.rejected_chunks = 0
+        self.stale_actions_discarded = 0
+        self.incoming_actions = 0
         self.stale_prefix_lengths.clear()
 
     @property
@@ -120,8 +173,11 @@ class ActionQueue:
     ) -> MergeOutcome:
         if self._episode_id is None:
             raise RuntimeError("Reset the action queue before merging a chunk")
+        if mode not in {"sync_hold", "async_naive", "async_aligned"}:
+            raise ValueError(f"Unsupported action-queue mode: {mode}")
         if result.episode_id != self._episode_id:
             self.old_episode_chunks_rejected += 1
+            self.rejected_chunks += 1
             return MergeOutcome(
                 accepted=False,
                 reason="old_episode",
@@ -129,6 +185,11 @@ class ActionQueue:
                 dropped_prefix_steps=0,
                 fully_stale=False,
                 queue_length=len(self._queue),
+                incoming_chunk_steps=len(result.actions),
+                stale_fraction=0.0,
+                replacement_position_l2=None,
+                replacement_rotation_geodesic_radians=None,
+                replacement_gripper_switch=None,
             )
 
         age_steps = current_control_step - result.observation_control_step
@@ -138,11 +199,15 @@ class ActionQueue:
                 f"current={current_control_step}, observation={result.observation_control_step}"
             )
 
-        drop = 0 if mode == "async_naive" else age_steps
+        self.incoming_actions += len(result.actions)
+        drop = age_steps if mode == "async_aligned" else 0
         bounded_drop = min(drop, len(result.actions))
+        stale_fraction = bounded_drop / len(result.actions)
         self.stale_prefix_lengths.append(bounded_drop)
+        self.stale_actions_discarded += bounded_drop
         if drop >= len(result.actions):
             self.stale_chunks_discarded += 1
+            self.rejected_chunks += 1
             return MergeOutcome(
                 accepted=False,
                 reason="fully_stale",
@@ -150,6 +215,11 @@ class ActionQueue:
                 dropped_prefix_steps=bounded_drop,
                 fully_stale=True,
                 queue_length=len(self._queue),
+                incoming_chunk_steps=len(result.actions),
+                stale_fraction=stale_fraction,
+                replacement_position_l2=None,
+                replacement_rotation_geodesic_radians=None,
+                replacement_gripper_switch=None,
             )
 
         replacement = result.actions[drop:]
@@ -159,9 +229,26 @@ class ActionQueue:
             if np.allclose(action, 0.0):
                 raise ValueError("Refusing to queue an all-zero absolute command")
 
+        replacement_position_l2: float | None = None
+        replacement_rotation_geodesic_radians: float | None = None
+        replacement_gripper_switch: bool | None = None
+        if self._last_action is not None:
+            first_replacement = np.asarray(replacement[0], dtype=np.float32)
+            replacement_position_l2 = float(
+                np.linalg.norm(first_replacement[:3] - self._last_action[:3])
+            )
+            replacement_rotation_geodesic_radians = _rotation_geodesic_radians(
+                self._last_action[3:6],
+                first_replacement[3:6],
+            )
+            replacement_gripper_switch = bool(
+                (self._last_action[6] >= 0.0) != (first_replacement[6] >= 0.0)
+            )
+
         self._queue.clear()
         self._queue.extend(np.asarray(action, dtype=np.float32).copy() for action in replacement)
         self.replacements += 1
+        self.accepted_chunks += 1
         return MergeOutcome(
             accepted=True,
             reason="replaced",
@@ -169,6 +256,11 @@ class ActionQueue:
             dropped_prefix_steps=bounded_drop,
             fully_stale=False,
             queue_length=len(self._queue),
+            incoming_chunk_steps=len(result.actions),
+            stale_fraction=stale_fraction,
+            replacement_position_l2=replacement_position_l2,
+            replacement_rotation_geodesic_radians=replacement_rotation_geodesic_radians,
+            replacement_gripper_switch=replacement_gripper_switch,
         )
 
     def next_action(self) -> tuple[np.ndarray, bool]:
@@ -353,6 +445,8 @@ class LatestRequestWorker:
                     delivery_timestamp=delivery_timestamp,
                     model_inference_latency_seconds=payload.model_inference_latency_seconds,
                     metadata=payload.metadata,
+                    queue_depth_at_request_steps=request.queue_depth_at_request_steps,
+                    queue_headroom_at_request_steps=request.queue_headroom_at_request_steps,
                 )
             except BaseException as exc:
                 with self._condition:

@@ -31,7 +31,7 @@ from actionstream.runtime import (
 )
 
 
-RUNTIME_MODES = ("sync", "async_naive", "async_aligned")
+RUNTIME_MODES = ("sync", "sync_hold", "async_naive", "async_aligned")
 
 
 def _parse_int_csv(value: str) -> list[int]:
@@ -87,6 +87,9 @@ def _write_trace(
     actions: list[np.ndarray],
     dispatch_timestamps: list[float],
     inference_events: list[dict[str, Any]],
+    queue_depth_before_action: list[int] | None = None,
+    queue_depth_after_action: list[int] | None = None,
+    queue_hold_mask: list[bool] | None = None,
 ) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     np.savez_compressed(
@@ -94,6 +97,18 @@ def _write_trace(
         actions=np.asarray(actions, dtype=np.float32),
         dispatch_timestamps=np.asarray(dispatch_timestamps, dtype=np.float64),
         inference_events_json=np.asarray(json.dumps(inference_events)),
+        queue_depth_before_action=np.asarray(
+            queue_depth_before_action if queue_depth_before_action is not None else [],
+            dtype=np.int32,
+        ),
+        queue_depth_after_action=np.asarray(
+            queue_depth_after_action if queue_depth_after_action is not None else [],
+            dtype=np.int32,
+        ),
+        queue_hold_mask=np.asarray(
+            queue_hold_mask if queue_hold_mask is not None else [],
+            dtype=np.bool_,
+        ),
     )
 
 
@@ -304,10 +319,10 @@ def _run_async_episode(
     inference_worker: LatestRequestWorker | None,
     output: Path,
 ) -> dict[str, Any]:
-    if mode not in {"async_naive", "async_aligned"}:
-        raise ValueError(f"Invalid asynchronous mode: {mode}")
+    if mode not in {"sync_hold", "async_naive", "async_aligned"}:
+        raise ValueError(f"Invalid real-time worker mode: {mode}")
     if not realtime:
-        raise ValueError("Asynchronous modes require --realtime")
+        raise ValueError("Real-time worker modes require --realtime")
     if replan_interval_steps <= 0:
         raise ValueError("replan_interval_steps must be positive")
     if inference_worker is None:
@@ -335,7 +350,14 @@ def _run_async_episode(
     inference_events: list[dict[str, Any]] = []
     actions_executed: list[np.ndarray] = []
     dispatch_timestamps: list[float] = []
+    queue_depth_before_action: list[int] = []
+    queue_depth_after_action: list[int] = []
+    queue_hold_mask: list[bool] = []
     discontinuities: list[float] = []
+    replacement_position_jumps: list[float] = []
+    replacement_rotation_jumps: list[float] = []
+    replacement_gripper_switches = 0
+    chunk_sizes: list[int] = []
     previous_action: np.ndarray | None = None
     time_to_first_action: float | None = None
     deadline_misses = 0
@@ -343,8 +365,11 @@ def _run_async_episode(
     success = False
     step_count = 0
     episode_finished: float | None = None
+    sync_hold_request_pending = False
 
     def submit_request(control_step: int, current_observation: dict[str, Any]) -> None:
+        nonlocal sync_hold_request_pending
+        queue_depth = queue.queue_length
         worker.submit(
             InferenceRequest(
                 observation=immutable_observation_snapshot(current_observation),
@@ -352,8 +377,12 @@ def _run_async_episode(
                 episode_id=episode_id,
                 observation_control_step=control_step,
                 request_timestamp=time.monotonic(),
+                queue_depth_at_request_steps=queue_depth,
+                queue_headroom_at_request_steps=queue_depth,
             )
         )
+        if mode == "sync_hold":
+            sync_hold_request_pending = True
 
     def record_result(
         result: InferenceResult,
@@ -361,7 +390,9 @@ def _run_async_episode(
         merge: bool,
         delivered: bool = True,
     ) -> None:
+        nonlocal replacement_gripper_switches, sync_hold_request_pending
         model_latencies.append(result.model_inference_latency_seconds)
+        chunk_sizes.append(len(result.actions))
         if delivered:
             delivery_latencies.append(result.delivery_timestamp - result.request_timestamp)
         event: dict[str, Any] = {
@@ -371,25 +402,63 @@ def _run_async_episode(
             "end_timestamp": result.end_timestamp,
             "delivery_timestamp": result.delivery_timestamp,
             "model_inference_latency_seconds": result.model_inference_latency_seconds,
+            "inference_queue_wait_seconds": (
+                result.start_timestamp - result.request_timestamp
+            ),
+            "injected_delivery_delay_seconds": (
+                result.delivery_timestamp - result.end_timestamp
+            ),
             "raw_shape": list(result.metadata.get("raw_shape", [])),
             "raw_dtype": result.metadata.get("raw_dtype"),
             "merged": merge,
             "published_before_episode_end": delivered,
+            "observation_to_delivery_latency_seconds": (
+                result.delivery_timestamp - result.request_timestamp
+            ),
+            "queue_depth_at_request_steps": result.queue_depth_at_request_steps,
+            "queue_headroom_at_request_steps": result.queue_headroom_at_request_steps,
+            "incoming_chunk_steps": len(result.actions),
+            "chunk_accepted": False,
+            "chunk_rejection_reason": "episode_ended" if not merge else None,
         }
         if merge:
+            queue_length_before_merge = queue.queue_length
             outcome = queue.replace(
                 result,
                 current_control_step=step_count,
                 mode=mode,
             )
             event["merge"] = {
+                "control_step": step_count,
+                "replacement_action_index": step_count if outcome.accepted else None,
                 "accepted": outcome.accepted,
                 "reason": outcome.reason,
                 "age_steps": outcome.age_steps,
                 "dropped_prefix_steps": outcome.dropped_prefix_steps,
                 "fully_stale": outcome.fully_stale,
+                "queue_length_before": queue_length_before_merge,
+                "queue_length_after": outcome.queue_length,
                 "queue_length": outcome.queue_length,
+                "incoming_chunk_steps": outcome.incoming_chunk_steps,
+                "stale_fraction": outcome.stale_fraction,
+                "replacement_position_l2": outcome.replacement_position_l2,
+                "replacement_rotation_geodesic_radians": (
+                    outcome.replacement_rotation_geodesic_radians
+                ),
+                "replacement_gripper_switch": outcome.replacement_gripper_switch,
             }
+            event["chunk_accepted"] = outcome.accepted
+            event["chunk_rejection_reason"] = None if outcome.accepted else outcome.reason
+            if outcome.replacement_position_l2 is not None:
+                replacement_position_jumps.append(outcome.replacement_position_l2)
+            if outcome.replacement_rotation_geodesic_radians is not None:
+                replacement_rotation_jumps.append(
+                    outcome.replacement_rotation_geodesic_radians
+                )
+            if outcome.replacement_gripper_switch:
+                replacement_gripper_switches += 1
+            if mode == "sync_hold":
+                sync_hold_request_pending = False
         inference_events.append(event)
 
     submit_request(0, observation)
@@ -416,7 +485,10 @@ def _run_async_episode(
         for result in worker.drain_results():
             record_result(result, merge=True)
 
-        action, _ = queue.next_action()
+        queue_depth_before_action.append(queue.queue_length)
+        action, held = queue.next_action()
+        queue_depth_after_action.append(queue.queue_length)
+        queue_hold_mask.append(held)
         if action.shape != (7,) or not np.isfinite(action).all():
             raise RuntimeError(f"Invalid queued environment action: {action}")
 
@@ -437,7 +509,10 @@ def _run_async_episode(
         success = success or step_output.success
         if success or step_output.terminated or step_output.truncated:
             break
-        if step_count % replan_interval_steps == 0:
+        if mode == "sync_hold":
+            if queue.queue_length == 0 and not sync_hold_request_pending:
+                submit_request(step_count, observation)
+        elif step_count % replan_interval_steps == 0:
             submit_request(step_count, observation)
         scheduled += period
     episode_finished = time.monotonic()
@@ -457,13 +532,51 @@ def _run_async_episode(
     if episode_finished is None:
         raise RuntimeError("Asynchronous episode ended without a completion timestamp")
     trace_path = _trace_path(output, mode, injected_delay_ms, task_id, episode_index)
+    stale_prefixes = queue.stale_prefix_lengths
+    control_step_durations = [
+        later - earlier
+        for earlier, later in zip(dispatch_timestamps, dispatch_timestamps[1:], strict=False)
+    ]
+    measured_control_step_seconds = (
+        float(np.median(np.asarray(control_step_durations, dtype=np.float64)))
+        if control_step_durations
+        else period
+    )
+    effective_delivery_ages: list[float] = []
+    for event in inference_events:
+        delivery_age = (
+            float(event["observation_to_delivery_latency_seconds"])
+            / measured_control_step_seconds
+        )
+        event["effective_delivery_age_steps"] = delivery_age
+        event["effective_delivery_age_step_duration_seconds"] = measured_control_step_seconds
+        if event["published_before_episode_end"]:
+            effective_delivery_ages.append(delivery_age)
     _write_trace(
         trace_path,
         actions=actions_executed,
         dispatch_timestamps=dispatch_timestamps,
         inference_events=inference_events,
+        queue_depth_before_action=queue_depth_before_action,
+        queue_depth_after_action=queue_depth_after_action,
+        queue_hold_mask=queue_hold_mask,
     )
-    stale_prefixes = queue.stale_prefix_lengths
+    chunk_size_steps = chunk_sizes[0] if chunk_sizes else None
+    actual_replan_interval_steps = (
+        chunk_size_steps if mode == "sync_hold" else replan_interval_steps
+    )
+    queue_headrooms = [
+        int(event["queue_headroom_at_request_steps"])
+        for event in inference_events
+        if event["queue_headroom_at_request_steps"] is not None
+    ]
+    stale_fractions = [
+        float(event["merge"]["stale_fraction"])
+        for event in inference_events
+        if "merge" in event
+    ]
+    chunks_accepted = sum(event["chunk_accepted"] is True for event in inference_events)
+    chunks_rejected = sum(event["chunk_accepted"] is False for event in inference_events)
 
     return {
         "run_id": run_id,
@@ -487,6 +600,8 @@ def _run_async_episode(
         "inference_latency_p95_seconds": _percentile(model_latencies, 95),
         "observation_to_delivery_p50_seconds": _percentile(delivery_latencies, 50),
         "observation_to_delivery_p95_seconds": _percentile(delivery_latencies, 95),
+        "effective_delivery_age_p50_steps": _percentile(effective_delivery_ages, 50),
+        "effective_delivery_age_p95_steps": _percentile(effective_delivery_ages, 95),
         "queue_underrun_hold_steps": queue.hold_steps,
         "stale_chunks_discarded": queue.stale_chunks_discarded,
         "stale_prefix_mean_steps": (
@@ -495,7 +610,32 @@ def _run_async_episode(
             else 0.0
         ),
         "stale_prefix_max_steps": max(stale_prefixes, default=0),
+        "incoming_stale_fraction_mean": (
+            float(np.mean(np.asarray(stale_fractions, dtype=np.float64)))
+            if stale_fractions
+            else 0.0
+        ),
+        "incoming_stale_fraction_p95": _percentile(stale_fractions, 95),
+        "stale_action_fraction": (
+            queue.stale_actions_discarded / queue.incoming_actions
+            if queue.incoming_actions
+            else 0.0
+        ),
+        "chunks_accepted": chunks_accepted,
+        "chunks_rejected": chunks_rejected,
+        "chunks_rejected_after_episode": sum(
+            event["chunk_rejection_reason"] == "episode_ended"
+            for event in inference_events
+        ),
+        "queue_depth_p50_steps": _percentile(queue_depth_before_action, 50),
+        "queue_depth_p95_steps": _percentile(queue_depth_before_action, 95),
+        "queue_depth_min_steps": min(queue_depth_before_action, default=None),
+        "queue_depth_max_steps": max(queue_depth_before_action, default=None),
+        "queue_headroom_at_request_p50_steps": _percentile(queue_headrooms, 50),
+        "queue_headroom_at_request_p95_steps": _percentile(queue_headrooms, 95),
         "control_deadline_misses": deadline_misses,
+        "control_step_duration_p50_seconds": _percentile(control_step_durations, 50),
+        "control_step_duration_p95_seconds": _percentile(control_step_durations, 95),
         "control_dispatch_lateness_p50_seconds": _percentile(dispatch_lateness, 50),
         "control_dispatch_lateness_p95_seconds": _percentile(dispatch_lateness, 95),
         "action_discontinuity_mean_l2": (
@@ -504,10 +644,35 @@ def _run_async_episode(
             else None
         ),
         "action_discontinuity_max_l2": max(discontinuities, default=None),
+        "replacement_position_jump_mean_l2": (
+            float(np.mean(np.asarray(replacement_position_jumps, dtype=np.float64)))
+            if replacement_position_jumps
+            else None
+        ),
+        "replacement_position_jump_max_l2": max(
+            replacement_position_jumps,
+            default=None,
+        ),
+        "replacement_rotation_jump_mean_radians": (
+            float(np.mean(np.asarray(replacement_rotation_jumps, dtype=np.float64)))
+            if replacement_rotation_jumps
+            else None
+        ),
+        "replacement_rotation_jump_max_radians": max(
+            replacement_rotation_jumps,
+            default=None,
+        ),
+        "replacement_gripper_switches": replacement_gripper_switches,
         "peak_cuda_memory_mib": backend.peak_cuda_memory_mib,
         "controller_frequency_hz": controller_hz,
         "realtime_control": True,
-        "replan_interval_steps": replan_interval_steps,
+        "chunk_size_steps": chunk_size_steps,
+        "replan_interval_steps": actual_replan_interval_steps,
+        "nominal_queue_headroom_steps": (
+            max(0, chunk_size_steps - actual_replan_interval_steps)
+            if chunk_size_steps is not None and actual_replan_interval_steps is not None
+            else None
+        ),
         "policy_rng_seed": seed,
         "policy_rng_reset_per_episode": True,
         "queue_replacements": queue.replacements,
@@ -522,6 +687,8 @@ def _run_async_episode(
 def run(args: argparse.Namespace) -> list[dict[str, Any]]:
     if args.output.exists() and not args.append:
         raise FileExistsError(f"Refusing to overwrite existing metrics: {args.output}")
+    if args.injected_delay_ms < 0:
+        raise ValueError("--injected-delay-ms must be non-negative")
     args.output.parent.mkdir(parents=True, exist_ok=True)
 
     initial_state_indices = args.initial_state_indices
@@ -600,7 +767,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--suite", default="libero_object")
     parser.add_argument("--seed", type=int, default=142)
     parser.add_argument("--episode-length", type=int, default=800)
-    parser.add_argument("--injected-delay-ms", type=int, choices=[0, 100, 200, 300], default=0)
+    parser.add_argument("--injected-delay-ms", type=int, default=0)
     parser.add_argument("--realtime", action="store_true")
     parser.add_argument("--replan-interval-steps", type=int, default=10)
     parser.add_argument("--output", type=Path, required=True)

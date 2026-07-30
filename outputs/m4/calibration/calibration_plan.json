@@ -1,0 +1,132 @@
+{
+  "status": "planned",
+  "generated_at_utc": "2026-07-30T09:29:44Z",
+  "git_commit": "8972f16c6e4f7e24a1711df81285b309f1677960",
+  "source": {
+    "m3_manifest": "outputs/summary/manifest.json",
+    "m3_manifest_sha256": "ac1f222e7d763b0ae2a7750887ea055762edffa8bbb4083cbf053345f47de5d8",
+    "episode_paths": [
+      "outputs/m3/async_aligned_delay0/episodes.jsonl",
+      "outputs/m3/async_aligned_delay200/episodes.jsonl",
+      "outputs/m3/async_naive_delay0/episodes.jsonl",
+      "outputs/m3/async_naive_delay200/episodes.jsonl",
+      "outputs/m3/sync_delay0/episodes.jsonl",
+      "outputs/m3/sync_delay200/episodes.jsonl"
+    ],
+    "trace_count": 120
+  },
+  "runtime_configuration": {
+    "chunk_size": 30,
+    "replan_interval_steps": 10,
+    "queue_headroom_steps": 20,
+    "queue_headroom_seconds_at_median_step": 1.054967420000139,
+    "queue_headroom_seconds_at_p95_step": 1.2408951239958697
+  },
+  "measured_m3_timings": {
+    "control_step_seconds": {
+      "count": 21339,
+      "mean": 0.053754759609494406,
+      "median": 0.052748371000006955,
+      "p95": 0.06204475619979348
+    },
+    "model_inference_seconds": {
+      "count": 2201,
+      "mean": 0.19241664970331845,
+      "median": 0.18846582099968145,
+      "p95": 0.2618489319997934
+    },
+    "observation_to_delivery_seconds": {
+      "count": 2201,
+      "mean": 0.3149953526796153,
+      "median": 0.3689412949997859,
+      "p95": 0.47282636700015246
+    },
+    "observation_to_delivery_by_delay_ms": {
+      "0": {
+        "count": 1011,
+        "mean": 0.14687599309792115,
+        "median": 0.12878512899987982,
+        "p95": 0.2809719385001017
+      },
+      "200": {
+        "count": 1190,
+        "mean": 0.4578261699376765,
+        "median": 0.4560353454996857,
+        "p95": 0.47650706569985457
+      }
+    }
+  },
+  "candidate_derivation": {
+    "formula": "injected_delay = target_age_steps * median_control_step - median_0ms_observation_to_delivery",
+    "delay_rounding_ms": 50,
+    "target_headroom_ratios": [
+      0.5,
+      0.75,
+      1.0,
+      1.2
+    ],
+    "initial_candidates": [
+      {
+        "target_headroom_ratio": 0.5,
+        "target_delivery_age_steps": 10.0,
+        "target_total_delivery_seconds": 0.5274837100000696,
+        "injected_delay_ms": 400,
+        "predicted_delivery_age_steps": 10.024672212148696
+      },
+      {
+        "target_headroom_ratio": 0.75,
+        "target_delivery_age_steps": 15.0,
+        "target_total_delivery_seconds": 0.7912255650001043,
+        "injected_delay_ms": 650,
+        "predicted_delivery_age_steps": 14.76415506745748
+      },
+      {
+        "target_headroom_ratio": 1.0,
+        "target_delivery_age_steps": 20.0,
+        "target_total_delivery_seconds": 1.054967420000139,
+        "injected_delay_ms": 950,
+        "predicted_delivery_age_steps": 20.451534493828017
+      },
+      {
+        "target_headroom_ratio": 1.2,
+        "target_delivery_age_steps": 24.0,
+        "target_total_delivery_seconds": 1.265960904000167,
+        "injected_delay_ms": 1150,
+        "predicted_delivery_age_steps": 24.243120778075046
+      }
+    ],
+    "include_300_ms": false,
+    "delay_300_predicted_delivery_age_steps": 8.128879070025182,
+    "delay_300_nearest_target_distance_steps": 1.8711209299748184,
+    "delay_300_rationale": "excluded because a derived candidate is closer to every target",
+    "extend_once_if_needed": {
+      "target_headroom_ratio": 1.5,
+      "target_delivery_age_steps": 30.0,
+      "target_total_delivery_seconds": 1.5824511300002087,
+      "injected_delay_ms": 1450,
+      "predicted_delivery_age_steps": 29.930500204445586
+    }
+  },
+  "calibration_protocol": {
+    "suite": "libero_object",
+    "task_ids": [
+      3
+    ],
+    "episodes_per_condition": 3,
+    "initial_state_indices": [
+      0,
+      2,
+      4
+    ],
+    "seeds": [
+      142,
+      143,
+      144
+    ],
+    "modes": [
+      "async_naive",
+      "async_aligned"
+    ],
+    "selection_rule": "Choose the smallest tested delay where the pooled median effective delivery age reaches queue headroom, or any queue hold or fully stale chunk occurs. If none qualifies, test the single 1.5x extension."
+  }
+}
