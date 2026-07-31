@@ -1,0 +1,208 @@
+{
+  "schema_version": 1,
+  "milestone": "M5-G0",
+  "status": "calibration_no_go",
+  "sealed_permitted": false,
+  "selected_task_id": null,
+  "no_shift_task_id": 0,
+  "selected_displacement_magnitude_mm": null,
+  "selected_candidate": null,
+  "hard_stop_reason": "Neither of the two pre-audited task candidates produced a valid behavioral challenge under the frozen magnitude rule",
+  "candidate_order": [
+    0,
+    2
+  ],
+  "detector": {
+    "type": "OracleGroundTruthPoseDetector",
+    "translation_threshold_m": 0.01,
+    "rotation_trigger_enabled": false,
+    "confirmation_steps": 1
+  },
+  "runtime": {
+    "control_frequency_hz": 20.0,
+    "chunk_size_steps": 30,
+    "replan_interval_steps": 10,
+    "injected_delay_ms": 950,
+    "episode_length_steps": 800,
+    "realtime": true
+  },
+  "perturbation": {
+    "axis_xyz": [
+      -1.0,
+      0.0,
+      0.0
+    ],
+    "schedule": "first_replenishment_request_with_nonempty_action_queue",
+    "midpoint_formula": "request_step + max(1, floor(floor(delay_seconds * control_frequency_hz) / 2))",
+    "workspace_bounds_m": {
+      "x": [
+        -0.25,
+        0.2
+      ],
+      "y": [
+        0.12,
+        0.38
+      ],
+      "maximum_robot_base_distance": 0.8
+    },
+    "displacement_tolerance_m": 0.001
+  },
+  "evaluator": {
+    "stale_definition": "action.world_epoch_at_observation < current_world_epoch",
+    "world_epoch_runtime_visible": false,
+    "detector_input": "ground_truth_entity_pose_only"
+  },
+  "config": {
+    "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/configs/m5_g0.json",
+    "sha256": "e70bc7850f4ffa265f5cc575cfbc8f9762292b517d44201bd12a61cf5b4e83b9"
+  },
+  "task_audit": {
+    "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/audit/task_entity_audit.json",
+    "sha256": "a49d8eeb09ea1e7d4bb12e6b9c67a7957c26e32d71987ee266191ff621d973c0"
+  },
+  "seed_manifests": {
+    "calibration": {
+      "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/protocol/calibration_seed_manifest.json",
+      "sha256": "b32182908fe33dcac2aa3bac22b29ba6070ae27b9cf03e7a1a703953f5486ca3",
+      "pair_count": 5
+    },
+    "no_shift_regression": {
+      "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/protocol/no_shift_seed_manifest.json",
+      "sha256": "46983d119818ea81546a24a2e30c287f95fe9ee0be2217463e1a0ca9ea2b3b52",
+      "pair_count": 10
+    },
+    "sealed_evaluation": {
+      "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/protocol/sealed_seed_manifest.json",
+      "sha256": "fc5ea8db752d8599ada571026e0ab3f1b31ebeb9c120a82d4bf8f8a157a07c53",
+      "pair_count": 30
+    }
+  },
+  "manifest_sources": [
+    {
+      "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/protocol/calibration_seed_manifest.json",
+      "sha256": "25aaf0d3afd2e73706671a226070ecf6adcf7f5a1ac9afc70e3b78109a9f3c11"
+    },
+    {
+      "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/protocol/no_shift_seed_manifest.json",
+      "sha256": "ff972719d03b8c21f1e1dd88030982a4bb16f4ff98993bf2894c5af31e0b8bad"
+    },
+    {
+      "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/protocol/sealed_seed_manifest.json",
+      "sha256": "e8ef5efb18c07c5facb6e634e319f8266d61aa2ed6fb56192a0cb27c3ba9f215"
+    }
+  ],
+  "calibration_decisions": [
+    {
+      "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/calibration/task0/decision_after_50_30.json",
+      "sha256": "0400e19b401e42a59a7a0eb0fe2b22eb5e5866e51585cce2476f49e96a90d6c3",
+      "selection_sha256": "9b0c903a88bc873c7707146296246b514f6b040fc0c04e6ef8831929e0e53fac",
+      "task_id": 0,
+      "status": "candidate_no_go"
+    },
+    {
+      "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/calibration/task2/decision_after_50_30.json",
+      "sha256": "ad2455dfff82ef3b4d5cbddb49dc6d7a2a6ca4cffd94ae3df2174c5c1f41e99c",
+      "selection_sha256": "bf6db954de148de9fc5102d01598787bb86e22cbcc18e273c0e6fcf91a40e879",
+      "task_id": 2,
+      "status": "candidate_no_go"
+    }
+  ],
+  "calibration_sources": [
+    {
+      "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/calibration/task0/magnitude50/episodes.jsonl",
+      "sha256": "c2375460ae09dc93a63614f05d9dabf71b38938fbd9a741ba7b95c465dde299e"
+    },
+    {
+      "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/calibration/task0/magnitude30/episodes.jsonl",
+      "sha256": "808c38ffb7ca91870aee6a67ae97ffa0a956b4a6fa9cc381680114073bbf0dc5"
+    },
+    {
+      "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/calibration/task0/decision_after_50_30.json",
+      "sha256": "0400e19b401e42a59a7a0eb0fe2b22eb5e5866e51585cce2476f49e96a90d6c3"
+    },
+    {
+      "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/calibration/task2/magnitude50/episodes.jsonl",
+      "sha256": "d9d0aa1f151a1e24c790747621063a2fdd9a24c265c7409a4cb1b366a1effc51"
+    },
+    {
+      "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/calibration/task2/magnitude30/episodes.jsonl",
+      "sha256": "61c747ecf1b7592aac58eca1887ef817792aa3ba516d81bea7acc5314e6cb5c4"
+    },
+    {
+      "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/calibration/task2/decision_after_50_30.json",
+      "sha256": "ad2455dfff82ef3b4d5cbddb49dc6d7a2a6ca4cffd94ae3df2174c5c1f41e99c"
+    }
+  ],
+  "implementation_source_sha256": "fc920da5221cbe7d7039fc87512b6757fd476ba33a92535f2fb63d42a3d6fd35",
+  "implementation_source_files": [
+    {
+      "path": "configs/m5_g0.json",
+      "sha256": "e70bc7850f4ffa265f5cc575cfbc8f9762292b517d44201bd12a61cf5b4e83b9"
+    },
+    {
+      "path": "src/actionstream/runtime.py",
+      "sha256": "e19b4e1d906fc9ca0a6e5564ff36b313f498cb0237f395a6248e24394ccea701"
+    },
+    {
+      "path": "src/actionstream/lerobot_backend.py",
+      "sha256": "62f2532e533587e8f79dadab255600a5aa6558046742ed35e2840e2158048c92"
+    },
+    {
+      "path": "src/actionstream/processors.py",
+      "sha256": "1f183708fd84c221d7d890ddefd599ac2130951a485da351cacb082588535595"
+    },
+    {
+      "path": "src/actionstream/libero_config.py",
+      "sha256": "4936c382c2baf0c787f6643ca677675303f43e242d005272d0694e9efd097d7f"
+    },
+    {
+      "path": "src/actionstream/m5_protocol.py",
+      "sha256": "4160fa5bdda15ee6922ab0a976e41b808c0cac00663742a4c33cacd6bf6a7d8e"
+    },
+    {
+      "path": "src/actionstream/m5_scene.py",
+      "sha256": "e48baa74d75e80d4e04b1b4b23ef6fec29876e4e8756a9f4b07eae177bc08bab"
+    },
+    {
+      "path": "src/actionstream/m5_runtime.py",
+      "sha256": "d216924add083d4c201021ad7c042cf085d0c17ace5b58bd0487e6a4708ff9e0"
+    },
+    {
+      "path": "src/actionstream/m5_benchmark.py",
+      "sha256": "bbbf87543ff62cc020a89943167013b9b2bbc1dc3c40158259d26938df4be041"
+    },
+    {
+      "path": "src/actionstream/m5_calibration.py",
+      "sha256": "f3f90fd893f4a46fc2fd7164d1bcf9ef01d82ace459652e1453e35b69176bd4f"
+    },
+    {
+      "path": "src/actionstream/m5_freeze.py",
+      "sha256": "928d787760315aa6d74eadfbf7f1816619a9a22df36ab05144e0c34e87991217"
+    },
+    {
+      "path": "src/actionstream/m5_no_shift.py",
+      "sha256": "369d46e78e4931987d3a5edcaf2b640291388f727e63f9a287e51ea40bdd94e6"
+    },
+    {
+      "path": "src/actionstream/m5_analysis.py",
+      "sha256": "cd30bad154ec6848860fc7ee972d7176448722bee0106443190120213251a60d"
+    },
+    {
+      "path": "src/actionstream/m5_report.py",
+      "sha256": "d3b962a6405ee2f2184a297e95d2b260ddedca88707fe9b183e59b85d1ab9818"
+    },
+    {
+      "path": "src/actionstream/m5_validation.py",
+      "sha256": "be1a96a7bb9f0df20ca1ec63a9ef375e2d8107f729ebec38deaf70f82a31e044"
+    },
+    {
+      "path": "scripts/run_m5_g0.sh",
+      "sha256": "d6112900280b0292776074e88009133f337c8e41c8e11c7e183100136e422ebc"
+    },
+    {
+      "path": "scripts/run_m5_g0_smoke.sh",
+      "sha256": "9ba4c9e3d14e1fa1be82ffc2fcc4d8d7b523f8a90deb19d07d9648dd16573c51"
+    }
+  ],
+  "protocol_decision_sha256": "f3fcabaa93a804c5dd0013afd6a92a66742c1353f13034a2db5c812a6c1132b9"
+}

@@ -1,0 +1,177 @@
+{
+  "schema_version": 1,
+  "milestone": "M5-G0",
+  "status": "candidate_no_go",
+  "task_id": 0,
+  "selected_displacement_magnitude_mm": null,
+  "tested_magnitudes_mm": [
+    50,
+    30
+  ],
+  "evaluations": [
+    {
+      "task_id": 0,
+      "displacement_magnitude_mm": 50,
+      "pair_count": 5,
+      "aligned_success_count": 5,
+      "gate_success_count": 3,
+      "gate_only_success_count": 0,
+      "aligned_only_success_count": 2,
+      "all_perturbations_physically_valid": true,
+      "paired_shift_parameters_identical": true,
+      "qualifies": false,
+      "pairs": [
+        {
+          "seed": 51001,
+          "initial_state_index": 0,
+          "aligned_success": true,
+          "gate_success": false,
+          "aligned_perturbation_valid": true,
+          "gate_perturbation_valid": true,
+          "gate_only_success": false,
+          "aligned_only_success": true,
+          "same_shift_step": true,
+          "same_displacement": true
+        },
+        {
+          "seed": 51002,
+          "initial_state_index": 2,
+          "aligned_success": true,
+          "gate_success": false,
+          "aligned_perturbation_valid": true,
+          "gate_perturbation_valid": true,
+          "gate_only_success": false,
+          "aligned_only_success": true,
+          "same_shift_step": true,
+          "same_displacement": true
+        },
+        {
+          "seed": 51003,
+          "initial_state_index": 4,
+          "aligned_success": true,
+          "gate_success": true,
+          "aligned_perturbation_valid": true,
+          "gate_perturbation_valid": true,
+          "gate_only_success": false,
+          "aligned_only_success": false,
+          "same_shift_step": true,
+          "same_displacement": true
+        },
+        {
+          "seed": 51004,
+          "initial_state_index": 6,
+          "aligned_success": true,
+          "gate_success": true,
+          "aligned_perturbation_valid": true,
+          "gate_perturbation_valid": true,
+          "gate_only_success": false,
+          "aligned_only_success": false,
+          "same_shift_step": true,
+          "same_displacement": true
+        },
+        {
+          "seed": 51005,
+          "initial_state_index": 8,
+          "aligned_success": true,
+          "gate_success": true,
+          "aligned_perturbation_valid": true,
+          "gate_perturbation_valid": true,
+          "gate_only_success": false,
+          "aligned_only_success": false,
+          "same_shift_step": true,
+          "same_displacement": true
+        }
+      ]
+    },
+    {
+      "task_id": 0,
+      "displacement_magnitude_mm": 30,
+      "pair_count": 5,
+      "aligned_success_count": 5,
+      "gate_success_count": 2,
+      "gate_only_success_count": 0,
+      "aligned_only_success_count": 3,
+      "all_perturbations_physically_valid": true,
+      "paired_shift_parameters_identical": true,
+      "qualifies": false,
+      "pairs": [
+        {
+          "seed": 51001,
+          "initial_state_index": 0,
+          "aligned_success": true,
+          "gate_success": false,
+          "aligned_perturbation_valid": true,
+          "gate_perturbation_valid": true,
+          "gate_only_success": false,
+          "aligned_only_success": true,
+          "same_shift_step": true,
+          "same_displacement": true
+        },
+        {
+          "seed": 51002,
+          "initial_state_index": 2,
+          "aligned_success": true,
+          "gate_success": false,
+          "aligned_perturbation_valid": true,
+          "gate_perturbation_valid": true,
+          "gate_only_success": false,
+          "aligned_only_success": true,
+          "same_shift_step": true,
+          "same_displacement": true
+        },
+        {
+          "seed": 51003,
+          "initial_state_index": 4,
+          "aligned_success": true,
+          "gate_success": true,
+          "aligned_perturbation_valid": true,
+          "gate_perturbation_valid": true,
+          "gate_only_success": false,
+          "aligned_only_success": false,
+          "same_shift_step": true,
+          "same_displacement": true
+        },
+        {
+          "seed": 51004,
+          "initial_state_index": 6,
+          "aligned_success": true,
+          "gate_success": true,
+          "aligned_perturbation_valid": true,
+          "gate_perturbation_valid": true,
+          "gate_only_success": false,
+          "aligned_only_success": false,
+          "same_shift_step": true,
+          "same_displacement": true
+        },
+        {
+          "seed": 51005,
+          "initial_state_index": 8,
+          "aligned_success": true,
+          "gate_success": false,
+          "aligned_perturbation_valid": true,
+          "gate_perturbation_valid": true,
+          "gate_only_success": false,
+          "aligned_only_success": true,
+          "same_shift_step": true,
+          "same_displacement": true
+        }
+      ]
+    }
+  ],
+  "reason": "No magnitude met the frozen behavioral challenge rule",
+  "source_episode_paths": [
+    "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/calibration/task0/magnitude50/episodes.jsonl",
+    "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/calibration/task0/magnitude30/episodes.jsonl"
+  ],
+  "source_episode_files": [
+    {
+      "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/calibration/task0/magnitude50/episodes.jsonl",
+      "sha256": "c2375460ae09dc93a63614f05d9dabf71b38938fbd9a741ba7b95c465dde299e"
+    },
+    {
+      "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/calibration/task0/magnitude30/episodes.jsonl",
+      "sha256": "808c38ffb7ca91870aee6a67ae97ffa0a956b4a6fa9cc381680114073bbf0dc5"
+    }
+  ],
+  "selection_sha256": "9b0c903a88bc873c7707146296246b514f6b040fc0c04e6ef8831929e0e53fac"
+}

@@ -1,0 +1,158 @@
+{
+  "schema_version": 1,
+  "milestone": "M5-G0",
+  "manifest_name": "sealed_evaluation",
+  "pairs": [
+    {
+      "pair_index": 0,
+      "seed": 53001,
+      "initial_state_index": 20
+    },
+    {
+      "pair_index": 1,
+      "seed": 53002,
+      "initial_state_index": 21
+    },
+    {
+      "pair_index": 2,
+      "seed": 53003,
+      "initial_state_index": 22
+    },
+    {
+      "pair_index": 3,
+      "seed": 53004,
+      "initial_state_index": 23
+    },
+    {
+      "pair_index": 4,
+      "seed": 53005,
+      "initial_state_index": 24
+    },
+    {
+      "pair_index": 5,
+      "seed": 53006,
+      "initial_state_index": 25
+    },
+    {
+      "pair_index": 6,
+      "seed": 53007,
+      "initial_state_index": 26
+    },
+    {
+      "pair_index": 7,
+      "seed": 53008,
+      "initial_state_index": 27
+    },
+    {
+      "pair_index": 8,
+      "seed": 53009,
+      "initial_state_index": 28
+    },
+    {
+      "pair_index": 9,
+      "seed": 53010,
+      "initial_state_index": 29
+    },
+    {
+      "pair_index": 10,
+      "seed": 53011,
+      "initial_state_index": 30
+    },
+    {
+      "pair_index": 11,
+      "seed": 53012,
+      "initial_state_index": 31
+    },
+    {
+      "pair_index": 12,
+      "seed": 53013,
+      "initial_state_index": 32
+    },
+    {
+      "pair_index": 13,
+      "seed": 53014,
+      "initial_state_index": 33
+    },
+    {
+      "pair_index": 14,
+      "seed": 53015,
+      "initial_state_index": 34
+    },
+    {
+      "pair_index": 15,
+      "seed": 53016,
+      "initial_state_index": 35
+    },
+    {
+      "pair_index": 16,
+      "seed": 53017,
+      "initial_state_index": 36
+    },
+    {
+      "pair_index": 17,
+      "seed": 53018,
+      "initial_state_index": 37
+    },
+    {
+      "pair_index": 18,
+      "seed": 53019,
+      "initial_state_index": 38
+    },
+    {
+      "pair_index": 19,
+      "seed": 53020,
+      "initial_state_index": 39
+    },
+    {
+      "pair_index": 20,
+      "seed": 53021,
+      "initial_state_index": 40
+    },
+    {
+      "pair_index": 21,
+      "seed": 53022,
+      "initial_state_index": 41
+    },
+    {
+      "pair_index": 22,
+      "seed": 53023,
+      "initial_state_index": 42
+    },
+    {
+      "pair_index": 23,
+      "seed": 53024,
+      "initial_state_index": 43
+    },
+    {
+      "pair_index": 24,
+      "seed": 53025,
+      "initial_state_index": 44
+    },
+    {
+      "pair_index": 25,
+      "seed": 53026,
+      "initial_state_index": 45
+    },
+    {
+      "pair_index": 26,
+      "seed": 53027,
+      "initial_state_index": 46
+    },
+    {
+      "pair_index": 27,
+      "seed": 53028,
+      "initial_state_index": 47
+    },
+    {
+      "pair_index": 28,
+      "seed": 53029,
+      "initial_state_index": 48
+    },
+    {
+      "pair_index": 29,
+      "seed": 53030,
+      "initial_state_index": 49
+    }
+  ],
+  "manifest_sha256": "fc5ea8db752d8599ada571026e0ab3f1b31ebeb9c120a82d4bf8f8a157a07c53"
+}

@@ -462,3 +462,104 @@ The final M4 validator covers 60 `sync_hold` episodes and traces, 24
 calibration episodes and traces, and 90 pressure episodes and traces. It
 validates exact matrix coverage, finite nonzero 7D actions, telemetry lengths
 and counts, commit/model consistency, and pressure-selection provenance.
+
+## M5-G0 oracle scene-shift gate
+
+M5-G0 tests a different failure mode from M4. M4's stale-prefix alignment
+compensates for delivery age while the scene is unchanged; M5-G0 physically
+moves a normally stationary, task-critical entity while a policy result is in
+flight. An independent oracle detector reads only the entity pose, invalidates
+queued and late-arriving actions generated from the old scene epoch, holds a
+finite environment-ready action while the queue is empty, and requests a fresh
+chunk. The perturbation flag and evaluator-only `world_epoch` are not visible
+to the detector.
+
+The primary candidate is LIBERO Object task 0, “pick up the alphabet soup and
+place it in the basket.” The manipulated object remains `alphabet_soup_1`; the
+moved entity is the normally stationary `basket_1` body
+`basket_1_main`/free joint `basket_1_joint0`. Task 2, which places the salad
+dressing in the same basket, is the single permitted backup. The predeclared
+shift translates the basket along negative x during the first replenishment
+request with a non-empty queue. Static audit covered both tasks, 20 initial
+states, both x directions, and 30/50/70 mm: all 120 configurations met the
+declared workspace, displacement, and non-floor-collision checks.
+
+### M5-G0 calibration result
+
+Five immutable seed/state pairs were run once for each condition and tested
+magnitude. Every perturbation was physically valid and every aligned/gated
+pair used the same shift step and displacement.
+
+| Task | Shift | Aligned success | Oracle-gated success | Gate-only success |
+|---:|---:|---:|---:|---:|
+| 0 | 50 mm | 5/5 | 3/5 | 0/5 |
+| 0 | 30 mm | 5/5 | 2/5 | 0/5 |
+| 2 | 50 mm | 2/5 | 3/5 | 1/5 |
+| 2 | 30 mm | 5/5 | 2/5 | 0/5 |
+
+The frozen challenge rule required gated success of at least 4/5, aligned
+success of at most 3/5, and at least two gate-only successes. No candidate and
+magnitude qualified, so no displacement was selected. The protocol therefore
+froze `calibration_no_go` and `sealed_permitted=false`. Per the hard-stop rule,
+the 10-pair no-shift control and 30-pair sealed evaluation were not run.
+McNemar and paired-bootstrap sealed estimates are consequently unavailable,
+not zero. The predeclared final classification is **NO-GO**.
+
+A calibration-only mechanism diagnostic is retained but is not treated as a
+sealed estimate: aligned executed 405 actions from the pre-shift world epoch,
+whereas the gated runtime executed zero. The gated traces contain 85 independent
+pose-change triggers: 20 at the scripted shift and 65 later, from steps
+106–778, when the dynamic basket again moved relative to newly captured pose
+references. Those later changes are not duplicate firings on the unchanged
+scripted pose, but they show that the receptacle does not remain stationary
+throughout task interaction and contributed 868 gate-hold steps. This overhead
+and the lower gated calibration success are material limitations of the
+candidate, not grounds for retuning it.
+
+The formal run used the unchanged M4 settings (950 ms injected delay, 20 Hz,
+30-action chunks, replanning every 10 control steps, and an 800-step episode
+limit), the frozen X-VLA revision above, and starting commit
+`0a2412625b858af8d507be6650612b13a28b91a5`. The fresh M4 task-0 smoke
+succeeded in 143 steps. Formal producer source hash
+`fc920da5221cbe7d7039fc87512b6757fd476ba33a92535f2fb63d42a3d6fd35`
+binds the 40 calibration episodes.
+
+After calibration had hard-stopped, downstream-only reporting defects were
+found: the validator checked an absent M4 field named `condition` instead of
+the recorded `runtime_mode`; the shell driver supplied inconsistent no-go
+wording and omitted the report's explicit M4 flag; and the paper-style
+Markdown omitted the calibration table and source-drift disclosure. Only
+`src/actionstream/m5_validation.py`, `src/actionstream/m5_report.py`, and the
+post-calibration reporting portion of `scripts/run_m5_g0.sh` were corrected.
+No benchmark runtime, detector, calibration/selection logic, raw evidence,
+seed, or outcome changed, and no seed was rerun. The formal validation artifact
+records both frozen and current hashes for this disclosed source drift.
+
+### M5-G0 commands and evidence
+
+Run the smoke path or a full reproduction from the repository root in the
+pinned WSL environment. Use a fresh output root so the checked-in formal
+evidence remains immutable:
+
+```bash
+export ACTIONSTREAM_OUTPUT_ROOT="$PWD/reproduced_outputs"
+export ACTIONSTREAM_VENV="$HOME/.venvs/actionstream"
+
+bash scripts/run_m5_g0_smoke.sh
+bash scripts/run_m5_g0.sh
+```
+
+The full driver performs task/magnitude calibration in the frozen order and
+automatically stops before no-shift/sealed evaluation when calibration is a
+no-go. It writes transactional per-episode bundles, JSONL aggregates,
+run/attempt manifests, exact request/action/event provenance, source hashes,
+formal validation, statistics, Markdown, and PNG/PDF figures.
+
+- [Task/entity and perturbation audit](outputs/m5_g0/audit/task_entity_audit.md)
+- [Frozen protocol decision](outputs/m5_g0/protocol/frozen_experiment.json)
+- [Formal M5-G0 report](outputs/m5_g0/report/m5_g0_report.md)
+- [Machine-readable aggregate](outputs/m5_g0/report/aggregate_summary.json)
+- [Acceptance decision](outputs/m5_g0/report/acceptance.json)
+- [Formal evidence validation](outputs/m5_g0/report/formal_validation.json)
+- Calibration raw evidence:
+  `outputs/m5_g0/calibration/task{0,2}/magnitude{50,30}/`

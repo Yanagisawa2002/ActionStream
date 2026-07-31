@@ -1,0 +1,1651 @@
+{
+  "schema_version": 1,
+  "milestone": "M5-G0",
+  "generated_at_utc": "2026-07-31T08:05:22Z",
+  "selected_task": {
+    "task_id": 0,
+    "instruction": "pick up the alphabet soup and place it in the basket",
+    "moved_entity": "basket_1",
+    "simulator_body": "basket_1_main",
+    "simulator_free_joint": "basket_1_joint0",
+    "goal_predicate": "(In alphabet_soup_1 basket_1_contain_region)",
+    "normally_stationary": true,
+    "task_critical_reason": "The instruction requires the alphabet soup center to enter the containment site attached to this basket body.",
+    "pose_read": "MuJoCo free-joint qpos and body pose resolved through the LIBERO object registry.",
+    "pose_mutation": "Translate free-joint qpos along -x, preserve z/quaternion, zero the 6D free-joint velocity, then call sim.forward()."
+  },
+  "protocol": {
+    "injected_delay_ms": 950,
+    "control_frequency_hz": 20.0,
+    "detector_translation_threshold_m": 0.01,
+    "perturbation_axis_xyz": [
+      -1.0,
+      0.0,
+      0.0
+    ],
+    "selected_displacement_magnitude_mm": null
+  },
+  "frozen_protocol_decision": {
+    "schema_version": 1,
+    "milestone": "M5-G0",
+    "status": "calibration_no_go",
+    "sealed_permitted": false,
+    "selected_task_id": null,
+    "no_shift_task_id": 0,
+    "selected_displacement_magnitude_mm": null,
+    "selected_candidate": null,
+    "hard_stop_reason": "Neither of the two pre-audited task candidates produced a valid behavioral challenge under the frozen magnitude rule",
+    "candidate_order": [
+      0,
+      2
+    ],
+    "detector": {
+      "type": "OracleGroundTruthPoseDetector",
+      "translation_threshold_m": 0.01,
+      "rotation_trigger_enabled": false,
+      "confirmation_steps": 1
+    },
+    "runtime": {
+      "control_frequency_hz": 20.0,
+      "chunk_size_steps": 30,
+      "replan_interval_steps": 10,
+      "injected_delay_ms": 950,
+      "episode_length_steps": 800,
+      "realtime": true
+    },
+    "perturbation": {
+      "axis_xyz": [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "schedule": "first_replenishment_request_with_nonempty_action_queue",
+      "midpoint_formula": "request_step + max(1, floor(floor(delay_seconds * control_frequency_hz) / 2))",
+      "workspace_bounds_m": {
+        "x": [
+          -0.25,
+          0.2
+        ],
+        "y": [
+          0.12,
+          0.38
+        ],
+        "maximum_robot_base_distance": 0.8
+      },
+      "displacement_tolerance_m": 0.001
+    },
+    "evaluator": {
+      "stale_definition": "action.world_epoch_at_observation < current_world_epoch",
+      "world_epoch_runtime_visible": false,
+      "detector_input": "ground_truth_entity_pose_only"
+    },
+    "config": {
+      "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/configs/m5_g0.json",
+      "sha256": "e70bc7850f4ffa265f5cc575cfbc8f9762292b517d44201bd12a61cf5b4e83b9"
+    },
+    "task_audit": {
+      "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/audit/task_entity_audit.json",
+      "sha256": "a49d8eeb09ea1e7d4bb12e6b9c67a7957c26e32d71987ee266191ff621d973c0"
+    },
+    "seed_manifests": {
+      "calibration": {
+        "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/protocol/calibration_seed_manifest.json",
+        "sha256": "b32182908fe33dcac2aa3bac22b29ba6070ae27b9cf03e7a1a703953f5486ca3",
+        "pair_count": 5
+      },
+      "no_shift_regression": {
+        "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/protocol/no_shift_seed_manifest.json",
+        "sha256": "46983d119818ea81546a24a2e30c287f95fe9ee0be2217463e1a0ca9ea2b3b52",
+        "pair_count": 10
+      },
+      "sealed_evaluation": {
+        "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/protocol/sealed_seed_manifest.json",
+        "sha256": "fc5ea8db752d8599ada571026e0ab3f1b31ebeb9c120a82d4bf8f8a157a07c53",
+        "pair_count": 30
+      }
+    },
+    "manifest_sources": [
+      {
+        "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/protocol/calibration_seed_manifest.json",
+        "sha256": "25aaf0d3afd2e73706671a226070ecf6adcf7f5a1ac9afc70e3b78109a9f3c11"
+      },
+      {
+        "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/protocol/no_shift_seed_manifest.json",
+        "sha256": "ff972719d03b8c21f1e1dd88030982a4bb16f4ff98993bf2894c5af31e0b8bad"
+      },
+      {
+        "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/protocol/sealed_seed_manifest.json",
+        "sha256": "e8ef5efb18c07c5facb6e634e319f8266d61aa2ed6fb56192a0cb27c3ba9f215"
+      }
+    ],
+    "calibration_decisions": [
+      {
+        "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/calibration/task0/decision_after_50_30.json",
+        "sha256": "0400e19b401e42a59a7a0eb0fe2b22eb5e5866e51585cce2476f49e96a90d6c3",
+        "selection_sha256": "9b0c903a88bc873c7707146296246b514f6b040fc0c04e6ef8831929e0e53fac",
+        "task_id": 0,
+        "status": "candidate_no_go"
+      },
+      {
+        "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/calibration/task2/decision_after_50_30.json",
+        "sha256": "ad2455dfff82ef3b4d5cbddb49dc6d7a2a6ca4cffd94ae3df2174c5c1f41e99c",
+        "selection_sha256": "bf6db954de148de9fc5102d01598787bb86e22cbcc18e273c0e6fcf91a40e879",
+        "task_id": 2,
+        "status": "candidate_no_go"
+      }
+    ],
+    "calibration_sources": [
+      {
+        "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/calibration/task0/magnitude50/episodes.jsonl",
+        "sha256": "c2375460ae09dc93a63614f05d9dabf71b38938fbd9a741ba7b95c465dde299e"
+      },
+      {
+        "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/calibration/task0/magnitude30/episodes.jsonl",
+        "sha256": "808c38ffb7ca91870aee6a67ae97ffa0a956b4a6fa9cc381680114073bbf0dc5"
+      },
+      {
+        "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/calibration/task0/decision_after_50_30.json",
+        "sha256": "0400e19b401e42a59a7a0eb0fe2b22eb5e5866e51585cce2476f49e96a90d6c3"
+      },
+      {
+        "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/calibration/task2/magnitude50/episodes.jsonl",
+        "sha256": "d9d0aa1f151a1e24c790747621063a2fdd9a24c265c7409a4cb1b366a1effc51"
+      },
+      {
+        "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/calibration/task2/magnitude30/episodes.jsonl",
+        "sha256": "61c747ecf1b7592aac58eca1887ef817792aa3ba516d81bea7acc5314e6cb5c4"
+      },
+      {
+        "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/calibration/task2/decision_after_50_30.json",
+        "sha256": "ad2455dfff82ef3b4d5cbddb49dc6d7a2a6ca4cffd94ae3df2174c5c1f41e99c"
+      }
+    ],
+    "implementation_source_sha256": "fc920da5221cbe7d7039fc87512b6757fd476ba33a92535f2fb63d42a3d6fd35",
+    "implementation_source_files": [
+      {
+        "path": "configs/m5_g0.json",
+        "sha256": "e70bc7850f4ffa265f5cc575cfbc8f9762292b517d44201bd12a61cf5b4e83b9"
+      },
+      {
+        "path": "src/actionstream/runtime.py",
+        "sha256": "e19b4e1d906fc9ca0a6e5564ff36b313f498cb0237f395a6248e24394ccea701"
+      },
+      {
+        "path": "src/actionstream/lerobot_backend.py",
+        "sha256": "62f2532e533587e8f79dadab255600a5aa6558046742ed35e2840e2158048c92"
+      },
+      {
+        "path": "src/actionstream/processors.py",
+        "sha256": "1f183708fd84c221d7d890ddefd599ac2130951a485da351cacb082588535595"
+      },
+      {
+        "path": "src/actionstream/libero_config.py",
+        "sha256": "4936c382c2baf0c787f6643ca677675303f43e242d005272d0694e9efd097d7f"
+      },
+      {
+        "path": "src/actionstream/m5_protocol.py",
+        "sha256": "4160fa5bdda15ee6922ab0a976e41b808c0cac00663742a4c33cacd6bf6a7d8e"
+      },
+      {
+        "path": "src/actionstream/m5_scene.py",
+        "sha256": "e48baa74d75e80d4e04b1b4b23ef6fec29876e4e8756a9f4b07eae177bc08bab"
+      },
+      {
+        "path": "src/actionstream/m5_runtime.py",
+        "sha256": "d216924add083d4c201021ad7c042cf085d0c17ace5b58bd0487e6a4708ff9e0"
+      },
+      {
+        "path": "src/actionstream/m5_benchmark.py",
+        "sha256": "bbbf87543ff62cc020a89943167013b9b2bbc1dc3c40158259d26938df4be041"
+      },
+      {
+        "path": "src/actionstream/m5_calibration.py",
+        "sha256": "f3f90fd893f4a46fc2fd7164d1bcf9ef01d82ace459652e1453e35b69176bd4f"
+      },
+      {
+        "path": "src/actionstream/m5_freeze.py",
+        "sha256": "928d787760315aa6d74eadfbf7f1816619a9a22df36ab05144e0c34e87991217"
+      },
+      {
+        "path": "src/actionstream/m5_no_shift.py",
+        "sha256": "369d46e78e4931987d3a5edcaf2b640291388f727e63f9a287e51ea40bdd94e6"
+      },
+      {
+        "path": "src/actionstream/m5_analysis.py",
+        "sha256": "cd30bad154ec6848860fc7ee972d7176448722bee0106443190120213251a60d"
+      },
+      {
+        "path": "src/actionstream/m5_report.py",
+        "sha256": "d3b962a6405ee2f2184a297e95d2b260ddedca88707fe9b183e59b85d1ab9818"
+      },
+      {
+        "path": "src/actionstream/m5_validation.py",
+        "sha256": "be1a96a7bb9f0df20ca1ec63a9ef375e2d8107f729ebec38deaf70f82a31e044"
+      },
+      {
+        "path": "scripts/run_m5_g0.sh",
+        "sha256": "d6112900280b0292776074e88009133f337c8e41c8e11c7e183100136e422ebc"
+      },
+      {
+        "path": "scripts/run_m5_g0_smoke.sh",
+        "sha256": "9ba4c9e3d14e1fa1be82ffc2fcc4d8d7b523f8a90deb19d07d9648dd16573c51"
+      }
+    ],
+    "protocol_decision_sha256": "f3fcabaa93a804c5dd0013afd6a92a66742c1353f13034a2db5c812a6c1132b9"
+  },
+  "no_shift_decision": null,
+  "formal_evidence_validation": {
+    "schema_version": 1,
+    "milestone": "M5-G0",
+    "status": "pass",
+    "checks": {
+      "m4_baseline_intact": true,
+      "repository_tests_and_compile_passed": true,
+      "frozen_source_binding_passed": true,
+      "episode_schema_and_pair_contract_passed": true,
+      "action_request_event_provenance_passed": true
+    },
+    "evidence_producer_source_sha256": "fc920da5221cbe7d7039fc87512b6757fd476ba33a92535f2fb63d42a3d6fd35",
+    "validator_source_sha256": "648b0436cbedf13feb8ccbf5e99c57a18fad722463ca258b3e91faca247d8eea",
+    "validator_source_files": [
+      {
+        "path": "configs/m5_g0.json",
+        "sha256": "e70bc7850f4ffa265f5cc575cfbc8f9762292b517d44201bd12a61cf5b4e83b9"
+      },
+      {
+        "path": "src/actionstream/runtime.py",
+        "sha256": "e19b4e1d906fc9ca0a6e5564ff36b313f498cb0237f395a6248e24394ccea701"
+      },
+      {
+        "path": "src/actionstream/lerobot_backend.py",
+        "sha256": "62f2532e533587e8f79dadab255600a5aa6558046742ed35e2840e2158048c92"
+      },
+      {
+        "path": "src/actionstream/processors.py",
+        "sha256": "1f183708fd84c221d7d890ddefd599ac2130951a485da351cacb082588535595"
+      },
+      {
+        "path": "src/actionstream/libero_config.py",
+        "sha256": "4936c382c2baf0c787f6643ca677675303f43e242d005272d0694e9efd097d7f"
+      },
+      {
+        "path": "src/actionstream/m5_protocol.py",
+        "sha256": "4160fa5bdda15ee6922ab0a976e41b808c0cac00663742a4c33cacd6bf6a7d8e"
+      },
+      {
+        "path": "src/actionstream/m5_scene.py",
+        "sha256": "e48baa74d75e80d4e04b1b4b23ef6fec29876e4e8756a9f4b07eae177bc08bab"
+      },
+      {
+        "path": "src/actionstream/m5_runtime.py",
+        "sha256": "d216924add083d4c201021ad7c042cf085d0c17ace5b58bd0487e6a4708ff9e0"
+      },
+      {
+        "path": "src/actionstream/m5_benchmark.py",
+        "sha256": "bbbf87543ff62cc020a89943167013b9b2bbc1dc3c40158259d26938df4be041"
+      },
+      {
+        "path": "src/actionstream/m5_calibration.py",
+        "sha256": "f3f90fd893f4a46fc2fd7164d1bcf9ef01d82ace459652e1453e35b69176bd4f"
+      },
+      {
+        "path": "src/actionstream/m5_freeze.py",
+        "sha256": "928d787760315aa6d74eadfbf7f1816619a9a22df36ab05144e0c34e87991217"
+      },
+      {
+        "path": "src/actionstream/m5_no_shift.py",
+        "sha256": "369d46e78e4931987d3a5edcaf2b640291388f727e63f9a287e51ea40bdd94e6"
+      },
+      {
+        "path": "src/actionstream/m5_analysis.py",
+        "sha256": "cd30bad154ec6848860fc7ee972d7176448722bee0106443190120213251a60d"
+      },
+      {
+        "path": "src/actionstream/m5_report.py",
+        "sha256": "dd5e8eae4658f42d205d7aca948262314fd6d40c247df57f74cbc4445224c957"
+      },
+      {
+        "path": "src/actionstream/m5_validation.py",
+        "sha256": "a8620887d1e882e92ae19d61623a76a6be51dca5808f310d7a8e432b5041d27f"
+      },
+      {
+        "path": "scripts/run_m5_g0.sh",
+        "sha256": "c2b27f184524b5945956f58e9cf6701911afa10fddf0a5defd7df2f99c7f1470"
+      },
+      {
+        "path": "scripts/run_m5_g0_smoke.sh",
+        "sha256": "9ba4c9e3d14e1fa1be82ffc2fcc4d8d7b523f8a90deb19d07d9648dd16573c51"
+      }
+    ],
+    "source_binding": {
+      "mode": "post_calibration_validation_and_reporting_patch",
+      "benchmark_runtime_and_selection_files_unchanged": true,
+      "post_calibration_validation_patch": true,
+      "post_calibration_reporting_orchestration_patch": true,
+      "post_calibration_report_rendering_patch": true,
+      "post_calibration_validation_patch_reason": "The original validator compared the audit condition to an absent M4 evidence field named condition; the frozen M4 evidence records the same value under runtime_mode.",
+      "post_calibration_reporting_patch_reason": "The original no-go reporting path passed the protocol-wide hard-stop wording instead of the terminal calibration decision reason expected by canonical report recomputation, omitted the report's explicit M4-baseline flag, and the paper-style Markdown omitted the calibration result table and downstream source-drift disclosure.",
+      "implementation_source_drift": [
+        {
+          "path": "src/actionstream/m5_report.py",
+          "recorded_sha256": "d3b962a6405ee2f2184a297e95d2b260ddedca88707fe9b183e59b85d1ab9818",
+          "current_sha256": "dd5e8eae4658f42d205d7aca948262314fd6d40c247df57f74cbc4445224c957"
+        },
+        {
+          "path": "src/actionstream/m5_validation.py",
+          "recorded_sha256": "be1a96a7bb9f0df20ca1ec63a9ef375e2d8107f729ebec38deaf70f82a31e044",
+          "current_sha256": "a8620887d1e882e92ae19d61623a76a6be51dca5808f310d7a8e432b5041d27f"
+        },
+        {
+          "path": "scripts/run_m5_g0.sh",
+          "recorded_sha256": "d6112900280b0292776074e88009133f337c8e41c8e11c7e183100136e422ebc",
+          "current_sha256": "c2b27f184524b5945956f58e9cf6701911afa10fddf0a5defd7df2f99c7f1470"
+        }
+      ]
+    },
+    "protocol_decision_sha256": "f3fcabaa93a804c5dd0013afd6a92a66742c1353f13034a2db5c812a6c1132b9",
+    "no_shift_decision_sha256": null,
+    "m4_baseline_validation": {
+      "passed": true,
+      "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/audit/m4_baseline_smoke/episodes.jsonl",
+      "sha256": "a72b4dd20d5e24cdd436f96e5333344ba8191a7eb7490b8c5451d8b4b5492bc2",
+      "episode": {
+        "runtime_mode": "async_aligned",
+        "task_id": 0,
+        "seed": 142,
+        "initial_state_index": 0,
+        "injected_delay_ms": 950,
+        "success": true,
+        "environment_steps": 143
+      }
+    },
+    "repository_validation": {
+      "passed": true,
+      "commands": [
+        {
+          "command": [
+            "/home/cgliu/.venvs/actionstream/bin/python",
+            "-m",
+            "pytest",
+            "-q"
+          ],
+          "returncode": 0
+        },
+        {
+          "command": [
+            "/home/cgliu/.venvs/actionstream/bin/python",
+            "-m",
+            "compileall",
+            "-q",
+            "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/src/actionstream"
+          ],
+          "returncode": 0
+        }
+      ],
+      "test_sources": [
+        {
+          "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/tests/test_m4_analysis.py",
+          "sha256": "541daaa23e25f1471ca5e43d3a3fad0349417296c9fd7c19043e2361d303bc68"
+        },
+        {
+          "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/tests/test_m4_calibration.py",
+          "sha256": "42e19fbc7eda2fdac6002009570f3a99a7cb9a5567a726488fe96d610cc709b6"
+        },
+        {
+          "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/tests/test_m4_report.py",
+          "sha256": "a56426819d0ebd78732a4e87ebe3e0b2c899a584d1f7f70318c80ba9c64215e1"
+        },
+        {
+          "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/tests/test_m5_analysis.py",
+          "sha256": "5f4276f66a64539ff541eac765df059d74ca6ebbd216ba66ffa624d3a0814ad5"
+        },
+        {
+          "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/tests/test_m5_benchmark.py",
+          "sha256": "c22bd0ee874091f199e0b0c86b39d9c5c31ee3aa5afc1274be42b0b21ea770e8"
+        },
+        {
+          "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/tests/test_m5_calibration.py",
+          "sha256": "cf332fc528fab9580ba50cbef86a3367344cb53a16438cef915695c1d176b5b5"
+        },
+        {
+          "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/tests/test_m5_freeze.py",
+          "sha256": "03cd346ce60f52403fa282a797bc74b83e6821ce92e865e2561665486b558c1f"
+        },
+        {
+          "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/tests/test_m5_no_shift.py",
+          "sha256": "f10827261eddefc2392016d5cc6b9bc6360479cf256d3b4b38ce7079c3441417"
+        },
+        {
+          "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/tests/test_m5_protocol.py",
+          "sha256": "689358b2ef15e4d9c8f61c2ac7e80440e4c6acf7324c9462280cdb5bea2b5011"
+        },
+        {
+          "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/tests/test_m5_report.py",
+          "sha256": "777f22ce4cb724ee739d21e5f5efc9534ab5d255c8eee078b6f9476f91bdb2ac"
+        },
+        {
+          "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/tests/test_m5_runtime.py",
+          "sha256": "3612b2dacd5b07f99e5510e6b7f777e80f368c198476d1e038e73538399d4991"
+        },
+        {
+          "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/tests/test_m5_scene.py",
+          "sha256": "b3ba1927c51fed593fe6732cc56ff33c55a21c078e1c4ddb920f99c3a51097a5"
+        },
+        {
+          "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/tests/test_m5_validation.py",
+          "sha256": "ba7f861f8b5f7304875eb6c27826e82afd80c0995d083dd38db3aaf2a53dccf1"
+        },
+        {
+          "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/tests/test_processors.py",
+          "sha256": "f4e8d05534df3f9358be80d1c11789a36750a7a9a5c838f09d7494e129aabe59"
+        },
+        {
+          "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/tests/test_results.py",
+          "sha256": "4c5919f730a8f45cd186b5295b8f0fe123771343e7857b496b2ce826af4095fa"
+        },
+        {
+          "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/tests/test_runtime.py",
+          "sha256": "534a5a1fa16a8ba64e3e6250090fce8fb35a65189bbd6b0f72940c3477ca3751"
+        }
+      ]
+    },
+    "episode_validation": {
+      "passed": true,
+      "episode_count": 0,
+      "phase_episode_counts": {},
+      "pair_checks": {}
+    },
+    "trace_validation": {
+      "passed": true,
+      "episode_count": 0,
+      "action_validation": {
+        "record_count": 0,
+        "executed_action_count": 0,
+        "discarded_action_count": 0,
+        "stale_executed_action_count": 0,
+        "discard_reason_counts": {},
+        "condition_record_counts": {},
+        "world_epoch_staleness_recomputed": true
+      },
+      "request_count": 0,
+      "event_count": 0,
+      "episode_action_summaries_recomputed": true,
+      "request_action_event_linkage_validated": true
+    },
+    "sources": [
+      {
+        "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/configs/m5_g0.json",
+        "sha256": "e70bc7850f4ffa265f5cc575cfbc8f9762292b517d44201bd12a61cf5b4e83b9"
+      },
+      {
+        "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/audit/task_entity_audit.json",
+        "sha256": "a49d8eeb09ea1e7d4bb12e6b9c67a7957c26e32d71987ee266191ff621d973c0"
+      },
+      {
+        "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/protocol/calibration_seed_manifest.json",
+        "sha256": "25aaf0d3afd2e73706671a226070ecf6adcf7f5a1ac9afc70e3b78109a9f3c11"
+      },
+      {
+        "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/protocol/no_shift_seed_manifest.json",
+        "sha256": "ff972719d03b8c21f1e1dd88030982a4bb16f4ff98993bf2894c5af31e0b8bad"
+      },
+      {
+        "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/protocol/sealed_seed_manifest.json",
+        "sha256": "e8ef5efb18c07c5facb6e634e319f8266d61aa2ed6fb56192a0cb27c3ba9f215"
+      },
+      {
+        "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/protocol/frozen_experiment.json",
+        "sha256": "62b4883b47c2cb04c0734fc38fe1e46c22bcada9f36a1b67fbcb465d729d46c2"
+      },
+      {
+        "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/calibration/task0/magnitude50/episodes.jsonl",
+        "sha256": "c2375460ae09dc93a63614f05d9dabf71b38938fbd9a741ba7b95c465dde299e"
+      },
+      {
+        "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/calibration/task0/magnitude30/episodes.jsonl",
+        "sha256": "808c38ffb7ca91870aee6a67ae97ffa0a956b4a6fa9cc381680114073bbf0dc5"
+      },
+      {
+        "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/calibration/task0/decision_after_50_30.json",
+        "sha256": "0400e19b401e42a59a7a0eb0fe2b22eb5e5866e51585cce2476f49e96a90d6c3"
+      },
+      {
+        "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/calibration/task2/magnitude50/episodes.jsonl",
+        "sha256": "d9d0aa1f151a1e24c790747621063a2fdd9a24c265c7409a4cb1b366a1effc51"
+      },
+      {
+        "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/calibration/task2/magnitude30/episodes.jsonl",
+        "sha256": "61c747ecf1b7592aac58eca1887ef817792aa3ba516d81bea7acc5314e6cb5c4"
+      },
+      {
+        "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/calibration/task2/decision_after_50_30.json",
+        "sha256": "ad2455dfff82ef3b4d5cbddb49dc6d7a2a6ca4cffd94ae3df2174c5c1f41e99c"
+      }
+    ],
+    "validation_sha256": "98e24c4dd325e3fafbe4dbff3f89673d5d9480f1abdcbef00d75ca265c2b1b31"
+  },
+  "calibration": {
+    "status": "no_go",
+    "selected_task_id": null,
+    "selected_displacement_magnitude_mm": null,
+    "decision_count": 2,
+    "decisions": [
+      {
+        "schema_version": 1,
+        "milestone": "M5-G0",
+        "status": "candidate_no_go",
+        "task_id": 0,
+        "selected_displacement_magnitude_mm": null,
+        "tested_magnitudes_mm": [
+          50,
+          30
+        ],
+        "evaluations": [
+          {
+            "task_id": 0,
+            "displacement_magnitude_mm": 50,
+            "pair_count": 5,
+            "aligned_success_count": 5,
+            "gate_success_count": 3,
+            "gate_only_success_count": 0,
+            "aligned_only_success_count": 2,
+            "all_perturbations_physically_valid": true,
+            "paired_shift_parameters_identical": true,
+            "qualifies": false,
+            "pairs": [
+              {
+                "seed": 51001,
+                "initial_state_index": 0,
+                "aligned_success": true,
+                "gate_success": false,
+                "aligned_perturbation_valid": true,
+                "gate_perturbation_valid": true,
+                "gate_only_success": false,
+                "aligned_only_success": true,
+                "same_shift_step": true,
+                "same_displacement": true
+              },
+              {
+                "seed": 51002,
+                "initial_state_index": 2,
+                "aligned_success": true,
+                "gate_success": false,
+                "aligned_perturbation_valid": true,
+                "gate_perturbation_valid": true,
+                "gate_only_success": false,
+                "aligned_only_success": true,
+                "same_shift_step": true,
+                "same_displacement": true
+              },
+              {
+                "seed": 51003,
+                "initial_state_index": 4,
+                "aligned_success": true,
+                "gate_success": true,
+                "aligned_perturbation_valid": true,
+                "gate_perturbation_valid": true,
+                "gate_only_success": false,
+                "aligned_only_success": false,
+                "same_shift_step": true,
+                "same_displacement": true
+              },
+              {
+                "seed": 51004,
+                "initial_state_index": 6,
+                "aligned_success": true,
+                "gate_success": true,
+                "aligned_perturbation_valid": true,
+                "gate_perturbation_valid": true,
+                "gate_only_success": false,
+                "aligned_only_success": false,
+                "same_shift_step": true,
+                "same_displacement": true
+              },
+              {
+                "seed": 51005,
+                "initial_state_index": 8,
+                "aligned_success": true,
+                "gate_success": true,
+                "aligned_perturbation_valid": true,
+                "gate_perturbation_valid": true,
+                "gate_only_success": false,
+                "aligned_only_success": false,
+                "same_shift_step": true,
+                "same_displacement": true
+              }
+            ]
+          },
+          {
+            "task_id": 0,
+            "displacement_magnitude_mm": 30,
+            "pair_count": 5,
+            "aligned_success_count": 5,
+            "gate_success_count": 2,
+            "gate_only_success_count": 0,
+            "aligned_only_success_count": 3,
+            "all_perturbations_physically_valid": true,
+            "paired_shift_parameters_identical": true,
+            "qualifies": false,
+            "pairs": [
+              {
+                "seed": 51001,
+                "initial_state_index": 0,
+                "aligned_success": true,
+                "gate_success": false,
+                "aligned_perturbation_valid": true,
+                "gate_perturbation_valid": true,
+                "gate_only_success": false,
+                "aligned_only_success": true,
+                "same_shift_step": true,
+                "same_displacement": true
+              },
+              {
+                "seed": 51002,
+                "initial_state_index": 2,
+                "aligned_success": true,
+                "gate_success": false,
+                "aligned_perturbation_valid": true,
+                "gate_perturbation_valid": true,
+                "gate_only_success": false,
+                "aligned_only_success": true,
+                "same_shift_step": true,
+                "same_displacement": true
+              },
+              {
+                "seed": 51003,
+                "initial_state_index": 4,
+                "aligned_success": true,
+                "gate_success": true,
+                "aligned_perturbation_valid": true,
+                "gate_perturbation_valid": true,
+                "gate_only_success": false,
+                "aligned_only_success": false,
+                "same_shift_step": true,
+                "same_displacement": true
+              },
+              {
+                "seed": 51004,
+                "initial_state_index": 6,
+                "aligned_success": true,
+                "gate_success": true,
+                "aligned_perturbation_valid": true,
+                "gate_perturbation_valid": true,
+                "gate_only_success": false,
+                "aligned_only_success": false,
+                "same_shift_step": true,
+                "same_displacement": true
+              },
+              {
+                "seed": 51005,
+                "initial_state_index": 8,
+                "aligned_success": true,
+                "gate_success": false,
+                "aligned_perturbation_valid": true,
+                "gate_perturbation_valid": true,
+                "gate_only_success": false,
+                "aligned_only_success": true,
+                "same_shift_step": true,
+                "same_displacement": true
+              }
+            ]
+          }
+        ],
+        "reason": "No magnitude met the frozen behavioral challenge rule",
+        "source_episode_paths": [
+          "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/calibration/task0/magnitude50/episodes.jsonl",
+          "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/calibration/task0/magnitude30/episodes.jsonl"
+        ],
+        "source_episode_files": [
+          {
+            "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/calibration/task0/magnitude50/episodes.jsonl",
+            "sha256": "c2375460ae09dc93a63614f05d9dabf71b38938fbd9a741ba7b95c465dde299e"
+          },
+          {
+            "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/calibration/task0/magnitude30/episodes.jsonl",
+            "sha256": "808c38ffb7ca91870aee6a67ae97ffa0a956b4a6fa9cc381680114073bbf0dc5"
+          }
+        ],
+        "selection_sha256": "9b0c903a88bc873c7707146296246b514f6b040fc0c04e6ef8831929e0e53fac"
+      },
+      {
+        "schema_version": 1,
+        "milestone": "M5-G0",
+        "status": "candidate_no_go",
+        "task_id": 2,
+        "selected_displacement_magnitude_mm": null,
+        "tested_magnitudes_mm": [
+          50,
+          30
+        ],
+        "evaluations": [
+          {
+            "task_id": 2,
+            "displacement_magnitude_mm": 50,
+            "pair_count": 5,
+            "aligned_success_count": 2,
+            "gate_success_count": 3,
+            "gate_only_success_count": 1,
+            "aligned_only_success_count": 0,
+            "all_perturbations_physically_valid": true,
+            "paired_shift_parameters_identical": true,
+            "qualifies": false,
+            "pairs": [
+              {
+                "seed": 51001,
+                "initial_state_index": 0,
+                "aligned_success": false,
+                "gate_success": false,
+                "aligned_perturbation_valid": true,
+                "gate_perturbation_valid": true,
+                "gate_only_success": false,
+                "aligned_only_success": false,
+                "same_shift_step": true,
+                "same_displacement": true
+              },
+              {
+                "seed": 51002,
+                "initial_state_index": 2,
+                "aligned_success": true,
+                "gate_success": true,
+                "aligned_perturbation_valid": true,
+                "gate_perturbation_valid": true,
+                "gate_only_success": false,
+                "aligned_only_success": false,
+                "same_shift_step": true,
+                "same_displacement": true
+              },
+              {
+                "seed": 51003,
+                "initial_state_index": 4,
+                "aligned_success": false,
+                "gate_success": true,
+                "aligned_perturbation_valid": true,
+                "gate_perturbation_valid": true,
+                "gate_only_success": true,
+                "aligned_only_success": false,
+                "same_shift_step": true,
+                "same_displacement": true
+              },
+              {
+                "seed": 51004,
+                "initial_state_index": 6,
+                "aligned_success": true,
+                "gate_success": true,
+                "aligned_perturbation_valid": true,
+                "gate_perturbation_valid": true,
+                "gate_only_success": false,
+                "aligned_only_success": false,
+                "same_shift_step": true,
+                "same_displacement": true
+              },
+              {
+                "seed": 51005,
+                "initial_state_index": 8,
+                "aligned_success": false,
+                "gate_success": false,
+                "aligned_perturbation_valid": true,
+                "gate_perturbation_valid": true,
+                "gate_only_success": false,
+                "aligned_only_success": false,
+                "same_shift_step": true,
+                "same_displacement": true
+              }
+            ]
+          },
+          {
+            "task_id": 2,
+            "displacement_magnitude_mm": 30,
+            "pair_count": 5,
+            "aligned_success_count": 5,
+            "gate_success_count": 2,
+            "gate_only_success_count": 0,
+            "aligned_only_success_count": 3,
+            "all_perturbations_physically_valid": true,
+            "paired_shift_parameters_identical": true,
+            "qualifies": false,
+            "pairs": [
+              {
+                "seed": 51001,
+                "initial_state_index": 0,
+                "aligned_success": true,
+                "gate_success": true,
+                "aligned_perturbation_valid": true,
+                "gate_perturbation_valid": true,
+                "gate_only_success": false,
+                "aligned_only_success": false,
+                "same_shift_step": true,
+                "same_displacement": true
+              },
+              {
+                "seed": 51002,
+                "initial_state_index": 2,
+                "aligned_success": true,
+                "gate_success": false,
+                "aligned_perturbation_valid": true,
+                "gate_perturbation_valid": true,
+                "gate_only_success": false,
+                "aligned_only_success": true,
+                "same_shift_step": true,
+                "same_displacement": true
+              },
+              {
+                "seed": 51003,
+                "initial_state_index": 4,
+                "aligned_success": true,
+                "gate_success": true,
+                "aligned_perturbation_valid": true,
+                "gate_perturbation_valid": true,
+                "gate_only_success": false,
+                "aligned_only_success": false,
+                "same_shift_step": true,
+                "same_displacement": true
+              },
+              {
+                "seed": 51004,
+                "initial_state_index": 6,
+                "aligned_success": true,
+                "gate_success": false,
+                "aligned_perturbation_valid": true,
+                "gate_perturbation_valid": true,
+                "gate_only_success": false,
+                "aligned_only_success": true,
+                "same_shift_step": true,
+                "same_displacement": true
+              },
+              {
+                "seed": 51005,
+                "initial_state_index": 8,
+                "aligned_success": true,
+                "gate_success": false,
+                "aligned_perturbation_valid": true,
+                "gate_perturbation_valid": true,
+                "gate_only_success": false,
+                "aligned_only_success": true,
+                "same_shift_step": true,
+                "same_displacement": true
+              }
+            ]
+          }
+        ],
+        "reason": "No magnitude met the frozen behavioral challenge rule",
+        "source_episode_paths": [
+          "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/calibration/task2/magnitude50/episodes.jsonl",
+          "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/calibration/task2/magnitude30/episodes.jsonl"
+        ],
+        "source_episode_files": [
+          {
+            "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/calibration/task2/magnitude50/episodes.jsonl",
+            "sha256": "d9d0aa1f151a1e24c790747621063a2fdd9a24c265c7409a4cb1b366a1effc51"
+          },
+          {
+            "path": "/mnt/c/Users/cgliu/OneDrive/Documents/ActionStream/outputs/m5_g0/calibration/task2/magnitude30/episodes.jsonl",
+            "sha256": "61c747ecf1b7592aac58eca1887ef817792aa3ba516d81bea7acc5314e6cb5c4"
+          }
+        ],
+        "selection_sha256": "bf6db954de148de9fc5102d01598787bb86e22cbcc18e273c0e6fcf91a40e879"
+      }
+    ],
+    "hard_stop_reason": "No magnitude met the frozen behavioral challenge rule"
+  },
+  "sealed_evaluation": {
+    "status": "not_run_due_to_calibration_hard_stop",
+    "valid_pair_count": 0,
+    "required_pair_count": 30,
+    "reason": "No magnitude met the frozen behavioral challenge rule"
+  },
+  "condition_summaries": [
+    {
+      "condition": "aligned_shift",
+      "label": "Aligned shift",
+      "episode_count": 0,
+      "valid_episode_count": 0,
+      "success_count": 0,
+      "success_rate": null,
+      "stale_action_steps": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "stale_action_duration_seconds": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "environment_steps": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "simulated_completion_time_seconds": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "wall_clock_episode_seconds": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "stale_policy_results_discarded": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "stale_queued_actions_discarded": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "fresh_replan_count": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "hold_steps_introduced_by_gate": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "maximum_queue_depth": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "action_source_observation_age_steps_mean": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "time_from_shift_to_gate_trigger_seconds": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "time_from_shift_to_queue_clear_seconds": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "time_from_shift_to_first_fresh_action_seconds": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "detector_max_translation_delta_m": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "detector_max_rotation_delta_rad": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "scene_gate_trigger_count": 0,
+      "queue_invalidation_count": 0,
+      "false_gate_count": 0,
+      "moved_state_recovered_count": 0,
+      "termination_reason_counts": {},
+      "invalid_episode_count": 0,
+      "invalid_episodes": []
+    },
+    {
+      "condition": "aligned_oracle_pose_gate_shift",
+      "label": "Oracle-gated shift",
+      "episode_count": 0,
+      "valid_episode_count": 0,
+      "success_count": 0,
+      "success_rate": null,
+      "stale_action_steps": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "stale_action_duration_seconds": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "environment_steps": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "simulated_completion_time_seconds": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "wall_clock_episode_seconds": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "stale_policy_results_discarded": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "stale_queued_actions_discarded": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "fresh_replan_count": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "hold_steps_introduced_by_gate": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "maximum_queue_depth": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "action_source_observation_age_steps_mean": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "time_from_shift_to_gate_trigger_seconds": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "time_from_shift_to_queue_clear_seconds": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "time_from_shift_to_first_fresh_action_seconds": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "detector_max_translation_delta_m": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "detector_max_rotation_delta_rad": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "scene_gate_trigger_count": 0,
+      "queue_invalidation_count": 0,
+      "false_gate_count": 0,
+      "moved_state_recovered_count": 0,
+      "termination_reason_counts": {},
+      "invalid_episode_count": 0,
+      "invalid_episodes": []
+    },
+    {
+      "condition": "aligned_no_shift",
+      "label": "Aligned no shift",
+      "episode_count": 0,
+      "valid_episode_count": 0,
+      "success_count": 0,
+      "success_rate": null,
+      "stale_action_steps": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "stale_action_duration_seconds": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "environment_steps": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "simulated_completion_time_seconds": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "wall_clock_episode_seconds": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "stale_policy_results_discarded": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "stale_queued_actions_discarded": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "fresh_replan_count": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "hold_steps_introduced_by_gate": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "maximum_queue_depth": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "action_source_observation_age_steps_mean": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "time_from_shift_to_gate_trigger_seconds": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "time_from_shift_to_queue_clear_seconds": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "time_from_shift_to_first_fresh_action_seconds": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "detector_max_translation_delta_m": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "detector_max_rotation_delta_rad": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "scene_gate_trigger_count": 0,
+      "queue_invalidation_count": 0,
+      "false_gate_count": 0,
+      "moved_state_recovered_count": 0,
+      "termination_reason_counts": {},
+      "invalid_episode_count": 0,
+      "invalid_episodes": []
+    },
+    {
+      "condition": "aligned_oracle_pose_gate_no_shift",
+      "label": "Oracle-gated no shift",
+      "episode_count": 0,
+      "valid_episode_count": 0,
+      "success_count": 0,
+      "success_rate": null,
+      "stale_action_steps": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "stale_action_duration_seconds": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "environment_steps": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "simulated_completion_time_seconds": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "wall_clock_episode_seconds": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "stale_policy_results_discarded": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "stale_queued_actions_discarded": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "fresh_replan_count": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "hold_steps_introduced_by_gate": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "maximum_queue_depth": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "action_source_observation_age_steps_mean": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "time_from_shift_to_gate_trigger_seconds": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "time_from_shift_to_queue_clear_seconds": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "time_from_shift_to_first_fresh_action_seconds": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "detector_max_translation_delta_m": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "detector_max_rotation_delta_rad": {
+        "count": 0,
+        "total": null,
+        "mean": null,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "scene_gate_trigger_count": 0,
+      "queue_invalidation_count": 0,
+      "false_gate_count": 0,
+      "moved_state_recovered_count": 0,
+      "termination_reason_counts": {},
+      "invalid_episode_count": 0,
+      "invalid_episodes": []
+    }
+  ],
+  "action_provenance_validation": {
+    "record_count": 0,
+    "executed_action_count": 0,
+    "discarded_action_count": 0,
+    "stale_executed_action_count": 0,
+    "discard_reason_counts": {},
+    "condition_record_counts": {},
+    "world_epoch_staleness_recomputed": true
+  },
+  "event_row_count": 0,
+  "analysis_episode_row_count": 0,
+  "representative_pair": null,
+  "statistics": {
+    "schema_version": 1,
+    "milestone": "M5-G0",
+    "analysis_unit": "paired episode",
+    "episode_row_count": 0,
+    "pairing_fields": [
+      "seed",
+      "initial_state_index"
+    ],
+    "difference_definition": "gate minus aligned unless marked as reduction",
+    "bootstrap": {
+      "method": "paired nonparametric percentile bootstrap",
+      "seed": 20260731,
+      "resamples": 10000,
+      "confidence_level": 0.95
+    },
+    "shift_comparison": null,
+    "no_shift_comparison": null,
+    "invalid_episodes": [],
+    "invalid_episode_count": 0,
+    "excluded_pairs": [],
+    "excluded_pair_count": 0,
+    "excluded_episode_count": 0,
+    "calibration_no_go_reason": "No magnitude met the frozen behavioral challenge rule",
+    "classification": {
+      "label": "NO-GO",
+      "criteria": {
+        "sealed_30_pairs_complete": false,
+        "stale_duration_reduction_at_least_70pct": false,
+        "stale_duration_reduction_ci_excludes_zero": false,
+        "success_improvement_at_least_15pp": false,
+        "mcnemar_p_below_0_05": false,
+        "success_not_regressed_more_than_5pp": false,
+        "success_does_not_significantly_improve": true,
+        "no_shift_safety_requirements_pass": false,
+        "m4_baseline_intact": true,
+        "source_validation_passed": true,
+        "calibration_challenge_valid": false
+      },
+      "reasons": [
+        "Calibration no-go: No magnitude met the frozen behavioral challenge rule"
+      ]
+    }
+  },
+  "acceptance": {
+    "schema_version": 1,
+    "milestone": "M5-G0",
+    "classification": {
+      "label": "NO-GO",
+      "criteria": {
+        "sealed_30_pairs_complete": false,
+        "stale_duration_reduction_at_least_70pct": false,
+        "stale_duration_reduction_ci_excludes_zero": false,
+        "success_improvement_at_least_15pp": false,
+        "mcnemar_p_below_0_05": false,
+        "success_not_regressed_more_than_5pp": false,
+        "success_does_not_significantly_improve": true,
+        "no_shift_safety_requirements_pass": false,
+        "m4_baseline_intact": true,
+        "source_validation_passed": true,
+        "calibration_challenge_valid": false
+      },
+      "reasons": [
+        "Calibration no-go: No magnitude met the frozen behavioral challenge rule"
+      ]
+    },
+    "calibration_status": "no_go",
+    "sealed_evaluation": {
+      "status": "not_run_due_to_calibration_hard_stop",
+      "valid_pair_count": 0,
+      "required_pair_count": 30,
+      "reason": "No magnitude met the frozen behavioral challenge rule"
+    },
+    "no_shift_safety_requirements_pass": false,
+    "no_shift_action_trace_equivalence_pass": null,
+    "m4_baseline_intact": true,
+    "source_validation_passed": true,
+    "statistics_origin": "reviewed_statistics_input_copied",
+    "acceptance_sha256": "3feb68903bf377239f32b44042ebf063e9c6396ed7cce1991d819fb7b2b2a763"
+  },
+  "sources": [
+    {
+      "role": "config",
+      "path": "configs/m5_g0.json",
+      "sha256": "e70bc7850f4ffa265f5cc575cfbc8f9762292b517d44201bd12a61cf5b4e83b9",
+      "bytes": 3642
+    },
+    {
+      "role": "task_audit",
+      "path": "outputs/m5_g0/audit/task_entity_audit.json",
+      "sha256": "a49d8eeb09ea1e7d4bb12e6b9c67a7957c26e32d71987ee266191ff621d973c0",
+      "bytes": 3766
+    },
+    {
+      "role": "calibration_decision",
+      "path": "outputs/m5_g0/calibration/task0/decision_after_50_30.json",
+      "sha256": "0400e19b401e42a59a7a0eb0fe2b22eb5e5866e51585cce2476f49e96a90d6c3",
+      "bytes": 5765
+    },
+    {
+      "role": "calibration_decision",
+      "path": "outputs/m5_g0/calibration/task2/decision_after_50_30.json",
+      "sha256": "ad2455dfff82ef3b4d5cbddb49dc6d7a2a6ca4cffd94ae3df2174c5c1f41e99c",
+      "bytes": 5769
+    },
+    {
+      "role": "seed_manifest",
+      "path": "outputs/m5_g0/protocol/calibration_seed_manifest.json",
+      "sha256": "25aaf0d3afd2e73706671a226070ecf6adcf7f5a1ac9afc70e3b78109a9f3c11",
+      "bytes": 630
+    },
+    {
+      "role": "seed_manifest",
+      "path": "outputs/m5_g0/protocol/no_shift_seed_manifest.json",
+      "sha256": "ff972719d03b8c21f1e1dd88030982a4bb16f4ff98993bf2894c5af31e0b8bad",
+      "bytes": 1088
+    },
+    {
+      "role": "seed_manifest",
+      "path": "outputs/m5_g0/protocol/sealed_seed_manifest.json",
+      "sha256": "e8ef5efb18c07c5facb6e634e319f8266d61aa2ed6fb56192a0cb27c3ba9f215",
+      "bytes": 2886
+    },
+    {
+      "role": "reviewed_statistics",
+      "path": "outputs/m5_g0/report/statistical_tests_input.json",
+      "sha256": "f35507afa439033dab5444abb3d2daae61b4c2cf4f94e16217317bf26c6b057d",
+      "bytes": 1388
+    },
+    {
+      "role": "frozen_protocol_decision",
+      "path": "outputs/m5_g0/protocol/frozen_experiment.json",
+      "sha256": "62b4883b47c2cb04c0734fc38fe1e46c22bcada9f36a1b67fbcb465d729d46c2",
+      "bytes": 8158
+    },
+    {
+      "role": "formal_evidence_validation",
+      "path": "outputs/m5_g0/report/formal_validation.json",
+      "sha256": "d2d9473a176cfd02a8f51449720d7da4e036576789b23c6798c2d04d743c00be",
+      "bytes": 12335
+    }
+  ],
+  "limitations": [
+    "The oracle detector reads exact simulator entity pose. It is an upper-bound mechanism test, not deployable RGB/RGB-D perception.",
+    "The experiment covers one frozen policy, at most two pre-audited calibration candidates, one moved task-critical entity class, and one scripted planar perturbation family; sealed evaluation remains limited to one selected task.",
+    "world_epoch is evaluator-only ground truth for labeling stale actions; the runtime gate is permitted to read pose displacement only.",
+    "ActionStream stale-prefix alignment handles temporal delivery age, whereas the oracle gate handles semantic invalidation after the physical scene moves.",
+    "Paired bootstrap intervals treat episode pairs, not individual actions, as independent statistical units.",
+    "The dynamic receptacle can move again during task interaction; later oracle detections therefore represent additional measured pose changes and can introduce gate holds beyond the single scripted shift.",
+    "No FoundationPose, PoseLoop, ROS 2, physical robot, new model, or training is included.",
+    "Static collision and reach checks do not prove that the frozen policy solves the shifted scene after a fresh observation; the five-pair calibration is the behavioral gate.",
+    "The oracle detector reads exact simulator pose and is not deployable perception.",
+    "Floor support contacts are expected and explicitly allowed; any other moved-entity contact invalidates the perturbation.",
+    "The fixed first-replenishment timing is selected before calibration and is not tuned after observing outcomes.",
+    "Sealed evidence is unavailable or incomplete: No magnitude met the frozen behavioral challenge rule.",
+    "No standalone event rows were supplied; timeline markers are reconstructed only from episode and action provenance where available."
+  ],
+  "artifacts": {
+    "aggregate_summary": "aggregate_summary.json",
+    "statistical_tests": "statistical_tests.json",
+    "acceptance": "acceptance.json",
+    "paper_report": "m5_g0_report.md",
+    "plots": [
+      "plots/representative_paired_timeline.png",
+      "plots/representative_paired_timeline.pdf",
+      "plots/mechanism_outcome.png",
+      "plots/mechanism_outcome.pdf"
+    ]
+  }
+}

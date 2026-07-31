@@ -1,0 +1,63 @@
+{
+  "action_record_count": 15961,
+  "attempt_count": 1,
+  "completed_at_utc": "2026-07-31T07:29:32Z",
+  "episode_count": 10,
+  "event_count": 12159,
+  "last_attempt_started_at_utc": "2026-07-31T07:23:37Z",
+  "last_error": null,
+  "milestone": "M5-G0",
+  "request_count": 514,
+  "run_contract": {
+    "calibration_directive_sha256": null,
+    "conditions": [
+      "aligned_shift",
+      "aligned_oracle_pose_gate_shift"
+    ],
+    "displacement_magnitude_mm": 50,
+    "experiment_config_sha256": "e70bc7850f4ffa265f5cc575cfbc8f9762292b517d44201bd12a61cf5b4e83b9",
+    "git_commit_at_start": "0a2412625b858af8d507be6650612b13a28b91a5",
+    "implementation_source_sha256": "fc920da5221cbe7d7039fc87512b6757fd476ba33a92535f2fb63d42a3d6fd35",
+    "milestone": "M5-G0",
+    "no_shift_decision_sha256": null,
+    "pairs": [
+      {
+        "initial_state_index": 0,
+        "pair_index": 0,
+        "seed": 51001
+      },
+      {
+        "initial_state_index": 2,
+        "pair_index": 1,
+        "seed": 51002
+      },
+      {
+        "initial_state_index": 4,
+        "pair_index": 2,
+        "seed": 51003
+      },
+      {
+        "initial_state_index": 6,
+        "pair_index": 3,
+        "seed": 51004
+      },
+      {
+        "initial_state_index": 8,
+        "pair_index": 4,
+        "seed": 51005
+      }
+    ],
+    "phase": "calibration",
+    "previous_task_decision_sha256": "9b0c903a88bc873c7707146296246b514f6b040fc0c04e6ef8831929e0e53fac",
+    "protocol_decision_sha256": null,
+    "run_id": "m5g0-calibration-c7cc1f6a",
+    "schema_version": 1,
+    "seed_manifest_name": "calibration",
+    "seed_manifest_sha256": "b32182908fe33dcac2aa3bac22b29ba6070ae27b9cf03e7a1a703953f5486ca3",
+    "task_audit_sha256": "a49d8eeb09ea1e7d4bb12e6b9c67a7957c26e32d71987ee266191ff621d973c0",
+    "task_id": 2
+  },
+  "run_contract_sha256": "5a728d01960ad181f7043512c779f429180eb2654ac3a4d00cbb7192dacedd83",
+  "schema_version": 1,
+  "status": "completed"
+}

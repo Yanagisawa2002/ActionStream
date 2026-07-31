@@ -1,0 +1,43 @@
+{
+  "action_record_count": 1834,
+  "attempt_count": 1,
+  "completed_at_utc": "2026-07-31T07:10:48Z",
+  "episode_count": 2,
+  "event_count": 2082,
+  "last_attempt_started_at_utc": "2026-07-31T07:09:45Z",
+  "last_error": null,
+  "milestone": "M5-G0",
+  "request_count": 58,
+  "run_contract": {
+    "calibration_directive_sha256": null,
+    "conditions": [
+      "aligned_shift",
+      "aligned_oracle_pose_gate_shift"
+    ],
+    "displacement_magnitude_mm": 50,
+    "experiment_config_sha256": "e70bc7850f4ffa265f5cc575cfbc8f9762292b517d44201bd12a61cf5b4e83b9",
+    "git_commit_at_start": "0a2412625b858af8d507be6650612b13a28b91a5",
+    "implementation_source_sha256": "d85a931f096f41f8c25c27ea925a902c6159e5d9512254229b441282b2a2e517",
+    "milestone": "M5-G0",
+    "no_shift_decision_sha256": null,
+    "pairs": [
+      {
+        "initial_state_index": 1,
+        "pair_index": 0,
+        "seed": 50001
+      }
+    ],
+    "phase": "audit",
+    "previous_task_decision_sha256": null,
+    "protocol_decision_sha256": null,
+    "run_id": "m5g0-audit-a409c4cf",
+    "schema_version": 1,
+    "seed_manifest_name": "runtime_smoke",
+    "seed_manifest_sha256": "8c15295aad3e81c8760a881840cbb3b9a0090e9aea757aad86526753794a7966",
+    "task_audit_sha256": "a49d8eeb09ea1e7d4bb12e6b9c67a7957c26e32d71987ee266191ff621d973c0",
+    "task_id": 0
+  },
+  "run_contract_sha256": "e9fd0337c6179db64caa113364e58d11f61a6e08154398ed954685e9bf401f38",
+  "schema_version": 1,
+  "status": "completed"
+}

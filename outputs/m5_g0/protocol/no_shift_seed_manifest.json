@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "milestone": "M5-G0",
+  "manifest_name": "no_shift_regression",
+  "pairs": [
+    {
+      "pair_index": 0,
+      "seed": 52001,
+      "initial_state_index": 10
+    },
+    {
+      "pair_index": 1,
+      "seed": 52002,
+      "initial_state_index": 11
+    },
+    {
+      "pair_index": 2,
+      "seed": 52003,
+      "initial_state_index": 12
+    },
+    {
+      "pair_index": 3,
+      "seed": 52004,
+      "initial_state_index": 13
+    },
+    {
+      "pair_index": 4,
+      "seed": 52005,
+      "initial_state_index": 14
+    },
+    {
+      "pair_index": 5,
+      "seed": 52006,
+      "initial_state_index": 15
+    },
+    {
+      "pair_index": 6,
+      "seed": 52007,
+      "initial_state_index": 16
+    },
+    {
+      "pair_index": 7,
+      "seed": 52008,
+      "initial_state_index": 17
+    },
+    {
+      "pair_index": 8,
+      "seed": 52009,
+      "initial_state_index": 18
+    },
+    {
+      "pair_index": 9,
+      "seed": 52010,
+      "initial_state_index": 19
+    }
+  ],
+  "manifest_sha256": "46983d119818ea81546a24a2e30c287f95fe9ee0be2217463e1a0ca9ea2b3b52"
+}

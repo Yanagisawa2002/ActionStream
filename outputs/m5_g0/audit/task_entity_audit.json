@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "milestone": "M5-G0",
+  "repository_starting_commit": "0a2412625b858af8d507be6650612b13a28b91a5",
+  "repository_starting_state": "clean master worktree; master matched origin/master; no push performed",
+  "m4_baseline_intact": true,
+  "m4_baseline_smoke": {
+    "passed": true,
+    "condition": "async_aligned",
+    "task_id": 0,
+    "seed": 142,
+    "initial_state_index": 0,
+    "injected_delay_ms": 950,
+    "success": true,
+    "environment_steps": 143,
+    "path": "outputs/m5_g0/audit/m4_baseline_smoke/episodes.jsonl",
+    "sha256": "a72b4dd20d5e24cdd436f96e5333344ba8191a7eb7490b8c5451d8b4b5492bc2"
+  },
+  "candidate_limit": 2,
+  "candidates_inspected": [
+    {
+      "audit_order": 1,
+      "task_id": 0,
+      "instruction": "pick up the alphabet soup and place it in the basket",
+      "m4_aligned_950ms_success": "10/10",
+      "manipulated_entity": "alphabet_soup_1",
+      "task_critical_stationary_entity": "basket_1",
+      "assessment": "selected"
+    },
+    {
+      "audit_order": 2,
+      "task_id": 2,
+      "instruction": "pick up the salad dressing and place it in the basket",
+      "m4_aligned_950ms_success": "10/10",
+      "manipulated_entity": "salad_dressing_1",
+      "task_critical_stationary_entity": "basket_1",
+      "assessment": "single permitted backup"
+    }
+  ],
+  "selected_task": {
+    "task_id": 0,
+    "instruction": "pick up the alphabet soup and place it in the basket",
+    "moved_entity": "basket_1",
+    "simulator_body": "basket_1_main",
+    "simulator_free_joint": "basket_1_joint0",
+    "goal_predicate": "(In alphabet_soup_1 basket_1_contain_region)",
+    "normally_stationary": true,
+    "task_critical_reason": "The instruction requires the alphabet soup center to enter the containment site attached to this basket body.",
+    "pose_read": "MuJoCo free-joint qpos and body pose resolved through the LIBERO object registry.",
+    "pose_mutation": "Translate free-joint qpos along -x, preserve z/quaternion, zero the 6D free-joint velocity, then call sim.forward()."
+  },
+  "workspace_and_collision_probe": {
+    "tasks": [
+      0,
+      2
+    ],
+    "initial_states_per_task": 20,
+    "magnitudes_mm": [
+      30,
+      50,
+      70
+    ],
+    "axes_tested": [
+      "positive_x",
+      "negative_x"
+    ],
+    "total_static_configurations": 120,
+    "maximum_displacement_error_m": 6.94e-18,
+    "non_floor_collision_cases": 0,
+    "maximum_floor_support_penetration_m": 1.48e-05,
+    "robot_base_to_containment_center_range_m": [
+      0.577,
+      0.737
+    ],
+    "selected_axis": "negative_x",
+    "selected_axis_rationale": "It moves the basket toward the robot and keeps every tested 30/50/70 mm pose inside the declared workspace with a shorter reach distance."
+  },
+  "timing_audit": {
+    "selected_schedule": "first replenishment request with a non-empty action queue",
+    "request_step": 10,
+    "delay_steps": 19,
+    "shift_step": 19,
+    "typical_old_result_merge_step_range": [
+      31,
+      32
+    ],
+    "queue_depth_at_request_steps": 20,
+    "pre_contact_evidence": "At steps 19-20 the commanded end effector and basket are separated by more than 0.40 m in y; the first gripper-close proxy occurs at steps 49-56."
+  },
+  "known_limitations": [
+    "Static collision and reach checks do not prove that the frozen policy solves the shifted scene after a fresh observation; the five-pair calibration is the behavioral gate.",
+    "The oracle detector reads exact simulator pose and is not deployable perception.",
+    "Floor support contacts are expected and explicitly allowed; any other moved-entity contact invalidates the perturbation.",
+    "The fixed first-replenishment timing is selected before calibration and is not tuned after observing outcomes."
+  ]
+}
