@@ -563,3 +563,63 @@ formal validation, statistics, Markdown, and PNG/PDF figures.
 - [Formal evidence validation](outputs/m5_g0/report/formal_validation.json)
 - Calibration raw evidence:
   `outputs/m5_g0/calibration/task{0,2}/magnitude{50,30}/`
+
+## M6-G0 LeRobot async-runtime audit
+
+M6-G0 is a CPU-only, synthetic pre-hardware gate. It compares the fixed
+ActionStream stale-prefix rule with every registered ACT-compatible
+aggregation behavior in official LeRobot at commit
+`62600065cdb349c1e41b0403c511f12ebfa686eb` (source/package version `0.6.1`).
+The adapter calls the frozen upstream `PolicyServer._time_action_chunk` and
+`RobotClient._aggregate_action_queues` methods directly. It does not train a
+policy, use a GPU, or control a robot.
+
+Clone the exact upstream source into the ignored audit directory and install it
+in an isolated environment. Use a fully resolved LeRobot environment for a
+fresh physical deployment; the checked-in
+[`pinned_upstream.json`](outputs/m6_g0/upstream/pinned_upstream.json) records
+the exact CPU-only environment used for the formal source/queue audit.
+
+```powershell
+git clone https://github.com/huggingface/lerobot.git .external/lerobot
+git -C .external/lerobot checkout 62600065cdb349c1e41b0403c511f12ebfa686eb
+
+py -3.12 -m venv .external/m6_venv
+.\.external\m6_venv\Scripts\python.exe -m pip install --upgrade pip
+.\.external\m6_venv\Scripts\python.exe -m pip install `
+  torch==2.7.1 torchvision==0.22.1 `
+  --index-url https://download.pytorch.org/whl/cpu
+.\.external\m6_venv\Scripts\python.exe -m pip install `
+  -e .external/lerobot pytest matplotlib transformers grpcio protobuf
+
+$env:PYTHONPATH=(Resolve-Path src).Path
+.\.external\m6_venv\Scripts\python.exe -m pytest `
+  tests/test_m6_conformance.py tests/test_m6_report.py -q
+
+.\.external\m6_venv\Scripts\python.exe -m actionstream.m6_conformance `
+  --manifest configs/m6_g0.json `
+  --lerobot-root .external/lerobot `
+  --output-root outputs/m6_g0
+
+.\.external\m6_venv\Scripts\python.exe -m actionstream.m6_report `
+  --manifest configs/m6_g0.json `
+  --lerobot-root .external/lerobot `
+  --output-root outputs/m6_g0
+```
+
+The frozen matrix uses a 12-action horizon at 20 Hz, seven latency families,
+four deterministic traces for fixed cases, 50 seeded traces for bounded
+jitter, six runtimes, and identical request/chunk inputs. ActionStream removed
+all stale-prefix execution and improved temporal error, but its queue-underrun
+worsening reached 47.92 percentage points in the fully stale family and 29.17
+points in the out-of-order family. This fails the predeclared 5-point gate, so
+the final M6-G0 classification is **NO-GO** and the recommended next step is
+**termination of this direction**.
+
+- [Paper-style M6-G0 report](outputs/m6_g0/report/m6_g0_report.md)
+- [Source-level semantic crosswalk](outputs/m6_g0/report/source_semantic_crosswalk.md)
+- [SO-101 + ACT portability audit](outputs/m6_g0/report/portability_audit.md)
+- [Frozen scenario](outputs/m6_g0/scenario/frozen_manifest.json)
+- [Aggregate metrics](outputs/m6_g0/metrics/aggregate_metrics.json)
+- [Machine-readable decision](outputs/m6_g0/decision.json)
+- [Formal artifact validation](outputs/m6_g0/report/report_validation.json)

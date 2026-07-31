@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "milestone": "M6-G0",
+  "scenario_manifest_sha256": "a37f46067ba31783fd4eec83c18384f3fc638290fdb786c8dc4bc3d0dd23c9e0",
+  "upstream_commit": "62600065cdb349c1e41b0403c511f12ebfa686eb",
+  "artifacts": {
+    "audit/initial_repository_audit.json": "bf579918d166a56fe129ef48412eaeab3aa6ed647ca12c9bca4687107e0e9ba6",
+    "decision.json": "db1f24372c0ebd645b4d20904f81451d9335b78f102dd9a13cf607a22886f90d",
+    "metrics/aggregate_metrics.json": "b06080527e482efeab5a29a5be25c05fdc7f22bfa933b395067a2cb21a915e51",
+    "metrics/trace_summaries.jsonl": "c7e82569508641fa28ebb6047cd7950a8e9a706aaeca74ae7d8744d10012389e",
+    "report/m6_g0_report.md": "b658e8331ec238108835cae12d50a6fa2c3fc3eb80b4f0999593bdfbaa1beff1",
+    "report/plots/aggregate_mechanism.pdf": "a9e6e6217c2fa4c754005a6a188a058401cd4b77dc53f22b8e6fa5db24c3100e",
+    "report/plots/aggregate_mechanism.png": "3b39bdfea139e123d942764699caef2555261ddc33739164b3347119de749d05",
+    "report/plots/representative_timeline.pdf": "fb1ffe30d6b5b560ce1df2d0cffc78f605c6ab0975ed6c5e11c677b7a9458852",
+    "report/plots/representative_timeline.png": "51714ae8fa3494c57da94b1e915888a2fd2948a77b992d34ce3efed2ceb880f5",
+    "report/portability_audit.md": "32242a8ce2a257d7ab342df2b61095903439eee0092402fa2d7a6915394ae154",
+    "report/report_validation.json": "4cd7b4a70aa98de862d8332cdc6d3f509f30785ae6d752b302a659e15eb6b95d",
+    "report/representative_timeline.json": "a283486814f069604ae768fb03f41d559e23f2778cd3e6c56c43c29d1d8b435f",
+    "report/source_references.json": "f0e5bb97ebfa759ff2d71cce3ed9ca7616f110a8607786193df1a457730538b7",
+    "report/source_semantic_crosswalk.md": "d09067bfdd2eb823de74f367092f34351d764d1272694c2770d3b56e98f787e7",
+    "scenario/frozen_manifest.json": "b87cefeedb2e4c26dc8e0fc61fc83dba5660a290745de914913012062db07c14",
+    "scenario/trace_contracts.jsonl": "4c7e42f8a8296af6e2e8b056a5912145fbf46640c8dcff9433e6a9b4f66f055d",
+    "traces/action_records.jsonl": "3557448c2adc03b6465b4c239e5ac227d91f2fb89ca98ef70cf1f44a14e4fa09",
+    "traces/result_records.jsonl": "c5f824063cae3c2bccc3432201557ef9c8e00dccf93369f22c6647a4151509cf",
+    "upstream/pinned_upstream.json": "77f41be1db1b3a891333f9fbcd7ac58dac358560011d2d2e567416d49d4ca251",
+    "validation.json": "e401457d69d3399faeeeb4d40a171b9cc522c57d0fc7632e2573d666cddfedf3"
+  },
+  "artifact_count": 20,
+  "artifact_manifest_sha256": "6f41868342edd82253eefc67ab18eaa48ea79f2ffcdbd6a1dba518b63433f132"
+}

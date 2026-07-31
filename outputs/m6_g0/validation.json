@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "milestone": "M6-G0",
+  "passed": true,
+  "checks": {
+    "schema_fields_complete": true,
+    "temporal_metric_formula_exact": true,
+    "stale_prefix_definition_exact": true,
+    "identical_runtime_inputs": true,
+    "bounded_jitter_has_50_traces_per_runtime": true,
+    "actual_upstream_methods_invoked": true,
+    "aggregate_matrix_complete": true,
+    "result_lifecycle_complete": true
+  },
+  "errors": [],
+  "counts": {
+    "action_records": 48122,
+    "result_records": 3552,
+    "trace_summaries": 444,
+    "aggregate_rows": 42,
+    "bounded_jitter_trace_counts": {
+      "sync_hold": 50,
+      "lerobot_weighted_average": 50,
+      "lerobot_latest_only": 50,
+      "lerobot_average": 50,
+      "lerobot_conservative": 50,
+      "actionstream_aligned": 50
+    },
+    "official_adapter_call_counts": {
+      "lerobot_weighted_average": {
+        "time_chunk": 592,
+        "aggregate": 544
+      },
+      "lerobot_latest_only": {
+        "time_chunk": 592,
+        "aggregate": 544
+      },
+      "lerobot_average": {
+        "time_chunk": 592,
+        "aggregate": 544
+      },
+      "lerobot_conservative": {
+        "time_chunk": 592,
+        "aggregate": 544
+      }
+    }
+  }
+}

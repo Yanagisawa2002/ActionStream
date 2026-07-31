@@ -1,0 +1,1758 @@
+{
+  "schema_version": 1,
+  "milestone": "M6-G0",
+  "latency_family": "out_of_order",
+  "trace_seed": 2026073100,
+  "interpretation": "Every transition records observation/request, arrival/insertion, old queue, new chunk, discarded prefix, and resulting queue. Executions record actual and intended indices plus underrun/hold state.",
+  "runtimes": {
+    "lerobot_latest_only": {
+      "executions": [
+        {
+          "actual_execution_step": 1,
+          "intended_execution_step": null,
+          "request_id": null,
+          "request_generation": null,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "upstream_no_send",
+          "record_kind": "underrun"
+        },
+        {
+          "actual_execution_step": 2,
+          "intended_execution_step": null,
+          "request_id": null,
+          "request_generation": null,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "upstream_no_send",
+          "record_kind": "underrun"
+        },
+        {
+          "actual_execution_step": 3,
+          "intended_execution_step": null,
+          "request_id": null,
+          "request_generation": null,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "upstream_no_send",
+          "record_kind": "underrun"
+        },
+        {
+          "actual_execution_step": 4,
+          "intended_execution_step": null,
+          "request_id": null,
+          "request_generation": null,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "upstream_no_send",
+          "record_kind": "underrun"
+        },
+        {
+          "actual_execution_step": 5,
+          "intended_execution_step": null,
+          "request_id": null,
+          "request_generation": null,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "upstream_no_send",
+          "record_kind": "underrun"
+        },
+        {
+          "actual_execution_step": 6,
+          "intended_execution_step": null,
+          "request_id": null,
+          "request_generation": null,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "upstream_no_send",
+          "record_kind": "underrun"
+        },
+        {
+          "actual_execution_step": 7,
+          "intended_execution_step": null,
+          "request_id": null,
+          "request_generation": null,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "upstream_no_send",
+          "record_kind": "underrun"
+        },
+        {
+          "actual_execution_step": 8,
+          "intended_execution_step": null,
+          "request_id": null,
+          "request_generation": null,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "upstream_no_send",
+          "record_kind": "underrun"
+        },
+        {
+          "actual_execution_step": 9,
+          "intended_execution_step": 7.0,
+          "request_id": "out_of_order-seed2026073100-request01",
+          "request_generation": 0,
+          "queue_depth_before_action": 12,
+          "queue_depth_after_action": 11,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 10,
+          "intended_execution_step": 8.0,
+          "request_id": "out_of_order-seed2026073100-request01",
+          "request_generation": 0,
+          "queue_depth_before_action": 11,
+          "queue_depth_after_action": 10,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 11,
+          "intended_execution_step": 3.0,
+          "request_id": "out_of_order-seed2026073100-request00",
+          "request_generation": 0,
+          "queue_depth_before_action": 10,
+          "queue_depth_after_action": 9,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 12,
+          "intended_execution_step": 4.0,
+          "request_id": "out_of_order-seed2026073100-request00",
+          "request_generation": 0,
+          "queue_depth_before_action": 9,
+          "queue_depth_after_action": 8,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 13,
+          "intended_execution_step": 5.0,
+          "request_id": "out_of_order-seed2026073100-request00",
+          "request_generation": 0,
+          "queue_depth_before_action": 8,
+          "queue_depth_after_action": 7,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 14,
+          "intended_execution_step": 6.0,
+          "request_id": "out_of_order-seed2026073100-request00",
+          "request_generation": 0,
+          "queue_depth_before_action": 7,
+          "queue_depth_after_action": 6,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 15,
+          "intended_execution_step": 7.0,
+          "request_id": "out_of_order-seed2026073100-request00",
+          "request_generation": 0,
+          "queue_depth_before_action": 6,
+          "queue_depth_after_action": 5,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 16,
+          "intended_execution_step": 8.0,
+          "request_id": "out_of_order-seed2026073100-request00",
+          "request_generation": 0,
+          "queue_depth_before_action": 5,
+          "queue_depth_after_action": 4,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 17,
+          "intended_execution_step": 9.0,
+          "request_id": "out_of_order-seed2026073100-request00",
+          "request_generation": 0,
+          "queue_depth_before_action": 4,
+          "queue_depth_after_action": 3,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 18,
+          "intended_execution_step": 10.0,
+          "request_id": "out_of_order-seed2026073100-request00",
+          "request_generation": 0,
+          "queue_depth_before_action": 3,
+          "queue_depth_after_action": 2,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 19,
+          "intended_execution_step": 11.0,
+          "request_id": "out_of_order-seed2026073100-request00",
+          "request_generation": 0,
+          "queue_depth_before_action": 2,
+          "queue_depth_after_action": 1,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 20,
+          "intended_execution_step": 12.0,
+          "request_id": "out_of_order-seed2026073100-request00",
+          "request_generation": 0,
+          "queue_depth_before_action": 1,
+          "queue_depth_after_action": 0,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 21,
+          "intended_execution_step": 22.0,
+          "request_id": "out_of_order-seed2026073100-request03",
+          "request_generation": 0,
+          "queue_depth_before_action": 9,
+          "queue_depth_after_action": 8,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 22,
+          "intended_execution_step": 23.0,
+          "request_id": "out_of_order-seed2026073100-request03",
+          "request_generation": 0,
+          "queue_depth_before_action": 8,
+          "queue_depth_after_action": 7,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 23,
+          "intended_execution_step": 24.0,
+          "request_id": "out_of_order-seed2026073100-request02",
+          "request_generation": 0,
+          "queue_depth_before_action": 1,
+          "queue_depth_after_action": 0,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 24,
+          "intended_execution_step": null,
+          "request_id": null,
+          "request_generation": null,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "upstream_no_send",
+          "record_kind": "underrun"
+        },
+        {
+          "actual_execution_step": 25,
+          "intended_execution_step": null,
+          "request_id": null,
+          "request_generation": null,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "upstream_no_send",
+          "record_kind": "underrun"
+        },
+        {
+          "actual_execution_step": 26,
+          "intended_execution_step": null,
+          "request_id": null,
+          "request_generation": null,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "upstream_no_send",
+          "record_kind": "underrun"
+        },
+        {
+          "actual_execution_step": 27,
+          "intended_execution_step": null,
+          "request_id": null,
+          "request_generation": null,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "upstream_no_send",
+          "record_kind": "underrun"
+        },
+        {
+          "actual_execution_step": 28,
+          "intended_execution_step": null,
+          "request_id": null,
+          "request_generation": null,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "upstream_no_send",
+          "record_kind": "underrun"
+        },
+        {
+          "actual_execution_step": 29,
+          "intended_execution_step": null,
+          "request_id": null,
+          "request_generation": null,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "upstream_no_send",
+          "record_kind": "underrun"
+        },
+        {
+          "actual_execution_step": 30,
+          "intended_execution_step": null,
+          "request_id": null,
+          "request_generation": null,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "upstream_no_send",
+          "record_kind": "underrun"
+        },
+        {
+          "actual_execution_step": 31,
+          "intended_execution_step": null,
+          "request_id": null,
+          "request_generation": null,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "upstream_no_send",
+          "record_kind": "underrun"
+        },
+        {
+          "actual_execution_step": 32,
+          "intended_execution_step": null,
+          "request_id": null,
+          "request_generation": null,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "upstream_no_send",
+          "record_kind": "underrun"
+        },
+        {
+          "actual_execution_step": 33,
+          "intended_execution_step": 32.0,
+          "request_id": "out_of_order-seed2026073100-request05",
+          "request_generation": 0,
+          "queue_depth_before_action": 11,
+          "queue_depth_after_action": 10,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 34,
+          "intended_execution_step": 33.0,
+          "request_id": "out_of_order-seed2026073100-request05",
+          "request_generation": 0,
+          "queue_depth_before_action": 10,
+          "queue_depth_after_action": 9,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 35,
+          "intended_execution_step": 28.0,
+          "request_id": "out_of_order-seed2026073100-request04",
+          "request_generation": 0,
+          "queue_depth_before_action": 9,
+          "queue_depth_after_action": 8,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 36,
+          "intended_execution_step": 29.0,
+          "request_id": "out_of_order-seed2026073100-request04",
+          "request_generation": 0,
+          "queue_depth_before_action": 8,
+          "queue_depth_after_action": 7,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 37,
+          "intended_execution_step": 30.0,
+          "request_id": "out_of_order-seed2026073100-request04",
+          "request_generation": 0,
+          "queue_depth_before_action": 7,
+          "queue_depth_after_action": 6,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 38,
+          "intended_execution_step": 31.0,
+          "request_id": "out_of_order-seed2026073100-request04",
+          "request_generation": 0,
+          "queue_depth_before_action": 6,
+          "queue_depth_after_action": 5,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 39,
+          "intended_execution_step": 32.0,
+          "request_id": "out_of_order-seed2026073100-request04",
+          "request_generation": 0,
+          "queue_depth_before_action": 5,
+          "queue_depth_after_action": 4,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 40,
+          "intended_execution_step": 33.0,
+          "request_id": "out_of_order-seed2026073100-request04",
+          "request_generation": 0,
+          "queue_depth_before_action": 4,
+          "queue_depth_after_action": 3,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 41,
+          "intended_execution_step": 34.0,
+          "request_id": "out_of_order-seed2026073100-request04",
+          "request_generation": 0,
+          "queue_depth_before_action": 3,
+          "queue_depth_after_action": 2,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 42,
+          "intended_execution_step": 35.0,
+          "request_id": "out_of_order-seed2026073100-request04",
+          "request_generation": 0,
+          "queue_depth_before_action": 2,
+          "queue_depth_after_action": 1,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 43,
+          "intended_execution_step": 36.0,
+          "request_id": "out_of_order-seed2026073100-request04",
+          "request_generation": 0,
+          "queue_depth_before_action": 1,
+          "queue_depth_after_action": 0,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 44,
+          "intended_execution_step": null,
+          "request_id": null,
+          "request_generation": null,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "upstream_no_send",
+          "record_kind": "underrun"
+        },
+        {
+          "actual_execution_step": 45,
+          "intended_execution_step": 45.0,
+          "request_id": "out_of_order-seed2026073100-request07",
+          "request_generation": 0,
+          "queue_depth_before_action": 10,
+          "queue_depth_after_action": 9,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 46,
+          "intended_execution_step": 46.0,
+          "request_id": "out_of_order-seed2026073100-request07",
+          "request_generation": 0,
+          "queue_depth_before_action": 9,
+          "queue_depth_after_action": 8,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 47,
+          "intended_execution_step": 47.0,
+          "request_id": "out_of_order-seed2026073100-request06",
+          "request_generation": 0,
+          "queue_depth_before_action": 2,
+          "queue_depth_after_action": 1,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 48,
+          "intended_execution_step": 48.0,
+          "request_id": "out_of_order-seed2026073100-request06",
+          "request_generation": 0,
+          "queue_depth_before_action": 1,
+          "queue_depth_after_action": 0,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        }
+      ],
+      "queue_transitions": [
+        {
+          "request_id": "out_of_order-seed2026073100-request01",
+          "request_generation": 0,
+          "observation_step": 6,
+          "result_arrival_step": 8,
+          "queue_insertion_step": 9,
+          "accepted": true,
+          "reason": "upstream_aggregated",
+          "out_of_order": false,
+          "late_generation": false,
+          "old_queue_intended_steps": [],
+          "new_chunk_intended_steps": [
+            7.0,
+            8.0,
+            9.0,
+            10.0,
+            11.0,
+            12.0,
+            13.0,
+            14.0,
+            15.0,
+            16.0,
+            17.0,
+            18.0
+          ],
+          "discarded_prefix_intended_steps": [],
+          "new_queue_intended_steps": [
+            7.0,
+            8.0,
+            9.0,
+            10.0,
+            11.0,
+            12.0,
+            13.0,
+            14.0,
+            15.0,
+            16.0,
+            17.0,
+            18.0
+          ],
+          "actions_inserted": 12,
+          "actions_discarded": 0
+        },
+        {
+          "request_id": "out_of_order-seed2026073100-request00",
+          "request_generation": 0,
+          "observation_step": 0,
+          "result_arrival_step": 10,
+          "queue_insertion_step": 11,
+          "accepted": true,
+          "reason": "upstream_aggregated",
+          "out_of_order": true,
+          "late_generation": false,
+          "old_queue_intended_steps": [
+            9.0,
+            10.0,
+            11.0,
+            12.0,
+            13.0,
+            14.0,
+            15.0,
+            16.0,
+            17.0,
+            18.0
+          ],
+          "new_chunk_intended_steps": [
+            1.0,
+            2.0,
+            3.0,
+            4.0,
+            5.0,
+            6.0,
+            7.0,
+            8.0,
+            9.0,
+            10.0,
+            11.0,
+            12.0
+          ],
+          "discarded_prefix_intended_steps": [
+            1.0,
+            2.0
+          ],
+          "new_queue_intended_steps": [
+            3.0,
+            4.0,
+            5.0,
+            6.0,
+            7.0,
+            8.0,
+            9.0,
+            10.0,
+            11.0,
+            12.0
+          ],
+          "actions_inserted": 10,
+          "actions_discarded": 2
+        },
+        {
+          "request_id": "out_of_order-seed2026073100-request03",
+          "request_generation": 0,
+          "observation_step": 18,
+          "result_arrival_step": 20,
+          "queue_insertion_step": 21,
+          "accepted": true,
+          "reason": "upstream_aggregated",
+          "out_of_order": false,
+          "late_generation": false,
+          "old_queue_intended_steps": [],
+          "new_chunk_intended_steps": [
+            19.0,
+            20.0,
+            21.0,
+            22.0,
+            23.0,
+            24.0,
+            25.0,
+            26.0,
+            27.0,
+            28.0,
+            29.0,
+            30.0
+          ],
+          "discarded_prefix_intended_steps": [
+            19.0,
+            20.0,
+            21.0
+          ],
+          "new_queue_intended_steps": [
+            22.0,
+            23.0,
+            24.0,
+            25.0,
+            26.0,
+            27.0,
+            28.0,
+            29.0,
+            30.0
+          ],
+          "actions_inserted": 9,
+          "actions_discarded": 3
+        },
+        {
+          "request_id": "out_of_order-seed2026073100-request02",
+          "request_generation": 0,
+          "observation_step": 12,
+          "result_arrival_step": 22,
+          "queue_insertion_step": 23,
+          "accepted": true,
+          "reason": "upstream_aggregated",
+          "out_of_order": true,
+          "late_generation": false,
+          "old_queue_intended_steps": [
+            24.0,
+            25.0,
+            26.0,
+            27.0,
+            28.0,
+            29.0,
+            30.0
+          ],
+          "new_chunk_intended_steps": [
+            13.0,
+            14.0,
+            15.0,
+            16.0,
+            17.0,
+            18.0,
+            19.0,
+            20.0,
+            21.0,
+            22.0,
+            23.0,
+            24.0
+          ],
+          "discarded_prefix_intended_steps": [
+            13.0,
+            14.0,
+            15.0,
+            16.0,
+            17.0,
+            18.0,
+            19.0,
+            20.0,
+            21.0,
+            22.0,
+            23.0
+          ],
+          "new_queue_intended_steps": [
+            24.0
+          ],
+          "actions_inserted": 1,
+          "actions_discarded": 11
+        },
+        {
+          "request_id": "out_of_order-seed2026073100-request05",
+          "request_generation": 0,
+          "observation_step": 30,
+          "result_arrival_step": 32,
+          "queue_insertion_step": 33,
+          "accepted": true,
+          "reason": "upstream_aggregated",
+          "out_of_order": false,
+          "late_generation": false,
+          "old_queue_intended_steps": [],
+          "new_chunk_intended_steps": [
+            31.0,
+            32.0,
+            33.0,
+            34.0,
+            35.0,
+            36.0,
+            37.0,
+            38.0,
+            39.0,
+            40.0,
+            41.0,
+            42.0
+          ],
+          "discarded_prefix_intended_steps": [
+            31.0
+          ],
+          "new_queue_intended_steps": [
+            32.0,
+            33.0,
+            34.0,
+            35.0,
+            36.0,
+            37.0,
+            38.0,
+            39.0,
+            40.0,
+            41.0,
+            42.0
+          ],
+          "actions_inserted": 11,
+          "actions_discarded": 1
+        },
+        {
+          "request_id": "out_of_order-seed2026073100-request04",
+          "request_generation": 0,
+          "observation_step": 24,
+          "result_arrival_step": 34,
+          "queue_insertion_step": 35,
+          "accepted": true,
+          "reason": "upstream_aggregated",
+          "out_of_order": true,
+          "late_generation": false,
+          "old_queue_intended_steps": [
+            34.0,
+            35.0,
+            36.0,
+            37.0,
+            38.0,
+            39.0,
+            40.0,
+            41.0,
+            42.0
+          ],
+          "new_chunk_intended_steps": [
+            25.0,
+            26.0,
+            27.0,
+            28.0,
+            29.0,
+            30.0,
+            31.0,
+            32.0,
+            33.0,
+            34.0,
+            35.0,
+            36.0
+          ],
+          "discarded_prefix_intended_steps": [
+            25.0,
+            26.0,
+            27.0
+          ],
+          "new_queue_intended_steps": [
+            28.0,
+            29.0,
+            30.0,
+            31.0,
+            32.0,
+            33.0,
+            34.0,
+            35.0,
+            36.0
+          ],
+          "actions_inserted": 9,
+          "actions_discarded": 3
+        },
+        {
+          "request_id": "out_of_order-seed2026073100-request07",
+          "request_generation": 0,
+          "observation_step": 42,
+          "result_arrival_step": 44,
+          "queue_insertion_step": 45,
+          "accepted": true,
+          "reason": "upstream_aggregated",
+          "out_of_order": false,
+          "late_generation": false,
+          "old_queue_intended_steps": [],
+          "new_chunk_intended_steps": [
+            43.0,
+            44.0,
+            45.0,
+            46.0,
+            47.0,
+            48.0,
+            49.0,
+            50.0,
+            51.0,
+            52.0,
+            53.0,
+            54.0
+          ],
+          "discarded_prefix_intended_steps": [
+            43.0,
+            44.0
+          ],
+          "new_queue_intended_steps": [
+            45.0,
+            46.0,
+            47.0,
+            48.0,
+            49.0,
+            50.0,
+            51.0,
+            52.0,
+            53.0,
+            54.0
+          ],
+          "actions_inserted": 10,
+          "actions_discarded": 2
+        },
+        {
+          "request_id": "out_of_order-seed2026073100-request06",
+          "request_generation": 0,
+          "observation_step": 36,
+          "result_arrival_step": 46,
+          "queue_insertion_step": 47,
+          "accepted": true,
+          "reason": "upstream_aggregated",
+          "out_of_order": true,
+          "late_generation": false,
+          "old_queue_intended_steps": [
+            47.0,
+            48.0,
+            49.0,
+            50.0,
+            51.0,
+            52.0,
+            53.0,
+            54.0
+          ],
+          "new_chunk_intended_steps": [
+            37.0,
+            38.0,
+            39.0,
+            40.0,
+            41.0,
+            42.0,
+            43.0,
+            44.0,
+            45.0,
+            46.0,
+            47.0,
+            48.0
+          ],
+          "discarded_prefix_intended_steps": [
+            37.0,
+            38.0,
+            39.0,
+            40.0,
+            41.0,
+            42.0,
+            43.0,
+            44.0,
+            45.0,
+            46.0
+          ],
+          "new_queue_intended_steps": [
+            47.0,
+            48.0
+          ],
+          "actions_inserted": 2,
+          "actions_discarded": 10
+        }
+      ]
+    },
+    "actionstream_aligned": {
+      "executions": [
+        {
+          "actual_execution_step": 1,
+          "intended_execution_step": null,
+          "request_id": null,
+          "request_generation": null,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "startup_block",
+          "record_kind": "underrun"
+        },
+        {
+          "actual_execution_step": 2,
+          "intended_execution_step": null,
+          "request_id": null,
+          "request_generation": null,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "startup_block",
+          "record_kind": "underrun"
+        },
+        {
+          "actual_execution_step": 3,
+          "intended_execution_step": null,
+          "request_id": null,
+          "request_generation": null,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "startup_block",
+          "record_kind": "underrun"
+        },
+        {
+          "actual_execution_step": 4,
+          "intended_execution_step": null,
+          "request_id": null,
+          "request_generation": null,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "startup_block",
+          "record_kind": "underrun"
+        },
+        {
+          "actual_execution_step": 5,
+          "intended_execution_step": null,
+          "request_id": null,
+          "request_generation": null,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "startup_block",
+          "record_kind": "underrun"
+        },
+        {
+          "actual_execution_step": 6,
+          "intended_execution_step": null,
+          "request_id": null,
+          "request_generation": null,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "startup_block",
+          "record_kind": "underrun"
+        },
+        {
+          "actual_execution_step": 7,
+          "intended_execution_step": null,
+          "request_id": null,
+          "request_generation": null,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "startup_block",
+          "record_kind": "underrun"
+        },
+        {
+          "actual_execution_step": 8,
+          "intended_execution_step": null,
+          "request_id": null,
+          "request_generation": null,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "startup_block",
+          "record_kind": "underrun"
+        },
+        {
+          "actual_execution_step": 9,
+          "intended_execution_step": 9.0,
+          "request_id": "out_of_order-seed2026073100-request01",
+          "request_generation": 0,
+          "queue_depth_before_action": 10,
+          "queue_depth_after_action": 9,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 10,
+          "intended_execution_step": 10.0,
+          "request_id": "out_of_order-seed2026073100-request01",
+          "request_generation": 0,
+          "queue_depth_before_action": 9,
+          "queue_depth_after_action": 8,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 11,
+          "intended_execution_step": 11.0,
+          "request_id": "out_of_order-seed2026073100-request00",
+          "request_generation": 0,
+          "queue_depth_before_action": 2,
+          "queue_depth_after_action": 1,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 12,
+          "intended_execution_step": 12.0,
+          "request_id": "out_of_order-seed2026073100-request00",
+          "request_generation": 0,
+          "queue_depth_before_action": 1,
+          "queue_depth_after_action": 0,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 13,
+          "intended_execution_step": 12.0,
+          "request_id": "out_of_order-seed2026073100-request00",
+          "request_generation": 0,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "hold_repeat_last_command",
+          "record_kind": "hold"
+        },
+        {
+          "actual_execution_step": 14,
+          "intended_execution_step": 12.0,
+          "request_id": "out_of_order-seed2026073100-request00",
+          "request_generation": 0,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "hold_repeat_last_command",
+          "record_kind": "hold"
+        },
+        {
+          "actual_execution_step": 15,
+          "intended_execution_step": 12.0,
+          "request_id": "out_of_order-seed2026073100-request00",
+          "request_generation": 0,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "hold_repeat_last_command",
+          "record_kind": "hold"
+        },
+        {
+          "actual_execution_step": 16,
+          "intended_execution_step": 12.0,
+          "request_id": "out_of_order-seed2026073100-request00",
+          "request_generation": 0,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "hold_repeat_last_command",
+          "record_kind": "hold"
+        },
+        {
+          "actual_execution_step": 17,
+          "intended_execution_step": 12.0,
+          "request_id": "out_of_order-seed2026073100-request00",
+          "request_generation": 0,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "hold_repeat_last_command",
+          "record_kind": "hold"
+        },
+        {
+          "actual_execution_step": 18,
+          "intended_execution_step": 12.0,
+          "request_id": "out_of_order-seed2026073100-request00",
+          "request_generation": 0,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "hold_repeat_last_command",
+          "record_kind": "hold"
+        },
+        {
+          "actual_execution_step": 19,
+          "intended_execution_step": 12.0,
+          "request_id": "out_of_order-seed2026073100-request00",
+          "request_generation": 0,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "hold_repeat_last_command",
+          "record_kind": "hold"
+        },
+        {
+          "actual_execution_step": 20,
+          "intended_execution_step": 12.0,
+          "request_id": "out_of_order-seed2026073100-request00",
+          "request_generation": 0,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "hold_repeat_last_command",
+          "record_kind": "hold"
+        },
+        {
+          "actual_execution_step": 21,
+          "intended_execution_step": 21.0,
+          "request_id": "out_of_order-seed2026073100-request03",
+          "request_generation": 0,
+          "queue_depth_before_action": 10,
+          "queue_depth_after_action": 9,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 22,
+          "intended_execution_step": 22.0,
+          "request_id": "out_of_order-seed2026073100-request03",
+          "request_generation": 0,
+          "queue_depth_before_action": 9,
+          "queue_depth_after_action": 8,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 23,
+          "intended_execution_step": 23.0,
+          "request_id": "out_of_order-seed2026073100-request02",
+          "request_generation": 0,
+          "queue_depth_before_action": 2,
+          "queue_depth_after_action": 1,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 24,
+          "intended_execution_step": 24.0,
+          "request_id": "out_of_order-seed2026073100-request02",
+          "request_generation": 0,
+          "queue_depth_before_action": 1,
+          "queue_depth_after_action": 0,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 25,
+          "intended_execution_step": 24.0,
+          "request_id": "out_of_order-seed2026073100-request02",
+          "request_generation": 0,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "hold_repeat_last_command",
+          "record_kind": "hold"
+        },
+        {
+          "actual_execution_step": 26,
+          "intended_execution_step": 24.0,
+          "request_id": "out_of_order-seed2026073100-request02",
+          "request_generation": 0,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "hold_repeat_last_command",
+          "record_kind": "hold"
+        },
+        {
+          "actual_execution_step": 27,
+          "intended_execution_step": 24.0,
+          "request_id": "out_of_order-seed2026073100-request02",
+          "request_generation": 0,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "hold_repeat_last_command",
+          "record_kind": "hold"
+        },
+        {
+          "actual_execution_step": 28,
+          "intended_execution_step": 24.0,
+          "request_id": "out_of_order-seed2026073100-request02",
+          "request_generation": 0,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "hold_repeat_last_command",
+          "record_kind": "hold"
+        },
+        {
+          "actual_execution_step": 29,
+          "intended_execution_step": 24.0,
+          "request_id": "out_of_order-seed2026073100-request02",
+          "request_generation": 0,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "hold_repeat_last_command",
+          "record_kind": "hold"
+        },
+        {
+          "actual_execution_step": 30,
+          "intended_execution_step": 24.0,
+          "request_id": "out_of_order-seed2026073100-request02",
+          "request_generation": 0,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "hold_repeat_last_command",
+          "record_kind": "hold"
+        },
+        {
+          "actual_execution_step": 31,
+          "intended_execution_step": 24.0,
+          "request_id": "out_of_order-seed2026073100-request02",
+          "request_generation": 0,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "hold_repeat_last_command",
+          "record_kind": "hold"
+        },
+        {
+          "actual_execution_step": 32,
+          "intended_execution_step": 24.0,
+          "request_id": "out_of_order-seed2026073100-request02",
+          "request_generation": 0,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "hold_repeat_last_command",
+          "record_kind": "hold"
+        },
+        {
+          "actual_execution_step": 33,
+          "intended_execution_step": 33.0,
+          "request_id": "out_of_order-seed2026073100-request05",
+          "request_generation": 0,
+          "queue_depth_before_action": 10,
+          "queue_depth_after_action": 9,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 34,
+          "intended_execution_step": 34.0,
+          "request_id": "out_of_order-seed2026073100-request05",
+          "request_generation": 0,
+          "queue_depth_before_action": 9,
+          "queue_depth_after_action": 8,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 35,
+          "intended_execution_step": 35.0,
+          "request_id": "out_of_order-seed2026073100-request04",
+          "request_generation": 0,
+          "queue_depth_before_action": 2,
+          "queue_depth_after_action": 1,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 36,
+          "intended_execution_step": 36.0,
+          "request_id": "out_of_order-seed2026073100-request04",
+          "request_generation": 0,
+          "queue_depth_before_action": 1,
+          "queue_depth_after_action": 0,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 37,
+          "intended_execution_step": 36.0,
+          "request_id": "out_of_order-seed2026073100-request04",
+          "request_generation": 0,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "hold_repeat_last_command",
+          "record_kind": "hold"
+        },
+        {
+          "actual_execution_step": 38,
+          "intended_execution_step": 36.0,
+          "request_id": "out_of_order-seed2026073100-request04",
+          "request_generation": 0,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "hold_repeat_last_command",
+          "record_kind": "hold"
+        },
+        {
+          "actual_execution_step": 39,
+          "intended_execution_step": 36.0,
+          "request_id": "out_of_order-seed2026073100-request04",
+          "request_generation": 0,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "hold_repeat_last_command",
+          "record_kind": "hold"
+        },
+        {
+          "actual_execution_step": 40,
+          "intended_execution_step": 36.0,
+          "request_id": "out_of_order-seed2026073100-request04",
+          "request_generation": 0,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "hold_repeat_last_command",
+          "record_kind": "hold"
+        },
+        {
+          "actual_execution_step": 41,
+          "intended_execution_step": 36.0,
+          "request_id": "out_of_order-seed2026073100-request04",
+          "request_generation": 0,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "hold_repeat_last_command",
+          "record_kind": "hold"
+        },
+        {
+          "actual_execution_step": 42,
+          "intended_execution_step": 36.0,
+          "request_id": "out_of_order-seed2026073100-request04",
+          "request_generation": 0,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "hold_repeat_last_command",
+          "record_kind": "hold"
+        },
+        {
+          "actual_execution_step": 43,
+          "intended_execution_step": 36.0,
+          "request_id": "out_of_order-seed2026073100-request04",
+          "request_generation": 0,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "hold_repeat_last_command",
+          "record_kind": "hold"
+        },
+        {
+          "actual_execution_step": 44,
+          "intended_execution_step": 36.0,
+          "request_id": "out_of_order-seed2026073100-request04",
+          "request_generation": 0,
+          "queue_depth_before_action": 0,
+          "queue_depth_after_action": 0,
+          "state": "hold_repeat_last_command",
+          "record_kind": "hold"
+        },
+        {
+          "actual_execution_step": 45,
+          "intended_execution_step": 45.0,
+          "request_id": "out_of_order-seed2026073100-request07",
+          "request_generation": 0,
+          "queue_depth_before_action": 10,
+          "queue_depth_after_action": 9,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 46,
+          "intended_execution_step": 46.0,
+          "request_id": "out_of_order-seed2026073100-request07",
+          "request_generation": 0,
+          "queue_depth_before_action": 9,
+          "queue_depth_after_action": 8,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 47,
+          "intended_execution_step": 47.0,
+          "request_id": "out_of_order-seed2026073100-request06",
+          "request_generation": 0,
+          "queue_depth_before_action": 2,
+          "queue_depth_after_action": 1,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        },
+        {
+          "actual_execution_step": 48,
+          "intended_execution_step": 48.0,
+          "request_id": "out_of_order-seed2026073100-request06",
+          "request_generation": 0,
+          "queue_depth_before_action": 1,
+          "queue_depth_after_action": 0,
+          "state": "fresh",
+          "record_kind": "policy_action"
+        }
+      ],
+      "queue_transitions": [
+        {
+          "request_id": "out_of_order-seed2026073100-request01",
+          "request_generation": 0,
+          "observation_step": 6,
+          "result_arrival_step": 8,
+          "queue_insertion_step": 9,
+          "accepted": true,
+          "reason": "aligned_replacement",
+          "out_of_order": false,
+          "late_generation": false,
+          "old_queue_intended_steps": [],
+          "new_chunk_intended_steps": [
+            7.0,
+            8.0,
+            9.0,
+            10.0,
+            11.0,
+            12.0,
+            13.0,
+            14.0,
+            15.0,
+            16.0,
+            17.0,
+            18.0
+          ],
+          "discarded_prefix_intended_steps": [
+            7.0,
+            8.0
+          ],
+          "new_queue_intended_steps": [
+            9.0,
+            10.0,
+            11.0,
+            12.0,
+            13.0,
+            14.0,
+            15.0,
+            16.0,
+            17.0,
+            18.0
+          ],
+          "actions_inserted": 10,
+          "actions_discarded": 2
+        },
+        {
+          "request_id": "out_of_order-seed2026073100-request00",
+          "request_generation": 0,
+          "observation_step": 0,
+          "result_arrival_step": 10,
+          "queue_insertion_step": 11,
+          "accepted": true,
+          "reason": "aligned_replacement",
+          "out_of_order": true,
+          "late_generation": false,
+          "old_queue_intended_steps": [
+            11.0,
+            12.0,
+            13.0,
+            14.0,
+            15.0,
+            16.0,
+            17.0,
+            18.0
+          ],
+          "new_chunk_intended_steps": [
+            1.0,
+            2.0,
+            3.0,
+            4.0,
+            5.0,
+            6.0,
+            7.0,
+            8.0,
+            9.0,
+            10.0,
+            11.0,
+            12.0
+          ],
+          "discarded_prefix_intended_steps": [
+            1.0,
+            2.0,
+            3.0,
+            4.0,
+            5.0,
+            6.0,
+            7.0,
+            8.0,
+            9.0,
+            10.0
+          ],
+          "new_queue_intended_steps": [
+            11.0,
+            12.0
+          ],
+          "actions_inserted": 2,
+          "actions_discarded": 10
+        },
+        {
+          "request_id": "out_of_order-seed2026073100-request03",
+          "request_generation": 0,
+          "observation_step": 18,
+          "result_arrival_step": 20,
+          "queue_insertion_step": 21,
+          "accepted": true,
+          "reason": "aligned_replacement",
+          "out_of_order": false,
+          "late_generation": false,
+          "old_queue_intended_steps": [],
+          "new_chunk_intended_steps": [
+            19.0,
+            20.0,
+            21.0,
+            22.0,
+            23.0,
+            24.0,
+            25.0,
+            26.0,
+            27.0,
+            28.0,
+            29.0,
+            30.0
+          ],
+          "discarded_prefix_intended_steps": [
+            19.0,
+            20.0
+          ],
+          "new_queue_intended_steps": [
+            21.0,
+            22.0,
+            23.0,
+            24.0,
+            25.0,
+            26.0,
+            27.0,
+            28.0,
+            29.0,
+            30.0
+          ],
+          "actions_inserted": 10,
+          "actions_discarded": 2
+        },
+        {
+          "request_id": "out_of_order-seed2026073100-request02",
+          "request_generation": 0,
+          "observation_step": 12,
+          "result_arrival_step": 22,
+          "queue_insertion_step": 23,
+          "accepted": true,
+          "reason": "aligned_replacement",
+          "out_of_order": true,
+          "late_generation": false,
+          "old_queue_intended_steps": [
+            23.0,
+            24.0,
+            25.0,
+            26.0,
+            27.0,
+            28.0,
+            29.0,
+            30.0
+          ],
+          "new_chunk_intended_steps": [
+            13.0,
+            14.0,
+            15.0,
+            16.0,
+            17.0,
+            18.0,
+            19.0,
+            20.0,
+            21.0,
+            22.0,
+            23.0,
+            24.0
+          ],
+          "discarded_prefix_intended_steps": [
+            13.0,
+            14.0,
+            15.0,
+            16.0,
+            17.0,
+            18.0,
+            19.0,
+            20.0,
+            21.0,
+            22.0
+          ],
+          "new_queue_intended_steps": [
+            23.0,
+            24.0
+          ],
+          "actions_inserted": 2,
+          "actions_discarded": 10
+        },
+        {
+          "request_id": "out_of_order-seed2026073100-request05",
+          "request_generation": 0,
+          "observation_step": 30,
+          "result_arrival_step": 32,
+          "queue_insertion_step": 33,
+          "accepted": true,
+          "reason": "aligned_replacement",
+          "out_of_order": false,
+          "late_generation": false,
+          "old_queue_intended_steps": [],
+          "new_chunk_intended_steps": [
+            31.0,
+            32.0,
+            33.0,
+            34.0,
+            35.0,
+            36.0,
+            37.0,
+            38.0,
+            39.0,
+            40.0,
+            41.0,
+            42.0
+          ],
+          "discarded_prefix_intended_steps": [
+            31.0,
+            32.0
+          ],
+          "new_queue_intended_steps": [
+            33.0,
+            34.0,
+            35.0,
+            36.0,
+            37.0,
+            38.0,
+            39.0,
+            40.0,
+            41.0,
+            42.0
+          ],
+          "actions_inserted": 10,
+          "actions_discarded": 2
+        },
+        {
+          "request_id": "out_of_order-seed2026073100-request04",
+          "request_generation": 0,
+          "observation_step": 24,
+          "result_arrival_step": 34,
+          "queue_insertion_step": 35,
+          "accepted": true,
+          "reason": "aligned_replacement",
+          "out_of_order": true,
+          "late_generation": false,
+          "old_queue_intended_steps": [
+            35.0,
+            36.0,
+            37.0,
+            38.0,
+            39.0,
+            40.0,
+            41.0,
+            42.0
+          ],
+          "new_chunk_intended_steps": [
+            25.0,
+            26.0,
+            27.0,
+            28.0,
+            29.0,
+            30.0,
+            31.0,
+            32.0,
+            33.0,
+            34.0,
+            35.0,
+            36.0
+          ],
+          "discarded_prefix_intended_steps": [
+            25.0,
+            26.0,
+            27.0,
+            28.0,
+            29.0,
+            30.0,
+            31.0,
+            32.0,
+            33.0,
+            34.0
+          ],
+          "new_queue_intended_steps": [
+            35.0,
+            36.0
+          ],
+          "actions_inserted": 2,
+          "actions_discarded": 10
+        },
+        {
+          "request_id": "out_of_order-seed2026073100-request07",
+          "request_generation": 0,
+          "observation_step": 42,
+          "result_arrival_step": 44,
+          "queue_insertion_step": 45,
+          "accepted": true,
+          "reason": "aligned_replacement",
+          "out_of_order": false,
+          "late_generation": false,
+          "old_queue_intended_steps": [],
+          "new_chunk_intended_steps": [
+            43.0,
+            44.0,
+            45.0,
+            46.0,
+            47.0,
+            48.0,
+            49.0,
+            50.0,
+            51.0,
+            52.0,
+            53.0,
+            54.0
+          ],
+          "discarded_prefix_intended_steps": [
+            43.0,
+            44.0
+          ],
+          "new_queue_intended_steps": [
+            45.0,
+            46.0,
+            47.0,
+            48.0,
+            49.0,
+            50.0,
+            51.0,
+            52.0,
+            53.0,
+            54.0
+          ],
+          "actions_inserted": 10,
+          "actions_discarded": 2
+        },
+        {
+          "request_id": "out_of_order-seed2026073100-request06",
+          "request_generation": 0,
+          "observation_step": 36,
+          "result_arrival_step": 46,
+          "queue_insertion_step": 47,
+          "accepted": true,
+          "reason": "aligned_replacement",
+          "out_of_order": true,
+          "late_generation": false,
+          "old_queue_intended_steps": [
+            47.0,
+            48.0,
+            49.0,
+            50.0,
+            51.0,
+            52.0,
+            53.0,
+            54.0
+          ],
+          "new_chunk_intended_steps": [
+            37.0,
+            38.0,
+            39.0,
+            40.0,
+            41.0,
+            42.0,
+            43.0,
+            44.0,
+            45.0,
+            46.0,
+            47.0,
+            48.0
+          ],
+          "discarded_prefix_intended_steps": [
+            37.0,
+            38.0,
+            39.0,
+            40.0,
+            41.0,
+            42.0,
+            43.0,
+            44.0,
+            45.0,
+            46.0
+          ],
+          "new_queue_intended_steps": [
+            47.0,
+            48.0
+          ],
+          "actions_inserted": 2,
+          "actions_discarded": 10
+        }
+      ]
+    }
+  }
+}

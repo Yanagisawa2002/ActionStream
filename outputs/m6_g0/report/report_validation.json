@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "milestone": "M6-G0",
+  "passed": true,
+  "checks": {
+    "benchmark_validation_passed": true,
+    "decision_hash_valid": true,
+    "paper_sections_complete": true,
+    "scope_boundaries_explicit": true,
+    "all_runtimes_reported": true,
+    "all_latency_families_reported": true,
+    "aggregate_matrix_has_42_rows": true,
+    "crosswalk_complete": true,
+    "source_references_complete": true,
+    "every_source_reference_is_pinned": true,
+    "port_surface_explicit": true,
+    "decision_is_frozen_label": true
+  },
+  "errors": []
+}

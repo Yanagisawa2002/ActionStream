@@ -1,0 +1,151 @@
+{
+  "schema_version": 1,
+  "milestone": "M6-G0",
+  "source_config": "C:\\Users\\cgliu\\OneDrive\\Documents\\ActionStream\\configs\\m6_g0.json",
+  "source_config_sha256": "a37f46067ba31783fd4eec83c18384f3fc638290fdb786c8dc4bc3d0dd23c9e0",
+  "frozen_before_benchmark": true,
+  "manifest": {
+    "schema_version": 1,
+    "milestone": "M6-G0",
+    "title": "LeRobot Async-Runtime Overlap and Port-Value Audit",
+    "frozen_before_benchmark": true,
+    "frozen_at": "2026-07-31T08:43:58.1523634Z",
+    "upstream": {
+      "repository_url": "https://github.com/huggingface/lerobot.git",
+      "commit": "62600065cdb349c1e41b0403c511f12ebfa686eb",
+      "source_version": "0.6.1",
+      "nearest_tag_description": "v0.6.0-105-g62600065",
+      "relative_checkout": ".external/lerobot"
+    },
+    "scenario": {
+      "chunk_horizon": 12,
+      "control_frequency_hz": 20,
+      "environment_dt_seconds": 0.05,
+      "action_dimensionality": 6,
+      "execution_steps": 48,
+      "request_interval_steps": 6,
+      "request_observation_steps": [
+        0,
+        6,
+        12,
+        18,
+        24,
+        30,
+        36,
+        42
+      ],
+      "official_chunk_size_threshold": 0.5,
+      "deterministic_trace_count": 4,
+      "stochastic_trace_count": 50,
+      "seed_base": 2026073100,
+      "ideal_action_encoding": [
+        "intended_execution_step",
+        "sin(intended_execution_step / 3)",
+        "cos(intended_execution_step / 5)",
+        "intended_execution_step mod 2",
+        "0.1 * intended_execution_step",
+        "-0.05 * intended_execution_step"
+      ],
+      "step_convention": {
+        "observation_step": "last completed control step",
+        "generated_intended_steps": "O+1 through O+H",
+        "result_arrival_step": "last completed control step when the result becomes available",
+        "queue_insertion_step": "result_arrival_step + 1",
+        "actual_execution_steps": "1 through execution_steps",
+        "stale_prefix_definition": "intended_execution_step < queue_insertion_step"
+      }
+    },
+    "latency_families": [
+      {
+        "id": "zero",
+        "kind": "fixed",
+        "delay_steps": 0,
+        "horizon_ratio": 0.0
+      },
+      {
+        "id": "quarter_horizon",
+        "kind": "fixed",
+        "delay_steps": 3,
+        "horizon_ratio": 0.25
+      },
+      {
+        "id": "sixty_percent_horizon",
+        "kind": "fixed",
+        "delay_steps": 7,
+        "horizon_ratio": 0.5833333333333334
+      },
+      {
+        "id": "one_twenty_percent_horizon",
+        "kind": "fixed",
+        "delay_steps": 14,
+        "horizon_ratio": 1.1666666666666667
+      },
+      {
+        "id": "bounded_jitter",
+        "kind": "seeded_jitter",
+        "center_delay_steps": 7,
+        "jitter_min_steps": -3,
+        "jitter_max_steps": 3,
+        "horizon_ratio_range": [
+          0.3333333333333333,
+          0.8333333333333334
+        ]
+      },
+      {
+        "id": "out_of_order",
+        "kind": "alternating",
+        "delay_steps_by_request_parity": [
+          10,
+          2
+        ],
+        "request_generation": 0
+      },
+      {
+        "id": "late_after_newer_generation",
+        "kind": "generation_race",
+        "first_request_delay_steps": 14,
+        "newer_request_delay_steps": 2,
+        "remaining_request_delay_steps": 7,
+        "first_request_generation": 0,
+        "newer_generation": 1
+      }
+    ],
+    "runtimes": {
+      "sync_reference": [
+        "sync_hold"
+      ],
+      "official_lerobot_act_compatible": [
+        "lerobot_weighted_average",
+        "lerobot_latest_only",
+        "lerobot_average",
+        "lerobot_conservative"
+      ],
+      "actionstream": [
+        "actionstream_aligned"
+      ]
+    },
+    "official_baseline_selection": {
+      "frozen_before_benchmark": true,
+      "scope": "all non-zero-latency families",
+      "lexicographic_keys": [
+        "mean stale-prefix actions executed per trace",
+        "mean family median temporal index error",
+        "mean queue-underrun rate",
+        "runtime identifier"
+      ]
+    },
+    "decision_thresholds": {
+      "stale_prefix_actions_executed_reduction_min_fraction": 0.5,
+      "median_temporal_index_error_reduction_min_fraction": 0.3,
+      "required_nonzero_latency_families_with_error_reduction": 3,
+      "queue_underrun_or_hold_worsening_max_percentage_points": 5.0,
+      "zero_latency_median_error_regression_max_steps": 0.1,
+      "zero_latency_underrun_worsening_max_percentage_points": 5.0,
+      "policy_retraining_allowed": false,
+      "act_architecture_modification_allowed": false,
+      "broad_runtime_fork_allowed": false
+    }
+  },
+  "trace_contract_count": 74,
+  "trace_contracts_sha256": "60fe364ec4e7bd7a4204945d0972973888cd7231f28d5acc13bc06c7a7e481fc"
+}
