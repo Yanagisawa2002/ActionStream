@@ -16,6 +16,38 @@ is contradicted in this regime. No fully stale chunk occurred, leaving that
 boundary untested. Aligned async succeeded in 29/30 pressure episodes, with one
 task-1 failure.
 
+## v1.0.0 release
+
+![ActionStream v1.0.0 pressure results](release/v1.0.0/media/actionstream_v1_demo_poster.png)
+
+- [Watch the 38-second captioned demonstration](release/v1.0.0/media/actionstream_v1_demo.mp4).
+- Core figures:
+  [M4 pressure headline](release/v1.0.0/figures/m4_pressure_headline.pdf),
+  [M3 paired latency effects](release/v1.0.0/figures/m3_latency_effects.pdf),
+  and
+  [queue-pressure calibration](release/v1.0.0/figures/queue_pressure_calibration.pdf).
+- [Machine-readable release summary](release/v1.0.0/evidence_summary.json) and
+  [asset manifest](release/v1.0.0/asset_manifest.json).
+- [Release notes](release/v1.0.0/RELEASE_NOTES.md) and
+  [third-party provenance](THIRD_PARTY_NOTICES.md).
+
+Regenerate and verify the release layer without running the benchmark:
+
+```bash
+python -m pip install -r requirements-release.txt
+python scripts/release/generate_figures.py
+python scripts/release/generate_release_summary.py
+python scripts/release/generate_demo_video.py
+python scripts/release/verify_release.py
+```
+
+The generated assets read the frozen evidence but never invoke the benchmark
+runtime or write under `outputs/`. Recorded outputs retain capture-time paths as
+provenance instead of rewriting historical evidence. In particular, frozen
+M3/M4 paths remain byte-for-byte unchanged because their source files are part
+of the validated SHA-256 chain. Portable validators resolve trace files by
+condition directory and filename rather than depending on recorded host paths.
+
 ## Hypothesis
 
 For a frozen X-VLA policy, dropping the stale prefix of a newly generated
@@ -94,7 +126,8 @@ distribution explicitly because `docker-desktop` is the Windows default:
 
 ```bash
 wsl.exe -d Ubuntu-24.04
-cd /mnt/c/Users/cgliu/OneDrive/Documents/ActionStream
+git clone https://github.com/Yanagisawa2002/ActionStream.git
+cd ActionStream
 ```
 
 Bootstrap or verify the pinned environment. Preserve the checked-in evidence

@@ -1,0 +1,129 @@
+{
+  "artifacts": [
+    {
+      "path": "release/v1.0.0/figures/m3_latency_effects.pdf",
+      "sha256": "5dc34b975bad68dde32e117e1f41b161cc3cd38e7def07f12c9ce8da35ca5ce6"
+    },
+    {
+      "path": "release/v1.0.0/figures/m4_pressure_headline.pdf",
+      "sha256": "a45d6668dd763419f29ea1562f3d2947143f146232ad8363dbc65d8beb4baae2"
+    },
+    {
+      "path": "release/v1.0.0/figures/queue_pressure_calibration.pdf",
+      "sha256": "5fa24cde9dd61dbdc86acd049aba54bd8278f51fe897f8c467c52a23cea19931"
+    },
+    {
+      "path": "release/v1.0.0/figures/m3_latency_effects.png",
+      "sha256": "e5490583094149ef83434b8ea64485cd52930fcaa5854a3c1dcb53ec5f38af82"
+    },
+    {
+      "path": "release/v1.0.0/figures/m4_pressure_headline.png",
+      "sha256": "8d4796bc10222a85af962df718bf226ff30fb48775b73e46f66921ce2251bdbe"
+    },
+    {
+      "path": "release/v1.0.0/figures/queue_pressure_calibration.png",
+      "sha256": "d99319c2e0aff350eea10caa3b90d971050f8ba427051272a0941c58bf43a211"
+    },
+    {
+      "path": "release/v1.0.0/evidence_summary.json",
+      "sha256": "c600068acb10795c3eeac89eb534bdad613396a811731cfb679e60d8fb791f40"
+    },
+    {
+      "path": "release/v1.0.0/RELEASE_NOTES.md",
+      "sha256": "adb642d85767f18f5b9d36618b14fcb44fa707839e90d50d9f0f9ed7255d240c"
+    },
+    {
+      "path": "release/v1.0.0/frozen_git_objects.json",
+      "sha256": "1f178ae8fdce51d1452b4d02457a09d32dcc7d5b7b63eade7b2b0bb1f8bb5d94"
+    },
+    {
+      "path": "requirements-release.txt",
+      "sha256": "01a170b188303d11741bd300e14f9b8b74e29fbf1837028939032604907b9912"
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "sha256": "123a095167b62f1eeeb91a701ba4ffe4a8e2006f1ef66bb8b654badbcabac22c"
+    }
+  ],
+  "content_boundary": "Task footage is from the official synchronous baseline and is illustrative only. M4 charts and telemetry are derived from frozen evidence.",
+  "inputs": [
+    {
+      "path": "outputs/m4/report/m4_report.json",
+      "sha256": "5a45aadb79fab025c12dfbb32988bcef5c854495dca5b61816e728699952cf45"
+    },
+    {
+      "path": "outputs/m4/calibration/calibration_plan.json",
+      "sha256": "c3a1c5418275f0daa1144ec1802c3652fca7b87c4a5737949dface6924441cd3"
+    },
+    {
+      "path": "outputs/m4/calibration/selection.json",
+      "sha256": "fd5a868b59feb37f4384a4acb0bfff7c618ee0f4366881d25495a64cfdf7b6f8"
+    },
+    {
+      "path": "release/v1.0.0/media/source/official_baseline_task0_episode2.mp4",
+      "sha256": "a19f410916c513bbe4240786e8ee12c8bc3f25526dfbe6469fde15aa5309a1b2"
+    },
+    {
+      "path": "release/v1.0.0/media/source/official_baseline_task1_episode8.mp4",
+      "sha256": "838a0a0d85d113601897d0f2cfcbfd7a21eb751ce35ccf577eaed1e17c4f8834"
+    },
+    {
+      "path": "release/v1.0.0/media/source/official_baseline_task2_episode3.mp4",
+      "sha256": "b237952c6e8d43625d8b6c3fec48c7fe6db397d5688d1acd97814ec8da5989ce"
+    },
+    {
+      "path": "outputs/m4/pressure/sync_hold_delay950/episodes.jsonl",
+      "sha256": "c3ad8bea9a7bd612f8f372b9767020a308f6b88e92d9f07f55e28c7b6c41fea6"
+    },
+    {
+      "path": "outputs/m4/pressure/async_naive_delay950/episodes.jsonl",
+      "sha256": "31cfe41addb57cf7595d46fad3a4c87a32fb792a540762afbf19aeda886d8bd4"
+    },
+    {
+      "path": "outputs/m4/pressure/async_aligned_delay950/episodes.jsonl",
+      "sha256": "a571379c7f2af327ec9ac266a229f646039a87889bf08e8be956edf216a429a9"
+    },
+    {
+      "path": "outputs/m4/pressure/sync_hold_delay950/traces/sync_hold_delay950_task0_episode2.npz",
+      "sha256": "9264018ca833c1df26e0e549f8c55389003285f5145fedd891a75428917ec831"
+    },
+    {
+      "path": "outputs/m4/pressure/async_naive_delay950/traces/async_naive_delay950_task0_episode2.npz",
+      "sha256": "3f638a03f17990fce4a6da7675505c707064521f5a56d33326b888f3a00f7e32"
+    },
+    {
+      "path": "outputs/m4/pressure/async_aligned_delay950/traces/async_aligned_delay950_task0_episode2.npz",
+      "sha256": "99011b1068b6bfa151db58b629da0bd4f79bf3f29af3bdc9fd450d9389b134a1"
+    },
+    {
+      "path": "release/v1.0.0/figures/queue_pressure_calibration.png",
+      "sha256": "d99319c2e0aff350eea10caa3b90d971050f8ba427051272a0941c58bf43a211"
+    },
+    {
+      "path": "release/v1.0.0/figures/m4_pressure_headline.png",
+      "sha256": "8d4796bc10222a85af962df718bf226ff30fb48775b73e46f66921ce2251bdbe"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "release/v1.0.0/media/actionstream_v1_demo.mp4",
+      "sha256": "cadbb8a4092f733ea8fc712f35d6a7591274fa13f1836d533c8dc43dbc0fff28"
+    },
+    {
+      "path": "release/v1.0.0/media/actionstream_v1_demo_poster.png",
+      "sha256": "6ac95c5b1ab25b7e8bff13df009d30107c6db1b0c0e78945568dab9767a1d7c9"
+    }
+  ],
+  "release": "v1.0.0",
+  "schema_version": 1,
+  "video": {
+    "codec": "h264",
+    "duration_seconds": 38.0,
+    "ffmpeg_version": "7.1-essentials_build-www.gyan.dev",
+    "fps": 30,
+    "frame_count": 1140,
+    "height": 720,
+    "pixel_format": "yuv420p(progressive)",
+    "width": 1280
+  }
+}

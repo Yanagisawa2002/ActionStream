@@ -4,13 +4,17 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "actionstream"
-version = "0.1.0"
+version = "1.0.0"
 description = "Delay-aware asynchronous action-chunk execution benchmark for X-VLA on LIBERO."
 readme = "README.md"
 requires-python = ">=3.12,<3.13"
 dependencies = [
   "lerobot[xvla,libero,evaluation]==0.6.0",
 ]
+
+[project.urls]
+Repository = "https://github.com/Yanagisawa2002/ActionStream"
+Issues = "https://github.com/Yanagisawa2002/ActionStream/issues"
 
 [project.scripts]
 actionstream-preflight = "actionstream.preflight:main"

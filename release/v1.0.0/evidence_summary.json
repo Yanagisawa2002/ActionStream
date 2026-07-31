@@ -1,0 +1,196 @@
+{
+  "claim_statuses": {
+    "comparison_id": "pressure_async_aligned_minus_async_naive",
+    "decision_rule": "Supported requires a favorable paired mean difference whose 95% paired bootstrap confidence interval excludes zero. Directional-only means the mean is favorable but its interval includes zero.",
+    "efficiency": {
+      "metrics": {
+        "environment_steps": {
+          "favorable_direction": "negative",
+          "paired_mean_difference": -399.9,
+          "paired_mean_difference_95pct_bootstrap_ci": [
+            -482.3358333333333,
+            -315.06583333333333
+          ],
+          "status": "supported"
+        },
+        "wall_clock_episode_seconds": {
+          "favorable_direction": "negative",
+          "paired_mean_difference": -19.925989352833465,
+          "paired_mean_difference_95pct_bootstrap_ci": [
+            -23.672444556745972,
+            -16.033504267759152
+          ],
+          "status": "supported"
+        }
+      },
+      "status": "supported"
+    },
+    "scope": "Primary success and efficiency statuses compare async_aligned with async_naive at the selected pressure delay. Cross-comparator fields separately record async_aligned versus sync_hold.",
+    "success": {
+      "favorable_direction": "positive",
+      "paired_mean_difference": 0.3333333333333333,
+      "paired_mean_difference_95pct_bootstrap_ci": [
+        0.13333333333333333,
+        0.5333333333333333
+      ],
+      "status": "supported"
+    },
+    "success_vs_sync_hold": {
+      "favorable_direction": "positive",
+      "paired_mean_difference": -0.03333333333333333,
+      "paired_mean_difference_95pct_bootstrap_ci": [
+        -0.1,
+        0.0
+      ],
+      "status": "unsupported"
+    },
+    "underrun": {
+      "aligned_minus_sync_hold_holds": {
+        "favorable_direction": "negative",
+        "paired_mean_difference": -68.5,
+        "paired_mean_difference_95pct_bootstrap_ci": [
+          -75.83333333333333,
+          -57.09916666666668
+        ],
+        "status": "supported"
+      },
+      "cross_comparator_status": "not_supported_as_stated_mixed_by_comparator",
+      "metrics": {
+        "queue_underrun_hold_steps": {
+          "favorable_direction": "negative",
+          "paired_mean_difference": 14.866666666666667,
+          "paired_mean_difference_95pct_bootstrap_ci": [
+            9.533333333333333,
+            24.4
+          ],
+          "status": "contradicted"
+        },
+        "stale_chunks_discarded": {
+          "favorable_direction": "negative",
+          "paired_mean_difference": 0.0,
+          "paired_mean_difference_95pct_bootstrap_ci": [
+            0.0,
+            0.0
+          ],
+          "status": "unsupported"
+        }
+      },
+      "status": "unsupported"
+    }
+  },
+  "limitations": [
+    "The 100% success rates in M3 and the ordinary-latency sync_hold runs are ceilings, not evidence that those modes are equally robust. The selected pressure matrix is not ceilinged.",
+    "Historical sync is a blocking evaluator baseline; sync_hold advances real-time simulator steps with repeated finite commands during inference.",
+    "Model inference latency, inference queue wait, and injected delivery delay are distinct; observation-to-delivery includes all three.",
+    "Ordinary 0/200 ms results and the selected queue-pressure results answer different operating-regime questions.",
+    "M3 has no explicit replacement boundary indices; its component jump metrics remain unavailable. M4 component metrics use directly logged events.",
+    "Calibration uses task 3 and three fixed states, while final pressure effects use 30 paired episodes over tasks 0-2.",
+    "Pressure rows record the selected delay but not the selection-file hash; ordering provenance relies on the frozen selection flag and runner contract.",
+    "Bootstrap intervals use episodes, not actions or replacement events, as independent units.",
+    "Primary episode step/time effects include 11 naive and one aligned 800-step timeout endpoints. In a post-hoc sensitivity restricted to the 18 pairs where both modes succeeded, aligned still used 274.8 fewer steps and 14.39 fewer seconds on average; this conditioned subset is diagnostic, not the primary estimate."
+  ],
+  "paired_async_aligned_minus_async_naive": {
+    "environment_steps": {
+      "aligned_minus_naive_mean": -399.9,
+      "paired_bootstrap_95pct_ci": [
+        -482.3358333333333,
+        -315.06583333333333
+      ],
+      "paired_episode_count": 30
+    },
+    "queue_underrun_hold_steps": {
+      "aligned_minus_naive_mean": 14.866666666666667,
+      "paired_bootstrap_95pct_ci": [
+        9.533333333333333,
+        24.4
+      ],
+      "paired_episode_count": 30
+    },
+    "stale_chunks_discarded": {
+      "aligned_minus_naive_mean": 0.0,
+      "paired_bootstrap_95pct_ci": [
+        0.0,
+        0.0
+      ],
+      "paired_episode_count": 30
+    },
+    "success": {
+      "aligned_minus_naive_mean": 0.3333333333333333,
+      "paired_bootstrap_95pct_ci": [
+        0.13333333333333333,
+        0.5333333333333333
+      ],
+      "paired_episode_count": 30
+    },
+    "wall_clock_episode_seconds": {
+      "aligned_minus_naive_mean": -19.925989352833465,
+      "paired_bootstrap_95pct_ci": [
+        -23.672444556745972,
+        -16.033504267759152
+      ],
+      "paired_episode_count": 30
+    }
+  },
+  "pressure_results": [
+    {
+      "environment_steps_mean": 211.33333333333334,
+      "episodes": 30,
+      "fully_stale_chunks_mean": 0.0,
+      "injected_delay_ms": 950,
+      "queue_hold_steps_mean": 84.86666666666666,
+      "runtime_mode": "sync_hold",
+      "success_rate": 1.0,
+      "successes": 30,
+      "wall_clock_seconds_mean": 13.673178044733323
+    },
+    {
+      "environment_steps_mean": 550.2333333333333,
+      "episodes": 30,
+      "fully_stale_chunks_mean": 0.0,
+      "injected_delay_ms": 950,
+      "queue_hold_steps_mean": 1.5,
+      "runtime_mode": "async_naive",
+      "success_rate": 0.6333333333333333,
+      "successes": 19,
+      "wall_clock_seconds_mean": 30.29550683046664
+    },
+    {
+      "environment_steps_mean": 150.33333333333334,
+      "episodes": 30,
+      "fully_stale_chunks_mean": 0.0,
+      "injected_delay_ms": 950,
+      "queue_hold_steps_mean": 16.366666666666667,
+      "runtime_mode": "async_aligned",
+      "success_rate": 0.9666666666666667,
+      "successes": 29,
+      "wall_clock_seconds_mean": 10.369517477633174
+    }
+  ],
+  "protocol": {
+    "bootstrap": {
+      "analysis_unit": "episode",
+      "confidence_level": 0.95,
+      "method": "paired nonparametric percentile bootstrap",
+      "resamples": 10000,
+      "seed": 20260730
+    },
+    "episodes_per_task": 10,
+    "paired_episode_count_per_mode": 30,
+    "queue_headroom_steps": 20,
+    "selected_pressure_delay_ms": 950,
+    "suite": "libero_object",
+    "task_ids": [
+      0,
+      1,
+      2
+    ]
+  },
+  "release": "v1.0.0",
+  "schema_version": 1,
+  "source": {
+    "path": "outputs/m4/report/m4_report.json",
+    "sha256": "5a45aadb79fab025c12dfbb32988bcef5c854495dca5b61816e728699952cf45",
+    "status": "validated"
+  },
+  "suggested_next_experiment": "Repeat the frozen 950 ms protocol on additional paired tasks and states to test generalization and diagnose the aligned task-1 state-16 failure. A separately preregistered higher-delay or smaller-headroom study would be needed to exercise fully stale-chunk rejection."
+}

@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "baseline_commit": "d84cb64e9e48b681e083828b24df5a38709c78c8",
+  "policy": "The validated runtime and M3/M4 evidence must remain byte-for-byte unchanged from the baseline commit. Capture-time absolute paths inside frozen outputs are provenance metadata and are intentionally preserved.",
+  "objects": {
+    "outputs/m3": "878ac286460313f7acf2d07a8ebbbc53cdeefdd8",
+    "outputs/m4": "29cdc3063aaf8d71a5024499f81ce518431aacc6",
+    "outputs/summary": "a6740e4498f073ea566bd6eda635aabe02eb2071",
+    "scripts/bootstrap_wsl.sh": "c90a93d36084e1b09b7cedb702c2b9be1e85be36",
+    "scripts/run_custom_sync_parity.sh": "d545234d7114f01d207ef4cc5136dc5b058b83b7",
+    "scripts/run_custom_sync_smoke.sh": "add0ea1caabfd861b22f8f8e312b551dae7f65f2",
+    "scripts/run_m3_matrix.sh": "5c8590530f0a7be49472987d09ec029dbe596295",
+    "scripts/run_m3_smoke.sh": "dee5110b9dd4292b6c50f9416888b1a57c8a786b",
+    "scripts/run_m4_calibration.sh": "2c780806d620cbf643a3c8a591d18c1dacd79634",
+    "scripts/run_m4_pressure.sh": "07245e5088a8d1ce57af6b33cff732786e6af949",
+    "scripts/run_m4_sync_hold.sh": "23623d73a9293152b20985b8194975bb94b0bab2",
+    "scripts/run_official_baseline.sh": "fec2c8d6466bf510d189a84ac57c339ab5a337c1",
+    "scripts/run_official_smoke.sh": "06f1a1a0478da2d037dc25f78847e7764948b40d",
+    "scripts/run_preflight.sh": "a78e4772028944822482846371c9c4bbd0055e27",
+    "src/actionstream/benchmark.py": "055a1708a5af271fe188ad503f4cb818b2974923",
+    "src/actionstream/lerobot_backend.py": "078375ee5406f26e9f6533c574a7ee4370c601d1",
+    "src/actionstream/libero_config.py": "a52ebe0b501fa391bd77d197a54b718b09d3d93a",
+    "src/actionstream/m4_analysis.py": "215b1e74661c022e4e17bc995099a3eacfc212eb",
+    "src/actionstream/m4_calibration.py": "888c2810c65b1112e126081578c07c80442862e1",
+    "src/actionstream/m4_report.py": "5c80145707cc18915a14d86eb0e834f63e45e602",
+    "src/actionstream/preflight.py": "20191e33ecbef6904e4395fb56bbab1622fd78cf",
+    "src/actionstream/processors.py": "f4342b6cf8a69b3cbf55a9286951f61526544a15",
+    "src/actionstream/results.py": "3dee26c404969afc03bbc61c107b882b18b3f0c1",
+    "src/actionstream/runtime.py": "18ad93f9d08f2b40151f5d01b88cd9aaec996c1a"
+  }
+}
