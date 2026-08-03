@@ -1,0 +1,366 @@
+{
+  "event_count": 535,
+  "event_log": "/workspace/outputs/m7_g0/development/episodes/profile_a/seed_2026080304/naive_async.events.jsonl",
+  "invariant_violation_counts": {
+    "expired_action_execution": 58
+  },
+  "metric_mismatches": {},
+  "metrics_match": true,
+  "milestone": "M7-G0",
+  "naive_expired_execution_is_expected_baseline_behavior": true,
+  "passed": true,
+  "schema_version": 1,
+  "semantic_invariants_pass": true,
+  "strategy": "naive_async",
+  "summary": "/workspace/outputs/m7_g0/development/episodes/profile_a/seed_2026080304/naive_async.summary.json",
+  "violations": [
+    {
+      "actual_target_step": 31,
+      "event_index": 179,
+      "reason": "expired_action_execution",
+      "source_target_step": 11
+    },
+    {
+      "actual_target_step": 32,
+      "event_index": 189,
+      "reason": "expired_action_execution",
+      "source_target_step": 12
+    },
+    {
+      "actual_target_step": 33,
+      "event_index": 194,
+      "reason": "expired_action_execution",
+      "source_target_step": 13
+    },
+    {
+      "actual_target_step": 34,
+      "event_index": 199,
+      "reason": "expired_action_execution",
+      "source_target_step": 14
+    },
+    {
+      "actual_target_step": 35,
+      "event_index": 204,
+      "reason": "expired_action_execution",
+      "source_target_step": 15
+    },
+    {
+      "actual_target_step": 36,
+      "event_index": 209,
+      "reason": "expired_action_execution",
+      "source_target_step": 16
+    },
+    {
+      "actual_target_step": 37,
+      "event_index": 214,
+      "reason": "expired_action_execution",
+      "source_target_step": 17
+    },
+    {
+      "actual_target_step": 38,
+      "event_index": 219,
+      "reason": "expired_action_execution",
+      "source_target_step": 18
+    },
+    {
+      "actual_target_step": 39,
+      "event_index": 224,
+      "reason": "expired_action_execution",
+      "source_target_step": 19
+    },
+    {
+      "actual_target_step": 40,
+      "event_index": 229,
+      "reason": "expired_action_execution",
+      "source_target_step": 20
+    },
+    {
+      "actual_target_step": 41,
+      "event_index": 239,
+      "reason": "expired_action_execution",
+      "source_target_step": 21
+    },
+    {
+      "actual_target_step": 42,
+      "event_index": 248,
+      "reason": "expired_action_execution",
+      "source_target_step": 22
+    },
+    {
+      "actual_target_step": 43,
+      "event_index": 253,
+      "reason": "expired_action_execution",
+      "source_target_step": 23
+    },
+    {
+      "actual_target_step": 44,
+      "event_index": 258,
+      "reason": "expired_action_execution",
+      "source_target_step": 24
+    },
+    {
+      "actual_target_step": 45,
+      "event_index": 263,
+      "reason": "expired_action_execution",
+      "source_target_step": 25
+    },
+    {
+      "actual_target_step": 46,
+      "event_index": 268,
+      "reason": "expired_action_execution",
+      "source_target_step": 26
+    },
+    {
+      "actual_target_step": 47,
+      "event_index": 273,
+      "reason": "expired_action_execution",
+      "source_target_step": 27
+    },
+    {
+      "actual_target_step": 48,
+      "event_index": 278,
+      "reason": "expired_action_execution",
+      "source_target_step": 28
+    },
+    {
+      "actual_target_step": 49,
+      "event_index": 283,
+      "reason": "expired_action_execution",
+      "source_target_step": 29
+    },
+    {
+      "actual_target_step": 50,
+      "event_index": 288,
+      "reason": "expired_action_execution",
+      "source_target_step": 30
+    },
+    {
+      "actual_target_step": 51,
+      "event_index": 298,
+      "reason": "expired_action_execution",
+      "source_target_step": 31
+    },
+    {
+      "actual_target_step": 52,
+      "event_index": 308,
+      "reason": "expired_action_execution",
+      "source_target_step": 32
+    },
+    {
+      "actual_target_step": 53,
+      "event_index": 313,
+      "reason": "expired_action_execution",
+      "source_target_step": 33
+    },
+    {
+      "actual_target_step": 54,
+      "event_index": 318,
+      "reason": "expired_action_execution",
+      "source_target_step": 34
+    },
+    {
+      "actual_target_step": 55,
+      "event_index": 323,
+      "reason": "expired_action_execution",
+      "source_target_step": 35
+    },
+    {
+      "actual_target_step": 56,
+      "event_index": 328,
+      "reason": "expired_action_execution",
+      "source_target_step": 36
+    },
+    {
+      "actual_target_step": 57,
+      "event_index": 333,
+      "reason": "expired_action_execution",
+      "source_target_step": 37
+    },
+    {
+      "actual_target_step": 58,
+      "event_index": 338,
+      "reason": "expired_action_execution",
+      "source_target_step": 38
+    },
+    {
+      "actual_target_step": 59,
+      "event_index": 343,
+      "reason": "expired_action_execution",
+      "source_target_step": 39
+    },
+    {
+      "actual_target_step": 60,
+      "event_index": 348,
+      "reason": "expired_action_execution",
+      "source_target_step": 40
+    },
+    {
+      "actual_target_step": 61,
+      "event_index": 358,
+      "reason": "expired_action_execution",
+      "source_target_step": 21
+    },
+    {
+      "actual_target_step": 62,
+      "event_index": 368,
+      "reason": "expired_action_execution",
+      "source_target_step": 22
+    },
+    {
+      "actual_target_step": 63,
+      "event_index": 373,
+      "reason": "expired_action_execution",
+      "source_target_step": 23
+    },
+    {
+      "actual_target_step": 64,
+      "event_index": 378,
+      "reason": "expired_action_execution",
+      "source_target_step": 24
+    },
+    {
+      "actual_target_step": 65,
+      "event_index": 383,
+      "reason": "expired_action_execution",
+      "source_target_step": 25
+    },
+    {
+      "actual_target_step": 66,
+      "event_index": 388,
+      "reason": "expired_action_execution",
+      "source_target_step": 26
+    },
+    {
+      "actual_target_step": 67,
+      "event_index": 393,
+      "reason": "expired_action_execution",
+      "source_target_step": 27
+    },
+    {
+      "actual_target_step": 68,
+      "event_index": 398,
+      "reason": "expired_action_execution",
+      "source_target_step": 28
+    },
+    {
+      "actual_target_step": 69,
+      "event_index": 403,
+      "reason": "expired_action_execution",
+      "source_target_step": 29
+    },
+    {
+      "actual_target_step": 70,
+      "event_index": 408,
+      "reason": "expired_action_execution",
+      "source_target_step": 30
+    },
+    {
+      "actual_target_step": 71,
+      "event_index": 418,
+      "reason": "expired_action_execution",
+      "source_target_step": 31
+    },
+    {
+      "actual_target_step": 72,
+      "event_index": 428,
+      "reason": "expired_action_execution",
+      "source_target_step": 32
+    },
+    {
+      "actual_target_step": 73,
+      "event_index": 433,
+      "reason": "expired_action_execution",
+      "source_target_step": 33
+    },
+    {
+      "actual_target_step": 74,
+      "event_index": 438,
+      "reason": "expired_action_execution",
+      "source_target_step": 34
+    },
+    {
+      "actual_target_step": 75,
+      "event_index": 443,
+      "reason": "expired_action_execution",
+      "source_target_step": 35
+    },
+    {
+      "actual_target_step": 76,
+      "event_index": 448,
+      "reason": "expired_action_execution",
+      "source_target_step": 36
+    },
+    {
+      "actual_target_step": 77,
+      "event_index": 453,
+      "reason": "expired_action_execution",
+      "source_target_step": 37
+    },
+    {
+      "actual_target_step": 78,
+      "event_index": 458,
+      "reason": "expired_action_execution",
+      "source_target_step": 38
+    },
+    {
+      "actual_target_step": 79,
+      "event_index": 463,
+      "reason": "expired_action_execution",
+      "source_target_step": 39
+    },
+    {
+      "actual_target_step": 80,
+      "event_index": 468,
+      "reason": "expired_action_execution",
+      "source_target_step": 40
+    },
+    {
+      "actual_target_step": 81,
+      "event_index": 478,
+      "reason": "expired_action_execution",
+      "source_target_step": 41
+    },
+    {
+      "actual_target_step": 82,
+      "event_index": 488,
+      "reason": "expired_action_execution",
+      "source_target_step": 42
+    },
+    {
+      "actual_target_step": 83,
+      "event_index": 493,
+      "reason": "expired_action_execution",
+      "source_target_step": 43
+    },
+    {
+      "actual_target_step": 84,
+      "event_index": 498,
+      "reason": "expired_action_execution",
+      "source_target_step": 44
+    },
+    {
+      "actual_target_step": 85,
+      "event_index": 503,
+      "reason": "expired_action_execution",
+      "source_target_step": 45
+    },
+    {
+      "actual_target_step": 86,
+      "event_index": 508,
+      "reason": "expired_action_execution",
+      "source_target_step": 46
+    },
+    {
+      "actual_target_step": 87,
+      "event_index": 513,
+      "reason": "expired_action_execution",
+      "source_target_step": 47
+    },
+    {
+      "actual_target_step": 88,
+      "event_index": 518,
+      "reason": "expired_action_execution",
+      "source_target_step": 48
+    }
+  ]
+}

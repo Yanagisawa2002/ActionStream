@@ -1,0 +1,19 @@
+# Response and source provenance are repeated intentionally so a chunk remains
+# independently auditable even if its request log is unavailable.
+builtin_interfaces/Time sim_stamp
+uint64 steady_time_ns
+uint64 wall_time_ns
+string episode_id
+uint64 request_id
+uint64 generation_id
+uint64 source_observation_step
+builtin_interfaces/Time source_sim_stamp
+uint64 source_observation_steady_time_ns
+uint32 action_dimension
+TargetAction[] actions
+builtin_interfaces/Time inference_complete_sim_stamp
+uint64 inference_complete_steady_time_ns
+uint64 inference_complete_wall_time_ns
+builtin_interfaces/Time response_publish_sim_stamp
+uint64 response_publish_steady_time_ns
+uint64 response_publish_wall_time_ns

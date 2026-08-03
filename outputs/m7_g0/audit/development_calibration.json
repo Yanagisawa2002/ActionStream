@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "milestone": "M7-G0",
+  "decision_utc": "2026-08-03T05:24:50Z",
+  "development_seed_count": 8,
+  "paired_episode_count_per_candidate": 48,
+  "candidate_1": {
+    "artifact_root": "outputs/m7_g0/development_candidate1",
+    "manifest_sha256": "b339ccb33e11833d190476be571ec74219e87c8e7714531ab359674b4bef7305",
+    "profile_b": {
+      "base_latency_ms": 850,
+      "jitter_ms": 200,
+      "drop_probability": 0.03,
+      "extra_delay_probability": 0.10,
+      "extra_delay_ms": 900,
+      "duplicate_probability": 0.02,
+      "communication_pause_probability": 0.03,
+      "communication_pause_ms": 250
+    },
+    "profile_b_successes": {
+      "sync_hold": "8/8",
+      "naive_async": "8/8",
+      "aligned_async": "8/8"
+    },
+    "decision": "The development stress profile was fully saturated, so the one permitted bounded adjustment was used."
+  },
+  "candidate_2_frozen": {
+    "artifact_root": "outputs/m7_g0/development",
+    "manifest_sha256": "feed12225604d541d98e6fc902180409e4df44637083a6da53a8b0346a621d09",
+    "profile_b": {
+      "base_latency_ms": 900,
+      "jitter_ms": 250,
+      "drop_probability": 0.05,
+      "extra_delay_probability": 0.12,
+      "extra_delay_ms": 1000,
+      "duplicate_probability": 0.02,
+      "communication_pause_probability": 0.05,
+      "communication_pause_ms": 300
+    },
+    "profile_a_successes": {
+      "sync_hold": "8/8",
+      "naive_async": "8/8",
+      "aligned_async": "7/8"
+    },
+    "profile_b_successes": {
+      "sync_hold": "7/8",
+      "naive_async": "8/8",
+      "aligned_async": "8/8"
+    },
+    "profile_b_aligned_minus_naive_percentage_points": 0.0,
+    "profile_b_paired_bootstrap_95_ci": [
+      0.0,
+      0.0
+    ],
+    "replay_episode_count": 48,
+    "replay_passed": true
+  },
+  "adjustments_used": 1,
+  "further_adjustments_allowed": false,
+  "holdout_inspected_at_decision_time": false,
+  "rationale": "Candidate 2 avoids an all-methods-saturated stress profile without selecting for a desired aligned-versus-naive effect. It is frozen despite showing no development success advantage for aligned_async."
+}

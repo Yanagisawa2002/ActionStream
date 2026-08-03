@@ -1,0 +1,15 @@
+{
+  "event_count": 347,
+  "event_log": "/workspace/outputs/m7_g0/holdout/episodes/profile_a/seed_2026080426/aligned_async.events.jsonl",
+  "invariant_violation_counts": {},
+  "metric_mismatches": {},
+  "metrics_match": true,
+  "milestone": "M7-G0",
+  "naive_expired_execution_is_expected_baseline_behavior": false,
+  "passed": true,
+  "schema_version": 1,
+  "semantic_invariants_pass": true,
+  "strategy": "aligned_async",
+  "summary": "/workspace/outputs/m7_g0/holdout/episodes/profile_a/seed_2026080426/aligned_async.summary.json",
+  "violations": []
+}

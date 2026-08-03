@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "milestone": "M7-G0",
+  "recorded_at_utc": "2026-08-03T04:07:31.4904999Z",
+  "repository": {
+    "path": "C:/Users/cgliu/OneDrive/Documents/ActionStream",
+    "branch": "master",
+    "head": "e786a25c5eeadffaed9bf35d6785fe4468ba7462",
+    "upstream": "origin/master",
+    "ahead": 2,
+    "behind": 0,
+    "worktree_clean": true,
+    "next_unused_milestone": "M7",
+    "applicable_agents_file": null
+  },
+  "accepted_artifact_tree_objects": {
+    "outputs/m3": "878ac286460313f7acf2d07a8ebbbc53cdeefdd8",
+    "outputs/m4": "29cdc3063aaf8d71a5024499f81ce518431aacc6",
+    "outputs/m5_g0": "6307724460379d266828f702b51de9737f77bac1",
+    "outputs/m6_g0": "0ca55aa95d6adf947508f06f5f04776155cbbe40"
+  },
+  "milestones_present": [
+    "M0",
+    "M1",
+    "M2",
+    "M3",
+    "M4",
+    "M5-G0",
+    "M6-G0"
+  ],
+  "canonical_components_reviewed": {
+    "runtime": [
+      "src/actionstream/runtime.py",
+      "src/actionstream/m5_runtime.py"
+    ],
+    "policy_and_processing": [
+      "src/actionstream/lerobot_backend.py",
+      "src/actionstream/processors.py"
+    ],
+    "benchmark_and_statistics": [
+      "src/actionstream/benchmark.py",
+      "src/actionstream/results.py",
+      "src/actionstream/m4_analysis.py"
+    ],
+    "accepted_reports": [
+      "outputs/m4/report/m4_report.json",
+      "outputs/m5_g0/report/formal_validation.json",
+      "outputs/m6_g0/decision.json"
+    ]
+  },
+  "windows": {
+    "edition": "Microsoft Windows 11 Home",
+    "version": "10.0.26200",
+    "build": "26200",
+    "architecture": "64-bit",
+    "cpu": "Intel Core Ultra 7 265K",
+    "physical_cores": 20,
+    "logical_processors": 20,
+    "ram_bytes": 33682857984,
+    "python": {
+      "version": "3.13.5",
+      "executable": "C:/ProgramData/anaconda3/python.exe",
+      "pytorch": "2.6.0+cu124",
+      "pytorch_cuda": "12.4",
+      "cuda_available": true
+    },
+    "compiler": {
+      "visual_studio_2022": "17.14.17",
+      "visual_studio_2026": "18.4.3",
+      "developer_environment_sourced": false,
+      "cl_on_initial_path": false
+    },
+    "cuda_toolkit": "13.0.88",
+    "cuda_driver_api": "13.1"
+  },
+  "wsl": {
+    "distribution": "Ubuntu-24.04",
+    "distribution_version": "24.04.4 LTS",
+    "kernel": "6.6.87.2-microsoft-standard-WSL2",
+    "python_system": "3.12.3",
+    "actionstream_python": "3.12.3",
+    "actionstream_pytorch": "2.11.0+cu130",
+    "actionstream_pytorch_cuda": "13.0",
+    "cuda_available": true,
+    "gcc": "13.3.0",
+    "gxx": "13.3.0",
+    "cmake": "3.28.3",
+    "glibc": "2.39",
+    "sudo_noninteractive": true
+  },
+  "gpu": {
+    "name": "NVIDIA GeForce RTX 4090",
+    "driver": "591.86",
+    "memory_mib": 24564
+  },
+  "initial_ros2": {
+    "windows_installation_found": false,
+    "wsl_installation_found": false,
+    "ros_distro_environment": null,
+    "rclpy_found": false,
+    "cached_official_images": {
+      "ros:jazzy-ros-base": "sha256:6513503d0b10e919fbe8134981d4f9d19b5c1f9b045b87a9fe3b0b9e03e7c2a9",
+      "ros:humble-ros-base-jammy": "sha256:afb40d6be65331c20a114d4e229a7ef099fed1b17bf6370daee193514b32aa16"
+    }
+  },
+  "initial_isaac": {
+    "windows_installation_found": false,
+    "wsl_installation_found": false,
+    "isaacsim_python_found": false,
+    "isaaclab_python_found": false
+  },
+  "official_installation_target": {
+    "ros2": "Jazzy on Ubuntu 24.04",
+    "isaac_sim": "6.0.1 native Windows compatibility check before any full install",
+    "reason": "NVIDIA documents Jazzy on Ubuntu 24.04 as recommended and Windows 11 as an Isaac Sim host. A minimal native compatibility-check installation is the least invasive supported-path attempt available on this machine.",
+    "known_precheck_blockers": [
+      "The installed 591.86 driver is below the current Isaac Sim 6.0.1 documented Windows requirement 595.97.",
+      "WSL2 is not a fully supported custom-message Isaac Sim host path.",
+      "Native ROS 2 is absent."
+    ]
+  },
+  "preservation": {
+    "previous_results_must_not_be_regenerated": true,
+    "previous_artifacts_modified_before_audit": false,
+    "no_push": true
+  }
+}

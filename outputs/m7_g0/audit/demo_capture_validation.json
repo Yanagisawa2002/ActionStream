@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "milestone": "M7-G0",
+  "generated_utc": "2026-08-03T06:59:42Z",
+  "purpose": "bounded_reproducible_recording_command_validation",
+  "headline_eligible": false,
+  "benchmark_evidence": false,
+  "episode_id": "m7-capture-smoke-20260803-07",
+  "runtime": {
+    "isaac_sim": "6.0.1.0",
+    "ros_distro": "jazzy",
+    "strategy": "aligned_async",
+    "policy": "none_safe_hold_only",
+    "headless": true
+  },
+  "command": ".\\scripts\\m7_record_demo.ps1 -Headless -EpisodeId 'm7-capture-smoke-20260803-07' -VideoOutput 'C:\\Users\\cgliu\\AppData\\Local\\Temp\\actionstream-m7-capture-smoke-20260803-07\\m7-safehold.mp4'",
+  "temporary_output": "C:\\Users\\cgliu\\AppData\\Local\\Temp\\actionstream-m7-capture-smoke-20260803-07\\m7-safehold.mp4",
+  "video_retained_in_repository": false,
+  "media_probe": {
+    "codec": "h264",
+    "width": 1280,
+    "height": 720,
+    "average_frame_rate": "20/1",
+    "decoded_frames": 180,
+    "duration_seconds": 9.0,
+    "size_bytes": 16003189,
+    "sha256": "b10e545767e0e2677a0ec9d3a7637cbfac27368256d7471902f9bac50f598588"
+  },
+  "decoded_frame_sha256": {
+    "first": "af9cac242cecc7da1bab39d78d4de32a63d734e1f67a657a598e666fe86354b7",
+    "middle": "f74eb6c1f8043bdd52764b649d2b4a5ef6aea6dfaac5982958f1cfa35a4d3449",
+    "last": "00e1d69326c8df35aaf5ebc67fa96b3fcff85ebdbc48f62f8dea066c8cd27746"
+  },
+  "checks": {
+    "adapter_exit_zero": true,
+    "nonempty_mp4": true,
+    "expected_codec_resolution_rate_frames_duration": true,
+    "intermediate_frame_directory_removed": true,
+    "first_middle_last_frames_distinct": true,
+    "visual_robot_object_target_framing_pass": true,
+    "owned_router_executor_processes_stopped": true
+  },
+  "note": "This validates the recording path only. It is not a policy-driven task result, paired comparison, holdout episode, or rosbag recording."
+}

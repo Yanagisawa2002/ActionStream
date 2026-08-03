@@ -1,0 +1,333 @@
+{
+  "episodes": [
+    {
+      "audit": "episodes/profile_a/seed_2026080300/sync_hold.audit.json",
+      "event_log": "episodes/profile_a/seed_2026080300/sync_hold.events.jsonl",
+      "summary": "episodes/profile_a/seed_2026080300/sync_hold.summary.json",
+      "trace": "traces/profile_a/seed_2026080300.trace.json"
+    },
+    {
+      "audit": "episodes/profile_a/seed_2026080300/naive_async.audit.json",
+      "event_log": "episodes/profile_a/seed_2026080300/naive_async.events.jsonl",
+      "summary": "episodes/profile_a/seed_2026080300/naive_async.summary.json",
+      "trace": "traces/profile_a/seed_2026080300.trace.json"
+    },
+    {
+      "audit": "episodes/profile_a/seed_2026080300/aligned_async.audit.json",
+      "event_log": "episodes/profile_a/seed_2026080300/aligned_async.events.jsonl",
+      "summary": "episodes/profile_a/seed_2026080300/aligned_async.summary.json",
+      "trace": "traces/profile_a/seed_2026080300.trace.json"
+    },
+    {
+      "audit": "episodes/profile_a/seed_2026080301/sync_hold.audit.json",
+      "event_log": "episodes/profile_a/seed_2026080301/sync_hold.events.jsonl",
+      "summary": "episodes/profile_a/seed_2026080301/sync_hold.summary.json",
+      "trace": "traces/profile_a/seed_2026080301.trace.json"
+    },
+    {
+      "audit": "episodes/profile_a/seed_2026080301/naive_async.audit.json",
+      "event_log": "episodes/profile_a/seed_2026080301/naive_async.events.jsonl",
+      "summary": "episodes/profile_a/seed_2026080301/naive_async.summary.json",
+      "trace": "traces/profile_a/seed_2026080301.trace.json"
+    },
+    {
+      "audit": "episodes/profile_a/seed_2026080301/aligned_async.audit.json",
+      "event_log": "episodes/profile_a/seed_2026080301/aligned_async.events.jsonl",
+      "summary": "episodes/profile_a/seed_2026080301/aligned_async.summary.json",
+      "trace": "traces/profile_a/seed_2026080301.trace.json"
+    },
+    {
+      "audit": "episodes/profile_a/seed_2026080302/sync_hold.audit.json",
+      "event_log": "episodes/profile_a/seed_2026080302/sync_hold.events.jsonl",
+      "summary": "episodes/profile_a/seed_2026080302/sync_hold.summary.json",
+      "trace": "traces/profile_a/seed_2026080302.trace.json"
+    },
+    {
+      "audit": "episodes/profile_a/seed_2026080302/naive_async.audit.json",
+      "event_log": "episodes/profile_a/seed_2026080302/naive_async.events.jsonl",
+      "summary": "episodes/profile_a/seed_2026080302/naive_async.summary.json",
+      "trace": "traces/profile_a/seed_2026080302.trace.json"
+    },
+    {
+      "audit": "episodes/profile_a/seed_2026080302/aligned_async.audit.json",
+      "event_log": "episodes/profile_a/seed_2026080302/aligned_async.events.jsonl",
+      "summary": "episodes/profile_a/seed_2026080302/aligned_async.summary.json",
+      "trace": "traces/profile_a/seed_2026080302.trace.json"
+    },
+    {
+      "audit": "episodes/profile_a/seed_2026080303/sync_hold.audit.json",
+      "event_log": "episodes/profile_a/seed_2026080303/sync_hold.events.jsonl",
+      "summary": "episodes/profile_a/seed_2026080303/sync_hold.summary.json",
+      "trace": "traces/profile_a/seed_2026080303.trace.json"
+    },
+    {
+      "audit": "episodes/profile_a/seed_2026080303/naive_async.audit.json",
+      "event_log": "episodes/profile_a/seed_2026080303/naive_async.events.jsonl",
+      "summary": "episodes/profile_a/seed_2026080303/naive_async.summary.json",
+      "trace": "traces/profile_a/seed_2026080303.trace.json"
+    },
+    {
+      "audit": "episodes/profile_a/seed_2026080303/aligned_async.audit.json",
+      "event_log": "episodes/profile_a/seed_2026080303/aligned_async.events.jsonl",
+      "summary": "episodes/profile_a/seed_2026080303/aligned_async.summary.json",
+      "trace": "traces/profile_a/seed_2026080303.trace.json"
+    },
+    {
+      "audit": "episodes/profile_a/seed_2026080304/sync_hold.audit.json",
+      "event_log": "episodes/profile_a/seed_2026080304/sync_hold.events.jsonl",
+      "summary": "episodes/profile_a/seed_2026080304/sync_hold.summary.json",
+      "trace": "traces/profile_a/seed_2026080304.trace.json"
+    },
+    {
+      "audit": "episodes/profile_a/seed_2026080304/naive_async.audit.json",
+      "event_log": "episodes/profile_a/seed_2026080304/naive_async.events.jsonl",
+      "summary": "episodes/profile_a/seed_2026080304/naive_async.summary.json",
+      "trace": "traces/profile_a/seed_2026080304.trace.json"
+    },
+    {
+      "audit": "episodes/profile_a/seed_2026080304/aligned_async.audit.json",
+      "event_log": "episodes/profile_a/seed_2026080304/aligned_async.events.jsonl",
+      "summary": "episodes/profile_a/seed_2026080304/aligned_async.summary.json",
+      "trace": "traces/profile_a/seed_2026080304.trace.json"
+    },
+    {
+      "audit": "episodes/profile_a/seed_2026080305/sync_hold.audit.json",
+      "event_log": "episodes/profile_a/seed_2026080305/sync_hold.events.jsonl",
+      "summary": "episodes/profile_a/seed_2026080305/sync_hold.summary.json",
+      "trace": "traces/profile_a/seed_2026080305.trace.json"
+    },
+    {
+      "audit": "episodes/profile_a/seed_2026080305/naive_async.audit.json",
+      "event_log": "episodes/profile_a/seed_2026080305/naive_async.events.jsonl",
+      "summary": "episodes/profile_a/seed_2026080305/naive_async.summary.json",
+      "trace": "traces/profile_a/seed_2026080305.trace.json"
+    },
+    {
+      "audit": "episodes/profile_a/seed_2026080305/aligned_async.audit.json",
+      "event_log": "episodes/profile_a/seed_2026080305/aligned_async.events.jsonl",
+      "summary": "episodes/profile_a/seed_2026080305/aligned_async.summary.json",
+      "trace": "traces/profile_a/seed_2026080305.trace.json"
+    },
+    {
+      "audit": "episodes/profile_a/seed_2026080306/sync_hold.audit.json",
+      "event_log": "episodes/profile_a/seed_2026080306/sync_hold.events.jsonl",
+      "summary": "episodes/profile_a/seed_2026080306/sync_hold.summary.json",
+      "trace": "traces/profile_a/seed_2026080306.trace.json"
+    },
+    {
+      "audit": "episodes/profile_a/seed_2026080306/naive_async.audit.json",
+      "event_log": "episodes/profile_a/seed_2026080306/naive_async.events.jsonl",
+      "summary": "episodes/profile_a/seed_2026080306/naive_async.summary.json",
+      "trace": "traces/profile_a/seed_2026080306.trace.json"
+    },
+    {
+      "audit": "episodes/profile_a/seed_2026080306/aligned_async.audit.json",
+      "event_log": "episodes/profile_a/seed_2026080306/aligned_async.events.jsonl",
+      "summary": "episodes/profile_a/seed_2026080306/aligned_async.summary.json",
+      "trace": "traces/profile_a/seed_2026080306.trace.json"
+    },
+    {
+      "audit": "episodes/profile_a/seed_2026080307/sync_hold.audit.json",
+      "event_log": "episodes/profile_a/seed_2026080307/sync_hold.events.jsonl",
+      "summary": "episodes/profile_a/seed_2026080307/sync_hold.summary.json",
+      "trace": "traces/profile_a/seed_2026080307.trace.json"
+    },
+    {
+      "audit": "episodes/profile_a/seed_2026080307/naive_async.audit.json",
+      "event_log": "episodes/profile_a/seed_2026080307/naive_async.events.jsonl",
+      "summary": "episodes/profile_a/seed_2026080307/naive_async.summary.json",
+      "trace": "traces/profile_a/seed_2026080307.trace.json"
+    },
+    {
+      "audit": "episodes/profile_a/seed_2026080307/aligned_async.audit.json",
+      "event_log": "episodes/profile_a/seed_2026080307/aligned_async.events.jsonl",
+      "summary": "episodes/profile_a/seed_2026080307/aligned_async.summary.json",
+      "trace": "traces/profile_a/seed_2026080307.trace.json"
+    },
+    {
+      "audit": "episodes/profile_b/seed_2026080300/sync_hold.audit.json",
+      "event_log": "episodes/profile_b/seed_2026080300/sync_hold.events.jsonl",
+      "summary": "episodes/profile_b/seed_2026080300/sync_hold.summary.json",
+      "trace": "traces/profile_b/seed_2026080300.trace.json"
+    },
+    {
+      "audit": "episodes/profile_b/seed_2026080300/naive_async.audit.json",
+      "event_log": "episodes/profile_b/seed_2026080300/naive_async.events.jsonl",
+      "summary": "episodes/profile_b/seed_2026080300/naive_async.summary.json",
+      "trace": "traces/profile_b/seed_2026080300.trace.json"
+    },
+    {
+      "audit": "episodes/profile_b/seed_2026080300/aligned_async.audit.json",
+      "event_log": "episodes/profile_b/seed_2026080300/aligned_async.events.jsonl",
+      "summary": "episodes/profile_b/seed_2026080300/aligned_async.summary.json",
+      "trace": "traces/profile_b/seed_2026080300.trace.json"
+    },
+    {
+      "audit": "episodes/profile_b/seed_2026080301/sync_hold.audit.json",
+      "event_log": "episodes/profile_b/seed_2026080301/sync_hold.events.jsonl",
+      "summary": "episodes/profile_b/seed_2026080301/sync_hold.summary.json",
+      "trace": "traces/profile_b/seed_2026080301.trace.json"
+    },
+    {
+      "audit": "episodes/profile_b/seed_2026080301/naive_async.audit.json",
+      "event_log": "episodes/profile_b/seed_2026080301/naive_async.events.jsonl",
+      "summary": "episodes/profile_b/seed_2026080301/naive_async.summary.json",
+      "trace": "traces/profile_b/seed_2026080301.trace.json"
+    },
+    {
+      "audit": "episodes/profile_b/seed_2026080301/aligned_async.audit.json",
+      "event_log": "episodes/profile_b/seed_2026080301/aligned_async.events.jsonl",
+      "summary": "episodes/profile_b/seed_2026080301/aligned_async.summary.json",
+      "trace": "traces/profile_b/seed_2026080301.trace.json"
+    },
+    {
+      "audit": "episodes/profile_b/seed_2026080302/sync_hold.audit.json",
+      "event_log": "episodes/profile_b/seed_2026080302/sync_hold.events.jsonl",
+      "summary": "episodes/profile_b/seed_2026080302/sync_hold.summary.json",
+      "trace": "traces/profile_b/seed_2026080302.trace.json"
+    },
+    {
+      "audit": "episodes/profile_b/seed_2026080302/naive_async.audit.json",
+      "event_log": "episodes/profile_b/seed_2026080302/naive_async.events.jsonl",
+      "summary": "episodes/profile_b/seed_2026080302/naive_async.summary.json",
+      "trace": "traces/profile_b/seed_2026080302.trace.json"
+    },
+    {
+      "audit": "episodes/profile_b/seed_2026080302/aligned_async.audit.json",
+      "event_log": "episodes/profile_b/seed_2026080302/aligned_async.events.jsonl",
+      "summary": "episodes/profile_b/seed_2026080302/aligned_async.summary.json",
+      "trace": "traces/profile_b/seed_2026080302.trace.json"
+    },
+    {
+      "audit": "episodes/profile_b/seed_2026080303/sync_hold.audit.json",
+      "event_log": "episodes/profile_b/seed_2026080303/sync_hold.events.jsonl",
+      "summary": "episodes/profile_b/seed_2026080303/sync_hold.summary.json",
+      "trace": "traces/profile_b/seed_2026080303.trace.json"
+    },
+    {
+      "audit": "episodes/profile_b/seed_2026080303/naive_async.audit.json",
+      "event_log": "episodes/profile_b/seed_2026080303/naive_async.events.jsonl",
+      "summary": "episodes/profile_b/seed_2026080303/naive_async.summary.json",
+      "trace": "traces/profile_b/seed_2026080303.trace.json"
+    },
+    {
+      "audit": "episodes/profile_b/seed_2026080303/aligned_async.audit.json",
+      "event_log": "episodes/profile_b/seed_2026080303/aligned_async.events.jsonl",
+      "summary": "episodes/profile_b/seed_2026080303/aligned_async.summary.json",
+      "trace": "traces/profile_b/seed_2026080303.trace.json"
+    },
+    {
+      "audit": "episodes/profile_b/seed_2026080304/sync_hold.audit.json",
+      "event_log": "episodes/profile_b/seed_2026080304/sync_hold.events.jsonl",
+      "summary": "episodes/profile_b/seed_2026080304/sync_hold.summary.json",
+      "trace": "traces/profile_b/seed_2026080304.trace.json"
+    },
+    {
+      "audit": "episodes/profile_b/seed_2026080304/naive_async.audit.json",
+      "event_log": "episodes/profile_b/seed_2026080304/naive_async.events.jsonl",
+      "summary": "episodes/profile_b/seed_2026080304/naive_async.summary.json",
+      "trace": "traces/profile_b/seed_2026080304.trace.json"
+    },
+    {
+      "audit": "episodes/profile_b/seed_2026080304/aligned_async.audit.json",
+      "event_log": "episodes/profile_b/seed_2026080304/aligned_async.events.jsonl",
+      "summary": "episodes/profile_b/seed_2026080304/aligned_async.summary.json",
+      "trace": "traces/profile_b/seed_2026080304.trace.json"
+    },
+    {
+      "audit": "episodes/profile_b/seed_2026080305/sync_hold.audit.json",
+      "event_log": "episodes/profile_b/seed_2026080305/sync_hold.events.jsonl",
+      "summary": "episodes/profile_b/seed_2026080305/sync_hold.summary.json",
+      "trace": "traces/profile_b/seed_2026080305.trace.json"
+    },
+    {
+      "audit": "episodes/profile_b/seed_2026080305/naive_async.audit.json",
+      "event_log": "episodes/profile_b/seed_2026080305/naive_async.events.jsonl",
+      "summary": "episodes/profile_b/seed_2026080305/naive_async.summary.json",
+      "trace": "traces/profile_b/seed_2026080305.trace.json"
+    },
+    {
+      "audit": "episodes/profile_b/seed_2026080305/aligned_async.audit.json",
+      "event_log": "episodes/profile_b/seed_2026080305/aligned_async.events.jsonl",
+      "summary": "episodes/profile_b/seed_2026080305/aligned_async.summary.json",
+      "trace": "traces/profile_b/seed_2026080305.trace.json"
+    },
+    {
+      "audit": "episodes/profile_b/seed_2026080306/sync_hold.audit.json",
+      "event_log": "episodes/profile_b/seed_2026080306/sync_hold.events.jsonl",
+      "summary": "episodes/profile_b/seed_2026080306/sync_hold.summary.json",
+      "trace": "traces/profile_b/seed_2026080306.trace.json"
+    },
+    {
+      "audit": "episodes/profile_b/seed_2026080306/naive_async.audit.json",
+      "event_log": "episodes/profile_b/seed_2026080306/naive_async.events.jsonl",
+      "summary": "episodes/profile_b/seed_2026080306/naive_async.summary.json",
+      "trace": "traces/profile_b/seed_2026080306.trace.json"
+    },
+    {
+      "audit": "episodes/profile_b/seed_2026080306/aligned_async.audit.json",
+      "event_log": "episodes/profile_b/seed_2026080306/aligned_async.events.jsonl",
+      "summary": "episodes/profile_b/seed_2026080306/aligned_async.summary.json",
+      "trace": "traces/profile_b/seed_2026080306.trace.json"
+    },
+    {
+      "audit": "episodes/profile_b/seed_2026080307/sync_hold.audit.json",
+      "event_log": "episodes/profile_b/seed_2026080307/sync_hold.events.jsonl",
+      "summary": "episodes/profile_b/seed_2026080307/sync_hold.summary.json",
+      "trace": "traces/profile_b/seed_2026080307.trace.json"
+    },
+    {
+      "audit": "episodes/profile_b/seed_2026080307/naive_async.audit.json",
+      "event_log": "episodes/profile_b/seed_2026080307/naive_async.events.jsonl",
+      "summary": "episodes/profile_b/seed_2026080307/naive_async.summary.json",
+      "trace": "traces/profile_b/seed_2026080307.trace.json"
+    },
+    {
+      "audit": "episodes/profile_b/seed_2026080307/aligned_async.audit.json",
+      "event_log": "episodes/profile_b/seed_2026080307/aligned_async.events.jsonl",
+      "summary": "episodes/profile_b/seed_2026080307/aligned_async.summary.json",
+      "trace": "traces/profile_b/seed_2026080307.trace.json"
+    }
+  ],
+  "evidence_class": "ros_cpp_test_plant",
+  "headline_eligible": true,
+  "milestone": "M7-G0",
+  "profiles": [
+    {
+      "base_latency_ms": 950,
+      "communication_pause_ms": 0,
+      "communication_pause_probability": 0.0,
+      "drop_probability": 0.0,
+      "duplicate_probability": 0.0,
+      "extra_delay_ms": 0,
+      "extra_delay_probability": 0.0,
+      "frozen": true,
+      "jitter_ms": 0,
+      "profile_id": "profile_a"
+    },
+    {
+      "base_latency_ms": 850,
+      "communication_pause_ms": 250,
+      "communication_pause_probability": 0.03,
+      "drop_probability": 0.03,
+      "duplicate_probability": 0.02,
+      "extra_delay_ms": 900,
+      "extra_delay_probability": 0.1,
+      "frozen": true,
+      "jitter_ms": 200,
+      "profile_id": "profile_b"
+    }
+  ],
+  "schema_version": 1,
+  "seeds": [
+    2026080300,
+    2026080301,
+    2026080302,
+    2026080303,
+    2026080304,
+    2026080305,
+    2026080306,
+    2026080307
+  ],
+  "split": "development"
+}

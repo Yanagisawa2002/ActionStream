@@ -6,6 +6,149 @@ tests whether compensating for observation age when an asynchronous action
 chunk arrives is safer and more efficient than replacing the queue with the
 entire stale chunk.
 
+## M7-G0: ROS 2 / Isaac Sim runtime integration — NO-GO
+
+M7 adds a mixed C++17/Python ROS 2 Jazzy runtime and an official Isaac Sim
+6.0.1 Franka adapter. The implementation is auditable and the native end-to-end
+path runs, but the predeclared reliability hypothesis did not pass: on the
+frozen 36-seed Profile B ROS test-plant holdout, `naive_async` and
+`aligned_async` both succeeded 36/36. Their paired difference is 0.0 percentage
+points (95% paired-bootstrap CI [0.0, 0.0]). A bounded policy-driven Isaac run
+also reached step 180 without lifting the object. M7 is therefore **NO-GO**, not
+an Isaac task-success or production-readiness claim.
+
+The failure mode is temporal, not a policy-learning problem. A reasonable
+naive asynchronous queue executes chunks in response-arrival order, so source
+actions can be applied at later actual timesteps. Aligned execution retains the
+explicit source observation and target step, removes the expired prefix,
+rejects stale episodes/generations/plans, and atomically rebuilds the executable
+queue. No model was trained for M7.
+
+```mermaid
+flowchart LR
+    I["Isaac Sim Franka adapter\nor deterministic ROS test plant"]
+    O["Observation + /clock"]
+    P["Python scripted policy"]
+    F["Python frozen fault injector"]
+    E["C++17 executor\nsync / naive / aligned"]
+    C["RobotCommand"]
+    R["Atomic JSONL recorder\n+ independent replay"]
+
+    I --> O --> E
+    E -->|"InferenceRequest"| P -->|"O+1 ... O+30"| F --> E
+    E --> C --> I
+    O -.-> R
+    P -.-> R
+    F -.-> R
+    E -.-> R
+```
+
+The five packages are `action_stream_msgs`, `action_stream_policy`,
+`action_stream_executor`, `action_stream_benchmark`, and
+`action_stream_isaac`. C++ owns the thread-safe strategy state machines,
+freshness ordering, queue mutation, command selection, and diagnostics. Python
+owns the deterministic policy, simulator glue, fault traces, orchestration,
+atomic recording, replay, statistics, and plotting. The executor uses explicit
+callback groups under a ROS `MultiThreadedExecutor`; observation callbacks do
+not wait for inference.
+
+### Frozen M7 contract
+
+- Observation `O` is the last completed 20 Hz control step. Every returned
+  30-action chunk explicitly targets `O+1` through `O+30`.
+- Final commands are absolute seven-vectors
+  `[x, y, z, axis-angle x, axis-angle y, axis-angle z, gripper]`, with exactly
+  `+1` open and `-1` closed.
+- `generation_id` is an invalidation epoch, not a request ID. Within one
+  generation, plan freshness is ordered lexicographically by
+  `(source_observation_step, request_id)`.
+- A target is expired if it precedes insertion or has already executed. The
+  first duplicate target in a chunk wins; aligned queue replacement is atomic.
+- The deterministic reach/lift task requires a grasped object at least 0.12 m
+  above its initial height for 20 consecutive steps, with a 180-step limit.
+- Profile A is fixed 950 ms latency. Frozen Profile B is 900 ms base,
+  +/-250 ms jitter, 5% drops, 12% additional 1000 ms delay, 2% duplicates, and
+  5% 300 ms communication pauses. Eight development seeds and 36 disjoint
+  holdout seeds are version controlled. One bounded Profile B adjustment was
+  made on development data before the holdout lock; none followed.
+
+### Frozen holdout results (`ros_cpp_test_plant`)
+
+| Profile | Method | Success | Median steps | Median wall time | Mean hold time |
+|---|---|---:|---:|---:|---:|
+| A | `sync_hold` | 36/36 | 47 | 4.350 s | 1.908 s |
+| A | `naive_async` | 36/36 | 88 | 5.956 s | 0.000 s |
+| A | `aligned_async` | 36/36 | 57 | 4.456 s | 0.000 s |
+| B | `sync_hold` | 34/36 | 47 | 4.375 s | 2.800 s |
+| B | `naive_async` | 36/36 | 88 | 5.708 s | 0.125 s |
+| B | `aligned_async` | 36/36 | 57 | 4.262 s | 0.318 s |
+
+Profile A was fully saturated and did not reproduce the historical success
+separation. On Profile B, aligned reduced hold time 88.6% versus sync and used
+31 fewer median steps than naive, but it did not improve reliability over
+naive. The primary gate failed its >=20 point success and positive-CI
+conditions; the >=50% hold-reduction and semantic/replay conditions passed.
+Strong GO was ineligible, and aligned reduced median wall time only 2.6% versus
+sync rather than the required 20%.
+
+Independent replay passed 216/216 episodes with matching metrics and zero
+aligned invariant violations. The deliberately naive baseline executed 3,857
+expired source actions across the matrix; aligned executed none and removed
+3,937 expired actions before queue installation. All 72 seed/profile blocks
+used one identical pre-generated trace across the three methods.
+
+The official native Windows path passed the Isaac 6.0.1 compatibility check,
+loaded the shipped experimental Franka API, enabled `isaacsim.ros2.bridge`
+before importing `rclpy`, and exchanged custom messages with the native C++
+executor. The single aligned Profile A policy episode was replay-clean but
+failed the task: 0/1 success, 180 steps, 18 requests, 165 executed policy
+actions, and 0.75 s hold time. It is integration evidence, not a paired Isaac
+benchmark.
+
+### Reproduce and inspect M7
+
+From PowerShell with Docker available, one command creates a fresh output root,
+builds the pinned ROS image if needed, runs all 216 test-plant episodes, replays
+them, analyzes 20,000 paired bootstrap samples, and writes three PNG/PDF figure
+pairs:
+
+```powershell
+.\scripts\m7_run_ros_holdout.ps1 `
+  -OutputSubdirectory outputs/m7_g0/reproductions/ros_holdout_001
+```
+
+Native Isaac build, launch, policy-smoke, and recording commands are pinned in
+[`docs/m7_environment.md`](docs/m7_environment.md); the architecture and timing
+contract are in [`docs/m7_architecture.md`](docs/m7_architecture.md). A bounded
+visual safe-hold MP4 can be recorded with:
+
+```powershell
+.\scripts\m7_record_demo.ps1
+```
+
+The script refuses overwrite/stale frame reuse, captures one framed viewport
+image per 20 Hz control tick, encodes H.264 at 1280x720/20 fps, verifies the
+non-empty MP4, and stops its owned process tree. `-Headless` is supported; the
+default output is ignored `outputs/m7_g0/demo/<episode>.mp4`. The validated
+recording audit is
+[`demo_capture_validation.json`](outputs/m7_g0/audit/demo_capture_validation.json).
+
+Evidence: [holdout manifest](outputs/m7_g0/holdout/manifest.json),
+[paired analysis](outputs/m7_g0/holdout/analysis.json),
+[independent replay](outputs/m7_g0/holdout/replay_validation.json),
+[Isaac episode summary](outputs/m7_g0/isaac_smoke/aligned_async.summary.json),
+[Isaac replay audit](outputs/m7_g0/isaac_smoke/aligned_async.audit.json), and
+[result figures](outputs/m7_g0/figures/README.md).
+
+Limitations: the paired matrix uses a deterministic ROS test plant rather than
+Isaac physics; the one Isaac task episode failed; standalone pre-Kit Windows
+`rclpy`/`ros2` CLI loading remains blocked, so no rosbag was captured; the
+validated video path is only a safe-hold demo and no video is used as benchmark
+evidence; the policy is scripted; only one reach/lift task and two fault
+profiles were tested; stale-generation execution is covered by deterministic
+tests but no generation transition occurred in the holdout; this is neither
+real-robot nor hard-real-time validation.
+
 M4 extends the completed 0/200 ms matrix into a calibrated 950 ms
 queue-pressure regime. Against naive asynchronous replacement at that pressure,
 alignment improved paired success by 0.333 (95% bootstrap CI 0.133 to 0.533)

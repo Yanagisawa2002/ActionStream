@@ -371,8 +371,21 @@ class UpstreamBindings:
 def load_upstream_bindings(lerobot_root: Path | str) -> UpstreamBindings:
     root = Path(lerobot_root).resolve()
     source_root = root / "src"
-    if str(source_root) not in sys.path:
-        sys.path.insert(0, str(source_root))
+    source_text = str(source_root)
+    # A full repository test run may have imported the installed LeRobot wheel
+    # before reaching the M6 conformance tests.  Merely prepending the frozen
+    # checkout does not replace modules already cached in ``sys.modules`` and
+    # makes the result depend on test order.  Evict only LeRobot modules whose
+    # source is outside the pinned checkout, then make the pinned source the
+    # unambiguous first import location.  The frozen torch dependency remains
+    # environment-provided by design.
+    sys.path[:] = [entry for entry in sys.path if entry != source_text]
+    sys.path.insert(0, source_text)
+    for module_name, module in list(sys.modules.items()):
+        if module_name != "lerobot" and not module_name.startswith("lerobot."):
+            continue
+        if module is None or not _module_is_below(module, root):
+            del sys.modules[module_name]
     importlib.invalidate_caches()
 
     torch = importlib.import_module("torch")
