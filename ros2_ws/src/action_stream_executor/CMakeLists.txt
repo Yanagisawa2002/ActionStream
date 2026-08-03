@@ -29,11 +29,15 @@ add_executable(action_stream_executor_node
   src/executor_node.cpp
   src/main.cpp
 )
+add_executable(action_stream_executor_replay_probe
+  src/differential_replay_probe.cpp
+)
 target_include_directories(action_stream_executor_node
   PRIVATE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 )
 target_link_libraries(action_stream_executor_node executor_state_machine)
+target_link_libraries(action_stream_executor_replay_probe executor_state_machine)
 ament_target_dependencies(action_stream_executor_node
   action_stream_msgs
   builtin_interfaces
@@ -45,7 +49,7 @@ install(
   DESTINATION include
 )
 install(
-  TARGETS executor_state_machine action_stream_executor_node
+  TARGETS executor_state_machine action_stream_executor_node action_stream_executor_replay_probe
   EXPORT export_action_stream_executor
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib

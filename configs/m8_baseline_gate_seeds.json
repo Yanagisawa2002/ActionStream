@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "milestone": "M8-G0",
+  "split": "simulator_baseline_gate",
+  "headline_eligible": false,
+  "usage": "Native-Isaac synchronous task/controller gate only; results are reported separately from holdout.",
+  "seeds": [
+    2026081000,
+    2026081001,
+    2026081002,
+    2026081003,
+    2026081004,
+    2026081005,
+    2026081006,
+    2026081007,
+    2026081008,
+    2026081009,
+    2026081010,
+    2026081011,
+    2026081012,
+    2026081013,
+    2026081014,
+    2026081015,
+    2026081016,
+    2026081017,
+    2026081018,
+    2026081019
+  ]
+}

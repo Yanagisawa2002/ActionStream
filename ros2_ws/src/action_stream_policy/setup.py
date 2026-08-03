@@ -20,10 +20,11 @@ setup(
     zip_safe=True,
     maintainer="ActionStream maintainers",
     maintainer_email="cgliu@localhost",
-    description="Deterministic 7D reach-and-lift policy adapter for ActionStream M7.",
+    description="Deterministic observation-conditioned policies for ActionStream M7 and M8.",
     license="Apache-2.0",
     entry_points={
         "console_scripts": [
+            "dynamic_policy_node = action_stream_policy.dynamic_policy_node:main",
             "scripted_policy_node = action_stream_policy.policy_node:main",
         ],
     },

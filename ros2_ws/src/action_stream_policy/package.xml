@@ -2,7 +2,7 @@
 <package format="3">
   <name>action_stream_policy</name>
   <version>0.1.0</version>
-  <description>Deterministic 7D reach-and-lift policy adapter for ActionStream M7.</description>
+  <description>Deterministic observation-conditioned policies for ActionStream M7 and M8.</description>
   <maintainer email="cgliu@localhost">ActionStream maintainers</maintainer>
   <license>Apache-2.0</license>
 

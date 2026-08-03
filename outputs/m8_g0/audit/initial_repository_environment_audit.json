@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "milestone": "M8-G0",
+  "recorded_at_utc": "2026-08-03T07:36:25.8941572Z",
+  "repository": {
+    "path": "<repository-root>",
+    "branch": "master",
+    "head": "1c51d3e0489a57224c4b4d2f4f6ddafae5302713",
+    "upstream": "origin/master",
+    "ahead": 3,
+    "behind": 0,
+    "worktree_clean": true,
+    "next_unused_milestone": "M8-G0",
+    "agents_file": null
+  },
+  "accepted_artifact_tree_objects": {
+    "outputs/m3": "878ac286460313f7acf2d07a8ebbbc53cdeefdd8",
+    "outputs/m4": "29cdc3063aaf8d71a5024499f81ce518431aacc6",
+    "outputs/m5_g0": "6307724460379d266828f702b51de9737f77bac1",
+    "outputs/m6_g0": "0ca55aa95d6adf947508f06f5f04776155cbbe40",
+    "outputs/m7_g0": "c00806da42782bb8d7c097445faf7a17901fafc3"
+  },
+  "canonical_components": {
+    "m4_python_executor": "src/actionstream/runtime.py:ActionQueue",
+    "m4_benchmark_orchestration": "src/actionstream/benchmark.py",
+    "m7_cpp_executor": "ros2_ws/src/action_stream_executor/src/executor_state_machine.cpp",
+    "m7_cpp_executor_contract": "ros2_ws/src/action_stream_executor/include/action_stream_executor/executor_state_machine.hpp",
+    "m7_messages": "ros2_ws/src/action_stream_msgs/msg",
+    "m7_benchmark_orchestration": "ros2_ws/src/action_stream_benchmark/action_stream_benchmark/cli.py",
+    "m7_fault_injector": "ros2_ws/src/action_stream_benchmark/action_stream_benchmark/fault_injector_node.py",
+    "m7_event_recorder": "ros2_ws/src/action_stream_benchmark/action_stream_benchmark/event_recorder_node.py",
+    "m7_replay_validator": "ros2_ws/src/action_stream_benchmark/action_stream_benchmark/replay.py",
+    "m7_isaac_adapter": "ros2_ws/src/action_stream_isaac/action_stream_isaac/isaac_adapter.py",
+    "m7_policy": "ros2_ws/src/action_stream_policy/action_stream_policy/scripted_policy.py",
+    "m7_report": "outputs/m7_g0/report/m7_report.md"
+  },
+  "frozen_action_contract": {
+    "control_frequency_hz": 20.0,
+    "chunk_horizon": 30,
+    "request_interval_steps": 10,
+    "action_dimension": 7,
+    "action_representation": "absolute_xyz_axis_angle_gripper",
+    "observation_semantics": "O_is_last_completed_control_step",
+    "target_steps": "O+1_through_O+30",
+    "generation_semantics": "invalidation_epoch_not_request_id",
+    "same_generation_freshness": [
+      "source_observation_step",
+      "request_id"
+    ],
+    "duplicate_target_rule": "first_valid_action_wins",
+    "aligned_replacement": "atomic"
+  },
+  "windows": {
+    "edition": "Microsoft Windows 11 Home",
+    "build": "26200",
+    "architecture": "x86_64",
+    "python": "3.13.5",
+    "pytorch": "2.6.0+cu124",
+    "pytorch_cuda": "12.4",
+    "cuda_toolkit": "13.0.88",
+    "visual_studio_selected": "Community 2022 17.14.17",
+    "visual_studio_build_tools_latest": "2022 17.14.23"
+  },
+  "wsl": {
+    "distribution": "Ubuntu-24.04",
+    "distribution_version": "24.04.4 LTS",
+    "kernel": "6.6.87.2-microsoft-standard-WSL2",
+    "python": "3.12.3",
+    "gcc": "13.3.0",
+    "gxx": "13.3.0",
+    "cmake": "3.28.3"
+  },
+  "gpu": {
+    "name": "NVIDIA GeForce RTX 4090",
+    "driver": "591.86",
+    "memory_mib": 24564,
+    "memory_used_mib_at_preflight": 15800,
+    "preflight_status": "BUSY_UNRELATED_UNITY_PROCESSES_DETECTED",
+    "isaac_launch_deferred": true
+  },
+  "docker": {
+    "client": "29.3.1",
+    "server": "29.3.1",
+    "m7_image": "actionstream-m7-ros:jazzy",
+    "m7_image_id": "sha256:64505ceaa908d1158844f0470fee5d8cda6ad0898ff1f94ad9e5193a3c34c952"
+  },
+  "isaac_ros_environment": {
+    "workspace": "C:/IsaacSim-ros_workspaces/jazzy_ws",
+    "workspace_commit": "dd3eeede7912755996a18f4884285d9f50843f79",
+    "manifest_sha256": "9649bf57644781a1fe0203ed6b80828ccb42ea07555475080e5d11a9b0c3e1ae",
+    "pixi": "0.75.0",
+    "python": "3.12.13",
+    "isaac_sim": "6.0.1.0",
+    "ros_distribution": "jazzy",
+    "rclpy": "7.1.9",
+    "rmw_zenoh_cpp": "0.2.9",
+    "rosgraph_msgs": "2.0.3"
+  },
+  "prechange_validation": {
+    "host_default_python_attempt": {
+      "command_class": "python -m pytest without source-layout import path",
+      "result": "collection_failed",
+      "reason": "repository package was not installed and src was not on sys.path"
+    },
+    "pinned_python312_attempt": {
+      "interpreter": ".external/m6_venv312/Scripts/python.exe",
+      "result": "one_failure_nine_errors_one_skip",
+      "reproducibility_defects": [
+        "M6 source-origin validation called inspect.getfile on a valid namespace package without __file__",
+        "the realtime synthetic benchmark could divide by a zero measured dispatch interval"
+      ],
+      "m7_focused_suite": "33 passed"
+    },
+    "gpu_launch_policy": "Native Isaac execution deferred while unrelated Unity editors occupied approximately 15.8 GiB VRAM; no unrelated process was terminated."
+  },
+  "preservation": {
+    "m3_through_m7_results_must_not_be_regenerated": true,
+    "historical_artifacts_modified_before_audit": false,
+    "m7_classification": "NO-GO",
+    "m7_headline_aligned_success": "36/36",
+    "m7_headline_naive_success": "36/36",
+    "no_push": true
+  }
+}

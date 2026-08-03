@@ -1,0 +1,50 @@
+{
+  "batch_profile_id": "profile_0_sanity",
+  "batch_strategy": "sync_hold",
+  "candidate_manifest": "../../../../configs/m8_g0.json",
+  "development_strategy_filter": [
+    "sync_hold"
+  ],
+  "episodes": [
+    {
+      "episode_id": "m8-development-profile_0_sanity-2026081100-sync_hold",
+      "event_log_path": "raw/events/m8-development-profile_0_sanity-2026081100-sync_hold.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_0_sanity_seed_2026081100.json",
+      "fault_trace_sha256": "32609780d64c72ba24c4e0297c54a7f8662309e602390e901ace3be46fd4d105",
+      "profile_id": "profile_0_sanity",
+      "scenario_file": "raw/scenarios/seed_2026081100.json",
+      "scenario_sha256": "2b46a21706eab002d1f0c22fef484ec1c1f70f24a76f30f886afff7d07857a2f",
+      "seed": 2026081100,
+      "strategy": "sync_hold",
+      "summary_path": "raw/summaries/m8-development-profile_0_sanity-2026081100-sync_hold.json"
+    }
+  ],
+  "evidence_class": "ros_cpp_isaac_sim",
+  "expected_episode_count": 1,
+  "fault_traces": [
+    {
+      "path": "raw/fault_traces/profile_0_sanity_seed_2026081100.json",
+      "profile_id": "profile_0_sanity",
+      "seed": 2026081100,
+      "trace_sha256": "32609780d64c72ba24c4e0297c54a7f8662309e602390e901ace3be46fd4d105"
+    }
+  ],
+  "frozen_before_first_holdout_result": false,
+  "headline_eligible": false,
+  "holdout_freeze_status": "pending",
+  "milestone": "M8-G0",
+  "native_results_status_at_creation": "not_run",
+  "persistent_isaac_process_required": true,
+  "profiles": {
+    "profile_0_sanity": {
+      "path": "../../../../ros2_ws/src/action_stream_benchmark/config/m8_profile_0_sanity.json",
+      "sha256": "6ed5d115855037a5805976a653eb36ff5a329ed43a7102a0d21c2a7a0ec3db60"
+    }
+  },
+  "protocol_sha256": "c7f5686e4187238310f65ceb589527b9eda863314fd884f39f7c802428a89b54",
+  "schema_version": 1,
+  "seed_count": 1,
+  "seed_file": "../../../../configs/m8_demo_seed.json",
+  "seed_file_sha256": "066d5be766290c1aa34c484f734b9e6210b82c4555537919b94a171c2ac5915a",
+  "split": "development"
+}

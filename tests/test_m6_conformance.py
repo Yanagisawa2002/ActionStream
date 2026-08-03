@@ -4,6 +4,7 @@ import copy
 import inspect
 import json
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -11,6 +12,7 @@ from actionstream.m6_conformance import (
     OFFICIAL_RUNTIME_TO_AGGREGATE,
     RUNTIME_IDS,
     OfficialLeRobotAdapter,
+    _module_is_below,
     ideal_action,
     load_frozen_manifest,
     load_upstream_bindings,
@@ -50,6 +52,12 @@ def _stable_result_rows(rows):
         {key: value for key, value in row.items() if key != "scheduler_overhead_ns"}
         for row in rows
     ]
+
+
+def test_source_origin_check_accepts_namespace_package_paths(tmp_path: Path) -> None:
+    namespace = SimpleNamespace(__file__=None, __path__=[str(tmp_path)])
+    assert _module_is_below(namespace, tmp_path)
+    assert not _module_is_below(namespace, tmp_path / "different-root")
 
 
 def test_zero_latency_actionstream_discards_no_valid_prefix(

@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "milestone": "M8-G0",
+  "split": "development",
+  "headline_eligible": false,
+  "maximum_candidates": 3,
+  "maximum_bounded_calibration_changes": 2,
+  "usage": "Candidate 0 plus at most two bounded calibration changes; at most 12 seeds per candidate and never included in headline metrics.",
+  "seeds": [
+    2026081100,
+    2026081101,
+    2026081102,
+    2026081103,
+    2026081104,
+    2026081105,
+    2026081106,
+    2026081107,
+    2026081108,
+    2026081109,
+    2026081110,
+    2026081111
+  ]
+}

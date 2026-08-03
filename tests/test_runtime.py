@@ -11,6 +11,7 @@ import pytest
 import actionstream.benchmark as benchmark
 from actionstream.benchmark import (
     _coalesce_missed_control_ticks,
+    _measured_control_step_seconds,
     _run_async_episode,
     build_parser,
 )
@@ -42,6 +43,14 @@ def test_observation_request_is_independent_and_immutable() -> None:
     thawed["pixels"][0, 0] = 4
     assert thawed["pixels"].flags.writeable
     assert snapshot["pixels"][0, 0] == 1
+
+
+def test_measured_control_period_falls_back_for_zero_or_nonfinite_clock_deltas() -> None:
+    period = 0.05
+    assert _measured_control_step_seconds([1.0, 1.0, 1.0], period) == period
+    assert _measured_control_step_seconds([1.0, float("nan")], period) == period
+    assert _measured_control_step_seconds([1.0], period) == period
+    assert _measured_control_step_seconds([1.0, 1.04, 1.08], period) == pytest.approx(0.04)
 
 
 def result(episode: str, observation_step: int, rows: int = 6) -> InferenceResult:

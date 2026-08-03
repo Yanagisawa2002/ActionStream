@@ -13,6 +13,7 @@ namespace
 {
 
 constexpr std::int64_t kNanosecondsPerSecond = 1'000'000'000LL;
+constexpr std::size_t kMaxPendingPreRegistrationChunks = 256U;
 
 [[nodiscard]] bool add_would_overflow(std::uint64_t value, std::uint64_t increment)
 {
@@ -107,10 +108,11 @@ void validate_safe_hold_command(
 
 ExecutorStateMachine::ExecutorStateMachine(
   const Strategy strategy, const std::size_t action_dimension,
-  std::vector<double> safe_hold_command)
+  std::vector<double> safe_hold_command, const bool sync_periodic_replan)
 : strategy_(strategy),
   action_dimension_(action_dimension),
-  safe_hold_command_(std::move(safe_hold_command))
+  safe_hold_command_(std::move(safe_hold_command)),
+  sync_periodic_replan_(sync_periodic_replan)
 {
   if (action_dimension_ == 0U) {
     throw std::invalid_argument("action_dimension must be positive");
@@ -160,11 +162,13 @@ Decision ExecutorStateMachine::begin_episode_locked(
   episode_active_ = true;
   episode_terminated_ = false;
   episode_success_ = false;
+  terminal_observation_pending_lifecycle_ = false;
   latest_observation_step_ = initial_observation_step;
   latest_executed_target_step_.reset();
   active_generation_id_ = initial_generation_id;
   queue_.clear();
   requests_.clear();
+  pending_pre_registration_chunks_.clear();
   completed_request_ids_.clear();
   latest_accepted_plan_key_.reset();
   sync_request_in_flight_.reset();
@@ -198,19 +202,36 @@ Decision ExecutorStateMachine::terminate_episode(
     return {false, "previous_episode", 0U, 0U, 0U, queue_.size()};
   }
   if (!episode_active_) {
-    return {false, "episode_not_active", 0U, 0U, 0U, queue_.size()};
+    if (!episode_terminated_ || !terminal_observation_pending_lifecycle_) {
+      return {false, "episode_not_active", 0U, 0U, 0U, queue_.size()};
+    }
+
+    terminal_observation_pending_lifecycle_ = false;
+    episode_success_ = success;
+    const std::string termination_reason = success ? "success" : "terminated";
+    RuntimeEventRecord event;
+    event.stamp = stamp;
+    event.event_type = "episode_terminated";
+    event.reason = termination_reason;
+    event.queue_length_before = queue_.size();
+    event.queue_length_after = queue_.size();
+    event.detail = "terminal observation finalized by lifecycle control";
+    push_event_locked(std::move(event));
+    return {true, termination_reason, 0U, 0U, 0U, queue_.size()};
   }
 
   close_hold_locked(stamp.steady_time_ns);
   const auto queue_before = queue_.size();
   queue_.clear();
   requests_.clear();
+  pending_pre_registration_chunks_.clear();
   completed_request_ids_.clear();
   latest_accepted_plan_key_.reset();
   sync_request_in_flight_.reset();
   episode_active_ = false;
   episode_terminated_ = true;
   episode_success_ = success;
+  terminal_observation_pending_lifecycle_ = false;
 
   const std::string termination_reason = success ? "success" : "terminated";
   RuntimeEventRecord event;
@@ -248,12 +269,28 @@ Decision ExecutorStateMachine::observe(const ObservationRecord & observation)
     push_event_locked(std::move(event));
     return {false, "non_monotonic_observation_step", 0U, 0U, 0U, queue_.size()};
   }
+  if (observation.generation_id < active_generation_id_) {
+    RuntimeEventRecord event;
+    event.stamp = observation.stamp;
+    event.event_type = "observation_rejected";
+    event.reason = "stale_observation_generation";
+    event.generation_id = observation.generation_id;
+    event.actual_target_step = observation.observation_step;
+    push_event_locked(std::move(event));
+    return {false, "stale_observation_generation", 0U, 0U, 0U, queue_.size()};
+  }
+  if (observation.generation_id > active_generation_id_) {
+    advance_generation_locked(
+      observation.generation_id, observation.observation_step, observation.stamp,
+      "observation_invalidation");
+  }
 
   latest_observation_step_ = observation.observation_step;
   RuntimeEventRecord event;
   event.stamp = observation.stamp;
   event.event_type = "observation_received";
   event.reason = observation.terminated ? "terminal_observation" : "accepted";
+  event.generation_id = observation.generation_id;
   event.actual_target_step = observation.observation_step;
   event.queue_length_before = queue_.size();
   event.queue_length_after = queue_.size();
@@ -263,12 +300,14 @@ Decision ExecutorStateMachine::observe(const ObservationRecord & observation)
     close_hold_locked(observation.stamp.steady_time_ns);
     queue_.clear();
     requests_.clear();
+    pending_pre_registration_chunks_.clear();
     completed_request_ids_.clear();
     latest_accepted_plan_key_.reset();
     sync_request_in_flight_.reset();
     episode_active_ = false;
     episode_terminated_ = true;
     episode_success_ = false;
+    terminal_observation_pending_lifecycle_ = true;
     return {true, "terminal_observation", 0U, 0U, 0U, 0U};
   }
   return {true, "accepted", 0U, 0U, 0U, queue_.size()};
@@ -289,6 +328,21 @@ Decision ExecutorStateMachine::register_request(const RequestRecord & request)
       event.queue_length_before = queue_.size();
       event.queue_length_after = queue_.size();
       push_event_locked(std::move(event));
+      const auto pending = pending_pre_registration_chunks_.find(request.request_id);
+      if (pending != pending_pre_registration_chunks_.end() &&
+        pending->second.episode_id == request.episode_id &&
+        pending->second.generation_id == request.generation_id &&
+        pending->second.source_observation_step == request.source_observation_step &&
+        pending->second.source_sim_time_ns == request.source_sim_time_ns &&
+        pending->second.source_observation_steady_time_ns ==
+        request.source_observation_steady_time_ns)
+      {
+        auto pending_chunk = std::move(pending->second);
+        pending_pre_registration_chunks_.erase(pending);
+        static_cast<void>(reject_chunk_locked(
+          pending_chunk, "request_registration_rejected", queue_.size(),
+          "request_reason=" + reason));
+      }
       return Decision{false, reason, 0U, 0U, 0U, queue_.size()};
     };
 
@@ -312,19 +366,36 @@ Decision ExecutorStateMachine::register_request(const RequestRecord & request)
   if (strategy_ != Strategy::kNaiveAsync && request.generation_id < active_generation_id_) {
     return reject("stale_generation");
   }
+  if (request.generation_id > active_generation_id_) {
+    advance_generation_locked(
+      request.generation_id, request.source_observation_step, request.stamp,
+      "request_invalidation");
+  }
   if (strategy_ == Strategy::kSyncHold) {
     if (sync_request_in_flight_.has_value()) {
       return reject("sync_request_already_in_flight");
     }
     if (!queue_.empty()) {
-      return reject("sync_queue_not_empty");
+      if (!sync_periodic_replan_) {
+        return reject("sync_queue_not_empty");
+      }
+      const auto queue_before = queue_.size();
+      queue_.clear();
+      ++sync_periodic_replans_;
+      sync_periodic_replan_actions_removed_ += queue_before;
+      RuntimeEventRecord replan_event;
+      replan_event.stamp = request.stamp;
+      replan_event.event_type = "queue_cleared";
+      replan_event.reason = "sync_periodic_replan";
+      replan_event.request_id = request.request_id;
+      replan_event.generation_id = request.generation_id;
+      replan_event.source_observation_step = request.source_observation_step;
+      replan_event.queue_length_before = queue_before;
+      replan_event.queue_length_after = 0U;
+      replan_event.action_count = queue_before;
+      push_event_locked(std::move(replan_event));
     }
     sync_request_in_flight_ = request.request_id;
-  }
-
-  if (request.generation_id > active_generation_id_) {
-    active_generation_id_ = request.generation_id;
-    latest_accepted_plan_key_.reset();
   }
   requests_.emplace(request.request_id, request);
   RuntimeEventRecord event;
@@ -337,6 +408,12 @@ Decision ExecutorStateMachine::register_request(const RequestRecord & request)
   event.queue_length_before = queue_.size();
   event.queue_length_after = queue_.size();
   push_event_locked(std::move(event));
+  const auto pending = pending_pre_registration_chunks_.find(request.request_id);
+  if (pending != pending_pre_registration_chunks_.end()) {
+    auto pending_chunk = std::move(pending->second);
+    pending_pre_registration_chunks_.erase(pending);
+    static_cast<void>(ingest_chunk_locked(pending_chunk));
+  }
   return {true, "accepted", 0U, 0U, 0U, queue_.size()};
 }
 
@@ -444,6 +521,11 @@ Decision ExecutorStateMachine::reject_chunk_locked(
 Decision ExecutorStateMachine::ingest_chunk(const ChunkRecord & chunk)
 {
   std::scoped_lock lock(mutex_);
+  return ingest_chunk_locked(chunk);
+}
+
+Decision ExecutorStateMachine::ingest_chunk_locked(const ChunkRecord & chunk)
+{
   const auto queue_before = queue_.size();
   if (chunk.episode_id != episode_id_) {
     return reject_chunk_locked(chunk, "previous_episode", queue_before);
@@ -452,18 +534,45 @@ Decision ExecutorStateMachine::ingest_chunk(const ChunkRecord & chunk)
     return reject_chunk_locked(
       chunk, episode_terminated_ ? "episode_terminated" : "episode_not_active", queue_before);
   }
+  if (completed_request_ids_.count(chunk.request_id) != 0U) {
+    return reject_chunk_locked(chunk, "duplicate_response", queue_before);
+  }
+  if (strategy_ != Strategy::kNaiveAsync && chunk.generation_id < active_generation_id_) {
+    return reject_chunk_locked(chunk, "stale_generation", queue_before);
+  }
+  const auto request_iterator = requests_.find(chunk.request_id);
+  if (request_iterator == requests_.end()) {
+    if (pending_pre_registration_chunks_.count(chunk.request_id) != 0U) {
+      return reject_chunk_locked(
+        chunk, "duplicate_response", queue_before,
+        "duplicate arrived before request registration");
+    }
+    if (pending_pre_registration_chunks_.size() >= kMaxPendingPreRegistrationChunks) {
+      return reject_chunk_locked(
+        chunk, "unknown_request", queue_before,
+        "pre-registration response buffer is full");
+    }
+    pending_pre_registration_chunks_.emplace(chunk.request_id, chunk);
+    RuntimeEventRecord event;
+    event.stamp = chunk.stamp;
+    event.event_type = "chunk_buffered";
+    event.reason = "awaiting_request_registration";
+    event.episode_id = chunk.episode_id;
+    event.request_id = chunk.request_id;
+    event.generation_id = chunk.generation_id;
+    event.source_observation_step = chunk.source_observation_step;
+    event.queue_length_before = queue_before;
+    event.queue_length_after = queue_.size();
+    event.action_count = chunk.actions.size();
+    event.detail = "bounded cross-topic ordering barrier";
+    push_event_locked(std::move(event));
+    return {true, "awaiting_request_registration", 0U, 0U, 0U, queue_.size()};
+  }
   if (strategy_ != Strategy::kNaiveAsync && chunk.generation_id != active_generation_id_) {
     return reject_chunk_locked(
       chunk,
       chunk.generation_id < active_generation_id_ ? "stale_generation" : "future_generation",
       queue_before);
-  }
-  if (completed_request_ids_.count(chunk.request_id) != 0U) {
-    return reject_chunk_locked(chunk, "duplicate_response", queue_before);
-  }
-  const auto request_iterator = requests_.find(chunk.request_id);
-  if (request_iterator == requests_.end()) {
-    return reject_chunk_locked(chunk, "unknown_request", queue_before);
   }
   const auto & request = request_iterator->second;
   if (request.episode_id != chunk.episode_id ||
@@ -597,6 +706,85 @@ Decision ExecutorStateMachine::ingest_chunk(const ChunkRecord & chunk)
     true, update_reason, queue_.size(), expired, duplicates, queue_.size()};
 }
 
+std::size_t ExecutorStateMachine::invalidate_stale_queue_actions_locked(
+  const ClockStamp & stamp, const std::string & reason,
+  const std::uint64_t actual_target_step)
+{
+  if (strategy_ == Strategy::kNaiveAsync) {
+    return 0U;
+  }
+
+  const auto queue_before = queue_.size();
+  std::size_t removed = 0U;
+  auto iterator = queue_.begin();
+  while (iterator != queue_.end()) {
+    if (iterator->generation_id == active_generation_id_) {
+      ++iterator;
+      continue;
+    }
+
+    RuntimeEventRecord event;
+    event.stamp = stamp;
+    event.event_type = "generation_invalidated";
+    event.reason = reason;
+    event.request_id = iterator->request_id;
+    event.generation_id = iterator->generation_id;
+    event.source_observation_step = iterator->source_observation_step;
+    event.source_target_step = iterator->source_target_step;
+    event.actual_target_step = actual_target_step;
+    event.queue_length_before = queue_.size();
+    iterator = queue_.erase(iterator);
+    event.queue_length_after = queue_.size();
+    event.action_count = 1U;
+    event.detail = "active_generation=" + std::to_string(active_generation_id_);
+    ++removed;
+    ++generation_invalidated_actions_;
+    push_event_locked(std::move(event));
+  }
+
+  if (removed > queue_before) {
+    throw std::logic_error("generation invalidation removed more actions than were queued");
+  }
+  return removed;
+}
+
+void ExecutorStateMachine::advance_generation_locked(
+  const std::uint64_t generation_id, const std::uint64_t source_observation_step,
+  const ClockStamp & stamp, const std::string & reason)
+{
+  if (generation_id <= active_generation_id_) {
+    return;
+  }
+
+  const auto previous_generation = active_generation_id_;
+  const auto queue_before = queue_.size();
+  active_generation_id_ = generation_id;
+  latest_accepted_plan_key_.reset();
+  sync_request_in_flight_.reset();
+  last_policy_action_.reset();
+  executed_source_generation_id_ = 0U;
+
+  RuntimeEventRecord event;
+  event.stamp = stamp;
+  event.event_type = "generation_advanced";
+  event.reason = reason;
+  event.generation_id = generation_id;
+  event.source_observation_step = source_observation_step;
+  event.queue_length_before = queue_before;
+  event.queue_length_after = queue_before;
+  event.detail = "previous_generation=" + std::to_string(previous_generation);
+  const auto generation_event_index = events_.size();
+  push_event_locked(std::move(event));
+
+  const auto removed = invalidate_stale_queue_actions_locked(
+    stamp, "newer_generation", source_observation_step);
+  if (removed != 0U) {
+    auto & generation_event = events_[generation_event_index];
+    generation_event.queue_length_after = queue_.size();
+    generation_event.action_count = removed;
+  }
+}
+
 CommandRecord ExecutorStateMachine::make_hold_locked(
   const std::uint64_t actual_target_step, const ClockStamp & stamp, const std::string & reason)
 {
@@ -668,6 +856,8 @@ std::optional<CommandRecord> ExecutorStateMachine::command_for_step(
     deadline_misses_ += actual_target_step - latest_executed_target_step_.value() - 1U;
   }
 
+  static_cast<void>(invalidate_stale_queue_actions_locked(
+      stamp, "defensive_execution_guard", actual_target_step));
   const auto queue_before = queue_.size();
   if (strategy_ != Strategy::kNaiveAsync) {
     while (!queue_.empty() && queue_.front().source_target_step < actual_target_step) {
@@ -768,7 +958,10 @@ Diagnostics ExecutorStateMachine::diagnostics(const std::uint64_t now_steady_tim
   diagnostics.duplicate_responses = duplicate_responses_;
   diagnostics.expired_actions_removed = expired_actions_removed_;
   diagnostics.duplicate_actions_removed = duplicate_actions_removed_;
+  diagnostics.generation_invalidated_actions = generation_invalidated_actions_;
   diagnostics.queue_rebuilds = queue_rebuilds_;
+  diagnostics.sync_periodic_replans = sync_periodic_replans_;
+  diagnostics.sync_periodic_replan_actions_removed = sync_periodic_replan_actions_removed_;
   diagnostics.deadline_misses = deadline_misses_;
   diagnostics.hold_steps = hold_steps_;
   diagnostics.total_hold_duration_ns = total_hold_duration_ns_;
@@ -781,6 +974,28 @@ Diagnostics ExecutorStateMachine::diagnostics(const std::uint64_t now_steady_tim
   diagnostics.current_action_age_steps = current_action_age_steps_;
   diagnostics.executed_source_generation_id = executed_source_generation_id_;
   return diagnostics;
+}
+
+StateSnapshot ExecutorStateMachine::snapshot() const
+{
+  std::scoped_lock lock(mutex_);
+  StateSnapshot result;
+  result.episode_id = episode_id_;
+  result.episode_active = episode_active_;
+  result.episode_terminated = episode_terminated_;
+  result.latest_observation_step = latest_observation_step_;
+  result.latest_executed_target_step = latest_executed_target_step_;
+  result.active_generation_id = active_generation_id_;
+  result.latest_accepted_plan_key = latest_accepted_plan_key_;
+  result.sync_request_in_flight = sync_request_in_flight_;
+  result.queue.reserve(queue_.size());
+  for (const auto & action : queue_) {
+    result.queue.push_back(
+      QueuedActionSnapshot{
+        action.request_id, action.generation_id, action.source_observation_step,
+        action.source_target_step, action.command});
+  }
+  return result;
 }
 
 std::vector<RuntimeEventRecord> ExecutorStateMachine::drain_events()
@@ -811,7 +1026,10 @@ void ExecutorStateMachine::reset_counters_locked()
   duplicate_responses_ = 0U;
   expired_actions_removed_ = 0U;
   duplicate_actions_removed_ = 0U;
+  generation_invalidated_actions_ = 0U;
   queue_rebuilds_ = 0U;
+  sync_periodic_replans_ = 0U;
+  sync_periodic_replan_actions_removed_ = 0U;
   deadline_misses_ = 0U;
   hold_steps_ = 0U;
   total_hold_duration_ns_ = 0U;

@@ -30,13 +30,15 @@ ActionStreamExecutorNode::ActionStreamExecutorNode(const rclcpp::NodeOptions & o
   const auto action_dimension = static_cast<std::size_t>(action_dimension_parameter);
   const auto safe_hold_command = declare_parameter<std::vector<double>>(
     "safe_hold_command", std::vector<double>{});
+  const auto sync_periodic_replan =
+    declare_parameter<bool>("sync_periodic_replan", false);
   if (safe_hold_command.empty()) {
     throw std::invalid_argument(
             "safe_hold_command is required; provide a finite nonzero 7D absolute command, "
             "for example [0.45, 0, 0.35, 3.141592653589793, 0, 0, 1]");
   }
   state_machine_ = std::make_unique<ExecutorStateMachine>(
-    parse_strategy(strategy_name), action_dimension, safe_hold_command);
+    parse_strategy(strategy_name), action_dimension, safe_hold_command, sync_periodic_replan);
 
   const auto observation_topic =
     declare_parameter<std::string>("observation_topic", "observation");
@@ -92,8 +94,9 @@ ActionStreamExecutorNode::ActionStreamExecutorNode(const rclcpp::NodeOptions & o
     create_publisher<action_stream_msgs::msg::RuntimeEvent>(event_topic, reliable_qos(200U));
 
   RCLCPP_INFO(
-    get_logger(), "ActionStream executor ready: strategy=%s action_dimension=%zu",
-    strategy_name.c_str(), action_dimension);
+    get_logger(),
+    "ActionStream executor ready: strategy=%s action_dimension=%zu sync_periodic_replan=%s",
+    strategy_name.c_str(), action_dimension, sync_periodic_replan ? "true" : "false");
 }
 
 void ActionStreamExecutorNode::on_episode_control(
@@ -140,8 +143,14 @@ void ActionStreamExecutorNode::on_observation(const ObservationMsg::ConstSharedP
 {
   const ClockStamp stamp{
     time_to_nanoseconds(message->sim_stamp), message->steady_time_ns, message->wall_time_ns};
+  const auto before = state_machine_->diagnostics(steady_now_ns());
+  const auto observation_generation =
+    message->generation_id == 0U && before.active_generation_id != 0U ?
+    before.active_generation_id : message->generation_id;
   const auto decision = state_machine_->observe(
-    ObservationRecord{stamp, message->episode_id, message->observation_step, message->terminated});
+    ObservationRecord{
+      stamp, message->episode_id, message->observation_step, message->terminated,
+      observation_generation});
   if (decision.accepted && !message->terminated) {
     if (message->observation_step == std::numeric_limits<std::uint64_t>::max()) {
       RCLCPP_ERROR(get_logger(), "Observation step overflow for episode=%s", message->episode_id.c_str());
@@ -163,7 +172,9 @@ void ActionStreamExecutorNode::on_request(const RequestMsg::ConstSharedPtr & mes
     time_to_nanoseconds(message->sim_stamp), message->request_steady_time_ns,
     message->request_wall_time_ns};
   if (message->observation.episode_id != message->episode_id ||
-    message->observation.observation_step != message->source_observation_step)
+    message->observation.observation_step != message->source_observation_step ||
+    (message->observation.generation_id != 0U &&
+    message->observation.generation_id != message->generation_id))
   {
     RCLCPP_WARN(
       get_logger(), "InferenceRequest %llu rejected: embedded_observation_mismatch",
@@ -177,14 +188,17 @@ void ActionStreamExecutorNode::on_request(const RequestMsg::ConstSharedPtr & mes
   // registering its provenance.  Command dispatch remains owned by the
   // observation callback; this synchronization never executes a command.
   const auto before = state_machine_->diagnostics(steady_now_ns());
-  if (message->source_observation_step > before.latest_observation_step) {
+  if (message->source_observation_step > before.latest_observation_step ||
+    message->generation_id > before.active_generation_id)
+  {
     const auto & observation = message->observation;
     const auto observation_decision = state_machine_->observe(
       ObservationRecord{
         ClockStamp{
           time_to_nanoseconds(observation.sim_stamp), observation.steady_time_ns,
           observation.wall_time_ns},
-        observation.episode_id, observation.observation_step, observation.terminated});
+        observation.episode_id, observation.observation_step, observation.terminated,
+        message->generation_id});
     if (!observation_decision.accepted) {
       RCLCPP_WARN(
         get_logger(), "InferenceRequest %llu source observation rejected: %s",
@@ -281,7 +295,11 @@ void ActionStreamExecutorNode::publish_state_outputs(const ClockStamp & stamp)
   message.duplicate_responses = diagnostics.duplicate_responses;
   message.expired_actions_removed = diagnostics.expired_actions_removed;
   message.duplicate_actions_removed = diagnostics.duplicate_actions_removed;
+  message.generation_invalidated_actions = diagnostics.generation_invalidated_actions;
   message.queue_rebuilds = diagnostics.queue_rebuilds;
+  message.sync_periodic_replans = diagnostics.sync_periodic_replans;
+  message.sync_periodic_replan_actions_removed =
+    diagnostics.sync_periodic_replan_actions_removed;
   message.deadline_misses = diagnostics.deadline_misses;
   message.hold_steps = diagnostics.hold_steps;
   message.total_hold_duration_ns = diagnostics.total_hold_duration_ns;

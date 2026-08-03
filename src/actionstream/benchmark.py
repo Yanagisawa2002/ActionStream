@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import importlib.metadata
 import json
+import math
 import subprocess
 import time
 import uuid
@@ -57,6 +58,25 @@ def _coalesce_missed_control_ticks(
         return scheduled_timestamp, 0
     missed_ticks = int((current_timestamp - scheduled_timestamp) // period_seconds)
     return scheduled_timestamp + missed_ticks * period_seconds, missed_ticks
+
+
+def _measured_control_step_seconds(
+    dispatch_timestamps: list[float],
+    period_seconds: float,
+) -> float:
+    durations = [
+        later - earlier
+        for earlier, later in zip(dispatch_timestamps, dispatch_timestamps[1:], strict=False)
+    ]
+    measured = (
+        float(np.median(np.asarray(durations, dtype=np.float64)))
+        if durations
+        else period_seconds
+    )
+    # Fast synthetic backends can dispatch multiple steps inside one platform
+    # clock quantum. A nonpositive or nonfinite empirical duration is not a
+    # valid action-age denominator, so retain the declared controller period.
+    return measured if math.isfinite(measured) and measured > 0.0 else period_seconds
 
 
 def _git_commit() -> str:
@@ -535,12 +555,15 @@ def _run_async_episode(
     stale_prefixes = queue.stale_prefix_lengths
     control_step_durations = [
         later - earlier
-        for earlier, later in zip(dispatch_timestamps, dispatch_timestamps[1:], strict=False)
+        for earlier, later in zip(
+            dispatch_timestamps,
+            dispatch_timestamps[1:],
+            strict=False,
+        )
     ]
-    measured_control_step_seconds = (
-        float(np.median(np.asarray(control_step_durations, dtype=np.float64)))
-        if control_step_durations
-        else period
+    measured_control_step_seconds = _measured_control_step_seconds(
+        dispatch_timestamps,
+        period,
     )
     effective_delivery_ages: list[float] = []
     for event in inference_events:

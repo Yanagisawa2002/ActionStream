@@ -11,6 +11,33 @@ from .ros_utils import combine_nanoseconds
 from .schema import AtomicJsonlLog, MILESTONE, SCHEMA_VERSION
 
 
+def task_success_from_state(milestone: str, task_state: Sequence[float]) -> bool:
+    index = 39 if milestone == "M8-G0" else 9
+    return len(task_state) > index and float(task_state[index]) >= 0.5
+
+
+def expanded_runtime_detail(milestone: str, detail: str) -> dict[str, Any]:
+    if milestone != "M8-G0" or not detail.strip().startswith("{"):
+        return {}
+    try:
+        value = json.loads(detail)
+    except (TypeError, ValueError):
+        return {}
+    if not isinstance(value, dict):
+        return {}
+    protected = {
+        "schema_version",
+        "milestone",
+        "event_index",
+        "event_type",
+        "profile_id",
+        "seed",
+        "strategy",
+        "episode_id",
+    }
+    return {str(key): child for key, child in value.items() if key not in protected}
+
+
 def _detail_counts(detail: str) -> tuple[int, int]:
     expired = 0
     duplicates = 0
@@ -62,6 +89,8 @@ def create_event_recorder_node(*, parameter_overrides: Sequence[Any] | None = No
             self.declare_parameter("seed", 0)
             self.declare_parameter("trace_sha256", "")
             self.declare_parameter("evidence_class", "ros_cpp_test_plant")
+            self.declare_parameter("milestone", MILESTONE)
+            self.declare_parameter("split", "")
             self.declare_parameter("observation_topic", "/action_stream/observation")
             self.declare_parameter("request_topic", "/action_stream/inference_request")
             self.declare_parameter("action_chunk_topic", "/action_stream/action_chunk")
@@ -77,6 +106,10 @@ def create_event_recorder_node(*, parameter_overrides: Sequence[Any] | None = No
             self._seed = int(self.get_parameter("seed").value)
             self._trace_sha256 = str(self.get_parameter("trace_sha256").value)
             self._evidence_class = str(self.get_parameter("evidence_class").value)
+            self._milestone = str(self.get_parameter("milestone").value)
+            self._split = str(self.get_parameter("split").value)
+            if self._milestone not in {MILESTONE, "M8-G0"}:
+                raise ValueError(f"unsupported recorder milestone: {self._milestone}")
             self._log = AtomicJsonlLog(Path(output_path), overwrite=True)
             self._log.__enter__()
             self._closed = False
@@ -151,12 +184,13 @@ def create_event_recorder_node(*, parameter_overrides: Sequence[Any] | None = No
                     return
                 row = {
                     "schema_version": SCHEMA_VERSION,
-                    "milestone": MILESTONE,
+                    "milestone": self._milestone,
                     "event_index": self._index,
                     "event_type": event_type,
                     "profile_id": self._profile_id,
                     "seed": self._seed,
                     "strategy": self._strategy,
+                    **({"split": self._split} if self._milestone == "M8-G0" else {}),
                     "episode_id": episode_id or self._episode_id,
                     "sim_time_ns": sim_time_ns,
                     "wall_time_ns": wall_time_ns,
@@ -175,6 +209,13 @@ def create_event_recorder_node(*, parameter_overrides: Sequence[Any] | None = No
                 return
             if int(message.command) == EpisodeControl.START:
                 self._episode_id = message.episode_id
+                self._request_starts.clear()
+                self._seen_responses.clear()
+                self._last_response_request_id = 0
+                if self._milestone == "M8-G0":
+                    # The dynamic adapter emits one enriched RuntimeEvent
+                    # episode_start. Avoid a second bare lifecycle row.
+                    return
                 self._append(
                     "episode_start",
                     sim_time_ns=self._sim(message),
@@ -186,6 +227,10 @@ def create_event_recorder_node(*, parameter_overrides: Sequence[Any] | None = No
                     evidence_class=self._evidence_class,
                 )
             elif int(message.command) == EpisodeControl.TERMINATE:
+                if self._milestone == "M8-G0":
+                    # M8 task_terminated/episode_end carry physical metrics and
+                    # are emitted by the adapter as enriched RuntimeEvents.
+                    return
                 self._append(
                     "episode_end",
                     sim_time_ns=self._sim(message),
@@ -209,7 +254,7 @@ def create_event_recorder_node(*, parameter_overrides: Sequence[Any] | None = No
                 robot_state=list(message.robot_state),
                 task_state=list(message.task_state),
                 terminated=bool(message.terminated),
-                success=(len(message.task_state) > 9 and message.task_state[9] >= 0.5),
+                success=task_success_from_state(self._milestone, message.task_state),
             )
 
         def _on_request(self, message) -> None:
@@ -335,6 +380,8 @@ def create_event_recorder_node(*, parameter_overrides: Sequence[Any] | None = No
                 except (TypeError, ValueError):
                     detail = {}
                 payload.update(detail)
+            if self._milestone == "M8-G0":
+                payload.update(expanded_runtime_detail(self._milestone, message.detail))
             self._append(
                 event_type,
                 sim_time_ns=self._sim(message),

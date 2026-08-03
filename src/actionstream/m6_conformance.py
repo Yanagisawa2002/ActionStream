@@ -346,11 +346,33 @@ def verify_upstream_checkout(
 
 
 def _module_is_below(module: Any, root: Path) -> bool:
-    module_path = Path(inspect.getfile(module)).resolve()
-    try:
-        module_path.relative_to(root.resolve())
-    except ValueError:
-        return False
+    """Return whether every discoverable module location is under ``root``.
+
+    Python namespace packages intentionally have no ``__file__``.  Treating
+    that as a built-in module made the frozen-source check depend on whether a
+    parent namespace happened to be imported earlier in the test process.
+    ``__path__`` is the authoritative source location for that case.
+    """
+
+    locations: list[Path] = []
+    module_file = getattr(module, "__file__", None)
+    if module_file:
+        locations.append(Path(module_file).resolve())
+    module_path = getattr(module, "__path__", None)
+    if module_path is not None:
+        locations.extend(Path(entry).resolve() for entry in module_path)
+    if not locations:
+        try:
+            locations.append(Path(inspect.getfile(module)).resolve())
+        except (TypeError, OSError):
+            return False
+
+    resolved_root = root.resolve()
+    for location in locations:
+        try:
+            location.relative_to(resolved_root)
+        except ValueError:
+            return False
     return True
 
 

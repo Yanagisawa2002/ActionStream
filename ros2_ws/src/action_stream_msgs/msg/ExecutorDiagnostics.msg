@@ -19,7 +19,10 @@ uint64 rejected_unknown_request_chunks
 uint64 duplicate_responses
 uint64 expired_actions_removed
 uint64 duplicate_actions_removed
+uint64 generation_invalidated_actions
 uint64 queue_rebuilds
+uint64 sync_periodic_replans
+uint64 sync_periodic_replan_actions_removed
 uint64 deadline_misses
 uint64 hold_steps
 uint64 total_hold_duration_ns

@@ -17,6 +17,7 @@ OBSERVATION_FIELDS: Final = (
     "wall_time_ns",
     "episode_id",
     "observation_step",
+    "generation_id",
     "task_id",
     "robot_state",
     "task_state",

@@ -76,11 +76,17 @@ void start(
 
 void observe(
   ExecutorStateMachine & machine, const std::uint64_t observation_step,
-  const std::string & episode_id = "episode")
+  const std::string & episode_id = "episode",
+  const std::uint64_t generation = std::numeric_limits<std::uint64_t>::max())
 {
+  const auto effective_generation =
+    generation == std::numeric_limits<std::uint64_t>::max() ?
+    machine.snapshot().active_generation_id : generation;
   ASSERT_TRUE(
     machine.observe(
-      ObservationRecord{stamp(observation_step), episode_id, observation_step, false}).accepted);
+      ObservationRecord{
+        stamp(observation_step), episode_id, observation_step, false,
+        effective_generation}).accepted);
 }
 
 TEST(StrategyTest, ParsesOnlyDeclaredStrategies)
@@ -277,6 +283,71 @@ TEST(GenerationTest, DroppedRequestDoesNotBlockNewerSuccessfulGeneration)
   EXPECT_EQ(command->source_generation_id, 2U);
 }
 
+TEST(GenerationTest, ObservationAdvancePurgesAlignedQueueBeforeNextCommand)
+{
+  ExecutorStateMachine machine(Strategy::kAlignedAsync, kActionDimension, {0.0, 0.0});
+  start(machine, 0U, 1U);
+  const auto old_request = request(1U, 1U, 0U, 3U);
+  ASSERT_TRUE(machine.register_request(old_request).accepted);
+  ASSERT_TRUE(machine.ingest_chunk(chunk(old_request, {1U, 2U, 3U})).accepted);
+
+  observe(machine, 0U, "episode", 2U);
+  const auto snapshot = machine.snapshot();
+  EXPECT_EQ(snapshot.active_generation_id, 2U);
+  EXPECT_TRUE(snapshot.queue.empty());
+  EXPECT_FALSE(snapshot.latest_accepted_plan_key.has_value());
+
+  const auto held = machine.command_for_step("episode", 1U, stamp(1U));
+  ASSERT_TRUE(held.has_value());
+  EXPECT_TRUE(held->hold);
+  EXPECT_EQ(held->source_generation_id, 0U);
+
+  const auto diagnostics = machine.diagnostics(stamp(1U).steady_time_ns);
+  EXPECT_EQ(diagnostics.generation_invalidated_actions, 3U);
+  const auto events = machine.drain_events();
+  EXPECT_EQ(
+    std::count_if(
+      events.begin(), events.end(), [](const RuntimeEventRecord & event) {
+        return event.event_type == "generation_invalidated";
+      }),
+    3);
+  const auto advanced = std::find_if(
+    events.begin(), events.end(), [](const RuntimeEventRecord & event) {
+      return event.event_type == "generation_advanced";
+    });
+  ASSERT_NE(advanced, events.end());
+  EXPECT_EQ(advanced->action_count, 3U);
+  EXPECT_EQ(advanced->queue_length_after, 0U);
+}
+
+TEST(GenerationTest, NaiveObservationAdvanceRetainsArrivalOrderedQueue)
+{
+  ExecutorStateMachine machine(Strategy::kNaiveAsync, kActionDimension, {0.0, 0.0});
+  start(machine, 0U, 1U);
+  const auto old_request = request(1U, 1U, 0U, 2U);
+  ASSERT_TRUE(machine.register_request(old_request).accepted);
+  ASSERT_TRUE(machine.ingest_chunk(chunk(old_request, {1U, 2U})).accepted);
+
+  observe(machine, 0U, "episode", 2U);
+  EXPECT_EQ(machine.snapshot().queue.size(), 2U);
+  const auto command = machine.command_for_step("episode", 1U, stamp(1U));
+  ASSERT_TRUE(command.has_value());
+  EXPECT_FALSE(command->hold);
+  EXPECT_EQ(command->source_generation_id, 1U);
+  EXPECT_EQ(machine.diagnostics(stamp(1U).steady_time_ns).generation_invalidated_actions, 0U);
+}
+
+TEST(GenerationTest, StaleObservationCannotDispatchAfterGenerationAdvance)
+{
+  ExecutorStateMachine machine(Strategy::kAlignedAsync, kActionDimension, {0.0, 0.0});
+  start(machine, 0U, 2U);
+  const auto decision = machine.observe(
+    ObservationRecord{stamp(1U), "episode", 1U, false, 1U});
+  EXPECT_FALSE(decision.accepted);
+  EXPECT_EQ(decision.reason, "stale_observation_generation");
+  EXPECT_EQ(machine.snapshot().latest_observation_step, 0U);
+}
+
 TEST(FreshnessTest, FresherSameGenerationResponseCannotBeOverwrittenByOlderSource)
 {
   ExecutorStateMachine machine(Strategy::kAlignedAsync, kActionDimension, {0.0, 0.0});
@@ -384,6 +455,62 @@ TEST(EpisodeLifecycleTest, PreviousEpisodeAndPostTerminationResultsAreRejected)
   EXPECT_TRUE(machine.diagnostics(stamp(1U).steady_time_ns).episode_success);
 }
 
+TEST(EpisodeLifecycleTest, TerminalObservationDefersSuccessToLifecycleTermination)
+{
+  ExecutorStateMachine machine(Strategy::kAlignedAsync, kActionDimension, {0.0, 0.0});
+  start(machine, 0U, 1U);
+  const auto pending = request(1U, 1U, 0U, 2U);
+  ASSERT_TRUE(machine.register_request(pending).accepted);
+
+  const auto observed = machine.observe(
+    ObservationRecord{stamp(1U), "episode", 1U, true, 1U});
+  ASSERT_TRUE(observed.accepted);
+  EXPECT_EQ(observed.reason, "terminal_observation");
+
+  const auto before_lifecycle = machine.diagnostics(stamp(1U).steady_time_ns);
+  EXPECT_FALSE(before_lifecycle.episode_active);
+  EXPECT_TRUE(before_lifecycle.episode_terminated);
+  EXPECT_FALSE(before_lifecycle.episode_success);
+  EXPECT_EQ(before_lifecycle.queue_length, 0U);
+  EXPECT_EQ(machine.register_request(request(2U, 1U, 1U, 2U)).reason, "episode_terminated");
+  EXPECT_EQ(machine.ingest_chunk(chunk(pending, {1U, 2U})).reason, "episode_terminated");
+
+  const auto finalized = machine.terminate_episode("episode", true, stamp(2U));
+  ASSERT_TRUE(finalized.accepted);
+  EXPECT_EQ(finalized.reason, "success");
+  EXPECT_TRUE(machine.diagnostics(stamp(2U).steady_time_ns).episode_success);
+
+  const auto events = machine.drain_events();
+  const auto termination = std::find_if(
+    events.begin(), events.end(), [](const RuntimeEventRecord & event) {
+      return event.event_type == "episode_terminated";
+    });
+  ASSERT_NE(termination, events.end());
+  EXPECT_EQ(termination->reason, "success");
+  EXPECT_EQ(termination->detail, "terminal observation finalized by lifecycle control");
+
+  const auto duplicate = machine.terminate_episode("episode", true, stamp(3U));
+  EXPECT_FALSE(duplicate.accepted);
+  EXPECT_EQ(duplicate.reason, "episode_not_active");
+}
+
+TEST(EpisodeLifecycleTest, TerminalObservationCanFinalizeAsFailureOnlyOnce)
+{
+  ExecutorStateMachine machine(Strategy::kAlignedAsync, kActionDimension, {0.0, 0.0});
+  start(machine, 0U, 1U);
+  ASSERT_TRUE(
+    machine.observe(ObservationRecord{stamp(1U), "episode", 1U, true, 1U}).accepted);
+
+  const auto finalized = machine.terminate_episode("episode", false, stamp(2U));
+  ASSERT_TRUE(finalized.accepted);
+  EXPECT_EQ(finalized.reason, "terminated");
+  EXPECT_FALSE(machine.diagnostics(stamp(2U).steady_time_ns).episode_success);
+
+  const auto duplicate = machine.terminate_episode("episode", false, stamp(3U));
+  EXPECT_FALSE(duplicate.accepted);
+  EXPECT_EQ(duplicate.reason, "episode_not_active");
+}
+
 TEST(ResponseTest, DuplicateResponseIsRejectedWithoutQueueMutation)
 {
   ExecutorStateMachine machine(Strategy::kAlignedAsync, kActionDimension, {0.0, 0.0});
@@ -398,6 +525,104 @@ TEST(ResponseTest, DuplicateResponseIsRejectedWithoutQueueMutation)
   const auto diagnostics = machine.diagnostics(stamp(0U).steady_time_ns);
   EXPECT_EQ(diagnostics.queue_length, 2U);
   EXPECT_EQ(diagnostics.duplicate_responses, 1U);
+}
+
+TEST(ResponseTest, BuffersCrossTopicResponseUntilRequestRegistration)
+{
+  ExecutorStateMachine machine(Strategy::kSyncHold, kActionDimension, {0.0, 0.0});
+  start(machine, 0U, 1U);
+  const auto source_request = request(1U, 1U, 0U, 3U);
+
+  const auto buffered = machine.ingest_chunk(chunk(source_request, {1U, 2U, 3U}));
+  ASSERT_TRUE(buffered.accepted);
+  EXPECT_EQ(buffered.reason, "awaiting_request_registration");
+  EXPECT_EQ(buffered.queue_length, 0U);
+  auto events = machine.drain_events();
+  ASSERT_EQ(events.size(), 1U);
+  EXPECT_EQ(events[0].event_type, "chunk_buffered");
+  EXPECT_EQ(events[0].reason, "awaiting_request_registration");
+
+  const auto registered = machine.register_request(source_request);
+  ASSERT_TRUE(registered.accepted);
+  EXPECT_EQ(registered.queue_length, 3U);
+  events = machine.drain_events();
+  ASSERT_EQ(events.size(), 2U);
+  EXPECT_EQ(events[0].event_type, "request_registered");
+  EXPECT_EQ(events[1].event_type, "queue_updated");
+  EXPECT_EQ(events[1].reason, "sync_valid_rebuild");
+
+  const auto command = machine.command_for_step("episode", 1U, stamp(1U));
+  ASSERT_TRUE(command.has_value());
+  EXPECT_FALSE(command->hold);
+  EXPECT_EQ(command->source_request_id, 1U);
+  const auto diagnostics = machine.diagnostics(stamp(1U).steady_time_ns);
+  EXPECT_EQ(diagnostics.accepted_chunks, 1U);
+  EXPECT_EQ(diagnostics.rejected_unknown_request_chunks, 0U);
+}
+
+TEST(ResponseTest, RejectsDuplicateWhileOnePreRegistrationResponseIsBuffered)
+{
+  ExecutorStateMachine machine(Strategy::kAlignedAsync, kActionDimension, {0.0, 0.0});
+  start(machine, 0U, 1U);
+  const auto source_request = request(1U, 1U, 0U, 2U);
+  ASSERT_TRUE(machine.ingest_chunk(chunk(source_request, {1U, 2U})).accepted);
+
+  const auto duplicate = machine.ingest_chunk(chunk(source_request, {1U, 2U}, 100.0));
+  EXPECT_FALSE(duplicate.accepted);
+  EXPECT_EQ(duplicate.reason, "duplicate_response");
+
+  ASSERT_TRUE(machine.register_request(source_request).accepted);
+  const auto command = machine.command_for_step("episode", 1U, stamp(1U));
+  ASSERT_TRUE(command.has_value());
+  EXPECT_FALSE(command->hold);
+  EXPECT_DOUBLE_EQ(command->command[0], 1.0);
+  EXPECT_EQ(machine.diagnostics(stamp(1U).steady_time_ns).duplicate_responses, 1U);
+}
+
+TEST(EpisodeLifecycleTest, PriorEpisodeRequestCannotEvictCurrentBufferedResponseWithSameId)
+{
+  ExecutorStateMachine machine(Strategy::kSyncHold, kActionDimension, {0.0, 0.0});
+  start(machine, 0U, 1U, "episode_a");
+  ASSERT_TRUE(machine.reset_episode("episode_b", 1U, 0U, stamp(1U)).accepted);
+  static_cast<void>(machine.drain_events());
+
+  const auto current_request = request(1U, 1U, 0U, 2U, "episode_b");
+  ASSERT_TRUE(machine.ingest_chunk(chunk(current_request, {1U, 2U})).accepted);
+
+  const auto delayed_prior_request = request(1U, 1U, 0U, 2U, "episode_a");
+  const auto rejected = machine.register_request(delayed_prior_request);
+  EXPECT_FALSE(rejected.accepted);
+  EXPECT_EQ(rejected.reason, "previous_episode");
+
+  const auto registered = machine.register_request(current_request);
+  ASSERT_TRUE(registered.accepted);
+  EXPECT_EQ(registered.queue_length, 2U);
+  const auto command = machine.command_for_step("episode_b", 1U, stamp(2U));
+  ASSERT_TRUE(command.has_value());
+  EXPECT_FALSE(command->hold);
+  EXPECT_EQ(command->source_request_id, 1U);
+}
+
+TEST(GenerationTest, BuffersFutureGenerationResponseUntilItsRequestAdvancesGeneration)
+{
+  ExecutorStateMachine machine(Strategy::kAlignedAsync, kActionDimension, {0.0, 0.0});
+  start(machine, 0U, 1U);
+  const auto next_generation_request = request(1U, 2U, 0U, 2U);
+
+  const auto buffered = machine.ingest_chunk(
+    chunk(next_generation_request, {1U, 2U}));
+  ASSERT_TRUE(buffered.accepted);
+  EXPECT_EQ(buffered.reason, "awaiting_request_registration");
+  EXPECT_EQ(machine.snapshot().active_generation_id, 1U);
+
+  const auto registered = machine.register_request(next_generation_request);
+  ASSERT_TRUE(registered.accepted);
+  EXPECT_EQ(registered.queue_length, 2U);
+  EXPECT_EQ(machine.snapshot().active_generation_id, 2U);
+  const auto command = machine.command_for_step("episode", 1U, stamp(1U));
+  ASSERT_TRUE(command.has_value());
+  EXPECT_FALSE(command->hold);
+  EXPECT_EQ(command->source_generation_id, 2U);
 }
 
 TEST(NaiveExecutorTest, AppendsChunksAndExecutesInResponseArrivalOrder)
@@ -444,6 +669,53 @@ TEST(SyncExecutorTest, HoldsSafelyUntilCorrespondingResponseThenExecutesValidSuf
   EXPECT_FALSE(command->hold);
   EXPECT_EQ(command->source_target_step, 2U);
   EXPECT_GT(machine.diagnostics(stamp(2U).steady_time_ns).total_hold_duration_ns, 0U);
+}
+
+TEST(SyncExecutorTest, PeriodicReplanRemainsDisabledByDefault)
+{
+  ExecutorStateMachine machine(Strategy::kSyncHold, kActionDimension, {9.0, 8.0});
+  start(machine, 0U, 1U);
+  const auto first = request(1U, 1U, 0U, 3U);
+  ASSERT_TRUE(machine.register_request(first).accepted);
+  ASSERT_TRUE(machine.ingest_chunk(chunk(first, {1U, 2U, 3U})).accepted);
+
+  const auto periodic = machine.register_request(request(2U, 1U, 0U, 3U));
+  EXPECT_FALSE(periodic.accepted);
+  EXPECT_EQ(periodic.reason, "sync_queue_not_empty");
+  EXPECT_EQ(machine.snapshot().queue.size(), 3U);
+  EXPECT_EQ(machine.diagnostics(stamp(0U).steady_time_ns).sync_periodic_replans, 0U);
+}
+
+TEST(SyncExecutorTest, EnabledPeriodicReplanClearsQueueAndHoldsUntilResponse)
+{
+  ExecutorStateMachine machine(
+    Strategy::kSyncHold, kActionDimension, {9.0, 8.0}, true);
+  start(machine, 0U, 1U);
+  const auto first = request(1U, 1U, 0U, 3U);
+  ASSERT_TRUE(machine.register_request(first).accepted);
+  ASSERT_TRUE(machine.ingest_chunk(chunk(first, {1U, 2U, 3U})).accepted);
+
+  const auto periodic = request(2U, 1U, 0U, 3U);
+  ASSERT_TRUE(machine.register_request(periodic).accepted);
+  const auto snapshot = machine.snapshot();
+  EXPECT_TRUE(snapshot.queue.empty());
+  ASSERT_TRUE(snapshot.sync_request_in_flight.has_value());
+  EXPECT_EQ(snapshot.sync_request_in_flight.value(), 2U);
+
+  const auto held = machine.command_for_step("episode", 1U, stamp(1U));
+  ASSERT_TRUE(held.has_value());
+  EXPECT_TRUE(held->hold);
+  EXPECT_EQ(held->reason, "waiting_for_sync_response");
+
+  ASSERT_TRUE(machine.ingest_chunk(chunk(periodic, {1U, 2U, 3U})).accepted);
+  const auto command = machine.command_for_step("episode", 2U, stamp(2U));
+  ASSERT_TRUE(command.has_value());
+  EXPECT_FALSE(command->hold);
+  EXPECT_EQ(command->source_request_id, 2U);
+
+  const auto diagnostics = machine.diagnostics(stamp(2U).steady_time_ns);
+  EXPECT_EQ(diagnostics.sync_periodic_replans, 1U);
+  EXPECT_EQ(diagnostics.sync_periodic_replan_actions_removed, 3U);
 }
 
 TEST(CommandTest, EmptyQueueUsesConfiguredSafeHoldAndNeverExecutesOneStepTwice)
@@ -514,6 +786,39 @@ TEST(ConcurrencyTest, ConcurrentChunkCallbacksConvergeOnFreshestPlanAtomically)
   ASSERT_TRUE(command.has_value());
   EXPECT_EQ(command->source_request_id, kRequestCount);
   EXPECT_EQ(command->command, (std::vector<double>{33.0, 32.5}));
+}
+
+TEST(ConcurrencyTest, ConcurrentRequestAndResponseCannotLoseCrossTopicResponse)
+{
+  for (std::uint64_t iteration = 0U; iteration < 100U; ++iteration) {
+    ExecutorStateMachine machine(Strategy::kSyncHold, kActionDimension, {0.0, 0.0});
+    start(machine, 0U, 1U);
+    const auto source_request = request(1U, 1U, 0U, 2U);
+    std::atomic<bool> release{false};
+    Decision request_decision;
+    Decision chunk_decision;
+    std::thread request_worker([&]() {
+        while (!release.load(std::memory_order_acquire)) {
+          std::this_thread::yield();
+        }
+        request_decision = machine.register_request(source_request);
+      });
+    std::thread chunk_worker([&]() {
+        while (!release.load(std::memory_order_acquire)) {
+          std::this_thread::yield();
+        }
+        chunk_decision = machine.ingest_chunk(chunk(source_request, {1U, 2U}));
+      });
+    release.store(true, std::memory_order_release);
+    request_worker.join();
+    chunk_worker.join();
+
+    ASSERT_TRUE(request_decision.accepted) << "iteration=" << iteration;
+    ASSERT_TRUE(chunk_decision.accepted) << "iteration=" << iteration;
+    EXPECT_EQ(machine.snapshot().queue.size(), 2U) << "iteration=" << iteration;
+    EXPECT_EQ(machine.diagnostics(stamp(0U).steady_time_ns).accepted_chunks, 1U)
+      << "iteration=" << iteration;
+  }
 }
 
 }  // namespace

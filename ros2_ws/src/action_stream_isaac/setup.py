@@ -20,12 +20,13 @@ setup(
     zip_safe=True,
     maintainer="ActionStream maintainers",
     maintainer_email="cgliu@localhost",
-    description="Headless Isaac Sim 6.0.1 Franka adapter for ActionStream M7.",
+    description="Headless Isaac Sim Franka adapters for ActionStream M7 and M8.",
     license="Apache-2.0",
     entry_points={
         "console_scripts": [
             "capability_probe = action_stream_isaac.capability_probe:main",
             "isaac_adapter = action_stream_isaac.isaac_adapter:main",
+            "dynamic_isaac_adapter = action_stream_isaac.dynamic_isaac_adapter:main",
         ],
     },
 )

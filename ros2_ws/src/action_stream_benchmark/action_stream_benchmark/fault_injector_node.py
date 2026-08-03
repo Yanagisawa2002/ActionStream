@@ -10,6 +10,27 @@ import time
 from typing import Any, Sequence
 
 from .faults import FaultTrace, load_fault_trace
+from .schema import read_json
+
+
+def load_runtime_fault_trace(path: str) -> Any:
+    """Dispatch M8 traces without changing legacy M7 deserialization."""
+
+    payload = read_json(path)
+    if payload.get("milestone") == "M8-G0":
+        from .m8_faults import load_fault_trace as load_m8_fault_trace
+
+        return load_m8_fault_trace(path)
+    return load_fault_trace(path)
+
+
+def duplicate_delivery_offset_ms(entry: Any) -> int:
+    """M7's accepted implicit offset remains exactly 50 ms."""
+
+    value = getattr(entry, "duplicate_delivery_offset_ms", 50)
+    if type(value) is not int or value < 0:
+        raise ValueError("duplicate delivery offset must be a non-negative integer")
+    return value
 
 
 @dataclass(order=True, slots=True)
@@ -51,7 +72,7 @@ def create_fault_injector_node(*, parameter_overrides: Sequence[Any] | None = No
             trace_file = str(self.get_parameter("trace_file").value)
             if not trace_file:
                 raise ValueError("trace_file is required; online random faults are forbidden")
-            self._trace: FaultTrace = load_fault_trace(trace_file)
+            self._trace: FaultTrace = load_runtime_fault_trace(trace_file)
             self._scheduled: list[_ScheduledChunk] = []
             self._serial = 0
             qos = QoSProfile(depth=256, reliability=ReliabilityPolicy.RELIABLE)
@@ -131,7 +152,8 @@ def create_fault_injector_node(*, parameter_overrides: Sequence[Any] | None = No
             self._schedule(message, ordinal, fault.total_delivery_delay_ms, False)
             self._event(message, "chunk_scheduled", "frozen_trace_delay", detail)
             if fault.duplicate_count:
-                duplicate_latency = fault.total_delivery_delay_ms + 50
+                duplicate_offset = duplicate_delivery_offset_ms(fault)
+                duplicate_latency = fault.total_delivery_delay_ms + duplicate_offset
                 self._schedule(message, ordinal, duplicate_latency, True)
 
         def _deliver_due(self) -> None:

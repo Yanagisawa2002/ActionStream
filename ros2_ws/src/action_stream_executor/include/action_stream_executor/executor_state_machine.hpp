@@ -56,6 +56,9 @@ struct ObservationRecord
   std::string episode_id;
   std::uint64_t observation_step{0};
   bool terminated{false};
+  // Zero is also the legacy/default generation.  The ROS node normalizes a
+  // legacy zero to the active nonzero generation before calling observe().
+  std::uint64_t generation_id{0};
 };
 
 struct RequestRecord
@@ -135,13 +138,38 @@ struct Diagnostics
   std::uint64_t duplicate_responses{0};
   std::uint64_t expired_actions_removed{0};
   std::uint64_t duplicate_actions_removed{0};
+  std::uint64_t generation_invalidated_actions{0};
   std::uint64_t queue_rebuilds{0};
+  std::uint64_t sync_periodic_replans{0};
+  std::uint64_t sync_periodic_replan_actions_removed{0};
   std::uint64_t deadline_misses{0};
   std::uint64_t hold_steps{0};
   std::uint64_t total_hold_duration_ns{0};
   std::uint64_t current_hold_duration_ns{0};
   std::uint64_t current_action_age_steps{0};
   std::uint64_t executed_source_generation_id{0};
+};
+
+struct QueuedActionSnapshot
+{
+  std::uint64_t request_id{0};
+  std::uint64_t generation_id{0};
+  std::uint64_t source_observation_step{0};
+  std::uint64_t source_target_step{0};
+  std::vector<double> command;
+};
+
+struct StateSnapshot
+{
+  std::string episode_id;
+  bool episode_active{false};
+  bool episode_terminated{false};
+  std::uint64_t latest_observation_step{0};
+  std::optional<std::uint64_t> latest_executed_target_step;
+  std::uint64_t active_generation_id{0};
+  std::optional<std::pair<std::uint64_t, std::uint64_t>> latest_accepted_plan_key;
+  std::optional<std::uint64_t> sync_request_in_flight;
+  std::vector<QueuedActionSnapshot> queue;
 };
 
 struct RuntimeEventRecord
@@ -167,7 +195,8 @@ class ExecutorStateMachine
 {
 public:
   ExecutorStateMachine(
-    Strategy strategy, std::size_t action_dimension, std::vector<double> safe_hold_command);
+    Strategy strategy, std::size_t action_dimension, std::vector<double> safe_hold_command,
+    bool sync_periodic_replan = false);
 
   ExecutorStateMachine(const ExecutorStateMachine &) = delete;
   ExecutorStateMachine & operator=(const ExecutorStateMachine &) = delete;
@@ -187,6 +216,7 @@ public:
     const std::string & episode_id, std::uint64_t actual_target_step, const ClockStamp & stamp);
 
   [[nodiscard]] Diagnostics diagnostics(std::uint64_t now_steady_time_ns) const;
+  [[nodiscard]] StateSnapshot snapshot() const;
   [[nodiscard]] std::vector<RuntimeEventRecord> drain_events();
   [[nodiscard]] Strategy strategy() const noexcept {return strategy_;}
   [[nodiscard]] std::size_t action_dimension() const noexcept {return action_dimension_;}
@@ -208,12 +238,19 @@ private:
   [[nodiscard]] Decision reject_chunk_locked(
     const ChunkRecord & chunk, const std::string & reason, std::size_t queue_before,
     const std::string & detail = {});
+  [[nodiscard]] Decision ingest_chunk_locked(const ChunkRecord & chunk);
   [[nodiscard]] bool validate_command_locked(const TargetActionRecord & action) const;
   [[nodiscard]] std::vector<QueuedAction> make_valid_actions_locked(
     const ChunkRecord & chunk, const RequestRecord & request, std::size_t * expired,
     std::size_t * duplicates, std::string * error) const;
   [[nodiscard]] CommandRecord make_hold_locked(
     std::uint64_t actual_target_step, const ClockStamp & stamp, const std::string & reason);
+  [[nodiscard]] std::size_t invalidate_stale_queue_actions_locked(
+    const ClockStamp & stamp, const std::string & reason,
+    std::uint64_t actual_target_step = 0U);
+  void advance_generation_locked(
+    std::uint64_t generation_id, std::uint64_t source_observation_step,
+    const ClockStamp & stamp, const std::string & reason);
   void close_hold_locked(std::uint64_t now_steady_time_ns);
   void push_event_locked(RuntimeEventRecord event);
   void reset_counters_locked();
@@ -221,17 +258,25 @@ private:
   const Strategy strategy_;
   const std::size_t action_dimension_;
   const std::vector<double> safe_hold_command_;
+  const bool sync_periodic_replan_;
 
   mutable std::mutex mutex_;
   std::string episode_id_;
   bool episode_active_{false};
   bool episode_terminated_{false};
   bool episode_success_{false};
+  // A terminal observation carries no success bit. Keep execution closed while
+  // allowing the causally subsequent lifecycle control to supply it once.
+  bool terminal_observation_pending_lifecycle_{false};
   std::uint64_t latest_observation_step_{0};
   std::optional<std::uint64_t> latest_executed_target_step_;
   std::uint64_t active_generation_id_{0};
   std::deque<QueuedAction> queue_;
   std::unordered_map<std::uint64_t, RequestRecord> requests_;
+  // ROS only preserves ordering within one topic. A policy response can cross
+  // the request topic at the executor, so retain one bounded response until
+  // its provenance-carrying request callback is registered.
+  std::unordered_map<std::uint64_t, ChunkRecord> pending_pre_registration_chunks_;
   std::unordered_set<std::uint64_t> completed_request_ids_;
   std::optional<std::pair<std::uint64_t, std::uint64_t>> latest_accepted_plan_key_;
   std::optional<std::uint64_t> sync_request_in_flight_;
@@ -248,7 +293,10 @@ private:
   std::uint64_t duplicate_responses_{0};
   std::uint64_t expired_actions_removed_{0};
   std::uint64_t duplicate_actions_removed_{0};
+  std::uint64_t generation_invalidated_actions_{0};
   std::uint64_t queue_rebuilds_{0};
+  std::uint64_t sync_periodic_replans_{0};
+  std::uint64_t sync_periodic_replan_actions_removed_{0};
   std::uint64_t deadline_misses_{0};
   std::uint64_t hold_steps_{0};
   std::uint64_t total_hold_duration_ns_{0};

@@ -2,7 +2,7 @@
 <package format="3">
   <name>action_stream_isaac</name>
   <version>0.1.0</version>
-  <description>Headless Isaac Sim 6.0.1 Franka reach-and-lift adapter for ActionStream M7.</description>
+  <description>Headless Isaac Sim Franka adapters for ActionStream M7 and M8.</description>
   <maintainer email="cgliu@localhost">ActionStream maintainers</maintainer>
   <license>Apache-2.0</license>
 

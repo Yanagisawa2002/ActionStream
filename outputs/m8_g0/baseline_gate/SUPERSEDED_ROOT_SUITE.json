@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "milestone": "M8-G0",
+  "status": "superseded_pre_native_attempt",
+  "headline_eligible": false,
+  "must_not_execute": true,
+  "reason": "The root-level matrix and batch were materialized before the final preregistered protocol bytes settled. The formal runner correctly refused the busy GPU before starting Isaac, and no native episode was produced.",
+  "superseded_artifacts": {
+    "matrix": {
+      "retained": false,
+      "file_sha256": "643e41cac9fbe54d8cec95c962f87e630d6a11d4245bc4e8547895df7a9c6c88",
+      "canonical_protocol_sha256": "c01e76bbbfbf1af4de61e12a19975f1e95b9b839b2e47505cbd2a7263fc559a2"
+    },
+    "batch": {
+      "retained": false,
+      "file_sha256": "09d2bc6c9a292a5a63f941c407a208c14ce5a749812a8eaf0e47e0ed003850e5",
+      "canonical_protocol_sha256": "c01e76bbbfbf1af4de61e12a19975f1e95b9b839b2e47505cbd2a7263fc559a2"
+    },
+    "raw_manifest_file_count": 40,
+    "raw_manifests_retained": false,
+    "gpu_refusal_receipt_retained": false,
+    "gpu_refusal_receipt_note": "The redundant pre-protocol receipt was omitted under repository hygiene; the final current-source refusal receipt is retained in outputs/m8_g0/audit.",
+    "native_event_log_count": 0,
+    "native_summary_count": 0
+  },
+  "replacement": {
+    "protocol": "configs/m8_g0.json",
+    "canonical_protocol_sha256": "c7f5686e4187238310f65ceb589527b9eda863314fd884f39f7c802428a89b54",
+    "matrix": "outputs/m8_g0/baseline_gate/candidate_0/matrix.json",
+    "raw_root": "outputs/m8_g0/baseline_gate/candidate_0/raw"
+  },
+  "interpretation": "Only this compact marker is retained. The duplicate pre-protocol manifests and private runner logs were omitted under repository hygiene. This is infrastructure-refusal history only, not a simulator baseline recipe, episode denominator, or task-performance evidence."
+}

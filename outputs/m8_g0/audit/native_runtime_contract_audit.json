@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "milestone": "M8-G0",
+  "recorded_at_utc": "2026-08-03T12:06:41.8558663Z",
+  "evidence_class": "native_api_cpu_contract_and_current_source_preflight_only",
+  "native_episode_executed": false,
+  "environment": {
+    "workspace": "C:/IsaacSim-ros_workspaces/jazzy_ws",
+    "isaac_sim_version": "6.0.1.0",
+    "ros_distribution": "jazzy",
+    "manipulator_api": "isaacsim.robot.experimental.manipulators.examples.franka.Franka"
+  },
+  "verified_contracts": [
+    {
+      "contract": "Franka articulation DOF limits",
+      "finding": "Isaac Sim 6 returns separate lower and upper arrays; the adapter decodes and validates that representation.",
+      "regression_test": "action_stream_isaac/test/test_dynamic_adapter_contract.py::test_isaac_6_joint_limits_are_separate_lower_upper_arrays"
+    },
+    {
+      "contract": "ground collision filtering",
+      "finding": "The collision prim is /World/GroundPlane/collisionPlane rather than the parent Xform.",
+      "regression_test": "action_stream_isaac/test/test_dynamic_adapter_contract.py::test_isaac_6_ground_contact_filter_targets_collision_child"
+    },
+    {
+      "contract": "cross-topic episode bootstrap",
+      "finding": "The first observation is deferred until the C++ executor acknowledges the lifecycle start, then a bootstrap request is observed before the main observation is released.",
+      "regression_test": "action_stream_isaac/test/test_dynamic_request_driver.py"
+    },
+    {
+      "contract": "terminal success propagation",
+      "finding": "A terminal observation stops execution immediately while permitting one matching TERMINATE request to record the actual success value; duplicates remain rejected.",
+      "regression_test": "action_stream_executor/test/test_executor_state_machine.cpp"
+    },
+    {
+      "contract": "episode failure cleanup",
+      "finding": "Runtime-close and summary-write failures cannot mask the primary episode error; all owned cleanup stages are attempted and cleanup metadata is retained.",
+      "regression_test": "action_stream_isaac/test/test_dynamic_adapter_contract.py"
+    },
+    {
+      "contract": "paired physical reset",
+      "finding": "Exact raw reset hashes remain integrity evidence, while direct preregistered numeric tolerances are authoritative across separately started Kit batches; quaternion comparison is sign invariant.",
+      "regression_test": "action_stream_benchmark/test/test_m8_replay.py::test_paired_reset_fairness_uses_numeric_tolerances_not_float_identity"
+    },
+    {
+      "contract": "cross-topic request and response ordering",
+      "finding": "ROS does not order separate topics, so the C++ state machine retains one bounded pre-registration response per request ID and validates it immediately after matching request provenance registers. Matching cleanup includes episode and full source provenance, preventing persistent-run request-ID collisions.",
+      "regression_test": "ResponseTest.BuffersCrossTopicResponseUntilRequestRegistration; GenerationTest.BuffersFutureGenerationResponseUntilItsRequestAdvancesGeneration; EpisodeLifecycleTest.PriorEpisodeRequestCannotEvictCurrentBufferedResponseWithSameId; ConcurrencyTest.ConcurrentRequestAndResponseCannotLoseCrossTopicResponse"
+    }
+  ],
+  "first_native_run_checks": [
+    "Inspect command_motion_audit requested_target_delta_m, applied_target_delta_m, and measured_end_effector_delta_m on the first delayed development episode.",
+    "Confirm initial safe-hold requested and physically applied targets remain within the preregistered reset tolerance.",
+    "Treat a dropped Profile-2 sync response as an intentionally in-flight request until terminal drain and report any episode-long hold honestly."
+  ],
+  "current_source_native_preflight": {
+    "suite_manifest": "outputs/m8_g0/baseline_gate/candidate_0/matrix.json",
+    "suite_manifest_sha256": "dfe61569c74fd8faf942871c5f9675f4b0c8f2063e48b44f70cc58ddcc328c4e",
+    "batch_manifest": "outputs/m8_g0/baseline_gate/candidate_0/batch_profile_0_sanity_sync_hold.json",
+    "batch_manifest_sha256": "a27ba16327113d5e382e25ec3a625ad31b5a30fd989e68cdb420243f9c0672d9",
+    "validated_episode_count": 20,
+    "runtime_config_binding_passed": true,
+    "redacted_preflight_receipt": "outputs/m8_g0/audit/native_preflight_refusal.json",
+    "redacted_preflight_receipt_sha256": "5cc2f762746b1d6bc2093a124ba984ee96ebecfbcb0b6b075d830436430f3455",
+    "raw_validation_log_retained": false,
+    "raw_validation_log_sha256": "877c628977c29e60bdd1e758675a56a517dc31220283bafc3dd8cb893d5584ce",
+    "raw_failure_receipt_retained": false,
+    "raw_failure_receipt_sha256": "89b5ac711dba712cdb2b568175339c914df207867aa89774025a17a34ce68435",
+    "raw_gpu_refusal_receipt_retained": false,
+    "raw_gpu_refusal_receipt_sha256": "55bdb866f887292a6691af730baf40b1e20d21f9a1f344d5985e64b57cc7d561",
+    "gpu_memory_used_mib": 16022,
+    "gpu_memory_threshold_mib": 4096,
+    "isaac_started": false,
+    "process_killed": false,
+    "interpretation": "The official Isaac Pixi environment validated every baseline manifest against current source before the fixed GPU gate. The occupied GPU caused a fail-closed refusal; this is unavailable native execution, not a failed task episode or a zero result."
+  },
+  "source_sha256": {
+    "ros2_ws/src/action_stream_isaac/action_stream_isaac/dynamic_isaac_adapter.py": "30045f592c7056462cacfdb12db7ba6042b638566cbefaf4baef4e8efbe0fd2a",
+    "ros2_ws/src/action_stream_executor/include/action_stream_executor/executor_state_machine.hpp": "833fd3f93eefb678a4c08d6db455fe09a3256975818611c8cf3a44883a03166a",
+    "ros2_ws/src/action_stream_executor/src/executor_state_machine.cpp": "0ce5f2c564b9c09fdd1906b915c4392f0596a28e490cd83d407290e654a8b3b2",
+    "configs/m8_g0.json": "5b3a7d5fb013b639fa6de0ee709b67f905a59754217fe900383e42e77ecbfe99",
+    "scripts/m8_run_isaac.ps1": "580cf68cc0475a334c489da22e439b04a11ff9c135e90443dfebe3e84ca73b86",
+    "outputs/m8_g0/differential/differential_replay_report.json": "26cee2a75011dc24ec3b1457022d628ab1f27d9306b5ff0074ebc1df960f8bb6"
+  },
+  "interpretation": "These checks validate installed API assumptions, failure semantics, and exact current-source preflight binding. Raw per-run process and path inventories were hash-recorded but omitted for privacy and repository hygiene. These checks are not physical-task success evidence and do not substitute for a completed native Isaac episode."
+}

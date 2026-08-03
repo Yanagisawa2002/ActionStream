@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "milestone": "M8-G0",
+  "recorded_at_utc": "2026-08-03T12:06:41.8558663Z",
+  "evidence_class": "cpu_build_test_and_static_validation_only",
+  "native_isaac_episode_executed": false,
+  "repository_python": {
+    "executable": ".external/m6_venv312/Scripts/python.exe",
+    "version": "3.12.10",
+    "command": "$env:PYTHONPATH='<repo>/src;<repo>/ros2_ws/src/action_stream_benchmark;<repo>/ros2_ws/src/action_stream_isaac;<repo>/ros2_ws/src/action_stream_policy'; .external/m6_venv312/Scripts/python.exe -m pytest tests ros2_ws/src/action_stream_benchmark/test ros2_ws/src/action_stream_isaac/test ros2_ws/src/action_stream_policy/test -o addopts= -q -rs",
+    "collected": 314,
+    "passed": 312,
+    "failed": 0,
+    "skipped": 2,
+    "skip_reasons": [
+      "tests/test_m5_scene.py:410: ACTIONSTREAM_RUN_LIBERO_SCENE_INTEGRATION is not enabled for the local no-policy LIBERO check",
+      "tests/test_m8_differential.py:63: the direct test-local probe did not discover a C++17 compiler; the separately built native C++ probe completed successfully"
+    ]
+  },
+  "native_windows_ros": {
+    "workspace": "C:/IsaacSim-ros_workspaces/jazzy_ws",
+    "pixi_version": "0.75.0",
+    "python_version": "3.12.13",
+    "ros_distribution": "jazzy",
+    "build": {
+      "packages": 5,
+      "result": "passed"
+    },
+    "test": {
+      "colcon_reported_tests": 198,
+      "leaf_test_cases": 197,
+      "ctest_wrapper_results": 1,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "leaf_breakdown": {
+        "action_stream_executor_gtest": 35,
+        "action_stream_benchmark_pytest": 92,
+        "action_stream_isaac_pytest": 59,
+        "action_stream_policy_pytest": 11
+      }
+    },
+    "interpretation": "The colcon total includes the CTest wrapper result in addition to its 35 individual GTest cases."
+  },
+  "linux_ros_docker": {
+    "image": "actionstream-m7-ros:jazzy",
+    "image_sha256": "64505ceaa908d1158844f0470fee5d8cda6ad0898ff1f94ad9e5193a3c34c952",
+    "mount": "repository mounted read-only at /workspace/repo",
+    "ros_distribution": "jazzy",
+    "python_version": "3.12.3",
+    "build": {
+      "packages": 5,
+      "result": "passed"
+    },
+    "test": {
+      "colcon_reported_tests": 198,
+      "leaf_test_cases": 197,
+      "ctest_wrapper_results": 1,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "leaf_breakdown": {
+        "action_stream_executor_gtest": 35,
+        "action_stream_benchmark_pytest": 92,
+        "action_stream_isaac_pytest": 59,
+        "action_stream_policy_pytest": 11
+      }
+    }
+  },
+  "phase_0_replay": {
+    "report": "outputs/m8_g0/differential/differential_replay_report.json",
+    "events": 74,
+    "common_domain_behavioral_equivalence": true,
+    "common_domain_mismatch_count": 0,
+    "unresolved_unintended_discrepancy_count": 0,
+    "headline_evaluation_unblocked": true,
+    "native_probe_sha256": "6a4ecb82988fb252ac4a6aad9e9f0198696f6cb73dfe976ebce5495463063bdf"
+  },
+  "static_checks": {
+    "git_diff_check": "passed",
+    "powershell_5_ast_parse": "passed",
+    "python_compile": "passed",
+    "m8_scoped_ruff": "passed",
+    "json_parse": "72 files passed: configs, compact M8 evidence, ROS benchmark configs, and the M8 dynamic-policy config",
+    "repository_wide_ruff": "one preexisting out-of-scope F841 at src/actionstream/m5_validation.py:501"
+  },
+  "interpretation": "These results validate buildability, queue semantics, orchestration contracts, and evidence tooling. They do not establish native Isaac task success and cannot substitute for the preregistered simulator baseline or frozen holdout."
+}
