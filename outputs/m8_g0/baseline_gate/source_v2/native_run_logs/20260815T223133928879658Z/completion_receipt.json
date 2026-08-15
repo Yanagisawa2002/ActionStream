@@ -1,0 +1,18 @@
+{
+  "analysis": null,
+  "analysis_sha256": null,
+  "completed_utc": "2026-08-15T22:39:01.539286Z",
+  "milestone": "M8-G0",
+  "preflight_receipt": "preflight_receipt.json",
+  "preflight_receipt_sha256": "cfd27d3ae65e4181b2416cfd07b821a990a7fbbd307093615bd65efa11b50bb1",
+  "process_log_archive": "process_logs.tar.gz",
+  "process_log_archive_sha256": "d1d99729b21711b22c9153e6d15ca41cccc3be64c9e465e9acfbcfd8bd465cac",
+  "process_log_manifest": "process_logs.manifest.json",
+  "process_log_manifest_sha256": "96014b5148efcb4e6a1f179cd4066f21ff0dd6cb97ca29209f0c7ffffeca75c5",
+  "process_log_member_count": 9,
+  "receipt_kind": "native_completion",
+  "replay_validation": "../../replay_validation.json",
+  "replay_validation_sha256": "f00c0f8160319fc1524a29d613acaec2a22e0978df2f5d093d08d9eed3aede7e",
+  "schema_version": 1,
+  "status": "complete"
+}
