@@ -2,10 +2,11 @@
   "schema_version": 1,
   "milestone": "M8-G0",
   "classification": "IN_PROGRESS",
+  "development_result": "POSITIVE",
   "headline_eligible": false,
   "headline_evidence_generated": false,
   "native_execution_completed": true,
-  "native_results_status": "baseline_passed_and_single_development_pair_completed",
+  "native_results_status": "source_matched_baseline_passed_and_full_development_candidate_recorded",
   "native_baseline": {
     "profile_id": "profile_0_sanity",
     "strategy": "sync_hold",
@@ -17,34 +18,107 @@
     "completion_steps_max": 251,
     "episode_replay_passed": 20,
     "paired_fairness_passed": true,
-    "provenance_passed": true
+    "provenance_passed": true,
+    "source_file_count": 101,
+    "source_manifest_sha256": "1648d72d2c0a539a4f5f64a4ff870c5428d491b0242c68feec3905034749f945",
+    "matrix": "outputs/m8_g0/baseline_gate/source_v2/matrix.json",
+    "matrix_sha256": "dfe61569c74fd8faf942871c5f9675f4b0c8f2063e48b44f70cc58ddcc328c4e",
+    "replay": "outputs/m8_g0/baseline_gate/source_v2/replay_validation.json",
+    "replay_sha256": "f00c0f8160319fc1524a29d613acaec2a22e0978df2f5d093d08d9eed3aede7e"
   },
-  "development_policy_pair": {
+  "development_candidate": {
+    "candidate_id": "candidate_0",
+    "split": "development",
+    "headline_eligible": false,
+    "seed_count": 12,
+    "profile_count": 2,
+    "paired_block_count": 24,
+    "episode_count": 48,
+    "episode_replay_passed": 48,
+    "fairness_passed": true,
+    "provenance_passed": true,
+    "matrix": "outputs/m8_g0/development/candidate_0_full/matrix.json",
+    "matrix_sha256": "deb16f17fa7d8a874f318cd14ae5a768664bbd4201325f84c4f94594c732e4b2",
+    "replay": "outputs/m8_g0/development/candidate_0_full/replay_validation.json",
+    "replay_sha256": "77c91b14a704eb9de1c845ec8f5be64d9dd3a31f556e5e059590fcb6c0d3b14c",
+    "analysis": "outputs/m8_g0/development/candidate_0_full/candidate_analysis.json",
+    "profiles": {
+      "profile_1_fixed": {
+        "paired_trial_count": 12,
+        "naive_successes": 0,
+        "aligned_successes": 10,
+        "aligned_minus_naive_percentage_points": 83.33333333333334,
+        "paired_bootstrap_95_ci_percentage_points": [
+          58.333333333333336,
+          100.0
+        ],
+        "exact_two_sided_mcnemar_p": 0.001953125,
+        "naive_expired_actions_executed": 846,
+        "aligned_expired_actions_executed": 0,
+        "mean_action_age_reduction": 0.5689944379731944,
+        "mean_maximum_applied_target_delta_reduction": 0.41188145556734823
+      },
+      "profile_2_faults": {
+        "paired_trial_count": 12,
+        "naive_successes": 0,
+        "aligned_successes": 8,
+        "aligned_minus_naive_percentage_points": 66.66666666666666,
+        "paired_bootstrap_95_ci_percentage_points": [
+          41.66666666666667,
+          91.66666666666666
+        ],
+        "exact_two_sided_mcnemar_p": 0.0078125,
+        "naive_expired_actions_executed": 842,
+        "aligned_expired_actions_executed": 0,
+        "mean_action_age_reduction": 0.5511423361317771,
+        "mean_maximum_applied_target_delta_reduction": 0.24176291574283248
+      }
+    },
+    "pooled_descriptive_only": {
+      "naive_successes": 0,
+      "aligned_successes": 18,
+      "trials_per_strategy": 24,
+      "naive_expired_actions_executed": 1688,
+      "aligned_expired_actions_executed": 0,
+      "mean_action_age_reduction": 0.5599235602039035,
+      "mean_maximum_applied_target_delta_reduction": 0.3278749174168726
+    }
+  },
+  "calibration_lifecycle": {
+    "ledger": "configs/m8_calibration_ledger_v2.json",
+    "status": "development_open",
+    "recorded_candidate_count": 1,
+    "selected_candidate_id": null,
+    "holdout_freeze_authorized": false,
+    "first_holdout_started": false
+  },
+  "successful_visual_pair": {
     "profile_id": "profile_1_fixed",
-    "fixed_latency_ms": 850,
-    "seed": 2026081100,
+    "seed": 2026081101,
+    "same_reset_fairness_passed": true,
     "episode_replay_passed": 2,
-    "paired_reset_fairness_passed": true,
     "naive_async": {
       "task_success": false,
       "completion_reason": "failed_approach",
       "completion_steps": 81,
       "grasp_success": false,
-      "expired_actions_executed": 71,
-      "mean_action_age_steps": 38.67605633802817
+      "expired_actions_executed": 70,
+      "mean_action_age_steps": 39.357142857142854
     },
     "aligned_async": {
-      "task_success": false,
-      "completion_reason": "joint_or_workspace_limit",
-      "completion_steps": 149,
+      "task_success": true,
+      "completion_reason": "correct_destination_stable_placement",
+      "completion_steps": 227,
       "grasp_success": true,
       "recovery_observed": true,
       "recovery_latency_steps": 13,
       "expired_actions_executed": 0,
-      "expired_actions_removed": 154,
-      "mean_action_age_steps": 17.23015873015873
+      "expired_actions_removed": 247,
+      "mean_action_age_steps": 17.176470588235293
     },
-    "interpretation": "Directional semantic and visual advantage for aligned execution, but no task-success advantage; one development pair cannot support a statistical claim."
+    "tracked_final_frame": "outputs/m8_g0/development/policy_pair_success_0/paired_success_final.png",
+    "local_composite_video": "outputs/m8_g0/development/policy_pair_success_0/videos/m8_profile1_seed2026081101_naive_fail_vs_aligned_success.mp4",
+    "video_full_decode_passed": true
   },
   "environment": {
     "isaacsim_version": "6.0.1.0",
@@ -52,11 +126,13 @@
     "ros_distribution": "jazzy",
     "rmw_implementation": "rmw_zenoh_cpp",
     "gpu": "NVIDIA GeForce RTX 5090",
+    "gpu_memory_total_mib": 32607,
     "gpu_driver": "595.71.05"
   },
+  "interpretation": "Aligned asynchronous execution has a large, replay-valid task-success advantage in both native-Isaac development profiles. M8 remains in progress because candidate selection, freeze, and the disjoint holdout are pending.",
   "limitations": [
-    "The paired development result contains one seed only.",
-    "Both 850 ms paired episodes failed the full placement task.",
+    "All paired statistics are from the open development split, not the frozen holdout.",
+    "Pooled cross-profile values are descriptive because both profiles reuse the same seeds.",
     "The policy is deterministic and observation-conditioned, not a learned VLA.",
     "No frozen M8 holdout or real-robot evaluation was run."
   ]

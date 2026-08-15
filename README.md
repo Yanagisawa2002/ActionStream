@@ -6,7 +6,7 @@ tests whether compensating for observation age when an asynchronous action
 chunk arrives is safer and more efficient than replacing the queue with the
 entire stale chunk.
 
-## M8-G0: native baseline passed; paired result is directional
+## M8-G0: positive native development result; holdout pending
 
 M8 runs a native Isaac Sim 6.0.1 Franka pick-and-place task with a seeded
 mid-episode destination switch. Old chunks point toward destination A while a
@@ -16,50 +16,55 @@ deterministic live Cartesian waypoint controller using end-effector/object
 poses, grasp state, phase, destination, and generation; it is not a learned
 VLA and does not replay a recorded trajectory.
 
-The exact ROS Jazzy/Isaac workspace passed its native gate on an RTX 5090:
-Profile-0 `sync_hold` completed 20/20 tasks, all 20 independent replay audits,
-fairness checks, source/runtime bindings, and completion-receipt validation.
-Completion ranged from 201 to 251 control steps with a median of 231. The
-calibration ledger now records `baseline_passed_development_open`.
+The source-matched ROS Jazzy/Isaac workspace passed its native gate on an RTX
+5090: Profile-0 `sync_hold` completed 20/20 tasks and all 20 independent replay
+audits. The registered development candidate then completed 48 native episodes:
+12 same-reset naive/aligned pairs under each of two preregistered delay profiles.
 
-The requested one-seed policy-driven paired capture then ran under the frozen
-850 ms Profile 1 delay with an exact same reset:
+| Development profile | `naive_async` | `aligned_async` | Aligned - naive (paired 95% CI) | Exact McNemar |
+|---|---:|---:|---:|---:|
+| Fixed 850 ms | 0/12 | 10/12 | +83.3 pp [+58.3, +100.0] | p=0.001953 |
+| 850 ms + jitter/faults | 0/12 | 8/12 | +66.7 pp [+41.7, +91.7] | p=0.007812 |
 
-| Metric | `naive_async` | `aligned_async` |
-|---|---:|---:|
-| Full task success | 0/1 | 0/1 |
-| Termination | failed approach, step 81 | joint/workspace guard, step 149 |
-| Grasp achieved | No | Yes |
-| Switch recovery | Not reached | 13 steps |
-| Expired actions executed | 71 | 0 |
-| Mean action age | 38.676 steps | 17.230 steps |
-| Maximum applied target delta | 0.2341 m | 0.1291 m |
+Independent replay passed 48/48 episodes and every paired-reset, seed, profile,
+fault-trace, and provenance audit. Across both profiles, the descriptive total
+was 0/24 naive versus 18/24 aligned successes; expired actions executed fell
+from 1,688 to 0, mean action age fell 56.0%, and mean maximum applied-target
+discontinuity fell 32.8%. The two profile-level intervals use the preregistered
+20,000-resample paired bootstrap. No pooled interval is reported because the
+same 12 seeds are reused across profiles.
 
-This is a real but bounded positive result: aligned execution grasped and
-lifted the cube, survived the step-110 destination switch, progressed toward
-the new green target, and executed no expired action. Naive execution never
-grasped the cube and failed before the switch. It is not a task-success win:
-aligned later hit the joint/workspace guard, both methods scored 0/1, and one
-development pair supports no confidence interval or reliability claim. A
-frozen M8 holdout has not been run, so M8 remains **in progress**, not GO.
+This is a genuinely positive native-Isaac **development** result. It is still
+not headline GO: the v2 calibration ledger remains `development_open`, no
+candidate has been selected or frozen, and the disjoint M8 holdout has not run.
+The policy is deterministic and observation-conditioned rather than a learned
+VLA, and this is simulator rather than real-robot evidence.
 
-![Native Profile-1 paired final frame](outputs/m8_g0/development/policy_pair_0/paired_final.png)
+One representative same-reset pair now shows the full content-level contrast:
+naive fails before grasp, while aligned grasps, recovers the step-110 target
+switch, places the cube on the active red destination, releases it, and holds
+the placement stable. The green marker in the final frame is the obsolete
+destination.
 
-Both raw 1280x720/20 fps viewport MP4s and a labelled side-by-side composite
-are retained locally and decode end-to-end. Git keeps the compact final frame,
+![Native Profile-1 naive failure versus aligned success](outputs/m8_g0/development/policy_pair_success_0/paired_success_final.png)
+
+The two raw 1280x720/20 fps viewport MP4s and labelled side-by-side composite
+are retained locally and decode end-to-end. Git keeps the final frame,
 hash/codec validation, raw JSONL, summaries, replay, and native receipts while
 ignoring MP4 payloads.
 
 Evidence: [current machine-readable status](outputs/m8_g0/report/m8_g0_current.json),
 [technical report](outputs/m8_g0/report/m8_g0_report.md),
-[20-seed baseline replay](outputs/m8_g0/baseline_gate/candidate_0/replay_validation.json),
-[paired findings](outputs/m8_g0/development/policy_pair_0/PAIRED_FINDINGS.md),
-[paired replay](outputs/m8_g0/development/policy_pair_0/replay_validation.json),
-[video validation](outputs/m8_g0/development/policy_pair_0/video_validation.json),
+[source-matched baseline replay](outputs/m8_g0/baseline_gate/source_v2/replay_validation.json),
+[full candidate findings](outputs/m8_g0/development/candidate_0_full/CANDIDATE_FINDINGS.md),
+[candidate analysis](outputs/m8_g0/development/candidate_0_full/candidate_analysis.json),
+[48-episode replay](outputs/m8_g0/development/candidate_0_full/replay_validation.json),
+[successful paired findings](outputs/m8_g0/development/policy_pair_success_0/PAIRED_FINDINGS.md),
+[video validation](outputs/m8_g0/development/policy_pair_success_0/video_validation.json),
 [architecture](docs/m8_architecture.md), and
-[reproduction commands](docs/m8_environment.md). The older
-`m8_g0_unavailable.json` and RTX-4090 refusal remain historical records, not the
-current result.
+[reproduction commands](docs/m8_environment.md). The older unavailable and
+single-seed directional records remain historical evidence, not the current
+summary.
 
 This does not change M4's original positive asynchronous result or M7's static
 36/36 saturation. M4, M7, and M8 use different endpoints and denominators; no

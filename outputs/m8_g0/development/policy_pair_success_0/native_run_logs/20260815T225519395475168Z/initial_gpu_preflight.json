@@ -1,0 +1,22 @@
+{
+  "actionable_compute_processes": [],
+  "blocking_compute_processes": [],
+  "captured_utc": "2026-08-15T22:55:20.999261Z",
+  "gpu_inventory": [
+    {
+      "driver_version": "595.71.05",
+      "index": 0,
+      "memory_total_mib": 32607,
+      "memory_used_mib": 2,
+      "name": "NVIDIA GeForce RTX 5090",
+      "utilization_gpu_percent": 0,
+      "uuid": "GPU-34b7b4fa-3bbd-aa20-57c9-94f8db8c40fe"
+    }
+  ],
+  "occupied_gpus": [],
+  "passed": true,
+  "phase": "initial_pre_build",
+  "reported_compute_processes": [],
+  "selected_gpu_index": 0,
+  "unknown_memory_compute_processes": []
+}

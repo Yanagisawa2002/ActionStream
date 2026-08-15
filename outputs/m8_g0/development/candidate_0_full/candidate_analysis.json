@@ -1,0 +1,198 @@
+{
+  "schema_version": 1,
+  "milestone": "M8-G0",
+  "created_at": "2026-08-16T07:03:38+08:00",
+  "split": "development",
+  "headline_eligible": false,
+  "evidence_class": "ros_cpp_isaac_sim",
+  "matrix": "matrix.json",
+  "matrix_sha256": "deb16f17fa7d8a874f318cd14ae5a768664bbd4201325f84c4f94594c732e4b2",
+  "replay": "replay_validation.json",
+  "replay_sha256": "77c91b14a704eb9de1c845ec8f5be64d9dd3a31f556e5e059590fcb6c0d3b14c",
+  "validation": {
+    "passed": true,
+    "episode_count": 48,
+    "episode_audits_passed": 48,
+    "seed_count": 12,
+    "paired_block_count": 24,
+    "fairness_passed": true,
+    "paired_reset_fairness_passed": true,
+    "profile_validation_passed": true,
+    "provenance_validation_passed": true
+  },
+  "bootstrap": {
+    "method": "paired_nonparametric_percentile_bootstrap",
+    "confidence": 0.95,
+    "resamples": 20000,
+    "base_seed": 20260808,
+    "unit": "paired_seed_within_profile"
+  },
+  "profiles": {
+    "profile_1_fixed": {
+      "faults": {
+        "base_latency_ms": 850,
+        "jitter_ms": 0,
+        "drop_probability": 0.0,
+        "extra_delay_probability": 0.0,
+        "duplicate_probability": 0.0,
+        "communication_pause_probability": 0.0
+      },
+      "paired_trial_count": 12,
+      "aligned_minus_naive_success_rate": 0.8333333333333334,
+      "aligned_minus_naive_percentage_points": 83.33333333333334,
+      "paired_bootstrap_95_ci_rate": [
+        0.5833333333333334,
+        1.0
+      ],
+      "paired_bootstrap_95_ci_percentage_points": [
+        58.333333333333336,
+        100.0
+      ],
+      "exact_two_sided_mcnemar": {
+        "aligned_only_successes": 10,
+        "naive_only_successes": 0,
+        "p_value": 0.001953125
+      },
+      "naive_async": {
+        "successes": 0,
+        "trials": 12,
+        "grasp_successes": 0,
+        "recovery_successes": 0,
+        "expired_actions_executed": 846,
+        "expired_actions_removed": 0,
+        "mean_action_age_steps": 40.433266264252175,
+        "mean_maximum_applied_target_delta_m": 0.22938964353229296
+      },
+      "aligned_async": {
+        "successes": 10,
+        "trials": 12,
+        "grasp_successes": 12,
+        "recovery_successes": 12,
+        "expired_actions_executed": 0,
+        "expired_actions_removed": 2784,
+        "mean_action_age_steps": 17.426962650803485,
+        "mean_maximum_applied_target_delta_m": 0.13490830326213699
+      },
+      "relative_reductions": {
+        "mean_action_age": 0.5689944379731944,
+        "mean_maximum_applied_target_delta": 0.41188145556734823
+      },
+      "aligned_failures": [
+        {
+          "seed": 2026081100,
+          "reason": "joint_or_workspace_limit"
+        },
+        {
+          "seed": 2026081108,
+          "reason": "joint_or_workspace_limit"
+        }
+      ]
+    },
+    "profile_2_faults": {
+      "faults": {
+        "base_latency_ms": 850,
+        "jitter_ms": 200,
+        "drop_probability": 0.03,
+        "extra_delay_probability": 0.1,
+        "extra_delay_ms": 900,
+        "duplicate_probability": 0.02,
+        "duplicate_delivery_offset_ms": 50,
+        "communication_pause_probability": 0.03,
+        "communication_pause_ms": 250
+      },
+      "paired_trial_count": 12,
+      "aligned_minus_naive_success_rate": 0.6666666666666666,
+      "aligned_minus_naive_percentage_points": 66.66666666666666,
+      "paired_bootstrap_95_ci_rate": [
+        0.4166666666666667,
+        0.9166666666666666
+      ],
+      "paired_bootstrap_95_ci_percentage_points": [
+        41.66666666666667,
+        91.66666666666666
+      ],
+      "exact_two_sided_mcnemar": {
+        "aligned_only_successes": 8,
+        "naive_only_successes": 0,
+        "p_value": 0.0078125
+      },
+      "naive_async": {
+        "successes": 0,
+        "trials": 12,
+        "grasp_successes": 0,
+        "recovery_successes": 0,
+        "expired_actions_executed": 842,
+        "expired_actions_removed": 0,
+        "mean_action_age_steps": 41.76698067191025,
+        "mean_maximum_applied_target_delta_m": 0.22378099993149891
+      },
+      "aligned_async": {
+        "successes": 8,
+        "trials": 12,
+        "grasp_successes": 11,
+        "recovery_successes": 11,
+        "expired_actions_executed": 0,
+        "expired_actions_removed": 2637,
+        "mean_action_age_steps": 18.747429371222854,
+        "mean_maximum_applied_target_delta_m": 0.16967905290021315
+      },
+      "relative_reductions": {
+        "mean_action_age": 0.5511423361317771,
+        "mean_maximum_applied_target_delta": 0.24176291574283248
+      },
+      "aligned_failures": [
+        {
+          "seed": 2026081100,
+          "reason": "joint_or_workspace_limit"
+        },
+        {
+          "seed": 2026081105,
+          "reason": "switch_precondition_missed"
+        },
+        {
+          "seed": 2026081107,
+          "reason": "joint_or_workspace_limit"
+        },
+        {
+          "seed": 2026081110,
+          "reason": "joint_or_workspace_limit"
+        }
+      ]
+    }
+  },
+  "pooled_descriptive_only": {
+    "reason_not_inferential": "The same 12 seeds are reused across both profiles, so profile-level paired inferences are reported separately.",
+    "paired_block_count": 24,
+    "naive_async": {
+      "successes": 0,
+      "trials": 24,
+      "grasp_successes": 0,
+      "recovery_successes": 0,
+      "expired_actions_executed": 1688,
+      "expired_actions_removed": 0,
+      "mean_action_age_steps": 41.10012346808121,
+      "mean_maximum_applied_target_delta_m": 0.22658532173189594
+    },
+    "aligned_async": {
+      "successes": 18,
+      "trials": 24,
+      "grasp_successes": 23,
+      "recovery_successes": 23,
+      "expired_actions_executed": 0,
+      "expired_actions_removed": 5421,
+      "mean_action_age_steps": 18.08719601101317,
+      "mean_maximum_applied_target_delta_m": 0.15229367808117505
+    },
+    "relative_reductions": {
+      "mean_action_age": 0.5599235602039035,
+      "mean_maximum_applied_target_delta": 0.3278749174168726
+    }
+  },
+  "interpretation": "Strong positive native-Isaac development evidence for aligned asynchronous execution under both preregistered delay profiles; not a frozen holdout or headline result.",
+  "limitations": [
+    "This is the open development split and candidate_0 has not been selected or frozen for holdout.",
+    "Pooled cross-profile values are descriptive only because both profiles reuse the same seeds.",
+    "The policy is deterministic and observation-conditioned, not a learned VLA.",
+    "No frozen M8 holdout or real-robot evaluation has been run."
+  ]
+}

@@ -1,170 +1,195 @@
-# M8-G0 technical report: native baseline passed
+# M8-G0 technical report: positive native development result
 
 ## Decision
 
-M8-G0 now has valid native Isaac evidence. The preregistered Profile-0
-`sync_hold` baseline passed 20/20 task episodes and 20/20 independent replay
-audits. This opens development; it does not by itself establish superiority of
-the asynchronous method.
+M8-G0 now has a strong positive native Isaac Sim development result. After a
+source-matched 20/20 Profile-0 baseline, `candidate_0` completed 48 native
+episodes across 12 paired seeds and two asynchronous fault profiles. Aligned
+execution succeeded 10/12 versus 0/12 under fixed 850 ms latency and 8/12
+versus 0/12 under 850 ms plus jitter and response faults. Both profile-level
+paired-bootstrap confidence intervals exclude zero.
 
-The requested one-seed Profile-1 native pair is also complete and replay-valid.
-It shows a directional semantic and visual advantage for aligned execution,
-but both methods failed the full task. No frozen holdout was run. The current
-classification is therefore **IN PROGRESS**, not GO and no longer
-`unavailable_not_run`.
+This is not a headline GO. The calibration ledger remains open, no candidate
+has been selected or frozen, and the disjoint holdout has not run. The current
+classification remains **IN PROGRESS**.
 
 | Boundary | Result |
 |---|---|
-| Native environment and current-source build | Passed |
-| Profile-0 baseline | 20/20 task success |
-| Baseline independent replay | 20/20 passed |
-| Baseline ledger | `baseline_passed_development_open` |
-| Profile-1 policy-driven pair | 2/2 replay-valid; 0/1 task success per method |
-| Frozen holdout | Not frozen or run |
+| Current-source native environment/build | Passed |
+| Source-matched Profile-0 baseline | 20/20 task success; 20/20 replay |
+| Development candidate | 48/48 replay-valid native episodes |
+| Profile 1 paired task success | 0/12 naive vs 10/12 aligned |
+| Profile 2 paired task success | 0/12 naive vs 8/12 aligned |
+| Calibration lifecycle | `candidate_0` recorded; `development_open` |
+| Candidate selection / freeze | Not performed |
+| Frozen holdout | Not run |
 | Headline classification | Not available |
 
 ## Native task and policy
 
 The benchmark uses Isaac Sim 6.0.1 native physics and the supported
 experimental Franka articulation/controller API. A cube must be approached,
-grasped, lifted, carried to the destination that is active after a seeded
-switch, released within tolerance, and remain stable for 20 steps.
+grasped, lifted, carried to the destination active after a seeded mid-episode
+switch, released within tolerance, and remain stable for 20 control steps.
 
 The shared policy is deterministic and observation-conditioned. Every request
-uses the live end-effector and object poses, grasp state, task phase, active
+uses live end-effector and object poses, grasp state, task phase, active
 destination, and generation to produce a bounded 30-step absolute Cartesian,
-axis-angle, and gripper chunk. This is a genuine closed-loop policy-driven run,
-but it is not a learned VLA and is not real-robot evidence.
+axis-angle, and gripper chunk. This is a genuine policy-driven closed loop, not
+a recorded-trajectory replay. It is not a learned VLA and it is not real-robot
+evidence.
 
-## Environment and provenance
+## Environment and source provenance
 
 - GPU: NVIDIA GeForce RTX 5090, 32,607 MiB, driver 595.71.05.
 - Isaac Sim: 6.0.1.0.
-- Official workspace commit:
+- Official Isaac/ROS workspace commit:
   `dd3eeede7912755996a18f4884285d9f50843f79`.
-- Pixi: 0.75.0 with the frozen workspace manifest and lock.
+- Pixi 0.75.0 with the frozen workspace manifest and lock.
 - ROS 2 Jazzy with `rmw_zenoh_cpp` 0.2.9.
-- ActionStream baseline source commit: `e32983d`.
-- ActionStream paired-run source commit: `ee2c840`.
+- Current-source manifest: 101 files, SHA-256
+  `1648d72d2c0a539a4f5f64a4ff870c5428d491b0242c68feec3905034749f945`.
+- Profile-1 run source commit: `b89442e`.
+- Profile-2 run source commit: `e640083`.
+- Combined candidate/lifecycle record source commit: `2b68c7a`.
 
-The completion receipts bind the GPU snapshots, source manifest, runner,
-runner-support helper, installed dynamic adapter, built C++ executor, Pixi
-files, process-log manifest/archive, matrix, and replay result. The local
-`baseline-record` command independently revalidated those bindings before
-advancing the calibration ledger.
+The earlier baseline receipt no longer matched the exact 101-file source
+manifest after two protocol-test files changed. The behavior implementation
+was unchanged, but the frozen provenance contract includes tests. The old
+ledger was preserved; a parallel v2 ledger was created and the full 20-seed
+native baseline was rerun from the current source before candidate recording.
+No source mismatch was waived.
 
-## Profile-0 baseline
+Completion receipts bind GPU snapshots, source manifests, the installed
+dynamic adapter and C++ executor, the runner and support helper, Pixi evidence,
+process-log manifests, matrices, and replay results.
 
-All 20 preregistered seeds completed with
-`correct_destination_stable_placement`. Completion steps ranged from 201 to
-251, with median 231. Independent replay passed all 20 event logs with no
-invariant or metric mismatch; seed, profile, provenance, and fairness checks
-also passed.
+## Source-matched Profile-0 baseline
 
-This is a positive simulator result: the observation-conditioned policy and
-native task are viable without artificial latency. It is not evidence that
-aligned async is better than another runtime because Profile 0 contains only
-the baseline `sync_hold` strategy.
+All 20 preregistered `sync_hold` seeds completed with
+`correct_destination_stable_placement`. Completion ranged from 201 to 251
+steps with median 231. Independent replay passed 20/20 logs, and the native,
+seed, profile, fairness, and provenance checks passed.
 
-## Profile-1 same-reset paired result
+This establishes task/controller viability with current source. It is a
+prerequisite rather than a comparison between asynchronous runtimes.
 
-The development pair uses seed `2026081100`, a destination switch at step 110,
-and fixed 850 ms response latency at 20 Hz. Both methods used exactly the same
-reset and fault trace; all pairwise reset deltas were zero except a
-`3.39e-08` quaternion-norm floating-point residual, well inside the frozen
-`1e-06` bound.
+## Full development candidate
+
+The development candidate uses the same 12 seeds under both profiles and the
+same reset/scenario/fault trace within each naive/aligned pair. There are 24
+paired blocks and 48 episodes.
+
+| Profile | Naive success | Aligned success | Difference | Paired bootstrap 95% CI | Exact two-sided McNemar |
+|---|---:|---:|---:|---:|---:|
+| Profile 1: fixed 850 ms | 0/12 | 10/12 | +83.3 pp | [+58.3, +100.0] pp | p=0.001953 |
+| Profile 2: 850 ms, +/-200 ms jitter, 3% drop, 10% extra 900 ms delay, 2% duplicate, 3% pause | 0/12 | 8/12 | +66.7 pp | [+41.7, +91.7] pp | p=0.007812 |
+
+Confidence intervals use the preregistered 20,000-resample nonparametric
+bootstrap over paired seed-level success differences. McNemar p-values use
+the exact two-sided binomial test over discordant task-success pairs. Because
+this is the open development split, these are exploratory candidate statistics
+rather than confirmatory holdout tests.
+
+| Profile / metric | Naive async | Aligned async | Relative change |
+|---|---:|---:|---:|
+| Profile 1 grasp success | 0/12 | 12/12 | -- |
+| Profile 1 switch recovery | 0/12 | 12/12 | -- |
+| Profile 1 expired executed | 846 | 0 | -100% |
+| Profile 1 mean action age | 40.433 steps | 17.427 steps | -56.9% |
+| Profile 1 mean max target delta | 0.2294 m | 0.1349 m | -41.2% |
+| Profile 2 grasp success | 0/12 | 11/12 | -- |
+| Profile 2 switch recovery | 0/12 | 11/12 | -- |
+| Profile 2 expired executed | 842 | 0 | -100% |
+| Profile 2 mean action age | 41.767 steps | 18.747 steps | -55.1% |
+| Profile 2 mean max target delta | 0.2238 m | 0.1697 m | -24.2% |
+
+Across the 24 profile/seed blocks, the descriptive total is 0/24 versus 18/24
+task success, 0/24 versus 23/24 grasp and recovery success, and 1,688 versus 0
+expired actions executed. Mean action age fell 56.0% and mean maximum applied
+target discontinuity fell 32.8%. These pooled numbers are descriptive only:
+the profiles reuse the same seeds, so inference is reported separately by
+profile.
+
+The aligned failures are bounded and visible. Profile 1 has two
+`joint_or_workspace_limit` failures. Profile 2 has three such failures and one
+`switch_precondition_missed` failure. Naive completes no full task in either
+profile.
+
+## Concrete paired visualization
+
+Development seed `2026081101` was recaptured under the exact Profile-1
+scenario/fault hashes with viewport video enabled:
 
 | Metric | Naive async | Aligned async |
 |---|---:|---:|
-| Task success | 0/1 | 0/1 |
-| Completion reason | `failed_approach` | `joint_or_workspace_limit` |
-| Completion step | 81 | 149 |
-| Grasp success | No | Yes |
-| Recovery observed | No; ended before switch | Yes |
-| Recovery latency | Not observed | 13 steps / 0.65 s |
-| Final-destination progress | Not observed | 15 steps after switch |
-| Expired actions executed | 71 | 0 |
-| Expired actions removed | 0 | 154 |
-| Mean action age | 38.676 steps | 17.230 steps |
-| P95 action age | 59 steps | 22 steps |
-| Maximum applied target delta | 0.2341 m | 0.1291 m |
-| Hold-control steps | 10 | 23 |
+| Task success | 0/1 | 1/1 |
+| Completion | `failed_approach`, step 81 | stable final placement, step 227 |
+| Grasp / recovery | No / no | Yes / 13 steps |
+| Expired actions executed | 70 | 0 |
+| Mean action age | 39.357 steps | 17.176 steps |
+| Maximum applied target delta | 0.2283 m | 0.1313 m |
 
-Aligned execution reduced mean action age by 55.5%, reduced maximum applied
-target discontinuity by 44.9%, and eliminated the 71 expired executions seen
-in naive async. Visually, naive approached but never grasped the cube and
-terminated 29 steps before the switch. Aligned grasped and lifted the cube,
-observed the active marker move from the red to the green destination,
-recovered in 13 steps, and moved toward the new target before the workspace
-guard stopped it.
+Visual inspection confirms that naive approaches but never grasps the cube.
+Aligned grasps and lifts it, recovers the destination switch, places it on the
+active red target, releases it, and maintains stable placement. The green
+marker visible at the end is the obsolete destination. Both raw captures and
+the labelled side-by-side composite decode completely as H.264 at 20 fps.
 
-This is not a positive task-success comparison. Both methods scored 0/1, the
-aligned run did not place the cube, and one development pair cannot support a
-confidence interval or reliability conclusion.
-
-## Native issues found and resolved
-
-The successful run followed several fail-closed attempts that were retained
-outside the canonical evidence path:
-
-1. Isaac Sim 6 required explicit contact-report API enablement.
-2. The in-process single-threaded ROS executor needed a bounded callback drain
-   between control steps to avoid response backlog.
-3. Cross-topic recorder arrival order could not reconstruct the executor's
-   queue-insertion boundary. `queue_updated` now records that boundary and both
-   native recorders decode it.
-4. A shared Colcon workspace could retain a CMake source directory from an
-   earlier Git worktree. The Linux runner now clears the CMake cache before
-   every current-source build.
-
-These are runtime/replay integrity fixes, not task or threshold calibration.
-The successful baseline was rerun from a clean Git worktree after all fixes.
+![Naive failure versus aligned stable placement](../development/policy_pair_success_0/paired_success_final.png)
 
 ## Validation
 
-- Native Profile-0 task success: 20/20.
-- Native Profile-0 replay: 20/20.
-- Native Profile-1 paired replay: 2/2.
-- Paired-reset fairness and provenance: passed.
-- C++ executor on the remote ROS workspace: 35/35 GTests passed.
-- Relevant local Python replay, recorder, adapter, and Linux-runner tests:
-  passed.
-- Three local MP4s (two raw captures and one labelled composite): H.264,
-  20 fps, full FFmpeg 8.1.1 decode passed.
-
-The broader local suite passes when the unrelated optional PyAV-dependent M4
-capture test is excluded; PyAV is not installed in the pinned local test venv
-and was not installed solely for this M8 run.
+- Source-matched baseline task success and replay: 20/20.
+- Full development candidate replay: 48/48.
+- Candidate paired-reset fairness: 24/24 blocks.
+- Candidate seed, profile, fault-trace, and native provenance checks: passed.
+- Candidate matrix SHA-256:
+  `deb16f17fa7d8a874f318cd14ae5a768664bbd4201325f84c4f94594c732e4b2`.
+- Candidate replay SHA-256:
+  `77c91b14a704eb9de1c845ec8f5be64d9dd3a31f556e5e059590fcb6c0d3b14c`.
+- Successful visual pair replay: 2/2.
+- Three successful-pair MP4s: full FFmpeg 8.1.1 decode passed.
+- Current v2 ledger schema/source/candidate integrity: passed.
+- Relevant local M8 protocol/replay tests: passed.
 
 ## Gate evaluation
 
-The >=90% native baseline prerequisite passed. The one-seed development pair
-does not evaluate the preregistered Profile-1 success-difference confidence
-interval, and neither method succeeded. Candidate selection, freeze, and the
-60-seed holdout remain unexecuted. M8 therefore has positive native viability
-and semantic evidence, but no headline GO result.
+The >=90% native baseline prerequisite passed. The registered development
+candidate has a large positive task-success separation in both delay profiles,
+positive paired-bootstrap lower bounds, zero aligned expired executions, and
+complete replay/fairness/provenance evidence. This is enough to call the
+development result positive.
+
+It is not enough to call M8 GO. Selecting `candidate_0`, closing the calibration
+ledger, creating the immutable freeze manifest, and running the disjoint
+holdout are deliberate next-stage actions. None is performed automatically in
+this report.
 
 ## Evidence index
 
 - [Current machine-readable status](m8_g0_current.json)
-- [Calibration ledger](../../../configs/m8_calibration_ledger.json)
-- [Baseline replay](../baseline_gate/candidate_0/replay_validation.json)
-- [Baseline completion receipt](../baseline_gate/candidate_0/native_run_logs/20260815T213757268580084Z/completion_receipt.json)
-- [Paired findings](../development/policy_pair_0/PAIRED_FINDINGS.md)
-- [Paired replay](../development/policy_pair_0/replay_validation.json)
-- [Paired video validation](../development/policy_pair_0/video_validation.json)
-- [Paired final frame](../development/policy_pair_0/paired_final.png)
+- [V2 calibration ledger](../../../configs/m8_calibration_ledger_v2.json)
+- [Source-matched baseline replay](../baseline_gate/source_v2/replay_validation.json)
+- [Source-matched baseline completion receipt](../baseline_gate/source_v2/native_run_logs/20260815T223133928879658Z/completion_receipt.json)
+- [Full candidate findings](../development/candidate_0_full/CANDIDATE_FINDINGS.md)
+- [Full candidate analysis](../development/candidate_0_full/candidate_analysis.json)
+- [Full candidate replay](../development/candidate_0_full/replay_validation.json)
+- [Successful paired findings](../development/policy_pair_success_0/PAIRED_FINDINGS.md)
+- [Successful paired replay](../development/policy_pair_success_0/replay_validation.json)
+- [Successful paired video validation](../development/policy_pair_success_0/video_validation.json)
 - [Environment and reproduction guide](../../../docs/m8_environment.md)
 
-The earlier [unavailable result](m8_g0_unavailable.json) and RTX-4090 refusal
-remain historical records of the prior machine state. They are not the current
-M8 result.
+The original baseline ledger, one-seed directional pair, unavailable report,
+and RTX-4090 refusal remain immutable historical records. They are not the
+current result.
 
 ## Honest resume bullet
 
-- Built and replay-validated a native Isaac Sim 6.0.1 Franka
-  observation-conditioned action-stream benchmark: 20/20 zero-fault baseline
-  successes; in one same-reset 850 ms development pair, aligned execution
-  grasped and recovered the destination switch with zero expired executions
-  while naive failed before the switch after 71 expired executions, although
-  both failed final placement and no holdout or real-robot claim is made.
+- Built and replay-validated a native Isaac Sim 6.0.1 Franka asynchronous
+  action-stream benchmark: after a 20/20 source-matched baseline, aligned queue
+  semantics improved development task success from 0/12 to 10/12 at fixed 850
+  ms latency and from 0/12 to 8/12 with added jitter/faults, with both paired
+  95% confidence intervals excluding zero and 48/48 replay audits passing;
+  results remain simulator-only, deterministic-policy development evidence
+  pending a frozen holdout.
