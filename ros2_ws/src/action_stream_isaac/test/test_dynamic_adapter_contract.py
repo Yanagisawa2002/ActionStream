@@ -19,6 +19,7 @@ from action_stream_isaac.dynamic_isaac_adapter import (
     DISALLOWED_CONTACT_FILTER_PATHS,
     GROUND_COLLISION_PATH,
     GROUND_PATH,
+    ROS_CALLBACK_DRAIN_LIMIT,
     _command_motion_audit_payload,
     _cleanup_batch_resources,
     _finalize_episode_summary,
@@ -592,6 +593,25 @@ def test_runtime_wires_single_m8_recorder_and_raw_derived_summary() -> None:
     assert "read_jsonl" in finalizer_source
     assert "write_summary_from_rows" in finalizer_source
     assert "result.success" not in finalizer_source
+
+
+def test_runtime_waits_once_then_drains_ros_callback_backlog() -> None:
+    class Executor:
+        def __init__(self) -> None:
+            self.timeouts: list[float] = []
+
+        def spin_once(self, *, timeout_sec: float) -> None:
+            self.timeouts.append(timeout_sec)
+
+    runtime = object.__new__(DynamicInKitEpisodeRuntime)
+    runtime._executor = Executor()
+
+    runtime.spin_pending_callbacks(initial_timeout_sec=0.01)
+
+    assert runtime._executor.timeouts == [0.01] + [0.0] * (
+        ROS_CALLBACK_DRAIN_LIMIT - 1
+    )
+    assert "spin_pending_callbacks" in inspect.getsource(main)
 
 
 def test_episode_failure_preserves_primary_and_records_runtime_close_error(

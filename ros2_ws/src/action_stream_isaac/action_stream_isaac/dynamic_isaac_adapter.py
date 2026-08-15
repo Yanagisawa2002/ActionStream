@@ -74,6 +74,7 @@ PHYSICS_FREQUENCY_HZ: Final = 60
 PHYSICS_STEPS_PER_CONTROL: Final = PHYSICS_FREQUENCY_HZ // CONTROL_FREQUENCY_HZ
 PHYSICS_DT_SECONDS: Final = 1.0 / PHYSICS_FREQUENCY_HZ
 CONTROL_DT_SECONDS: Final = 1.0 / CONTROL_FREQUENCY_HZ
+ROS_CALLBACK_DRAIN_LIMIT: Final = 64
 
 FRANKA_PATH: Final = "/World/Franka"
 OBJECT_PATH: Final = "/World/DynamicObject"
@@ -2268,6 +2269,22 @@ class DynamicInKitEpisodeRuntime:
             raise RuntimeError("dynamic in-Kit executor is closed")
         self._executor.spin_once(timeout_sec=timeout_sec)
 
+    def spin_pending_callbacks(self, *, initial_timeout_sec: float) -> None:
+        """Wait once, then drain the bounded in-process ROS callback backlog.
+
+        A native control step publishes several events plus an observation. A
+        single callback per 20 Hz cycle therefore falls behind even when the
+        policy itself is immediate, making fresh requests appear artificially
+        delayed. The public rclpy executor API has no ``spin_some`` result, so
+        use a fixed nonblocking drain bound after the initial wait.
+        """
+
+        if self._executor is None:
+            raise RuntimeError("dynamic in-Kit executor is closed")
+        self._executor.spin_once(timeout_sec=initial_timeout_sec)
+        for _ in range(ROS_CALLBACK_DRAIN_LIMIT - 1):
+            self._executor.spin_once(timeout_sec=0.0)
+
     def close(self) -> None:
         executor = self._executor
         self._executor = None
@@ -2702,13 +2719,13 @@ def main(argv: Sequence[str] | None = None) -> int:
                     and rclpy.ok()
                     and time.monotonic() < discovery_deadline
                 ):
-                    runtime.spin_once(timeout_sec=0.01)
+                    runtime.spin_pending_callbacks(initial_timeout_sec=0.01)
                 bridge.publish_episode_request(reset=index > 0)
                 executor_ack_deadline: float | None = None
                 bootstrap_request_deadline: float | None = None
                 terminal_drain_deadline: float | None = None
                 while simulation_app.is_running() and rclpy.ok():
-                    runtime.spin_once(timeout_sec=0.01)
+                    runtime.spin_pending_callbacks(initial_timeout_sec=0.01)
                     bridge.process_control_requests()
                     if bridge.initial_observation_is_deferred:
                         if not runtime.executor_episode_ready:
