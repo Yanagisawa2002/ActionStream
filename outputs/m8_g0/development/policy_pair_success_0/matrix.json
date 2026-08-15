@@ -1,0 +1,76 @@
+{
+  "batch_manifests": [
+    {
+      "episode_count": 1,
+      "path": "batch_profile_1_fixed_naive_async.json",
+      "profile_id": "profile_1_fixed",
+      "strategy": "naive_async"
+    },
+    {
+      "episode_count": 1,
+      "path": "batch_profile_1_fixed_aligned_async.json",
+      "profile_id": "profile_1_fixed",
+      "strategy": "aligned_async"
+    }
+  ],
+  "candidate_manifest": "../../../../configs/m8_g0.json",
+  "development_strategy_filter": [
+    "naive_async",
+    "aligned_async"
+  ],
+  "episodes": [
+    {
+      "episode_id": "m8-development-profile_1_fixed-2026081101-naive_async",
+      "event_log_path": "raw/events/m8-development-profile_1_fixed-2026081101-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_1_fixed_seed_2026081101.json",
+      "fault_trace_sha256": "82e3723143691cc229d51810bfb50d1b1b5dfcc70d30d1acb18e97fe5e1dee37",
+      "profile_id": "profile_1_fixed",
+      "scenario_file": "raw/scenarios/seed_2026081101.json",
+      "scenario_sha256": "7c80bdf29807ae8c6ea9fe67281e83be321e87267585a5dd04b4b24b303f4f46",
+      "seed": 2026081101,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-development-profile_1_fixed-2026081101-naive_async.json"
+    },
+    {
+      "episode_id": "m8-development-profile_1_fixed-2026081101-aligned_async",
+      "event_log_path": "raw/events/m8-development-profile_1_fixed-2026081101-aligned_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_1_fixed_seed_2026081101.json",
+      "fault_trace_sha256": "82e3723143691cc229d51810bfb50d1b1b5dfcc70d30d1acb18e97fe5e1dee37",
+      "profile_id": "profile_1_fixed",
+      "scenario_file": "raw/scenarios/seed_2026081101.json",
+      "scenario_sha256": "7c80bdf29807ae8c6ea9fe67281e83be321e87267585a5dd04b4b24b303f4f46",
+      "seed": 2026081101,
+      "strategy": "aligned_async",
+      "summary_path": "raw/summaries/m8-development-profile_1_fixed-2026081101-aligned_async.json"
+    }
+  ],
+  "evidence_class": "ros_cpp_isaac_sim",
+  "expected_episode_count": 2,
+  "fault_traces": [
+    {
+      "path": "raw/fault_traces/profile_1_fixed_seed_2026081101.json",
+      "profile_id": "profile_1_fixed",
+      "seed": 2026081101,
+      "trace_sha256": "82e3723143691cc229d51810bfb50d1b1b5dfcc70d30d1acb18e97fe5e1dee37"
+    }
+  ],
+  "frozen_before_first_holdout_result": false,
+  "headline_eligible": false,
+  "holdout_freeze_status": "pending",
+  "milestone": "M8-G0",
+  "native_results_status_at_creation": "not_run",
+  "persistent_batch_count": 2,
+  "persistent_isaac_process_required": true,
+  "profiles": {
+    "profile_1_fixed": {
+      "path": "../../../../ros2_ws/src/action_stream_benchmark/config/m8_profile_1_fixed.json",
+      "sha256": "996010206f7ca48321c4df2ac7ebfbf95933b66b0beb869c45109f198e05cda4"
+    }
+  },
+  "protocol_sha256": "c7f5686e4187238310f65ceb589527b9eda863314fd884f39f7c802428a89b54",
+  "schema_version": 1,
+  "seed_count": 1,
+  "seed_file": "../../../../configs/m8_success_demo_seed.json",
+  "seed_file_sha256": "cb91d0e47b77e6aa670129a8bee6a743ea8309f49630457025dc5275b384747c",
+  "split": "development"
+}

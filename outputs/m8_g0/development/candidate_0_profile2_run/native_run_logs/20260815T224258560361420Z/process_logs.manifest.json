@@ -1,0 +1,80 @@
+{
+  "archive": "process_logs.tar.gz",
+  "archive_format": "deterministic_tar_gzip",
+  "archive_sha256": "6f2bc04aeed9997c08c5710d87bf1f1610033c448cb5cfe6adfe76f0bc978069",
+  "archive_size_bytes": 25969,
+  "members": [
+    {
+      "path": "batch_profile_2_faults_aligned_async.adapter.stderr.log",
+      "sha256": "e98ac364376f27688201d08605d568753375cd65cff42cb06eca30fba19a9f9f",
+      "size_bytes": 7684
+    },
+    {
+      "path": "batch_profile_2_faults_aligned_async.adapter.stdout.log",
+      "sha256": "383332e6a818d63c44d3604de8ca790c85cd13b59159a119fb7e44439956e1da",
+      "size_bytes": 27973
+    },
+    {
+      "path": "batch_profile_2_faults_aligned_async.executor.stderr.log",
+      "sha256": "1e5ea1a426219504079af58b87c0563ecc2f8ad1f2db370ed2af3b832aea36a2",
+      "size_bytes": 4071
+    },
+    {
+      "path": "batch_profile_2_faults_aligned_async.executor.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": "batch_profile_2_faults_aligned_async.validate_only.log",
+      "sha256": "592ca2e5916bdd6a782e0f6bbdfb92a8e7abe5050bd29ff50d6e7258f364482f",
+      "size_bytes": 2782
+    },
+    {
+      "path": "batch_profile_2_faults_naive_async.adapter.stderr.log",
+      "sha256": "25df7e4035d5ba9d69bb324c8465acacf4c14331410ddee3ea60c72d319b3b82",
+      "size_bytes": 7636
+    },
+    {
+      "path": "batch_profile_2_faults_naive_async.adapter.stdout.log",
+      "sha256": "16759ab2765ed73b04d4700166f2e8af33318870ee4dcaf433b4f35a432f7f94",
+      "size_bytes": 27723
+    },
+    {
+      "path": "batch_profile_2_faults_naive_async.executor.stderr.log",
+      "sha256": "c3a6ef4f930242345ecd4f337d3325c80f32c3ba1ce3cd02c2dc506907b967e7",
+      "size_bytes": 1656
+    },
+    {
+      "path": "batch_profile_2_faults_naive_async.executor.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0
+    },
+    {
+      "path": "batch_profile_2_faults_naive_async.validate_only.log",
+      "sha256": "c175d126fb132184b8a2db6aab7f82c6bfe88dcae24207a2df6733569b257fd2",
+      "size_bytes": 2778
+    },
+    {
+      "path": "colcon_build.log",
+      "sha256": "6c5f3ea969592f8a448f8b3fab846a92a2c5e541387fffab7e59ec3dd67acfec",
+      "size_bytes": 3846
+    },
+    {
+      "path": "replay_validate.log",
+      "sha256": "a200cd63cdefbe87a8b768456296d403cf0c0db99c5353f0bdf0054402f57a5c",
+      "size_bytes": 83920
+    },
+    {
+      "path": "router.stderr.log",
+      "sha256": "825d9997bce5d79930dc76a1dbecb62e854527fba6ead7e03d9dcaa38ac13f4c",
+      "size_bytes": 522
+    },
+    {
+      "path": "router.stdout.log",
+      "sha256": "2b218e9d7d4502df5d9d8147d7e8be85f04eb2a7f4358fda950fbd2bb773e0e8",
+      "size_bytes": 536
+    }
+  ],
+  "milestone": "M8-G0",
+  "schema_version": 1
+}

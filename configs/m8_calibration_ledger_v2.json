@@ -62,7 +62,22 @@
   "bounded_calibration_changes": [],
   "candidate_created_utc": "2026-08-03T08:07:13Z",
   "development": {
-    "candidates": [],
+    "candidates": [
+      {
+        "candidate_id": "candidate_0",
+        "contract_sha256": "fed3a2addb5ebddb7f441b9d541721ee7e883a1342e95802fd55c783ac68f771",
+        "headline_eligible": false,
+        "matrix_path": "outputs/m8_g0/development/candidate_0_full/matrix.json",
+        "matrix_sha256": "deb16f17fa7d8a874f318cd14ae5a768664bbd4201325f84c4f94594c732e4b2",
+        "protocol_file_sha256": "5b3a7d5fb013b639fa6de0ee709b67f905a59754217fe900383e42e77ecbfe99",
+        "protocol_path": "configs/m8_g0.json",
+        "protocol_sha256": "c7f5686e4187238310f65ceb589527b9eda863314fd884f39f7c802428a89b54",
+        "replay_path": "outputs/m8_g0/development/candidate_0_full/replay_validation.json",
+        "replay_sha256": "77c91b14a704eb9de1c845ec8f5be64d9dd3a31f556e5e059590fcb6c0d3b14c",
+        "replay_validated": true,
+        "seed_count": 12
+      }
+    ],
     "headline_eligible": false,
     "seed_count_per_candidate": 12,
     "selected_candidate_id": null,
@@ -74,5 +89,5 @@
   "maximum_bounded_calibration_changes": 2,
   "milestone": "M8-G0",
   "schema_version": 1,
-  "status": "baseline_passed_development_open"
+  "status": "development_open"
 }
