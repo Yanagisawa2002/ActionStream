@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "experiment_id": "current_lerobot_async_rtc_20260815",
+  "frozen_utc": "2026-08-15T08:00:00Z",
+  "source": {
+    "repository_url": "https://github.com/huggingface/lerobot",
+    "commit": "6adf51511b7625090eade8d82d9f61a1846ebe56",
+    "source_version": "0.6.2"
+  },
+  "environment": {
+    "type": "libero",
+    "suite": "libero_object",
+    "task_ids": [0, 1, 2],
+    "episode_length": 800,
+    "control_frequency_hz": 20.0,
+    "initial_state_indices": [0, 2, 4],
+    "base_seed": 2026081500
+  },
+  "models": [
+    {
+      "key": "xvla",
+      "model_id": "lerobot/xvla-libero",
+      "revision": "12e8783e996944f5c97e490d37d4c145484ed70a",
+      "control_mode": "absolute",
+      "chunk_size": 30,
+      "request_interval_steps": 10,
+      "rtc_expected": false,
+      "required": true,
+      "rename_map": {}
+    },
+    {
+      "key": "pi05",
+      "model_id": "lerobot/pi05_libero_finetuned",
+      "revision": "8e174154ef5f6c60a8da12ae99c303d8963138c1",
+      "control_mode": "relative",
+      "chunk_size": 50,
+      "request_interval_steps": 10,
+      "rtc_expected": true,
+      "rtc_execution_horizon": 10,
+      "required": true,
+      "rename_map": {}
+    },
+    {
+      "key": "smolvla",
+      "model_id": "lerobot/smolvla_libero",
+      "revision": "31d453f7edd78c839a8bbc39744a292686daf0de",
+      "control_mode": "relative",
+      "chunk_size": 50,
+      "request_interval_steps": 10,
+      "rtc_expected": true,
+      "rtc_execution_horizon": 10,
+      "required": false,
+      "rename_map": {
+        "observation.images.image": "observation.images.camera1",
+        "observation.images.image2": "observation.images.camera2"
+      }
+    }
+  ],
+  "runtimes": [
+    "sync_hold",
+    "lerobot_weighted_average",
+    "lerobot_latest_only",
+    "actionstream_aligned",
+    "lerobot_rtc"
+  ],
+  "delay_profiles": [
+    {"key": "fixed_0000", "kind": "fixed", "milliseconds": 0},
+    {"key": "fixed_0250", "kind": "fixed", "milliseconds": 250},
+    {"key": "fixed_0500", "kind": "fixed", "milliseconds": 500},
+    {"key": "fixed_0950", "kind": "fixed", "milliseconds": 950},
+    {
+      "key": "jitter_0500_pm0250",
+      "kind": "seeded_uniform",
+      "center_milliseconds": 500,
+      "half_width_milliseconds": 250,
+      "seed": 2026081517,
+      "trace_length": 1024
+    }
+  ],
+  "compact_matrix": {
+    "episodes_per_task": 3,
+    "paired": true,
+    "reuse_delay_trace_across_runtimes": true
+  },
+  "evidence_boundary": {
+    "official_async": "Calls the pinned upstream PolicyServer timing and RobotClient aggregation methods directly; only transport fault injection and the LIBERO control loop are local adapters.",
+    "official_rtc": "Requires policy.supports_rtc(), calls the policy RTC signature, and uses the pinned upstream RTC ActionQueue merge implementation. Unsupported cells are recorded as not_applicable.",
+    "cross_model": "Comparisons are paired within a model only because action representations and policy quality differ."
+  }
+}

@@ -283,9 +283,9 @@ class LatestRequestWorker:
         self,
         infer_fn: Callable[[InferenceRequest], InferencePayload],
         *,
-        delivery_delay_seconds: float = 0.0,
+        delivery_delay_seconds: float | Callable[[InferenceRequest, int], float] = 0.0,
     ) -> None:
-        if delivery_delay_seconds < 0:
+        if not callable(delivery_delay_seconds) and delivery_delay_seconds < 0:
             raise ValueError("delivery_delay_seconds must be non-negative")
         self._infer_fn = infer_fn
         self._delivery_delay_seconds = delivery_delay_seconds
@@ -428,13 +428,27 @@ class LatestRequestWorker:
                 generation, request = self._pending
                 self._pending = None
                 self._active = True
+                request_ordinal = self.calls_started
                 self.calls_started += 1
 
             start_timestamp = time.monotonic()
             try:
                 payload = self._infer_fn(request)
                 end_timestamp = time.monotonic()
-                delivery_timestamp = end_timestamp + self._delivery_delay_seconds
+                if callable(self._delivery_delay_seconds):
+                    delivery_delay_seconds = float(
+                        self._delivery_delay_seconds(request, request_ordinal)
+                    )
+                else:
+                    delivery_delay_seconds = float(self._delivery_delay_seconds)
+                if delivery_delay_seconds < 0:
+                    raise ValueError("delivery delay callback returned a negative delay")
+                metadata = dict(payload.metadata)
+                metadata.setdefault("delay_trace_index", request_ordinal)
+                metadata.setdefault(
+                    "injected_delivery_delay_seconds", delivery_delay_seconds
+                )
+                delivery_timestamp = end_timestamp + delivery_delay_seconds
                 result = InferenceResult(
                     actions=payload.actions,
                     episode_id=request.episode_id,
@@ -444,7 +458,7 @@ class LatestRequestWorker:
                     end_timestamp=end_timestamp,
                     delivery_timestamp=delivery_timestamp,
                     model_inference_latency_seconds=payload.model_inference_latency_seconds,
-                    metadata=payload.metadata,
+                    metadata=metadata,
                     queue_depth_at_request_steps=request.queue_depth_at_request_steps,
                     queue_headroom_at_request_steps=request.queue_headroom_at_request_steps,
                 )
