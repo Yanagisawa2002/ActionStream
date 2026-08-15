@@ -498,7 +498,7 @@ def build_validation(
     event_paths: list[Path],
     run_tests: bool,
 ) -> dict[str, Any]:
-    config = _read_json(config_path, role="config")
+    _config = _read_json(config_path, role="config")
     task_audit = _read_json(task_audit_path, role="task audit")
     protocol = _read_json(protocol_decision_path, role="frozen protocol")
     _validate_canonical_payload(

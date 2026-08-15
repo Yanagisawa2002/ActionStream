@@ -12,7 +12,7 @@ from collections.abc import Iterable, Mapping, Sequence
 from copy import deepcopy
 import hashlib
 import math
-from pathlib import Path
+from pathlib import Path, PurePosixPath, PureWindowsPath
 import re
 from typing import Any, Final
 
@@ -41,6 +41,90 @@ PROFILE_STRATEGIES: Final = {
     "profile_2_faults": STRATEGIES,
 }
 NATIVE_ISAAC_EVIDENCE_CLASS: Final = "ros_cpp_isaac_sim"
+NATIVE_RUNNER_SOURCE_PATHS: Final = (
+    "scripts/m8_run_isaac.ps1",
+    "scripts/m8_run_isaac.sh",
+)
+LINUX_NATIVE_RUNNER_SOURCE_PATH: Final = "scripts/m8_run_isaac.sh"
+LINUX_NATIVE_RUNNER_SUPPORT_SOURCE_PATH: Final = (
+    "scripts/m8_linux_runner_support.py"
+)
+LINUX_NATIVE_RUNNER_SUPPORT_FIELDS: Final = (
+    "runner_support_source",
+    "runner_support_evidence",
+    "runner_support_evidence_sha256",
+    "runner_support_sha256",
+)
+LINUX_NATIVE_RUNNER_SUPPORT_BASELINE_FIELDS: Final = (
+    "runner_support_source",
+    "runner_support_evidence_sha256",
+    "runner_support_sha256",
+)
+ISAAC_WORKSPACE_REPOSITORY_URL: Final = (
+    "https://github.com/isaac-sim/IsaacSim-ros_workspaces.git"
+)
+ISAAC_WORKSPACE_COMMIT: Final = "dd3eeede7912755996a18f4884285d9f50843f79"
+ISAAC_WORKSPACE_RELATIVE_PATH: Final = "jazzy_ws"
+OFFICIAL_LINUX_PIXI_VERSION: Final = "0.75.0"
+OFFICIAL_LINUX_PIXI_VERSION_OUTPUT: Final = "pixi 0.75.0"
+OFFICIAL_LINUX_PIXI_EXECUTABLE_SIZE_BYTES: Final = 77_311_024
+OFFICIAL_LINUX_PIXI_EXECUTABLE_SHA256: Final = (
+    "4383aed18b2d5569cf34a19638daf954aa4415cc87ad3a9da9f34059cc4a004c"
+)
+OFFICIAL_WORKSPACE_FILE_SPECS: Final = {
+    "pixi.toml": {
+        "canonical_lf_size_bytes": 5_467,
+        "canonical_lf_sha256": (
+            "b4e7a34c264e88f19ba6bfb3c7a72ee46b0843f3e6eb7e75619dc0ebb87b313d"
+        ),
+        "exact_crlf_size_bytes": 5_618,
+        "exact_crlf_sha256": (
+            "9649bf57644781a1fe0203ed6b80828ccb42ea07555475080e5d11a9b0c3e1ae"
+        ),
+    },
+    "pixi.lock": {
+        "canonical_lf_size_bytes": 1_491_808,
+        "canonical_lf_sha256": (
+            "ba8e59eef962cbf49a1ff06ff947ed5eaa4547d018389b048771a1e7d8bb890d"
+        ),
+        "exact_crlf_size_bytes": 1_533_045,
+        "exact_crlf_sha256": (
+            "2c2f9097b129847735b5abb805045a22076a731e2138c8192caac95d09a2866e"
+        ),
+    },
+}
+EXPECTED_RUNTIME_VERSIONS: Final = {
+    "python_version": "3.12.13",
+    "isaacsim": "6.0.1.0",
+    "isaacsim-app": "6.0.1.0",
+    "isaacsim-core": "6.0.1.0",
+    "isaacsim-robot": "6.0.1.0",
+    "isaacsim-ros2": "6.0.1.0",
+    "rclpy": "7.1.9",
+    "rosgraph-msgs": "2.0.3",
+    "ros_distribution": "jazzy",
+    "rmw_implementation": "rmw_zenoh_cpp",
+    "rmw_zenoh_cpp": "0.2.9",
+}
+NATIVE_ENVIRONMENT_HASH_FIELDS: Final = (
+    "external_environment_evidence_sha256",
+    "pixi_manifest_evidence_sha256",
+    "pixi_lock_evidence_sha256",
+)
+NATIVE_ENVIRONMENT_LEDGER_FIELDS: Final = (
+    *NATIVE_ENVIRONMENT_HASH_FIELDS,
+    "isaac_workspace_commit",
+    "pixi_version",
+    "python_version",
+    "isaacsim_version",
+    "ros_distribution",
+    "rmw_implementation",
+    "rmw_zenoh_cpp_version",
+    "selected_gpu_uuid",
+    "selected_gpu_name",
+    "selected_gpu_driver_version",
+    "selected_gpu_memory_total_mib",
+)
 STRONG_OBSOLETE_STEP_REDUCTION_THRESHOLD: Final = 0.20
 PAIRED_RESET_FAIRNESS_CONTRACT: Final = {
     "raw_reset_state_sha256_required": True,
@@ -183,7 +267,8 @@ REQUIRED_FREEZE_SOURCE_PATHS: Final = (
     "ros2_ws/src/action_stream_msgs/msg/RobotCommand.msg",
     "ros2_ws/src/action_stream_msgs/msg/RuntimeEvent.msg",
     "ros2_ws/src/action_stream_msgs/msg/TargetAction.msg",
-    "scripts/m8_run_isaac.ps1",
+    *NATIVE_RUNNER_SOURCE_PATHS,
+    LINUX_NATIVE_RUNNER_SUPPORT_SOURCE_PATH,
 )
 
 
@@ -193,6 +278,74 @@ def sha256_file(path: Path | str) -> str:
         for block in iter(lambda: stream.read(1024 * 1024), b""):
             digest.update(block)
     return digest.hexdigest()
+
+
+def _portable_path_parts(value: object, *, name: str) -> tuple[str, ...]:
+    text = value if isinstance(value, str) else ""
+    normalized = text.replace("\\", "/")
+    posix = PurePosixPath(normalized)
+    windows = PureWindowsPath(text)
+    if (
+        not text
+        or Path(text).is_absolute()
+        or posix.is_absolute()
+        or windows.is_absolute()
+        or bool(windows.drive)
+    ):
+        raise ValueError(f"{name} must be a portable relative path")
+    return tuple(posix.parts)
+
+
+def _receipt_relative_file(
+    value: object,
+    *,
+    receipt_file: Path,
+    repository_root: Path,
+    name: str,
+    allow_parent: bool,
+) -> Path:
+    try:
+        parts = _portable_path_parts(value, name=name)
+    except ValueError as exc:
+        raise ValueError(f"{name} must be receipt-relative") from exc
+    if not allow_parent and ".." in parts:
+        raise ValueError(f"{name} must stay inside its receipt directory")
+    candidate = (receipt_file.parent / Path(*parts)).resolve()
+    try:
+        candidate.relative_to(repository_root)
+    except ValueError as exc:
+        raise ValueError(f"{name} escapes the repository") from exc
+    if not candidate.is_file():
+        raise ValueError(f"{name} does not exist: {candidate}")
+    return candidate
+
+
+def _repository_relative_file(
+    value: object,
+    *,
+    repository_root: Path,
+    name: str,
+) -> tuple[str, Path]:
+    parts = _portable_path_parts(value, name=name)
+    if ".." in parts:
+        raise ValueError(f"{name} escapes the repository")
+    portable = PurePosixPath(*parts).as_posix()
+    candidate = (repository_root / Path(*parts)).resolve()
+    try:
+        candidate.relative_to(repository_root)
+    except ValueError as exc:
+        raise ValueError(f"{name} escapes the repository") from exc
+    if not candidate.is_file():
+        raise ValueError(f"{name} does not exist: {candidate}")
+    return portable, candidate
+
+
+def _is_informational_absolute_path(value: object) -> bool:
+    if not isinstance(value, str) or not value:
+        return False
+    return PurePosixPath(value.replace("\\", "/")).is_absolute() or PureWindowsPath(
+        value
+    ).is_absolute()
 
 
 def load_seed_file(path: Path | str) -> tuple[int, ...]:
@@ -725,6 +878,7 @@ def validate_calibration_ledger(
             and baseline.get("profile_id") == "profile_0_sanity"
             and baseline.get("strategy") == "sync_hold"
             and baseline.get("evidence_class") == NATIVE_ISAAC_EVIDENCE_CLASS
+            and baseline.get("runner_source") in NATIVE_RUNNER_SOURCE_PATHS
             and all(
                 isinstance(baseline.get(name), str) and len(baseline.get(name)) == 64
                 for name in (
@@ -737,14 +891,62 @@ def validate_calibration_ledger(
                     "preflight_receipt_sha256",
                     "source_manifest_sha256",
                     "runner_sha256",
+                    "runner_evidence_sha256",
                     "installed_dynamic_adapter_sha256",
+                    "installed_dynamic_adapter_evidence_sha256",
+                    "executor_sha256",
+                    "executor_evidence_sha256",
+                    "router_sha256",
                     "process_log_archive_sha256",
                     "process_log_manifest_sha256",
+                    *NATIVE_ENVIRONMENT_HASH_FIELDS,
                 )
             )
             and int(baseline.get("source_file_count", 0)) > 0
         ):
             raise ValueError("native-Isaac baseline gate has not been validated at >=90%")
+        if (
+            baseline.get("runner_source") != LINUX_NATIVE_RUNNER_SOURCE_PATH
+            or baseline.get("isaac_workspace_commit") != ISAAC_WORKSPACE_COMMIT
+            or baseline.get("pixi_version") != OFFICIAL_LINUX_PIXI_VERSION
+            or baseline.get("python_version") != EXPECTED_RUNTIME_VERSIONS["python_version"]
+            or baseline.get("isaacsim_version") != EXPECTED_RUNTIME_VERSIONS["isaacsim"]
+            or baseline.get("ros_distribution")
+            != EXPECTED_RUNTIME_VERSIONS["ros_distribution"]
+            or baseline.get("rmw_implementation")
+            != EXPECTED_RUNTIME_VERSIONS["rmw_implementation"]
+            or baseline.get("rmw_zenoh_cpp_version")
+            != EXPECTED_RUNTIME_VERSIONS["rmw_zenoh_cpp"]
+            or not isinstance(baseline.get("selected_gpu_uuid"), str)
+            or not re.fullmatch(r"GPU-[A-Za-z0-9-]+", baseline["selected_gpu_uuid"])
+            or not isinstance(baseline.get("selected_gpu_name"), str)
+            or not baseline["selected_gpu_name"].strip()
+            or not isinstance(baseline.get("selected_gpu_driver_version"), str)
+            or not baseline["selected_gpu_driver_version"].strip()
+            or type(baseline.get("selected_gpu_memory_total_mib")) is not int
+            or baseline["selected_gpu_memory_total_mib"] <= 0
+        ):
+            raise ValueError("native-Isaac baseline environment/GPU proof is invalid")
+        baseline_support_fields = {
+            str(name) for name in baseline if str(name).startswith("runner_support_")
+        }
+        if baseline.get("runner_source") == LINUX_NATIVE_RUNNER_SOURCE_PATH:
+            if (
+                baseline_support_fields
+                != set(LINUX_NATIVE_RUNNER_SUPPORT_BASELINE_FIELDS)
+                or baseline.get("runner_support_source")
+                != LINUX_NATIVE_RUNNER_SUPPORT_SOURCE_PATH
+                or not _is_sha256(baseline.get("runner_support_sha256"))
+                or baseline.get("runner_support_sha256")
+                != baseline.get("runner_support_evidence_sha256")
+            ):
+                raise ValueError(
+                    "Linux native baseline does not bind exact runner-support evidence"
+                )
+        elif baseline_support_fields:
+            raise ValueError(
+                "non-Linux native baseline must not declare runner-support evidence"
+            )
         if not isinstance(development, Mapping) or development.get("status") != "complete":
             raise ValueError("development calibration must be complete before freeze")
         candidates = development.get("candidates")
@@ -1098,26 +1300,270 @@ def ros_source_manifest(repository_root: Path | str) -> dict[str, Any]:
     }
 
 
-def validate_native_completion_receipt(
+def _validated_formal_gpu_identity(preflight: Mapping[str, Any]) -> dict[str, Any]:
+    threshold = preflight.get("gpu_memory_refusal_threshold_mib")
+    selected_index = preflight.get("selected_gpu_index")
+    selected_uuid = preflight.get("selected_gpu_uuid")
+    selected_identity = preflight.get("selected_gpu_identity")
+    if (
+        type(threshold) is not int
+        or threshold <= 0
+        or type(selected_index) is not int
+        or selected_index < 0
+        or not isinstance(selected_uuid, str)
+        or not re.fullmatch(r"GPU-[A-Za-z0-9-]+", selected_uuid)
+        or not isinstance(selected_identity, Mapping)
+    ):
+        raise ValueError("native preflight selected GPU identity is malformed")
+    identities: list[dict[str, Any]] = []
+    for field, expected_phase in (
+        ("initial_gpu_preflight", "initial_pre_build"),
+        ("post_build_gpu_preflight", "post_build_pre_launch"),
+    ):
+        snapshot = preflight.get(field)
+        if not isinstance(snapshot, Mapping):
+            raise ValueError(f"native preflight {field} is missing")
+        inventory = snapshot.get("gpu_inventory")
+        if (
+            snapshot.get("phase") != expected_phase
+            or snapshot.get("passed") is not True
+            or snapshot.get("selected_gpu_index") != selected_index
+            or not isinstance(inventory, list)
+            or len(inventory) != 1
+            or not isinstance(inventory[0], Mapping)
+        ):
+            raise ValueError("native preflight GPU snapshot identity is malformed")
+        row = dict(inventory[0])
+        if (
+            row.get("index") != selected_index
+            or row.get("uuid") != selected_uuid
+            or not isinstance(row.get("name"), str)
+            or not row["name"].strip()
+            or not isinstance(row.get("driver_version"), str)
+            or not row["driver_version"].strip()
+            or type(row.get("memory_total_mib")) is not int
+            or row["memory_total_mib"] <= 0
+            or type(row.get("memory_used_mib")) is not int
+            or not 0 <= row["memory_used_mib"] <= threshold
+            or type(row.get("utilization_gpu_percent")) is not int
+            or not 0 <= row["utilization_gpu_percent"] <= 100
+        ):
+            raise ValueError("native preflight GPU snapshot row is invalid")
+        for name in (
+            "reported_compute_processes",
+            "actionable_compute_processes",
+            "blocking_compute_processes",
+            "unknown_memory_compute_processes",
+            "occupied_gpus",
+        ):
+            if snapshot.get(name) != []:
+                raise ValueError(f"native preflight GPU snapshot {name} is not empty")
+        identities.append(
+            {
+                key: row[key]
+                for key in (
+                    "index",
+                    "name",
+                    "uuid",
+                    "driver_version",
+                    "memory_total_mib",
+                )
+            }
+        )
+    if identities[0] != identities[1] or dict(selected_identity) != identities[1]:
+        raise ValueError("native preflight selected GPU identity is not cross-linked")
+    if (
+        preflight.get("gpu_inventory")
+        != preflight["post_build_gpu_preflight"]["gpu_inventory"]
+        or preflight.get("reported_compute_processes") != []
+        or preflight.get("preexisting_compute_processes") != []
+    ):
+        raise ValueError("native preflight top-level GPU state is not cross-linked")
+    return identities[1]
+
+
+def _validated_workspace_file_evidence(
+    record: Any,
+    *,
+    filename: str,
+    environment_file: Path,
+    repository_root: Path,
+) -> tuple[Path, str]:
+    if not isinstance(record, Mapping):
+        raise ValueError(f"external environment {filename} record is malformed")
+    spec = OFFICIAL_WORKSPACE_FILE_SPECS[filename]
+    if (
+        not _is_informational_absolute_path(record.get("source_path"))
+        or record.get("canonical_lf_size_bytes") != spec["canonical_lf_size_bytes"]
+        or record.get("canonical_lf_sha256") != spec["canonical_lf_sha256"]
+        or record.get("byte_form") not in {"lf", "crlf"}
+    ):
+        raise ValueError(f"external environment {filename} canonical record is invalid")
+    evidence = _receipt_relative_file(
+        record.get("evidence"),
+        receipt_file=environment_file,
+        repository_root=repository_root,
+        name=f"external environment {filename} evidence",
+        allow_parent=False,
+    )
+    data = evidence.read_bytes()
+    digest = hashlib.sha256(data).hexdigest()
+    if record.get("size_bytes") != len(data) or record.get("sha256") != digest:
+        raise ValueError(f"external environment {filename} evidence binding mismatch")
+    if record["byte_form"] == "lf":
+        if (
+            len(data) != spec["canonical_lf_size_bytes"]
+            or digest != spec["canonical_lf_sha256"]
+        ):
+            raise ValueError(f"external environment {filename} is not the exact LF blob")
+    else:
+        if (
+            len(data) != spec["exact_crlf_size_bytes"]
+            or digest != spec["exact_crlf_sha256"]
+            or b"\r" in data.replace(b"\r\n", b"")
+        ):
+            raise ValueError(
+                f"external environment {filename} is not the exact all-CRLF form"
+            )
+        normalized = data.replace(b"\r\n", b"\n")
+        if (
+            len(normalized) != spec["canonical_lf_size_bytes"]
+            or hashlib.sha256(normalized).hexdigest()
+            != spec["canonical_lf_sha256"]
+        ):
+            raise ValueError(
+                f"external environment {filename} does not normalize to its Git blob"
+            )
+    return evidence, digest
+
+
+def _validated_external_environment(
+    preflight: Mapping[str, Any],
+    *,
+    preflight_file: Path,
+    repository_root: Path,
+) -> dict[str, Any]:
+    environment_file = _receipt_relative_file(
+        preflight.get("external_environment_evidence"),
+        receipt_file=preflight_file,
+        repository_root=repository_root,
+        name="external environment evidence",
+        allow_parent=False,
+    )
+    environment_hash = sha256_file(environment_file)
+    if preflight.get("external_environment_evidence_sha256") != environment_hash:
+        raise ValueError("native preflight external environment evidence hash mismatch")
+    environment = read_json(environment_file)
+    if not isinstance(environment, Mapping) or (
+        environment.get("schema_version") != M8_SCHEMA_VERSION
+        or environment.get("milestone") != M8_MILESTONE
+        or environment.get("evidence_kind") != "native_external_environment"
+        or environment.get("repository_url") != ISAAC_WORKSPACE_REPOSITORY_URL
+        or environment.get("workspace_commit") != ISAAC_WORKSPACE_COMMIT
+        or environment.get("workspace_relative_path")
+        != ISAAC_WORKSPACE_RELATIVE_PATH
+        or environment.get("tracked_manifest_lock_clean") is not True
+        or not _is_informational_absolute_path(environment.get("repository_root"))
+    ):
+        raise ValueError("native external environment repository proof is invalid")
+    workspace_files = environment.get("workspace_files")
+    if not isinstance(workspace_files, Mapping) or set(workspace_files) != set(
+        OFFICIAL_WORKSPACE_FILE_SPECS
+    ):
+        raise ValueError("native external environment workspace file inventory is invalid")
+    manifest_evidence, manifest_hash = _validated_workspace_file_evidence(
+        workspace_files["pixi.toml"],
+        filename="pixi.toml",
+        environment_file=environment_file,
+        repository_root=repository_root,
+    )
+    lock_evidence, lock_hash = _validated_workspace_file_evidence(
+        workspace_files["pixi.lock"],
+        filename="pixi.lock",
+        environment_file=environment_file,
+        repository_root=repository_root,
+    )
+    if workspace_files["pixi.toml"].get("byte_form") != workspace_files[
+        "pixi.lock"
+    ].get("byte_form"):
+        raise ValueError(
+            "native external environment pixi.toml and pixi.lock must use the "
+            "same exact newline form"
+        )
+    pixi = environment.get("pixi")
+    if not isinstance(pixi, Mapping) or (
+        not _is_informational_absolute_path(pixi.get("executable"))
+        or pixi.get("executable_size_bytes")
+        != OFFICIAL_LINUX_PIXI_EXECUTABLE_SIZE_BYTES
+        or pixi.get("executable_sha256") != OFFICIAL_LINUX_PIXI_EXECUTABLE_SHA256
+        or pixi.get("version") != OFFICIAL_LINUX_PIXI_VERSION
+        or pixi.get("version_output") != OFFICIAL_LINUX_PIXI_VERSION_OUTPUT
+    ):
+        raise ValueError("native external environment Pixi proof is invalid")
+    runtime = environment.get("runtime")
+    if not isinstance(runtime, Mapping):
+        raise ValueError("native external environment runtime proof is malformed")
+    packages = runtime.get("packages")
+    if not isinstance(packages, Mapping):
+        raise ValueError("native external environment package proof is malformed")
+    for name in (
+        "isaacsim",
+        "isaacsim-app",
+        "isaacsim-core",
+        "isaacsim-robot",
+        "isaacsim-ros2",
+        "rclpy",
+        "rosgraph-msgs",
+    ):
+        if packages.get(name) != EXPECTED_RUNTIME_VERSIONS[name]:
+            raise ValueError(f"native external environment {name} version is invalid")
+    for name in (
+        "python_version",
+        "ros_distribution",
+        "rmw_implementation",
+        "rmw_zenoh_cpp",
+    ):
+        if runtime.get(name) != EXPECTED_RUNTIME_VERSIONS[name]:
+            raise ValueError(f"native external environment {name} is invalid")
+    if (
+        runtime.get("platform_system") != "Linux"
+        or runtime.get("platform_machine") not in {"x86_64", "AMD64"}
+        or not _is_informational_absolute_path(runtime.get("python_executable"))
+        or not _is_informational_absolute_path(runtime.get("sys_prefix"))
+    ):
+        raise ValueError("native external environment platform proof is invalid")
+    return {
+        "external_environment_evidence_path": environment_file,
+        "external_environment_evidence_sha256": environment_hash,
+        "pixi_manifest_evidence_path": manifest_evidence,
+        "pixi_manifest_evidence_sha256": manifest_hash,
+        "pixi_lock_evidence_path": lock_evidence,
+        "pixi_lock_evidence_sha256": lock_hash,
+        "environment": dict(environment),
+        "runtime": dict(runtime),
+    }
+
+
+def validate_native_completion_receipt_portability(
     *,
     completion_receipt_path: Path | str,
-    matrix_path: Path | str,
-    replay_path: Path | str,
     repository_root: Path | str,
 ) -> dict[str, Any]:
+    """Validate portable source evidence without dereferencing a rental install.
+
+    Successful native receipts keep absolute runtime paths only as informational
+    strings.  Revalidation instead consumes immutable copies stored next to the
+    preflight receipt and binds them to repository source bytes.
+    """
+
     root = Path(repository_root).resolve()
     completion_file = Path(completion_receipt_path).resolve()
-    matrix_file = Path(matrix_path).resolve()
-    replay_file = Path(replay_path).resolve()
-    for artifact_name, artifact_path in (
-        ("completion receipt", completion_file),
-        ("baseline matrix", matrix_file),
-        ("baseline replay", replay_file),
-    ):
-        try:
-            artifact_path.relative_to(root)
-        except ValueError as exc:
-            raise ValueError(f"{artifact_name} must be inside the repository") from exc
+    try:
+        completion_file.relative_to(root)
+    except ValueError as exc:
+        raise ValueError("completion receipt must be inside the repository") from exc
+    if not completion_file.is_file():
+        raise ValueError(f"completion receipt does not exist: {completion_file}")
     completion = read_json(completion_file)
     if (
         completion.get("schema_version") != M8_SCHEMA_VERSION
@@ -1125,29 +1571,15 @@ def validate_native_completion_receipt(
         or completion.get("receipt_kind") != "native_completion"
         or completion.get("status") != "complete"
     ):
-        raise ValueError("baseline receipt is not a successful native completion")
+        raise ValueError("receipt is not a successful native completion")
 
-    def receipt_path(value: Any, *, name: str) -> Path:
-        candidate = Path(str(value or ""))
-        if candidate.is_absolute() or not value:
-            raise ValueError(f"{name} must be receipt-relative")
-        candidate = completion_file.parent / candidate
-        candidate = candidate.resolve()
-        try:
-            candidate.relative_to(root)
-        except ValueError as exc:
-            raise ValueError(f"{name} escapes the repository") from exc
-        if not candidate.is_file():
-            raise ValueError(f"{name} does not exist: {candidate}")
-        return candidate
-
-    recorded_replay = receipt_path(completion.get("replay_validation"), name="receipt replay")
-    if (
-        recorded_replay != replay_file
-        or completion.get("replay_validation_sha256") != sha256_file(replay_file)
-    ):
-        raise ValueError("native completion receipt does not bind the baseline replay")
-    preflight_file = receipt_path(completion.get("preflight_receipt"), name="preflight receipt")
+    preflight_file = _receipt_relative_file(
+        completion.get("preflight_receipt"),
+        receipt_file=completion_file,
+        repository_root=root,
+        name="preflight receipt",
+        allow_parent=True,
+    )
     if completion.get("preflight_receipt_sha256") != sha256_file(preflight_file):
         raise ValueError("native completion preflight receipt hash mismatch")
     preflight = read_json(preflight_file)
@@ -1156,10 +1588,225 @@ def validate_native_completion_receipt(
         or preflight.get("milestone") != M8_MILESTONE
         or preflight.get("receipt_kind") != "native_preflight"
         or preflight.get("operator_authorized_native_gpu_run") is not True
-        or preflight.get("preexisting_compute_processes") not in ([], ())
     ):
         raise ValueError("referenced receipt is not a successful native preflight")
+
+    source = ros_source_manifest(root)
+    source_parts = _portable_path_parts(
+        preflight.get("source_root"), name="native preflight source root"
+    )
+    if ".." in source_parts:
+        raise ValueError("native preflight source root escapes the repository")
+    recorded_source_root = (root / Path(*source_parts)).resolve()
+    if (
+        recorded_source_root != source["source_root"]
+        or int(preflight.get("source_file_count", -1)) != source["source_file_count"]
+        or preflight.get("source_manifest_sha256") != source["source_manifest_sha256"]
+    ):
+        raise ValueError("native preflight source manifest does not match the current ROS tree")
+
+    if not _is_informational_absolute_path(preflight.get("installed_dynamic_adapter")):
+        raise ValueError("installed adapter runtime path must be absolute and informational")
+    adapter_source = (
+        root
+        / "ros2_ws/src/action_stream_isaac/action_stream_isaac/dynamic_isaac_adapter.py"
+    )
+    if not adapter_source.is_file():
+        raise ValueError("repository dynamic adapter source is missing")
+    adapter_evidence = _receipt_relative_file(
+        preflight.get("installed_dynamic_adapter_evidence"),
+        receipt_file=preflight_file,
+        repository_root=root,
+        name="installed adapter evidence",
+        allow_parent=False,
+    )
+    adapter_hash = sha256_file(adapter_evidence)
+    if (
+        not _is_sha256(preflight.get("installed_dynamic_adapter_evidence_sha256"))
+        or preflight.get("installed_dynamic_adapter_evidence_sha256") != adapter_hash
+        or preflight.get("installed_dynamic_adapter_sha256") != adapter_hash
+        or sha256_file(adapter_source) != adapter_hash
+    ):
+        raise ValueError("native preflight portable installed adapter evidence mismatch")
+
+    if not _is_informational_absolute_path(preflight.get("executor_path")):
+        raise ValueError("installed executor runtime path must be absolute and informational")
+    executor_evidence = _receipt_relative_file(
+        preflight.get("executor_evidence"),
+        receipt_file=preflight_file,
+        repository_root=root,
+        name="installed executor evidence",
+        allow_parent=False,
+    )
+    executor_hash = sha256_file(executor_evidence)
+    if (
+        not _is_sha256(preflight.get("executor_evidence_sha256"))
+        or preflight.get("executor_evidence_sha256") != executor_hash
+        or preflight.get("executor_sha256") != executor_hash
+    ):
+        raise ValueError("native preflight portable installed executor evidence mismatch")
+    if (
+        not _is_informational_absolute_path(preflight.get("router_path"))
+        or not _is_sha256(preflight.get("router_sha256"))
+    ):
+        raise ValueError("native preflight Zenoh router provenance is malformed")
+
+    runner_relative, runner_source = _repository_relative_file(
+        preflight.get("runner_source"),
+        repository_root=root,
+        name="native runner source",
+    )
+    if runner_relative not in NATIVE_RUNNER_SOURCE_PATHS:
+        raise ValueError("native runner source is not an allowed M8 runner")
+    if runner_relative != LINUX_NATIVE_RUNNER_SOURCE_PATH:
+        raise ValueError(
+            "formal native portability requires the Linux runner with exact "
+            "external-environment and selected-GPU evidence"
+        )
+    runtime_runner = preflight.get("runner")
+    if runtime_runner is not None and not _is_informational_absolute_path(runtime_runner):
+        raise ValueError("native runner runtime path must be absolute and informational")
+    runner_evidence = _receipt_relative_file(
+        preflight.get("runner_evidence"),
+        receipt_file=preflight_file,
+        repository_root=root,
+        name="native runner evidence",
+        allow_parent=False,
+    )
+    runner_hash = sha256_file(runner_evidence)
+    if (
+        not _is_sha256(preflight.get("runner_evidence_sha256"))
+        or preflight.get("runner_evidence_sha256") != runner_hash
+        or preflight.get("runner_sha256") != runner_hash
+        or sha256_file(runner_source) != runner_hash
+    ):
+        raise ValueError("native preflight portable runner evidence mismatch")
+
+    runner_support_source: str | None = None
+    runner_support_evidence: Path | None = None
+    runner_support_hash: str | None = None
+    support_fields_present = {
+        str(name) for name in preflight if str(name).startswith("runner_support_")
+    }
+    if runner_relative == LINUX_NATIVE_RUNNER_SOURCE_PATH:
+        if support_fields_present != set(LINUX_NATIVE_RUNNER_SUPPORT_FIELDS):
+            raise ValueError(
+                "Linux native preflight must bind every runner-support evidence field"
+            )
+        support_relative, support_source = _repository_relative_file(
+            preflight.get("runner_support_source"),
+            repository_root=root,
+            name="Linux native runner support source",
+        )
+        if support_relative != LINUX_NATIVE_RUNNER_SUPPORT_SOURCE_PATH:
+            raise ValueError("Linux native preflight binds an unexpected runner support")
+        runner_support_evidence = _receipt_relative_file(
+            preflight.get("runner_support_evidence"),
+            receipt_file=preflight_file,
+            repository_root=root,
+            name="Linux native runner support evidence",
+            allow_parent=False,
+        )
+        runner_support_hash = sha256_file(runner_support_evidence)
+        if (
+            not _is_sha256(preflight.get("runner_support_evidence_sha256"))
+            or preflight.get("runner_support_evidence_sha256")
+            != runner_support_hash
+            or preflight.get("runner_support_sha256") != runner_support_hash
+            or sha256_file(support_source) != runner_support_hash
+        ):
+            raise ValueError(
+                "native preflight portable Linux runner-support evidence mismatch"
+            )
+        runner_support_source = support_relative
+    elif support_fields_present:
+        raise ValueError(
+            "non-Linux native preflight must not declare runner-support evidence"
+        )
+
+    external_environment = _validated_external_environment(
+        preflight,
+        preflight_file=preflight_file,
+        repository_root=root,
+    )
+    selected_gpu = _validated_formal_gpu_identity(preflight)
+
+    return {
+        **external_environment,
+        "completion_receipt_path": completion_file,
+        "completion_receipt_sha256": sha256_file(completion_file),
+        "preflight_receipt_path": preflight_file,
+        "preflight_receipt_sha256": sha256_file(preflight_file),
+        "source_file_count": source["source_file_count"],
+        "source_manifest_sha256": source["source_manifest_sha256"],
+        "installed_dynamic_adapter_evidence_path": adapter_evidence,
+        "installed_dynamic_adapter_evidence_sha256": adapter_hash,
+        "installed_dynamic_adapter_sha256": adapter_hash,
+        "executor_evidence_path": executor_evidence,
+        "executor_evidence_sha256": executor_hash,
+        "executor_sha256": executor_hash,
+        "router_sha256": preflight["router_sha256"],
+        "runner_source": runner_relative,
+        "runner_evidence_path": runner_evidence,
+        "runner_evidence_sha256": runner_hash,
+        "runner_sha256": runner_hash,
+        "runner_support_source": runner_support_source,
+        "runner_support_evidence_path": runner_support_evidence,
+        "runner_support_evidence_sha256": runner_support_hash,
+        "runner_support_sha256": runner_support_hash,
+        "selected_gpu_identity": selected_gpu,
+    }
+
+
+def validate_native_completion_receipt(
+    *,
+    completion_receipt_path: Path | str,
+    matrix_path: Path | str,
+    replay_path: Path | str,
+    repository_root: Path | str,
+) -> dict[str, Any]:
+    root = Path(repository_root).resolve()
+    portable = validate_native_completion_receipt_portability(
+        completion_receipt_path=completion_receipt_path,
+        repository_root=root,
+    )
+    completion_file = portable["completion_receipt_path"]
+    matrix_file = Path(matrix_path).resolve()
+    replay_file = Path(replay_path).resolve()
+    for artifact_name, artifact_path in (
+        ("baseline matrix", matrix_file),
+        ("baseline replay", replay_file),
+    ):
+        try:
+            artifact_path.relative_to(root)
+        except ValueError as exc:
+            raise ValueError(f"{artifact_name} must be inside the repository") from exc
+    completion = read_json(completion_file)
+    recorded_replay = _receipt_relative_file(
+        completion.get("replay_validation"),
+        receipt_file=completion_file,
+        repository_root=root,
+        name="receipt replay",
+        allow_parent=True,
+    )
+    if (
+        recorded_replay != replay_file
+        or completion.get("replay_validation_sha256") != sha256_file(replay_file)
+    ):
+        raise ValueError("native completion receipt does not bind the baseline replay")
+    preflight_file = portable["preflight_receipt_path"]
+    preflight = read_json(preflight_file)
+    if preflight.get("preexisting_compute_processes") not in ([], ()):
+        raise ValueError("referenced receipt is not a successful native preflight")
     matrix_payload = read_json(matrix_file)
+    matrix_split = matrix_payload.get("split")
+    if matrix_split not in {"baseline_gate", "development", "frozen_holdout"}:
+        raise ValueError("native completion matrix split is invalid")
+    expected_frozen_validation = matrix_split == "frozen_holdout"
+    if preflight.get("frozen_live_inputs_validated") is not expected_frozen_validation:
+        raise ValueError(
+            "native preflight frozen-live-input validation does not match the matrix split"
+        )
     batch_records = matrix_payload.get("batch_manifests")
     if (
         not isinstance(batch_records, list)
@@ -1169,6 +1816,7 @@ def validate_native_completion_receipt(
     ):
         raise ValueError("baseline matrix has no exact persistent batch inventory")
     expected_batch_validation_logs: list[str] = []
+    expected_batch_process_logs: list[str] = []
     seen_batch_paths: set[Path] = set()
     for index, record in enumerate(batch_records):
         if not isinstance(record, Mapping) or not record.get("path"):
@@ -1186,6 +1834,11 @@ def validate_native_completion_receipt(
         seen_batch_paths.add(batch_file)
         log_stem = re.sub(r"[^A-Za-z0-9_.-]", "_", batch_file.stem)
         expected_batch_validation_logs.append(f"{log_stem}.validate_only.log")
+        expected_batch_process_logs.extend(
+            f"{log_stem}.{process}.{stream}.log"
+            for process in ("executor", "adapter")
+            for stream in ("stdout", "stderr")
+        )
     if len(set(expected_batch_validation_logs)) != len(expected_batch_validation_logs):
         raise ValueError("baseline batch validation log names are not unique")
     recorded_validation_logs = preflight.get("current_source_batch_validation_logs")
@@ -1284,32 +1937,19 @@ def validate_native_completion_receipt(
         or preflight.get("suite_manifest_sha256") != sha256_file(matrix_file)
     ):
         raise ValueError("native preflight receipt does not bind the baseline matrix")
-    source = ros_source_manifest(root)
-    if (
-        Path(str(preflight.get("source_root", ""))).is_absolute()
-        or (root / str(preflight.get("source_root", ""))).resolve() != source["source_root"]
-        or int(preflight.get("source_file_count", -1)) != source["source_file_count"]
-        or preflight.get("source_manifest_sha256") != source["source_manifest_sha256"]
-    ):
-        raise ValueError("native preflight source manifest does not match the current ROS tree")
-    adapter = root / "ros2_ws/src/action_stream_isaac/action_stream_isaac/dynamic_isaac_adapter.py"
-    runner = root / "scripts/m8_run_isaac.ps1"
-    installed_adapter = Path(str(preflight.get("installed_dynamic_adapter", "")))
-    if (
-        not adapter.is_file()
-        or not runner.is_file()
-        or not installed_adapter.is_absolute()
-        or not installed_adapter.is_file()
-        or preflight.get("installed_dynamic_adapter_sha256") != sha256_file(installed_adapter)
-        or sha256_file(installed_adapter) != sha256_file(adapter)
-        or preflight.get("runner_sha256") != sha256_file(runner)
-    ):
-        raise ValueError("native preflight installed adapter or runner hash mismatch")
-    log_archive = receipt_path(
-        completion.get("process_log_archive"), name="native process-log archive"
+    log_archive = _receipt_relative_file(
+        completion.get("process_log_archive"),
+        receipt_file=completion_file,
+        repository_root=root,
+        name="native process-log archive",
+        allow_parent=True,
     )
-    log_manifest = receipt_path(
-        completion.get("process_log_manifest"), name="native process-log manifest"
+    log_manifest = _receipt_relative_file(
+        completion.get("process_log_manifest"),
+        receipt_file=completion_file,
+        repository_root=root,
+        name="native process-log manifest",
+        allow_parent=True,
     )
     if (
         completion.get("process_log_archive_sha256") != sha256_file(log_archive)
@@ -1341,9 +1981,40 @@ def validate_native_completion_receipt(
         or completion.get("process_log_member_count") != len(logged_names)
     ):
         raise ValueError("native process-log archive member inventory is malformed")
-    planned_names = {Path(str(value)).name for value in preflight.get("planned_process_logs", ())}
+    planned_records = preflight.get("planned_process_logs")
+    if (
+        not isinstance(planned_records, list)
+        or not planned_records
+        or any(
+            not isinstance(value, str)
+            or not value
+            or "\\" in value
+            or Path(value).name != value
+            or not value.endswith(".log")
+            for value in planned_records
+        )
+        or len(set(planned_records)) != len(planned_records)
+    ):
+        raise ValueError("native preflight planned process-log inventory is malformed")
+    planned_names = set(planned_records)
     if not planned_names or not planned_names.issubset(logged_names):
         raise ValueError("native process-log archive is missing planned process logs")
+    required_process_logs = {
+        "colcon_build.log",
+        "replay_validate.log",
+        "router.stdout.log",
+        "router.stderr.log",
+        *expected_batch_validation_logs,
+        *expected_batch_process_logs,
+    }
+    if expected_frozen_validation:
+        required_process_logs.update({"freeze_validate.log", "analysis_figures.log"})
+    if not required_process_logs.issubset(planned_names) or not (
+        required_process_logs.issubset(logged_names)
+    ):
+        raise ValueError(
+            "native process-log archive does not bind every required runner log"
+        )
     expected_validation_names = set(expected_batch_validation_logs)
     if not expected_validation_names.issubset(planned_names) or not (
         expected_validation_names.issubset(logged_names)
@@ -1352,14 +2023,7 @@ def validate_native_completion_receipt(
             "native process-log archive does not bind every batch validation log"
         )
     return {
-        "completion_receipt_path": completion_file,
-        "completion_receipt_sha256": sha256_file(completion_file),
-        "preflight_receipt_path": preflight_file,
-        "preflight_receipt_sha256": sha256_file(preflight_file),
-        "source_file_count": source["source_file_count"],
-        "source_manifest_sha256": source["source_manifest_sha256"],
-        "runner_sha256": sha256_file(runner),
-        "installed_dynamic_adapter_sha256": sha256_file(adapter),
+        **portable,
         "process_log_archive_path": log_archive,
         "process_log_archive_sha256": sha256_file(log_archive),
         "process_log_manifest_path": log_manifest,
@@ -1530,6 +2194,10 @@ def validate_baseline_gate_artifacts(
         ).as_posix()
     except ValueError as exc:
         raise ValueError("baseline evidence must remain inside the repository") from exc
+    environment = receipt["environment"]
+    runtime = receipt["runtime"]
+    runtime_packages = runtime["packages"]
+    selected_gpu = receipt["selected_gpu_identity"]
     evidence_summary = {
         "native_isaac_physics": True,
         "status": "passed",
@@ -1558,13 +2226,49 @@ def validate_baseline_gate_artifacts(
         "preflight_receipt_sha256": receipt["preflight_receipt_sha256"],
         "source_file_count": receipt["source_file_count"],
         "source_manifest_sha256": receipt["source_manifest_sha256"],
+        "runner_source": receipt["runner_source"],
         "runner_sha256": receipt["runner_sha256"],
+        "runner_evidence_sha256": receipt["runner_evidence_sha256"],
+        "external_environment_evidence_sha256": receipt[
+            "external_environment_evidence_sha256"
+        ],
+        "pixi_manifest_evidence_sha256": receipt[
+            "pixi_manifest_evidence_sha256"
+        ],
+        "pixi_lock_evidence_sha256": receipt["pixi_lock_evidence_sha256"],
+        "isaac_workspace_commit": environment["workspace_commit"],
+        "pixi_version": environment["pixi"]["version"],
+        "python_version": runtime["python_version"],
+        "isaacsim_version": runtime_packages["isaacsim"],
+        "ros_distribution": runtime["ros_distribution"],
+        "rmw_implementation": runtime["rmw_implementation"],
+        "rmw_zenoh_cpp_version": runtime["rmw_zenoh_cpp"],
+        "selected_gpu_uuid": selected_gpu["uuid"],
+        "selected_gpu_name": selected_gpu["name"],
+        "selected_gpu_driver_version": selected_gpu["driver_version"],
+        "selected_gpu_memory_total_mib": selected_gpu["memory_total_mib"],
         "installed_dynamic_adapter_sha256": receipt[
             "installed_dynamic_adapter_sha256"
         ],
+        "installed_dynamic_adapter_evidence_sha256": receipt[
+            "installed_dynamic_adapter_evidence_sha256"
+        ],
+        "executor_sha256": receipt["executor_sha256"],
+        "executor_evidence_sha256": receipt["executor_evidence_sha256"],
+        "router_sha256": receipt["router_sha256"],
         "process_log_archive_sha256": receipt["process_log_archive_sha256"],
         "process_log_manifest_sha256": receipt["process_log_manifest_sha256"],
     }
+    if receipt["runner_support_source"] is not None:
+        evidence_summary.update(
+            {
+                "runner_support_source": receipt["runner_support_source"],
+                "runner_support_sha256": receipt["runner_support_sha256"],
+                "runner_support_evidence_sha256": receipt[
+                    "runner_support_evidence_sha256"
+                ],
+            }
+        )
     if not require_closed_lifecycle:
         return evidence_summary
 
@@ -1603,8 +2307,14 @@ def validate_baseline_gate_artifacts(
                 "preflight_receipt_sha256",
                 "source_file_count",
                 "source_manifest_sha256",
+                "runner_source",
                 "runner_sha256",
+                "runner_evidence_sha256",
                 "installed_dynamic_adapter_sha256",
+                "installed_dynamic_adapter_evidence_sha256",
+                "executor_sha256",
+                "executor_evidence_sha256",
+                "router_sha256",
                 "process_log_archive_sha256",
                 "process_log_manifest_sha256",
             )
@@ -1618,6 +2328,11 @@ def validate_baseline_gate_artifacts(
             "bounded_calibration_change_count"
         ],
     }
+    for name in LINUX_NATIVE_RUNNER_SUPPORT_BASELINE_FIELDS:
+        if name in evidence_summary:
+            expected_ledger[name] = evidence_summary[name]
+    for name in NATIVE_ENVIRONMENT_LEDGER_FIELDS:
+        expected_ledger[name] = evidence_summary[name]
     drift = {
         name: {"expected": expected, "actual": baseline.get(name)}
         for name, expected in expected_ledger.items()
@@ -2440,34 +3155,40 @@ def build_freeze_manifest(
     }:
         raise ValueError("freeze profile inputs do not equal the selected development candidate")
     completion_payload = read_json(baseline_completion_receipt_file)
-    baseline_preflight_receipt_file = Path(
-        str(completion_payload.get("preflight_receipt", ""))
+    receipt_portability = validate_native_completion_receipt_portability(
+        completion_receipt_path=baseline_completion_receipt_file,
+        repository_root=root,
     )
-    if not baseline_preflight_receipt_file.is_absolute():
-        baseline_preflight_receipt_file = (
-            baseline_completion_receipt_file.parent / baseline_preflight_receipt_file
-        )
-    baseline_preflight_receipt_file = baseline_preflight_receipt_file.resolve()
-    baseline_process_log_archive_file = Path(
-        str(completion_payload.get("process_log_archive", ""))
+    baseline_preflight_receipt_file = receipt_portability["preflight_receipt_path"]
+    baseline_adapter_evidence_file = receipt_portability[
+        "installed_dynamic_adapter_evidence_path"
+    ]
+    baseline_executor_evidence_file = receipt_portability["executor_evidence_path"]
+    baseline_runner_evidence_file = receipt_portability["runner_evidence_path"]
+    baseline_runner_support_evidence_file = receipt_portability[
+        "runner_support_evidence_path"
+    ]
+    baseline_external_environment_file = receipt_portability[
+        "external_environment_evidence_path"
+    ]
+    baseline_pixi_manifest_evidence_file = receipt_portability[
+        "pixi_manifest_evidence_path"
+    ]
+    baseline_pixi_lock_evidence_file = receipt_portability["pixi_lock_evidence_path"]
+    baseline_process_log_archive_file = _receipt_relative_file(
+        completion_payload.get("process_log_archive"),
+        receipt_file=baseline_completion_receipt_file,
+        repository_root=root,
+        name="baseline process-log archive",
+        allow_parent=True,
     )
-    baseline_process_log_manifest_file = Path(
-        str(completion_payload.get("process_log_manifest", ""))
+    baseline_process_log_manifest_file = _receipt_relative_file(
+        completion_payload.get("process_log_manifest"),
+        receipt_file=baseline_completion_receipt_file,
+        repository_root=root,
+        name="baseline process-log manifest",
+        allow_parent=True,
     )
-    if baseline_process_log_archive_file.is_absolute() or not completion_payload.get(
-        "process_log_archive"
-    ):
-        raise ValueError("baseline process-log archive path must be receipt-relative")
-    if baseline_process_log_manifest_file.is_absolute() or not completion_payload.get(
-        "process_log_manifest"
-    ):
-        raise ValueError("baseline process-log manifest path must be receipt-relative")
-    baseline_process_log_archive_file = (
-        baseline_completion_receipt_file.parent / baseline_process_log_archive_file
-    ).resolve()
-    baseline_process_log_manifest_file = (
-        baseline_completion_receipt_file.parent / baseline_process_log_manifest_file
-    ).resolve()
     baseline_artifacts = _baseline_artifact_role_paths(
         baseline_matrix_file,
         repository_root=root,
@@ -2489,9 +3210,22 @@ def build_freeze_manifest(
         ("baseline_candidate_protocol", baseline_candidate_protocol_file),
         ("baseline_completion_receipt", baseline_completion_receipt_file),
         ("baseline_preflight_receipt", baseline_preflight_receipt_file),
+        ("baseline_installed_dynamic_adapter_evidence", baseline_adapter_evidence_file),
+        ("baseline_installed_executor_evidence", baseline_executor_evidence_file),
+        ("baseline_runner_evidence", baseline_runner_evidence_file),
+        ("baseline_external_environment", baseline_external_environment_file),
+        ("baseline_pixi_manifest_evidence", baseline_pixi_manifest_evidence_file),
+        ("baseline_pixi_lock_evidence", baseline_pixi_lock_evidence_file),
         ("baseline_process_log_archive", baseline_process_log_archive_file),
         ("baseline_process_log_manifest", baseline_process_log_manifest_file),
     ]
+    if baseline_runner_support_evidence_file is not None:
+        role_paths.append(
+            (
+                "baseline_runner_support_evidence",
+                baseline_runner_support_evidence_file,
+            )
+        )
     for profile_file in profile_files:
         profile_id = str(read_json(profile_file).get("profile", {}).get("profile_id"))
         role_paths.append((f"profile:{profile_id}", profile_file))
@@ -2545,6 +3279,17 @@ def build_freeze_manifest(
         "baseline_candidate_protocol",
         "baseline_completion_receipt",
         "baseline_preflight_receipt",
+        "baseline_installed_dynamic_adapter_evidence",
+        "baseline_installed_executor_evidence",
+        "baseline_runner_evidence",
+        "baseline_external_environment",
+        "baseline_pixi_manifest_evidence",
+        "baseline_pixi_lock_evidence",
+        *(
+            ("baseline_runner_support_evidence",)
+            if baseline_runner_support_evidence_file is not None
+            else ()
+        ),
         "baseline_process_log_archive",
         "baseline_process_log_manifest",
         *(f"profile:{profile_id}" for profile_id in sorted(PROFILE_STRATEGIES)),
@@ -2631,6 +3376,35 @@ def validate_freeze_manifest(
     baseline_candidate_record = records_by_role.get("baseline_candidate_protocol")
     baseline_completion_record = records_by_role.get("baseline_completion_receipt")
     baseline_preflight_record = records_by_role.get("baseline_preflight_receipt")
+    baseline_adapter_evidence_record = records_by_role.get(
+        "baseline_installed_dynamic_adapter_evidence"
+    )
+    baseline_executor_evidence_record = records_by_role.get(
+        "baseline_installed_executor_evidence"
+    )
+    baseline_runner_evidence_record = records_by_role.get("baseline_runner_evidence")
+    baseline_runner_support_evidence_record = records_by_role.get(
+        "baseline_runner_support_evidence"
+    )
+    baseline_external_environment_record = records_by_role.get(
+        "baseline_external_environment"
+    )
+    baseline_pixi_manifest_evidence_record = records_by_role.get(
+        "baseline_pixi_manifest_evidence"
+    )
+    baseline_pixi_lock_evidence_record = records_by_role.get(
+        "baseline_pixi_lock_evidence"
+    )
+    baseline_gate_payload = manifest.get("baseline_gate")
+    baseline_runner_support_required = (
+        isinstance(baseline_gate_payload, Mapping)
+        and baseline_gate_payload.get("runner_source")
+        == LINUX_NATIVE_RUNNER_SOURCE_PATH
+    )
+    if (baseline_runner_support_evidence_record is not None) != (
+        baseline_runner_support_required
+    ):
+        errors.append("baseline_runner_support_evidence_role_presence_mismatch")
     baseline_process_log_archive_record = records_by_role.get(
         "baseline_process_log_archive"
     )
@@ -2731,6 +3505,17 @@ def validate_freeze_manifest(
                 "baseline_candidate_protocol",
                 "baseline_completion_receipt",
                 "baseline_preflight_receipt",
+                "baseline_installed_dynamic_adapter_evidence",
+                "baseline_installed_executor_evidence",
+                "baseline_runner_evidence",
+                "baseline_external_environment",
+                "baseline_pixi_manifest_evidence",
+                "baseline_pixi_lock_evidence",
+                *(
+                    ("baseline_runner_support_evidence",)
+                    if baseline_runner_support_required
+                    else ()
+                ),
                 "baseline_process_log_archive",
                 "baseline_process_log_manifest",
                 *(f"profile:{profile_id}" for profile_id in PROFILE_STRATEGIES),
@@ -2785,6 +3570,17 @@ def validate_freeze_manifest(
         "baseline_candidate_protocol",
         "baseline_completion_receipt",
         "baseline_preflight_receipt",
+        "baseline_installed_dynamic_adapter_evidence",
+        "baseline_installed_executor_evidence",
+        "baseline_runner_evidence",
+        "baseline_external_environment",
+        "baseline_pixi_manifest_evidence",
+        "baseline_pixi_lock_evidence",
+        *(
+            ("baseline_runner_support_evidence",)
+            if baseline_runner_support_required
+            else ()
+        ),
         "baseline_process_log_archive",
         "baseline_process_log_manifest",
         *(f"profile:{profile_id}" for profile_id in sorted(PROFILE_STRATEGIES)),
@@ -2851,17 +3647,71 @@ def validate_freeze_manifest(
             if recorded_candidate != candidate_path:
                 errors.append("baseline_candidate_protocol_role_mismatch")
     if baseline_completion_file is not None and baseline_completion_file.is_file():
+        try:
+            receipt_portability = validate_native_completion_receipt_portability(
+                completion_receipt_path=baseline_completion_file,
+                repository_root=root,
+            )
+        except (OSError, TypeError, ValueError) as exc:
+            errors.append(f"baseline_receipt_portability_invalid:{exc}")
+        else:
+            for expected_path, record, error_name in (
+                (
+                    receipt_portability["preflight_receipt_path"],
+                    baseline_preflight_record,
+                    "baseline_preflight_receipt_role_mismatch",
+                ),
+                (
+                    receipt_portability["installed_dynamic_adapter_evidence_path"],
+                    baseline_adapter_evidence_record,
+                    "baseline_installed_dynamic_adapter_evidence_role_mismatch",
+                ),
+                (
+                    receipt_portability["executor_evidence_path"],
+                    baseline_executor_evidence_record,
+                    "baseline_installed_executor_evidence_role_mismatch",
+                ),
+                (
+                    receipt_portability["runner_evidence_path"],
+                    baseline_runner_evidence_record,
+                    "baseline_runner_evidence_role_mismatch",
+                ),
+                (
+                    receipt_portability["external_environment_evidence_path"],
+                    baseline_external_environment_record,
+                    "baseline_external_environment_role_mismatch",
+                ),
+                (
+                    receipt_portability["pixi_manifest_evidence_path"],
+                    baseline_pixi_manifest_evidence_record,
+                    "baseline_pixi_manifest_evidence_role_mismatch",
+                ),
+                (
+                    receipt_portability["pixi_lock_evidence_path"],
+                    baseline_pixi_lock_evidence_record,
+                    "baseline_pixi_lock_evidence_role_mismatch",
+                ),
+                *(
+                    (
+                        (
+                            receipt_portability["runner_support_evidence_path"],
+                            baseline_runner_support_evidence_record,
+                            "baseline_runner_support_evidence_role_mismatch",
+                        ),
+                    )
+                    if receipt_portability["runner_support_evidence_path"]
+                    is not None
+                    else ()
+                ),
+            ):
+                recorded_path = (
+                    None
+                    if record is None
+                    else (root / str(record.get("path", ""))).resolve()
+                )
+                if recorded_path != expected_path:
+                    errors.append(error_name)
         completion_payload = read_json(baseline_completion_file)
-        preflight_path = Path(str(completion_payload.get("preflight_receipt", "")))
-        if not preflight_path.is_absolute():
-            preflight_path = baseline_completion_file.parent / preflight_path
-        recorded_preflight = (
-            None
-            if baseline_preflight_record is None
-            else (root / str(baseline_preflight_record.get("path", ""))).resolve()
-        )
-        if recorded_preflight != preflight_path.resolve():
-            errors.append("baseline_preflight_receipt_role_mismatch")
         for field, record, error_name in (
             (
                 "process_log_archive",
@@ -2874,11 +3724,17 @@ def validate_freeze_manifest(
                 "baseline_process_log_manifest_role_mismatch",
             ),
         ):
-            receipt_value = Path(str(completion_payload.get(field, "")))
-            if receipt_value.is_absolute() or not completion_payload.get(field):
-                errors.append(f"{error_name}:invalid_receipt_path")
+            try:
+                expected_path = _receipt_relative_file(
+                    completion_payload.get(field),
+                    receipt_file=baseline_completion_file,
+                    repository_root=root,
+                    name=field.replace("_", " "),
+                    allow_parent=True,
+                )
+            except (OSError, TypeError, ValueError) as exc:
+                errors.append(f"{error_name}:invalid_receipt_path:{exc}")
                 continue
-            expected_path = (baseline_completion_file.parent / receipt_value).resolve()
             recorded_path = (
                 None
                 if record is None

@@ -754,6 +754,23 @@ def test_dynamic_launch_entrypoint_and_native_runner_are_single_owner() -> None:
     assert "completion_receipt.json" in runner_source
     assert "actionable_compute_allocation" in runner_source
     assert "$null -ne $usedMemory -and $usedMemory -gt 0" in runner_source
+    linux_runner_source = (root / "scripts" / "m8_run_isaac.sh").read_text(
+        encoding="utf-8"
+    )
+    assert "colcon build" in linux_runner_source
+    assert "exec python -m action_stream_isaac.dynamic_isaac_adapter" in linux_runner_source
+    assert "ros2 launch" not in linux_runner_source
+    assert "sync_periodic_replan:=true" in linux_runner_source
+    assert "freeze-validate" in linux_runner_source
+    assert "--authorize-native-gpu-run" in linux_runner_source
+    assert "preflight_receipt.json" in linux_runner_source
+    assert "completion_receipt.json" in linux_runner_source
+    assert "external_environment.json" in linux_runner_source
+    assert linux_runner_source.count("run --frozen --manifest-path") == 4
+    linux_support_source = (
+        root / "scripts" / "m8_linux_runner_support.py"
+    ).read_text(encoding="utf-8")
+    assert "gpu_memory_refusal_threshold_mib" in linux_support_source
     demo_source = (root / "scripts" / "m8_record_demo.ps1").read_text(encoding="utf-8")
     assert "python -m action_stream_isaac.dynamic_isaac_adapter" in demo_source
     assert "--video-output" in demo_source

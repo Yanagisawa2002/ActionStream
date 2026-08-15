@@ -1,17 +1,151 @@
 from __future__ import annotations
 
+import hashlib
 from pathlib import Path
 
 import pytest
 
+import action_stream_benchmark.m8_protocol as protocol_module
 import action_stream_benchmark.m8_report as report_module
+from action_stream_benchmark.m8_archive import build_archive
 from action_stream_benchmark.m8_cli import run
-from action_stream_benchmark.m8_protocol import PROFILE_STRATEGIES, sha256_file
+from action_stream_benchmark.m8_protocol import (
+    PROFILE_STRATEGIES,
+    ros_source_manifest,
+    sha256_file,
+)
 from action_stream_benchmark.m8_report import (
     generate_technical_report,
     write_unavailable_report,
 )
 from action_stream_benchmark.schema import read_json, write_json_atomic
+
+
+TEST_PIXI_TOML_BYTES = b"[workspace]\nname = 'report-test'\n"
+TEST_PIXI_LOCK_BYTES = b"version: 7\n"
+
+
+def _test_workspace_specs() -> dict[str, dict[str, int | str]]:
+    def record(data: bytes) -> dict[str, int | str]:
+        crlf = data.replace(b"\n", b"\r\n")
+        return {
+            "canonical_lf_size_bytes": len(data),
+            "canonical_lf_sha256": hashlib.sha256(data).hexdigest(),
+            "exact_crlf_size_bytes": len(crlf),
+            "exact_crlf_sha256": hashlib.sha256(crlf).hexdigest(),
+        }
+
+    return {
+        "pixi.toml": record(TEST_PIXI_TOML_BYTES),
+        "pixi.lock": record(TEST_PIXI_LOCK_BYTES),
+    }
+
+
+def _formal_external_environment_fixture(receipt_directory: Path) -> Path:
+    manifest_evidence = receipt_directory / "isaac_workspace.pixi.toml"
+    lock_evidence = receipt_directory / "isaac_workspace.pixi.lock"
+    manifest_evidence.write_bytes(TEST_PIXI_TOML_BYTES)
+    lock_evidence.write_bytes(TEST_PIXI_LOCK_BYTES)
+    workspace_files = {}
+    for filename, evidence in (
+        ("pixi.toml", manifest_evidence),
+        ("pixi.lock", lock_evidence),
+    ):
+        spec = _test_workspace_specs()[filename]
+        workspace_files[filename] = {
+            "source_path": (
+                f"/deleted-rental/IsaacSim-ros_workspaces/jazzy_ws/{filename}"
+            ),
+            "evidence": evidence.name,
+            "size_bytes": evidence.stat().st_size,
+            "sha256": sha256_file(evidence),
+            "canonical_lf_size_bytes": spec["canonical_lf_size_bytes"],
+            "canonical_lf_sha256": spec["canonical_lf_sha256"],
+            "byte_form": "lf",
+        }
+    environment = receipt_directory / "external_environment.json"
+    write_json_atomic(
+        environment,
+        {
+            "schema_version": 1,
+            "milestone": "M8-G0",
+            "evidence_kind": "native_external_environment",
+            "created_utc": "2026-08-04T00:00:00Z",
+            "repository_root": "/deleted-rental/IsaacSim-ros_workspaces",
+            "repository_url": protocol_module.ISAAC_WORKSPACE_REPOSITORY_URL,
+            "workspace_commit": protocol_module.ISAAC_WORKSPACE_COMMIT,
+            "workspace_relative_path": protocol_module.ISAAC_WORKSPACE_RELATIVE_PATH,
+            "tracked_manifest_lock_clean": True,
+            "workspace_files": workspace_files,
+            "pixi": {
+                "executable": "/deleted-rental/bin/pixi",
+                "executable_size_bytes": (
+                    protocol_module.OFFICIAL_LINUX_PIXI_EXECUTABLE_SIZE_BYTES
+                ),
+                "executable_sha256": (
+                    protocol_module.OFFICIAL_LINUX_PIXI_EXECUTABLE_SHA256
+                ),
+                "version": protocol_module.OFFICIAL_LINUX_PIXI_VERSION,
+                "version_output": protocol_module.OFFICIAL_LINUX_PIXI_VERSION_OUTPUT,
+            },
+            "runtime": {
+                "platform_system": "Linux",
+                "platform_machine": "x86_64",
+                "python_version": protocol_module.EXPECTED_RUNTIME_VERSIONS[
+                    "python_version"
+                ],
+                "python_executable": "/deleted-rental/.pixi/envs/default/bin/python",
+                "sys_prefix": "/deleted-rental/.pixi/envs/default",
+                "packages": {
+                    name: protocol_module.EXPECTED_RUNTIME_VERSIONS[name]
+                    for name in (
+                        "isaacsim",
+                        "isaacsim-app",
+                        "isaacsim-core",
+                        "isaacsim-robot",
+                        "isaacsim-ros2",
+                        "rclpy",
+                        "rosgraph-msgs",
+                    )
+                },
+                "ros_distribution": protocol_module.EXPECTED_RUNTIME_VERSIONS[
+                    "ros_distribution"
+                ],
+                "rmw_implementation": protocol_module.EXPECTED_RUNTIME_VERSIONS[
+                    "rmw_implementation"
+                ],
+                "rmw_zenoh_cpp": protocol_module.EXPECTED_RUNTIME_VERSIONS[
+                    "rmw_zenoh_cpp"
+                ],
+            },
+        },
+    )
+    return environment
+
+
+def _formal_gpu_snapshot(phase: str) -> dict:
+    return {
+        "phase": phase,
+        "captured_utc": "2026-08-04T00:00:00Z",
+        "selected_gpu_index": 0,
+        "gpu_inventory": [
+            {
+                "index": 0,
+                "name": "NVIDIA GeForce RTX 5090",
+                "uuid": "GPU-report-test-0",
+                "driver_version": "580.105.08",
+                "memory_total_mib": 32607,
+                "memory_used_mib": 0,
+                "utilization_gpu_percent": 0,
+            }
+        ],
+        "reported_compute_processes": [],
+        "actionable_compute_processes": [],
+        "blocking_compute_processes": [],
+        "unknown_memory_compute_processes": [],
+        "occupied_gpus": [],
+        "passed": True,
+    }
 
 
 def test_unavailable_path_never_synthesizes_native_metrics(tmp_path: Path) -> None:
@@ -46,6 +180,9 @@ def _file_record(path: Path, *, base: Path, format_name: str | None = None) -> d
 
 
 def _report_fixture(monkeypatch: pytest.MonkeyPatch, root: Path) -> dict[str, Path]:
+    monkeypatch.setattr(
+        protocol_module, "OFFICIAL_WORKSPACE_FILE_SPECS", _test_workspace_specs()
+    )
     (root / ".git").mkdir(parents=True)
     protocol = _write(
         root,
@@ -102,6 +239,11 @@ def _report_fixture(monkeypatch: pytest.MonkeyPatch, root: Path) -> dict[str, Pa
         },
     )
     seed_sha256 = "e" * 64
+    batch = _write(
+        root,
+        "outputs/batch_profile_0_sanity_sync_hold.json",
+        {"schema_version": 1, "milestone": "M8-G0"},
+    )
     matrix = _write(
         root,
         "outputs/matrix.json",
@@ -113,6 +255,10 @@ def _report_fixture(monkeypatch: pytest.MonkeyPatch, root: Path) -> dict[str, Pa
             "freeze_manifest": freeze.relative_to(root).as_posix(),
             "freeze_sha256": freeze_sha256,
             "seed_file_sha256": seed_sha256,
+            "persistent_batch_count": 1,
+            "batch_manifests": [
+                {"path": batch.relative_to(root / "outputs").as_posix()}
+            ],
         },
     )
 
@@ -229,7 +375,7 @@ def _report_fixture(monkeypatch: pytest.MonkeyPatch, root: Path) -> dict[str, Pa
                 "pytorch": "2.6",
                 "cuda_toolkit": "12.4",
             },
-            "gpu": {"name": "GPU", "driver": "1"},
+            "gpu": {"name": "NVIDIA GeForce RTX 4090", "driver": "1"},
             "docker": {"version": "1"},
             "isaac_ros_environment": {
                 "isaac_sim": "6.0",
@@ -308,6 +454,121 @@ def _report_fixture(monkeypatch: pytest.MonkeyPatch, root: Path) -> dict[str, Pa
             },
         },
     )
+    adapter_source = (
+        root
+        / "ros2_ws/src/action_stream_isaac/action_stream_isaac/dynamic_isaac_adapter.py"
+    )
+    adapter_source.parent.mkdir(parents=True)
+    adapter_source.write_text("# portable adapter source\n", encoding="utf-8")
+    runner_source = root / "scripts/m8_run_isaac.sh"
+    runner_source.parent.mkdir(parents=True)
+    runner_source.write_text("# portable runner source\n", encoding="utf-8")
+    runner_support_source = root / "scripts/m8_linux_runner_support.py"
+    runner_support_source.write_text(
+        "# portable runner support source\n", encoding="utf-8"
+    )
+    receipt_directory = root / "outputs/native_receipt"
+    receipt_directory.mkdir(parents=True)
+    adapter_evidence = receipt_directory / "installed_dynamic_adapter.py"
+    adapter_evidence.write_bytes(adapter_source.read_bytes())
+    executor_evidence = receipt_directory / "action_stream_executor_node"
+    executor_evidence.write_bytes(b"compiled executor evidence\n")
+    runner_evidence = receipt_directory / "m8_run_isaac.runner.sh"
+    runner_evidence.write_bytes(runner_source.read_bytes())
+    runner_support_evidence = receipt_directory / "m8_linux_runner_support.py"
+    runner_support_evidence.write_bytes(runner_support_source.read_bytes())
+    external_environment = _formal_external_environment_fixture(receipt_directory)
+    initial_gpu = _formal_gpu_snapshot("initial_pre_build")
+    post_gpu = _formal_gpu_snapshot("post_build_pre_launch")
+    selected_gpu_identity = {
+        key: post_gpu["gpu_inventory"][0][key]
+        for key in ("index", "name", "uuid", "driver_version", "memory_total_mib")
+    }
+    source = ros_source_manifest(root)
+    validation_log_name = "batch_profile_0_sanity_sync_hold.validate_only.log"
+    freeze_validation_log_name = "freeze_validate.log"
+    process_log_names = [
+        "colcon_build.log",
+        "replay_validate.log",
+        "analysis_figures.log",
+        "router.stdout.log",
+        "router.stderr.log",
+        "batch_profile_0_sanity_sync_hold.executor.stdout.log",
+        "batch_profile_0_sanity_sync_hold.executor.stderr.log",
+        "batch_profile_0_sanity_sync_hold.adapter.stdout.log",
+        "batch_profile_0_sanity_sync_hold.adapter.stderr.log",
+        validation_log_name,
+        freeze_validation_log_name,
+    ]
+    for name in process_log_names:
+        (receipt_directory / name).write_text("runner log\n", encoding="utf-8")
+    process_log_archive = receipt_directory / "process_logs.tar.gz"
+    process_log_manifest = receipt_directory / "process_logs.manifest.json"
+    build_archive(
+        root=receipt_directory,
+        members=[receipt_directory / name for name in process_log_names],
+        archive_path=process_log_archive,
+        manifest_path=process_log_manifest,
+    )
+    preflight = _write(
+        root,
+        "outputs/native_receipt/preflight.json",
+        {
+            "schema_version": 1,
+            "milestone": "M8-G0",
+            "receipt_kind": "native_preflight",
+            "operator_authorized_native_gpu_run": True,
+            "gpu_memory_refusal_threshold_mib": 4096,
+            "gpu_inventory": post_gpu["gpu_inventory"],
+            "reported_compute_processes": [],
+            "preexisting_compute_processes": [],
+            "initial_gpu_preflight": initial_gpu,
+            "post_build_gpu_preflight": post_gpu,
+            "selected_gpu_index": selected_gpu_identity["index"],
+            "selected_gpu_uuid": selected_gpu_identity["uuid"],
+            "selected_gpu_identity": selected_gpu_identity,
+            "source_root": "ros2_ws/src",
+            "source_file_count": source["source_file_count"],
+            "source_manifest_sha256": source["source_manifest_sha256"],
+            "suite_manifest": matrix.relative_to(root).as_posix(),
+            "suite_manifest_sha256": sha256_file(matrix),
+            "current_source_batch_validation_passed": True,
+            "current_source_batch_validation_count": 1,
+            "current_source_batch_validation_logs": [validation_log_name],
+            "frozen_live_inputs_validated": True,
+            "planned_process_logs": process_log_names,
+            "external_environment_evidence": external_environment.name,
+            "external_environment_evidence_sha256": sha256_file(
+                external_environment
+            ),
+            "installed_dynamic_adapter": (
+                "/deleted-rental/install/action_stream_isaac/"
+                "action_stream_isaac/dynamic_isaac_adapter.py"
+            ),
+            "installed_dynamic_adapter_evidence": adapter_evidence.name,
+            "installed_dynamic_adapter_evidence_sha256": sha256_file(
+                adapter_evidence
+            ),
+            "installed_dynamic_adapter_sha256": sha256_file(adapter_source),
+            "executor_path": "/deleted-rental/install/action_stream_executor_node",
+            "executor_evidence": executor_evidence.name,
+            "executor_evidence_sha256": sha256_file(executor_evidence),
+            "executor_sha256": sha256_file(executor_evidence),
+            "router_path": "/deleted-rental/.pixi/envs/default/bin/rmw_zenohd",
+            "router_sha256": "a" * 64,
+            "runner": "/deleted-rental/checkout/scripts/m8_run_isaac.sh",
+            "runner_source": "scripts/m8_run_isaac.sh",
+            "runner_evidence": runner_evidence.name,
+            "runner_evidence_sha256": sha256_file(runner_evidence),
+            "runner_sha256": sha256_file(runner_source),
+            "runner_support_source": "scripts/m8_linux_runner_support.py",
+            "runner_support_evidence": runner_support_evidence.name,
+            "runner_support_evidence_sha256": sha256_file(
+                runner_support_evidence
+            ),
+            "runner_support_sha256": sha256_file(runner_support_source),
+        },
+    )
     completion = _write(
         root,
         "outputs/completion.json",
@@ -316,8 +577,21 @@ def _report_fixture(monkeypatch: pytest.MonkeyPatch, root: Path) -> dict[str, Pa
             "milestone": "M8-G0",
             "receipt_kind": "native_completion",
             "status": "complete",
+            "preflight_receipt": preflight.relative_to(root / "outputs").as_posix(),
+            "preflight_receipt_sha256": sha256_file(preflight),
             "analysis_sha256": sha256_file(analysis),
+            "analysis": analysis.relative_to(root / "outputs").as_posix(),
+            "replay_validation": replay.relative_to(root / "outputs").as_posix(),
             "replay_validation_sha256": sha256_file(replay),
+            "process_log_archive": process_log_archive.relative_to(
+                root / "outputs"
+            ).as_posix(),
+            "process_log_archive_sha256": sha256_file(process_log_archive),
+            "process_log_manifest": process_log_manifest.relative_to(
+                root / "outputs"
+            ).as_posix(),
+            "process_log_manifest_sha256": sha256_file(process_log_manifest),
+            "process_log_member_count": len(process_log_names),
         },
     )
 
@@ -385,6 +659,13 @@ def test_technical_report_binds_evidence_and_reports_unavailable_metrics(
     assert "not real-robot validation" in report
     assert "unavailable" in report
     assert "Holdout Matrix" in report
+    assert "Starting audit GPU only (not the native holdout runtime)" in report
+    assert "NVIDIA GeForce RTX 4090" in report
+    assert "NVIDIA GeForce RTX 5090" in report
+    assert "GPU-report-test-0" in report
+    assert protocol_module.ISAAC_WORKSPACE_COMMIT in report
+    assert "Pixi 0.75.0" in report
+    assert "bash scripts/m8_run_isaac.sh" in report
 
     cli_output = paths["repository_root"] / "outputs/report-from-cli.md"
     assert (
@@ -438,4 +719,62 @@ def test_technical_report_fails_closed_on_replay_or_matrix_tampering(
     matrix["headline_eligible"] = False
     write_json_atomic(paths["repository_root"] / "outputs/matrix.json", matrix)
     with pytest.raises(ValueError, match="cryptographically bound"):
+        generate_technical_report(**paths)
+
+
+def test_technical_report_fails_closed_on_portable_runner_evidence_tampering(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    paths = _report_fixture(monkeypatch, tmp_path / "repo")
+    evidence = (
+        paths["repository_root"]
+        / "outputs/native_receipt/m8_run_isaac.runner.sh"
+    )
+    evidence.write_text("# tampered after native run\n", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="portable runner evidence mismatch"):
+        generate_technical_report(**paths)
+
+
+def test_technical_report_rejects_unrelated_native_completion_receipt(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    paths = _report_fixture(monkeypatch, tmp_path / "repo")
+    root = paths["repository_root"]
+    matrix_path = root / "outputs/matrix.json"
+    unrelated_matrix = root / "outputs/unrelated_matrix.json"
+    unrelated_matrix.write_bytes(matrix_path.read_bytes())
+
+    preflight_path = root / "outputs/native_receipt/preflight.json"
+    preflight = read_json(preflight_path)
+    preflight["suite_manifest"] = unrelated_matrix.relative_to(root).as_posix()
+    preflight["suite_manifest_sha256"] = sha256_file(unrelated_matrix)
+    write_json_atomic(preflight_path, preflight)
+
+    completion = read_json(paths["completion_receipt_path"])
+    completion["preflight_receipt_sha256"] = sha256_file(preflight_path)
+    write_json_atomic(paths["completion_receipt_path"], completion)
+
+    with pytest.raises(ValueError, match="does not bind the baseline matrix"):
+        generate_technical_report(**paths)
+
+
+def test_technical_report_rejects_unrelated_analysis_path_with_same_bytes(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    paths = _report_fixture(monkeypatch, tmp_path / "repo")
+    root = paths["repository_root"]
+    unrelated_analysis = root / "outputs/unrelated_analysis.json"
+    unrelated_analysis.write_bytes(paths["analysis_path"].read_bytes())
+    completion = read_json(paths["completion_receipt_path"])
+    completion["analysis"] = unrelated_analysis.relative_to(
+        paths["completion_receipt_path"].parent
+    ).as_posix()
+    completion["analysis_sha256"] = sha256_file(unrelated_analysis)
+    write_json_atomic(paths["completion_receipt_path"], completion)
+
+    with pytest.raises(ValueError, match="does not bind this analysis/replay pair"):
         generate_technical_report(**paths)

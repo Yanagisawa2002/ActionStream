@@ -1,15 +1,18 @@
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 
 import pytest
 
+import action_stream_benchmark.m8_protocol as protocol_module
 import action_stream_benchmark.m8_replay as replay_module
 from action_stream_benchmark.m8_archive import build_archive
 from action_stream_benchmark.m8_matrix import build_matrix_manifest
 from action_stream_benchmark.m8_protocol import (
     REQUIRED_FREEZE_SOURCE_PATHS,
+    PROFILE_STRATEGIES,
     SAFE_HOLD_COMMAND,
     STRONG_OBSOLETE_STEP_REDUCTION_THRESHOLD,
     build_episode_fairness,
@@ -25,6 +28,9 @@ from action_stream_benchmark.m8_protocol import (
     validate_baseline_gate_artifacts,
     validate_calibration_ledger,
     validate_development_calibration_lifecycle,
+    validate_freeze_manifest,
+    validate_native_completion_receipt,
+    validate_native_completion_receipt_portability,
     validate_protocol,
     validate_seed_splits,
 )
@@ -33,6 +39,31 @@ from action_stream_benchmark.schema import canonical_sha256, read_json, write_js
 
 
 ROOT = Path(__file__).resolve().parents[4]
+TEST_PIXI_TOML_BYTES = b"[workspace]\nname = 'test'\n"
+TEST_PIXI_LOCK_BYTES = b"version: 7\n"
+
+
+def _test_workspace_specs() -> dict[str, dict[str, int | str]]:
+    def record(data: bytes) -> dict[str, int | str]:
+        crlf = data.replace(b"\n", b"\r\n")
+        return {
+            "canonical_lf_size_bytes": len(data),
+            "canonical_lf_sha256": hashlib.sha256(data).hexdigest(),
+            "exact_crlf_size_bytes": len(crlf),
+            "exact_crlf_sha256": hashlib.sha256(crlf).hexdigest(),
+        }
+
+    return {
+        "pixi.toml": record(TEST_PIXI_TOML_BYTES),
+        "pixi.lock": record(TEST_PIXI_LOCK_BYTES),
+    }
+
+
+@pytest.fixture(autouse=True)
+def _small_official_workspace_evidence(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(
+        protocol_module, "OFFICIAL_WORKSPACE_FILE_SPECS", _test_workspace_specs()
+    )
 
 
 def test_candidate_protocol_seed_contract_and_component_hashes() -> None:
@@ -82,6 +113,8 @@ def test_freeze_covers_native_runner_code_build_and_message_dependencies() -> No
         "ros2_ws/src/action_stream_policy/setup.py",
         "ros2_ws/src/action_stream_benchmark/setup.py",
         "scripts/m8_run_isaac.ps1",
+        "scripts/m8_run_isaac.sh",
+        "scripts/m8_linux_runner_support.py",
     }
     assert expected <= required
     assert len(required) == len(REQUIRED_FREEZE_SOURCE_PATHS)
@@ -246,6 +279,104 @@ def test_split_aware_persistent_matrix_is_portable(tmp_path: Path) -> None:
         )
 
 
+def _formal_external_environment_fixture(run_log_dir: Path) -> Path:
+    manifest_evidence = run_log_dir / "isaac_workspace.pixi.toml"
+    lock_evidence = run_log_dir / "isaac_workspace.pixi.lock"
+    manifest_evidence.write_bytes(TEST_PIXI_TOML_BYTES)
+    lock_evidence.write_bytes(TEST_PIXI_LOCK_BYTES)
+    specs = _test_workspace_specs()
+    workspace_files = {}
+    for filename, evidence in (
+        ("pixi.toml", manifest_evidence),
+        ("pixi.lock", lock_evidence),
+    ):
+        spec = specs[filename]
+        workspace_files[filename] = {
+            "source_path": f"/deleted-rental/IsaacSim-ros_workspaces/jazzy_ws/{filename}",
+            "evidence": evidence.name,
+            "size_bytes": evidence.stat().st_size,
+            "sha256": sha256_file(evidence),
+            "canonical_lf_size_bytes": spec["canonical_lf_size_bytes"],
+            "canonical_lf_sha256": spec["canonical_lf_sha256"],
+            "byte_form": "lf",
+        }
+    path = run_log_dir / "external_environment.json"
+    write_json_atomic(
+        path,
+        {
+            "schema_version": 1,
+            "milestone": "M8-G0",
+            "evidence_kind": "native_external_environment",
+            "created_utc": "2026-08-04T00:00:00Z",
+            "repository_root": "/deleted-rental/IsaacSim-ros_workspaces",
+            "repository_url": protocol_module.ISAAC_WORKSPACE_REPOSITORY_URL,
+            "workspace_commit": protocol_module.ISAAC_WORKSPACE_COMMIT,
+            "workspace_relative_path": protocol_module.ISAAC_WORKSPACE_RELATIVE_PATH,
+            "tracked_manifest_lock_clean": True,
+            "workspace_files": workspace_files,
+            "pixi": {
+                "executable": "/deleted-rental/bin/pixi",
+                "executable_size_bytes": (
+                    protocol_module.OFFICIAL_LINUX_PIXI_EXECUTABLE_SIZE_BYTES
+                ),
+                "executable_sha256": (
+                    protocol_module.OFFICIAL_LINUX_PIXI_EXECUTABLE_SHA256
+                ),
+                "version": protocol_module.OFFICIAL_LINUX_PIXI_VERSION,
+                "version_output": protocol_module.OFFICIAL_LINUX_PIXI_VERSION_OUTPUT,
+            },
+            "runtime": {
+                "platform_system": "Linux",
+                "platform_machine": "x86_64",
+                "python_version": "3.12.13",
+                "python_executable": "/deleted-rental/.pixi/envs/default/bin/python",
+                "sys_prefix": "/deleted-rental/.pixi/envs/default",
+                "packages": {
+                    name: protocol_module.EXPECTED_RUNTIME_VERSIONS[name]
+                    for name in (
+                        "isaacsim",
+                        "isaacsim-app",
+                        "isaacsim-core",
+                        "isaacsim-robot",
+                        "isaacsim-ros2",
+                        "rclpy",
+                        "rosgraph-msgs",
+                    )
+                },
+                "ros_distribution": "jazzy",
+                "rmw_implementation": "rmw_zenoh_cpp",
+                "rmw_zenoh_cpp": "0.2.9",
+            },
+        },
+    )
+    return path
+
+
+def _formal_gpu_snapshot(phase: str) -> dict:
+    return {
+        "phase": phase,
+        "captured_utc": "2026-08-04T00:00:00Z",
+        "selected_gpu_index": 0,
+        "gpu_inventory": [
+            {
+                "index": 0,
+                "name": "NVIDIA GeForce RTX 5090",
+                "uuid": "GPU-test-0",
+                "driver_version": "580.105.08",
+                "memory_total_mib": 32607,
+                "memory_used_mib": 0,
+                "utilization_gpu_percent": 0,
+            }
+        ],
+        "reported_compute_processes": [],
+        "actionable_compute_processes": [],
+        "blocking_compute_processes": [],
+        "unknown_memory_compute_processes": [],
+        "occupied_gpus": [],
+        "passed": True,
+    }
+
+
 def _baseline_gate_fixture(tmp_path: Path) -> tuple:
     repository_root = tmp_path
     adapter_path = (
@@ -254,15 +385,11 @@ def _baseline_gate_fixture(tmp_path: Path) -> tuple:
     )
     adapter_path.parent.mkdir(parents=True)
     adapter_path.write_text("# installed adapter source\n", encoding="utf-8")
-    installed_adapter_path = (
-        repository_root
-        / "native_install/action_stream_isaac/action_stream_isaac/dynamic_isaac_adapter.py"
-    )
-    installed_adapter_path.parent.mkdir(parents=True)
-    installed_adapter_path.write_bytes(adapter_path.read_bytes())
-    runner_path = repository_root / "scripts/m8_run_isaac.ps1"
+    runner_path = repository_root / "scripts/m8_run_isaac.sh"
     runner_path.parent.mkdir(parents=True)
     runner_path.write_text("# native runner\n", encoding="utf-8")
+    runner_support_path = repository_root / "scripts/m8_linux_runner_support.py"
+    runner_support_path.write_text("# native runner support\n", encoding="utf-8")
     matrix_path = tmp_path / "baseline_matrix.json"
     seed_path = tmp_path / "baseline_seeds.json"
     write_json_atomic(
@@ -388,25 +515,47 @@ def _baseline_gate_fixture(tmp_path: Path) -> tuple:
     write_json_atomic(replay_path, fresh)
     run_log_dir = tmp_path / "native_run_logs/run-001"
     run_log_dir.mkdir(parents=True)
-    process_log = run_log_dir / "router.stdout.log"
-    process_log.write_text("native process completed\n", encoding="utf-8")
+    adapter_evidence = run_log_dir / "installed_dynamic_adapter.py"
+    adapter_evidence.write_bytes(adapter_path.read_bytes())
+    executor_evidence = run_log_dir / "action_stream_executor_node"
+    executor_evidence.write_bytes(b"compiled executor evidence\n")
+    runner_evidence = run_log_dir / "m8_run_isaac.runner.sh"
+    runner_evidence.write_bytes(runner_path.read_bytes())
+    runner_support_evidence = run_log_dir / "m8_linux_runner_support.py"
+    runner_support_evidence.write_bytes(runner_support_path.read_bytes())
+    external_environment_path = _formal_external_environment_fixture(run_log_dir)
     validation_log = run_log_dir / f"{batch_path.stem}.validate_only.log"
-    validation_log.write_text(
-        '{"validation_passed":true,"native_execution_performed":false}\n',
-        encoding="utf-8",
-    )
+    process_log_names = [
+        "colcon_build.log",
+        "replay_validate.log",
+        "router.stdout.log",
+        "router.stderr.log",
+        f"{batch_path.stem}.executor.stdout.log",
+        f"{batch_path.stem}.executor.stderr.log",
+        f"{batch_path.stem}.adapter.stdout.log",
+        f"{batch_path.stem}.adapter.stderr.log",
+        validation_log.name,
+    ]
+    for name in process_log_names:
+        (run_log_dir / name).write_text("native process completed\n", encoding="utf-8")
     process_log_archive = run_log_dir / "process_logs.tar.gz"
     process_log_manifest = run_log_dir / "process_logs.manifest.json"
     archive_payload = build_archive(
         root=run_log_dir,
-        members=[process_log.name, validation_log.name],
+        members=process_log_names,
         archive_path=process_log_archive,
         manifest_path=process_log_manifest,
     )
-    process_log.unlink()
-    validation_log.unlink()
+    for name in process_log_names:
+        (run_log_dir / name).unlink()
     source = ros_source_manifest(repository_root)
     preflight_path = run_log_dir / "preflight_receipt.json"
+    initial_gpu = _formal_gpu_snapshot("initial_pre_build")
+    post_gpu = _formal_gpu_snapshot("post_build_pre_launch")
+    selected_gpu_identity = {
+        key: post_gpu["gpu_inventory"][0][key]
+        for key in ("index", "name", "uuid", "driver_version", "memory_total_mib")
+    }
     write_json_atomic(
         preflight_path,
         {
@@ -415,31 +564,52 @@ def _baseline_gate_fixture(tmp_path: Path) -> tuple:
             "receipt_kind": "native_preflight",
             "operator_authorized_native_gpu_run": True,
             "gpu_memory_refusal_threshold_mib": 4096,
-            "gpu_inventory": [
-                {
-                    "index": 0,
-                    "name": "Test GPU",
-                    "uuid": "GPU-test-0",
-                    "driver_version": "999.0",
-                    "memory_total_mib": 24576,
-                    "memory_used_mib": 512,
-                    "utilization_gpu_percent": 2,
-                }
-            ],
+            "gpu_inventory": post_gpu["gpu_inventory"],
             "reported_compute_processes": [],
             "preexisting_compute_processes": [],
+            "initial_gpu_preflight": initial_gpu,
+            "post_build_gpu_preflight": post_gpu,
+            "selected_gpu_index": 0,
+            "selected_gpu_uuid": selected_gpu_identity["uuid"],
+            "selected_gpu_identity": selected_gpu_identity,
             "suite_manifest": matrix_path.relative_to(repository_root).as_posix(),
             "suite_manifest_sha256": sha256_file(matrix_path),
             "source_root": "ros2_ws/src",
             "source_file_count": source["source_file_count"],
             "source_manifest_sha256": source["source_manifest_sha256"],
-            "installed_dynamic_adapter": str(installed_adapter_path.resolve()),
+            "external_environment_evidence": external_environment_path.name,
+            "external_environment_evidence_sha256": sha256_file(
+                external_environment_path
+            ),
+            "installed_dynamic_adapter": (
+                "C:/deleted-rental/install/action_stream_isaac/"
+                "action_stream_isaac/dynamic_isaac_adapter.py"
+            ),
+            "installed_dynamic_adapter_evidence": adapter_evidence.name,
+            "installed_dynamic_adapter_evidence_sha256": sha256_file(
+                adapter_evidence
+            ),
             "installed_dynamic_adapter_sha256": sha256_file(adapter_path),
+            "executor_path": "/deleted-rental/install/action_stream_executor_node",
+            "executor_evidence": executor_evidence.name,
+            "executor_evidence_sha256": sha256_file(executor_evidence),
+            "executor_sha256": sha256_file(executor_evidence),
+            "router_path": "/deleted-rental/.pixi/envs/default/bin/rmw_zenohd",
+            "router_sha256": "a" * 64,
+            "runner": "/deleted-rental/checkout/scripts/m8_run_isaac.sh",
+            "runner_source": "scripts/m8_run_isaac.sh",
+            "runner_evidence": runner_evidence.name,
+            "runner_evidence_sha256": sha256_file(runner_evidence),
             "runner_sha256": sha256_file(runner_path),
+            "runner_support_source": "scripts/m8_linux_runner_support.py",
+            "runner_support_evidence": runner_support_evidence.name,
+            "runner_support_evidence_sha256": sha256_file(runner_support_evidence),
+            "runner_support_sha256": sha256_file(runner_support_path),
+            "frozen_live_inputs_validated": False,
             "current_source_batch_validation_passed": True,
             "current_source_batch_validation_count": 1,
             "current_source_batch_validation_logs": [validation_log.name],
-            "planned_process_logs": [process_log.name, validation_log.name],
+            "planned_process_logs": process_log_names,
         },
     )
     completion_path = run_log_dir / "completion_receipt.json"
@@ -565,8 +735,41 @@ def _baseline_gate_fixture(tmp_path: Path) -> tuple:
             "preflight_receipt_sha256": sha256_file(preflight_path),
             "source_file_count": source["source_file_count"],
             "source_manifest_sha256": source["source_manifest_sha256"],
+            "runner_source": "scripts/m8_run_isaac.sh",
             "runner_sha256": sha256_file(runner_path),
+            "runner_evidence_sha256": sha256_file(runner_evidence),
+            "runner_support_source": "scripts/m8_linux_runner_support.py",
+            "runner_support_sha256": sha256_file(runner_support_path),
+            "runner_support_evidence_sha256": sha256_file(runner_support_evidence),
+            "external_environment_evidence_sha256": sha256_file(
+                external_environment_path
+            ),
+            "pixi_manifest_evidence_sha256": sha256_file(
+                run_log_dir / "isaac_workspace.pixi.toml"
+            ),
+            "pixi_lock_evidence_sha256": sha256_file(
+                run_log_dir / "isaac_workspace.pixi.lock"
+            ),
+            "isaac_workspace_commit": protocol_module.ISAAC_WORKSPACE_COMMIT,
+            "pixi_version": "0.75.0",
+            "python_version": "3.12.13",
+            "isaacsim_version": "6.0.1.0",
+            "ros_distribution": "jazzy",
+            "rmw_implementation": "rmw_zenoh_cpp",
+            "rmw_zenoh_cpp_version": "0.2.9",
+            "selected_gpu_uuid": selected_gpu_identity["uuid"],
+            "selected_gpu_name": selected_gpu_identity["name"],
+            "selected_gpu_driver_version": selected_gpu_identity["driver_version"],
+            "selected_gpu_memory_total_mib": selected_gpu_identity[
+                "memory_total_mib"
+            ],
             "installed_dynamic_adapter_sha256": sha256_file(adapter_path),
+            "installed_dynamic_adapter_evidence_sha256": sha256_file(
+                adapter_evidence
+            ),
+            "executor_sha256": sha256_file(executor_evidence),
+            "executor_evidence_sha256": sha256_file(executor_evidence),
+            "router_sha256": "a" * 64,
             "process_log_archive_sha256": sha256_file(process_log_archive),
             "process_log_manifest_sha256": sha256_file(process_log_manifest),
         },
@@ -592,6 +795,447 @@ def _baseline_gate_fixture(tmp_path: Path) -> tuple:
         repository_root,
         adapter_path,
     )
+
+
+def test_successful_receipt_revalidates_after_remote_install_is_deleted(
+    tmp_path: Path,
+) -> None:
+    fixture = _baseline_gate_fixture(tmp_path)
+    completion_path = fixture[7]
+    repository_root = fixture[8]
+    preflight_path = completion_path.parent / "preflight_receipt.json"
+    preflight = read_json(preflight_path)
+    preflight["installed_dynamic_adapter"] = (
+        "/deleted-rental/install/action_stream_isaac/"
+        "action_stream_isaac/dynamic_isaac_adapter.py"
+    )
+    preflight["runner"] = "/deleted-rental/checkout/scripts/m8_run_isaac.sh"
+    write_json_atomic(preflight_path, preflight)
+    completion = read_json(completion_path)
+    completion["preflight_receipt_sha256"] = sha256_file(preflight_path)
+    write_json_atomic(completion_path, completion)
+
+    audit = validate_native_completion_receipt_portability(
+        completion_receipt_path=completion_path,
+        repository_root=repository_root,
+    )
+
+    assert audit["installed_dynamic_adapter_evidence_path"].is_file()
+    assert audit["runner_evidence_path"].is_file()
+    assert audit["runner_source"] == "scripts/m8_run_isaac.sh"
+    assert audit["runner_support_evidence_path"].is_file()
+    assert audit["external_environment_evidence_path"].is_file()
+    assert audit["pixi_manifest_evidence_path"].is_file()
+    assert audit["pixi_lock_evidence_path"].is_file()
+    assert audit["runner_support_source"] == "scripts/m8_linux_runner_support.py"
+
+
+def test_native_completion_rejects_frozen_validation_split_mismatch(
+    tmp_path: Path,
+) -> None:
+    fixture = _baseline_gate_fixture(tmp_path)
+    matrix_path, replay_path = fixture[0], fixture[1]
+    completion_path, repository_root = fixture[7], fixture[8]
+    preflight_path = completion_path.parent / "preflight_receipt.json"
+    preflight = read_json(preflight_path)
+    preflight["frozen_live_inputs_validated"] = True
+    write_json_atomic(preflight_path, preflight)
+    completion = read_json(completion_path)
+    completion["preflight_receipt_sha256"] = sha256_file(preflight_path)
+    write_json_atomic(completion_path, completion)
+
+    with pytest.raises(ValueError, match="does not match the matrix split"):
+        validate_native_completion_receipt(
+            completion_receipt_path=completion_path,
+            matrix_path=matrix_path,
+            replay_path=replay_path,
+            repository_root=repository_root,
+        )
+
+
+def test_linux_receipt_binds_portable_runner_support_evidence(tmp_path: Path) -> None:
+    fixture = _baseline_gate_fixture(tmp_path)
+    completion_path = fixture[7]
+    repository_root = fixture[8]
+    receipt_directory = completion_path.parent
+    runner_source = repository_root / "scripts/m8_run_isaac.sh"
+    runner_source.write_text("#!/usr/bin/env bash\n", encoding="utf-8")
+    support_source = repository_root / "scripts/m8_linux_runner_support.py"
+    support_source.write_text("SUPPORT = True\n", encoding="utf-8")
+    runner_evidence = receipt_directory / "m8_run_isaac.runner.sh"
+    runner_evidence.write_bytes(runner_source.read_bytes())
+    support_evidence = receipt_directory / "m8_linux_runner_support.py"
+    support_evidence.write_bytes(support_source.read_bytes())
+
+    preflight_path = receipt_directory / "preflight_receipt.json"
+    preflight = read_json(preflight_path)
+    preflight.update(
+        {
+            "runner": "/deleted-rental/checkout/scripts/m8_run_isaac.sh",
+            "runner_source": "scripts/m8_run_isaac.sh",
+            "runner_evidence": runner_evidence.name,
+            "runner_evidence_sha256": sha256_file(runner_evidence),
+            "runner_sha256": sha256_file(runner_source),
+            "runner_support_source": "scripts/m8_linux_runner_support.py",
+            "runner_support_evidence": support_evidence.name,
+            "runner_support_evidence_sha256": sha256_file(support_evidence),
+            "runner_support_sha256": sha256_file(support_source),
+        }
+    )
+    write_json_atomic(preflight_path, preflight)
+    completion = read_json(completion_path)
+    completion["preflight_receipt_sha256"] = sha256_file(preflight_path)
+    write_json_atomic(completion_path, completion)
+
+    audit = validate_native_completion_receipt_portability(
+        completion_receipt_path=completion_path,
+        repository_root=repository_root,
+    )
+    assert audit["runner_support_source"] == "scripts/m8_linux_runner_support.py"
+    assert audit["runner_support_evidence_path"] == support_evidence.resolve()
+    assert audit["runner_support_sha256"] == sha256_file(support_source)
+
+    support_evidence.write_text("TAMPERED = True\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="runner-support evidence mismatch"):
+        validate_native_completion_receipt_portability(
+            completion_receipt_path=completion_path,
+            repository_root=repository_root,
+        )
+
+
+def test_windows_receipt_is_rejected_as_incomplete_formal_evidence(tmp_path: Path) -> None:
+    fixture = _baseline_gate_fixture(tmp_path)
+    completion_path = fixture[7]
+    repository_root = fixture[8]
+    preflight_path = completion_path.parent / "preflight_receipt.json"
+    preflight = read_json(preflight_path)
+    windows_runner = repository_root / "scripts/m8_run_isaac.ps1"
+    windows_runner.write_text("# legacy Windows runner\n", encoding="utf-8")
+    windows_evidence = preflight_path.parent / "m8_run_isaac.runner.ps1"
+    windows_evidence.write_bytes(windows_runner.read_bytes())
+    preflight["runner"] = "C:/deleted-rental/checkout/scripts/m8_run_isaac.ps1"
+    preflight["runner_source"] = "scripts/m8_run_isaac.ps1"
+    preflight["runner_evidence"] = windows_evidence.name
+    preflight["runner_evidence_sha256"] = sha256_file(windows_evidence)
+    preflight["runner_sha256"] = sha256_file(windows_runner)
+    for name in tuple(preflight):
+        if name.startswith("runner_support_"):
+            preflight.pop(name)
+    write_json_atomic(preflight_path, preflight)
+    completion = read_json(completion_path)
+    completion["preflight_receipt_sha256"] = sha256_file(preflight_path)
+    write_json_atomic(completion_path, completion)
+
+    with pytest.raises(ValueError, match="formal native portability requires the Linux runner"):
+        validate_native_completion_receipt_portability(
+            completion_receipt_path=completion_path,
+            repository_root=repository_root,
+        )
+
+
+@pytest.mark.parametrize(
+    ("field", "value", "expected_error"),
+    [
+        (
+            "workspace_commit",
+            "0" * 40,
+            "native external environment repository proof is invalid",
+        ),
+        (
+            "python_version",
+            "3.12.12",
+            "native external environment python_version is invalid",
+        ),
+    ],
+)
+def test_formal_receipt_rejects_external_environment_tampering(
+    tmp_path: Path,
+    field: str,
+    value: str,
+    expected_error: str,
+) -> None:
+    fixture = _baseline_gate_fixture(tmp_path)
+    completion_path = fixture[7]
+    repository_root = fixture[8]
+    preflight_path = completion_path.parent / "preflight_receipt.json"
+    environment_path = completion_path.parent / "external_environment.json"
+    environment = read_json(environment_path)
+    if field == "python_version":
+        environment["runtime"][field] = value
+    else:
+        environment[field] = value
+    write_json_atomic(environment_path, environment)
+    preflight = read_json(preflight_path)
+    preflight["external_environment_evidence_sha256"] = sha256_file(environment_path)
+    write_json_atomic(preflight_path, preflight)
+    completion = read_json(completion_path)
+    completion["preflight_receipt_sha256"] = sha256_file(preflight_path)
+    write_json_atomic(completion_path, completion)
+
+    with pytest.raises(ValueError, match=expected_error):
+        validate_native_completion_receipt_portability(
+            completion_receipt_path=completion_path,
+            repository_root=repository_root,
+        )
+
+
+def test_formal_receipt_rejects_pixi_lock_evidence_tampering(tmp_path: Path) -> None:
+    fixture = _baseline_gate_fixture(tmp_path)
+    completion_path = fixture[7]
+    repository_root = fixture[8]
+    lock_evidence = completion_path.parent / "isaac_workspace.pixi.lock"
+    lock_evidence.write_bytes(lock_evidence.read_bytes() + b"tampered\n")
+
+    with pytest.raises(ValueError, match="pixi.lock evidence binding mismatch"):
+        validate_native_completion_receipt_portability(
+            completion_receipt_path=completion_path,
+            repository_root=repository_root,
+        )
+
+
+def test_formal_receipt_rejects_executor_evidence_tampering(tmp_path: Path) -> None:
+    fixture = _baseline_gate_fixture(tmp_path)
+    completion_path = fixture[7]
+    repository_root = fixture[8]
+    executor_evidence = completion_path.parent / "action_stream_executor_node"
+    executor_evidence.write_bytes(executor_evidence.read_bytes() + b"tampered")
+
+    with pytest.raises(ValueError, match="installed executor evidence mismatch"):
+        validate_native_completion_receipt_portability(
+            completion_receipt_path=completion_path,
+            repository_root=repository_root,
+        )
+
+
+def test_formal_receipt_accepts_exact_crlf_and_rejects_mixed_newlines(
+    tmp_path: Path,
+) -> None:
+    fixture = _baseline_gate_fixture(tmp_path)
+    completion_path = fixture[7]
+    repository_root = fixture[8]
+    receipt_directory = completion_path.parent
+    preflight_path = receipt_directory / "preflight_receipt.json"
+    environment_path = receipt_directory / "external_environment.json"
+    manifest_evidence = receipt_directory / "isaac_workspace.pixi.toml"
+    lock_evidence = receipt_directory / "isaac_workspace.pixi.lock"
+
+    def rebind_workspace_file(filename: str, evidence: Path, data: bytes) -> None:
+        evidence.write_bytes(data)
+        environment = read_json(environment_path)
+        record = environment["workspace_files"][filename]
+        record["size_bytes"] = len(data)
+        record["sha256"] = hashlib.sha256(data).hexdigest()
+        record["byte_form"] = "crlf"
+        write_json_atomic(environment_path, environment)
+        preflight = read_json(preflight_path)
+        preflight["external_environment_evidence_sha256"] = sha256_file(
+            environment_path
+        )
+        write_json_atomic(preflight_path, preflight)
+        completion = read_json(completion_path)
+        completion["preflight_receipt_sha256"] = sha256_file(preflight_path)
+        write_json_atomic(completion_path, completion)
+
+    rebind_workspace_file(
+        "pixi.toml",
+        manifest_evidence,
+        TEST_PIXI_TOML_BYTES.replace(b"\n", b"\r\n"),
+    )
+    with pytest.raises(ValueError, match="same exact newline form"):
+        validate_native_completion_receipt_portability(
+            completion_receipt_path=completion_path,
+            repository_root=repository_root,
+        )
+
+    rebind_workspace_file(
+        "pixi.lock",
+        lock_evidence,
+        TEST_PIXI_LOCK_BYTES.replace(b"\n", b"\r\n"),
+    )
+    audit = validate_native_completion_receipt_portability(
+        completion_receipt_path=completion_path,
+        repository_root=repository_root,
+    )
+    assert audit["pixi_manifest_evidence_path"] == manifest_evidence.resolve()
+
+    rebind_workspace_file(
+        "pixi.toml",
+        manifest_evidence,
+        TEST_PIXI_TOML_BYTES.replace(b"\n", b"\r\n", 1),
+    )
+    with pytest.raises(ValueError, match="not the exact all-CRLF form"):
+        validate_native_completion_receipt_portability(
+            completion_receipt_path=completion_path,
+            repository_root=repository_root,
+        )
+
+
+def test_formal_receipt_rejects_selected_gpu_crosslink_tampering(
+    tmp_path: Path,
+) -> None:
+    fixture = _baseline_gate_fixture(tmp_path)
+    completion_path = fixture[7]
+    repository_root = fixture[8]
+    preflight_path = completion_path.parent / "preflight_receipt.json"
+    preflight = read_json(preflight_path)
+    preflight["post_build_gpu_preflight"]["gpu_inventory"][0]["name"] = (
+        "different GPU"
+    )
+    preflight["gpu_inventory"] = preflight["post_build_gpu_preflight"][
+        "gpu_inventory"
+    ]
+    write_json_atomic(preflight_path, preflight)
+    completion = read_json(completion_path)
+    completion["preflight_receipt_sha256"] = sha256_file(preflight_path)
+    write_json_atomic(completion_path, completion)
+
+    with pytest.raises(ValueError, match="selected GPU identity is not cross-linked"):
+        validate_native_completion_receipt_portability(
+            completion_receipt_path=completion_path,
+            repository_root=repository_root,
+        )
+
+
+def test_portable_receipt_evidence_must_stay_beside_preflight(tmp_path: Path) -> None:
+    fixture = _baseline_gate_fixture(tmp_path)
+    completion_path = fixture[7]
+    repository_root = fixture[8]
+    preflight_path = completion_path.parent / "preflight_receipt.json"
+    preflight = read_json(preflight_path)
+    preflight["installed_dynamic_adapter_evidence"] = "../installed_dynamic_adapter.py"
+    write_json_atomic(preflight_path, preflight)
+    completion = read_json(completion_path)
+    completion["preflight_receipt_sha256"] = sha256_file(preflight_path)
+    write_json_atomic(completion_path, completion)
+
+    with pytest.raises(ValueError, match="must stay inside its receipt directory"):
+        validate_native_completion_receipt_portability(
+            completion_receipt_path=completion_path,
+            repository_root=repository_root,
+        )
+
+
+def test_freeze_build_and_validation_bind_portable_receipt_evidence(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    (
+        baseline_matrix,
+        baseline_replay,
+        _fresh,
+        ledger,
+        baseline_seeds,
+        _profile0,
+        finalized_protocol,
+        completion_receipt,
+        repository_root,
+        adapter_source,
+    ) = _baseline_gate_fixture(tmp_path)
+    protocol_path = repository_root / "finalized_protocol.json"
+    write_json_atomic(protocol_path, finalized_protocol)
+    ledger_path = repository_root / "closed_ledger.json"
+    write_json_atomic(ledger_path, ledger)
+    holdout_seeds = repository_root / "holdout_seeds.json"
+    write_json_atomic(
+        holdout_seeds,
+        {
+            "schema_version": 1,
+            "milestone": "M8-G0",
+            "split": "holdout",
+            "seeds": list(range(200, 260)),
+        },
+    )
+    profile_paths = {
+        profile_id: repository_root / "profiles" / f"m8_{profile_id}.json"
+        for profile_id in PROFILE_STRATEGIES
+    }
+    candidate_path = repository_root / "baseline_candidate_protocol.json"
+    lifecycle = {
+        "selected_candidate_id": "candidate_0",
+        "selected_candidate_protocol_path": candidate_path.relative_to(
+            repository_root
+        ).as_posix(),
+        "selected_candidate_protocol_file_sha256": sha256_file(candidate_path),
+        "selected_contract_sha256": ledger["baseline_gate"][
+            "behavioral_protocol_contract_sha256"
+        ],
+        "selected_protocol_sha256": ledger["baseline_gate"][
+            "baseline_candidate_protocol_sha256"
+        ],
+        "candidate_count": 1,
+        "bounded_calibration_change_count": 0,
+        "candidates": [],
+        "input_role_paths": [],
+        "selected_profile_paths": profile_paths,
+    }
+    gate = {
+        "status": "passed",
+        "success_count": 18,
+        "trial_count": 20,
+        "runner_source": "scripts/m8_run_isaac.sh",
+    }
+    runner_source = repository_root / "scripts/m8_run_isaac.sh"
+    runner_support_source = repository_root / "scripts/m8_linux_runner_support.py"
+    monkeypatch.setattr(
+        protocol_module,
+        "REQUIRED_FREEZE_SOURCE_PATHS",
+        (
+                adapter_source.relative_to(repository_root).as_posix(),
+                runner_source.relative_to(repository_root).as_posix(),
+                runner_support_source.relative_to(repository_root).as_posix(),
+        ),
+    )
+    monkeypatch.setattr(protocol_module, "_baseline_artifact_role_paths", lambda *_a, **_k: [])
+    monkeypatch.setattr(
+        protocol_module,
+        "validate_baseline_gate_artifacts",
+        lambda **_kwargs: gate,
+    )
+    monkeypatch.setattr(
+        protocol_module,
+        "validate_development_calibration_lifecycle",
+        lambda **_kwargs: lifecycle,
+    )
+
+    manifest = build_freeze_manifest(
+        repository_root=repository_root,
+        protocol_path=protocol_path,
+        baseline_seed_path=baseline_seeds,
+        development_seed_path=repository_root / "development_seeds.json",
+        holdout_seed_path=holdout_seeds,
+        calibration_ledger_path=ledger_path,
+        baseline_matrix_path=baseline_matrix,
+        baseline_replay_path=baseline_replay,
+        baseline_completion_receipt_path=completion_receipt,
+        profile_paths=profile_paths.values(),
+    )
+    freeze_path = repository_root / "freeze.json"
+    write_json_atomic(freeze_path, manifest)
+
+    roles = {record["role"]: record for record in manifest["inputs"]}
+    assert roles["baseline_installed_dynamic_adapter_evidence"]["path"].endswith(
+        "installed_dynamic_adapter.py"
+    )
+    assert roles["baseline_runner_evidence"]["path"].endswith(
+        "m8_run_isaac.runner.sh"
+    )
+    assert roles["baseline_runner_support_evidence"]["path"].endswith(
+        "m8_linux_runner_support.py"
+    )
+    assert roles["baseline_external_environment"]["path"].endswith(
+        "external_environment.json"
+    )
+    assert roles["baseline_pixi_manifest_evidence"]["path"].endswith(
+        "isaac_workspace.pixi.toml"
+    )
+    assert roles["baseline_pixi_lock_evidence"]["path"].endswith(
+        "isaac_workspace.pixi.lock"
+    )
+    freeze_audit = validate_freeze_manifest(
+        freeze_path,
+        repository_root=repository_root,
+    )
+    assert freeze_audit["passed"], freeze_audit["errors"]
 
 
 def _fixture_contract(protocol: dict, repository_root: Path) -> dict:
@@ -1159,7 +1803,7 @@ def test_baseline_gate_rejects_invalid_gpu_preflight_inventory(
     completion["preflight_receipt_sha256"] = sha256_file(preflight_path)
     write_json_atomic(completion_path, completion)
 
-    with pytest.raises(ValueError, match="GPU inventory"):
+    with pytest.raises(ValueError, match="GPU"):
         validate_baseline_gate_artifacts(
             matrix_path=matrix_path,
             replay_path=replay_path,
@@ -1249,7 +1893,7 @@ def test_baseline_gate_binds_batch_validation_logs_into_process_archive(
     completion["preflight_receipt_sha256"] = sha256_file(preflight_path)
     write_json_atomic(completion_path, completion)
 
-    with pytest.raises(ValueError, match="bind every batch validation log"):
+    with pytest.raises(ValueError, match="bind every required runner log"):
         validate_baseline_gate_artifacts(
             matrix_path=matrix_path,
             replay_path=replay_path,
@@ -1262,7 +1906,9 @@ def test_baseline_gate_binds_batch_validation_logs_into_process_archive(
         )
 
 
-@pytest.mark.parametrize("tamper_kind", ["installed_adapter", "competing_compute"])
+@pytest.mark.parametrize(
+    "tamper_kind", ["installed_adapter", "runner", "competing_compute"]
+)
 def test_baseline_gate_rejects_native_preflight_provenance_tampering(
     monkeypatch, tmp_path: Path, tamper_kind: str
 ) -> None:
@@ -1281,11 +1927,16 @@ def test_baseline_gate_rejects_native_preflight_provenance_tampering(
     monkeypatch.setattr(replay_module, "validate_manifest", lambda _path: fresh)
     preflight_path = completion_path.parent / "preflight_receipt.json"
     preflight = json.loads(preflight_path.read_text(encoding="utf-8"))
-    expected_error = "installed adapter or runner hash mismatch"
+    expected_error = "portable installed adapter evidence mismatch"
     if tamper_kind == "installed_adapter":
-        Path(preflight["installed_dynamic_adapter"]).write_text(
+        (preflight_path.parent / preflight["installed_dynamic_adapter_evidence"]).write_text(
             "# installed bytes changed after preflight\n", encoding="utf-8"
         )
+    elif tamper_kind == "runner":
+        (preflight_path.parent / preflight["runner_evidence"]).write_text(
+            "# runner bytes changed after preflight\n", encoding="utf-8"
+        )
+        expected_error = "portable runner evidence mismatch"
     else:
         preflight["reported_compute_processes"] = [
             {
@@ -1300,7 +1951,7 @@ def test_baseline_gate_rejects_native_preflight_provenance_tampering(
         completion = json.loads(completion_path.read_text(encoding="utf-8"))
         completion["preflight_receipt_sha256"] = sha256_file(preflight_path)
         write_json_atomic(completion_path, completion)
-        expected_error = "competing compute use"
+        expected_error = "GPU state|GPU snapshot|competing compute use"
 
     with pytest.raises(ValueError, match=expected_error):
         validate_baseline_gate_artifacts(

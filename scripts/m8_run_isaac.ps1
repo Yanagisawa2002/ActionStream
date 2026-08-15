@@ -594,8 +594,24 @@ if ($matchingAdapters.Count -lt 1) {
     throw 'Installed dynamic adapter does not match the current checkout after colcon build.'
 }
 $selectedInstalledAdapter = $matchingAdapters[0].FullName
+$installedAdapterEvidencePath = Join-Path $logDirectory 'installed_dynamic_adapter.py'
+$runnerEvidencePath = Join-Path $logDirectory 'm8_run_isaac.runner.ps1'
+Require-PathAbsent -Path $installedAdapterEvidencePath -Description 'installed adapter evidence copy'
+Require-PathAbsent -Path $runnerEvidencePath -Description 'runner evidence copy'
+Copy-Item -LiteralPath $selectedInstalledAdapter -Destination $installedAdapterEvidencePath
+Copy-Item -LiteralPath $PSCommandPath -Destination $runnerEvidencePath
+$installedAdapterEvidenceHash = (Get-FileHash -LiteralPath $installedAdapterEvidencePath -Algorithm SHA256).Hash.ToLowerInvariant()
+$runnerHash = (Get-FileHash -LiteralPath $PSCommandPath -Algorithm SHA256).Hash.ToLowerInvariant()
+$runnerEvidenceHash = (Get-FileHash -LiteralPath $runnerEvidencePath -Algorithm SHA256).Hash.ToLowerInvariant()
+if ($installedAdapterEvidenceHash -ne $sourceAdapterHash.ToLowerInvariant()) {
+    throw 'Portable installed-adapter evidence copy does not match the current checkout.'
+}
+if ($runnerEvidenceHash -ne $runnerHash) {
+    throw 'Portable runner evidence copy does not match the executing runner.'
+}
 $suiteRepositoryRelative = Get-ContainedRelativePath -BasePath $repositoryRoot -TargetPath $suitePath
 $sourceRepositoryRelative = Get-ContainedRelativePath -BasePath $repositoryRoot -TargetPath $sourceRoot
+$runnerRepositoryRelative = Get-ContainedRelativePath -BasePath $repositoryRoot -TargetPath $PSCommandPath
 $plannedLogFiles = @('router.stdout.log', 'router.stderr.log') + $batchSourceValidationLogs
 foreach ($batchRecord in $batches) {
     $stem = ([System.IO.Path]::GetFileNameWithoutExtension([string]$batchRecord.path) -replace '[^A-Za-z0-9_.-]', '_')
@@ -628,12 +644,18 @@ $preflightReceipt = [ordered]@{
     source_file_count = $sourceRecords.Count
     source_manifest_sha256 = $sourceManifestHash
     installed_dynamic_adapter = $selectedInstalledAdapter
+    installed_dynamic_adapter_evidence = Get-ContainedRelativePath -BasePath $logDirectory -TargetPath $installedAdapterEvidencePath
+    installed_dynamic_adapter_evidence_sha256 = $installedAdapterEvidenceHash
     installed_dynamic_adapter_sha256 = (Get-FileHash -LiteralPath $selectedInstalledAdapter -Algorithm SHA256).Hash.ToLowerInvariant()
     executor_path = $executor
     executor_sha256 = (Get-FileHash -LiteralPath $executor -Algorithm SHA256).Hash.ToLowerInvariant()
     router_path = $router
     router_sha256 = (Get-FileHash -LiteralPath $router -Algorithm SHA256).Hash.ToLowerInvariant()
-    runner_sha256 = (Get-FileHash -LiteralPath $PSCommandPath -Algorithm SHA256).Hash.ToLowerInvariant()
+    runner = $PSCommandPath
+    runner_source = $runnerRepositoryRelative
+    runner_evidence = Get-ContainedRelativePath -BasePath $logDirectory -TargetPath $runnerEvidencePath
+    runner_evidence_sha256 = $runnerEvidenceHash
+    runner_sha256 = $runnerHash
     batch_timeout_seconds = $BatchTimeoutSeconds
     planned_process_logs = $plannedLogFiles
 }

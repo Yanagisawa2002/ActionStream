@@ -15,6 +15,7 @@ from .m8_protocol import (
     sha256_file,
     validate_calibration_ledger,
     validate_freeze_manifest,
+    validate_native_completion_receipt,
 )
 from .schema import read_json, write_json_atomic
 
@@ -104,6 +105,35 @@ def _resolve_repository_reference(value: object, *, repository_root: Path, label
         resolved.relative_to(repository_root.resolve())
     except ValueError as exc:
         raise ValueError(f"{label} escapes the repository") from exc
+    return resolved
+
+
+def _resolve_receipt_reference(
+    value: object,
+    *,
+    receipt_path: Path,
+    repository_root: Path,
+    label: str,
+) -> Path:
+    text = str(value)
+    windows = PureWindowsPath(text)
+    pure = PurePosixPath(text)
+    if (
+        not text
+        or "\\" in text
+        or Path(text).is_absolute()
+        or windows.is_absolute()
+        or windows.drive
+        or pure.is_absolute()
+    ):
+        raise ValueError(f"{label} must be a portable receipt-relative path")
+    resolved = (receipt_path.parent / Path(*pure.parts)).resolve()
+    try:
+        resolved.relative_to(repository_root.resolve())
+    except ValueError as exc:
+        raise ValueError(f"{label} escapes the repository") from exc
+    if not resolved.is_file():
+        raise FileNotFoundError(resolved)
     return resolved
 
 
@@ -279,17 +309,34 @@ def _validate_analysis_replay_binding(
 def _validate_completion_receipt(
     payload: Mapping[str, Any],
     *,
+    completion_path: Path,
+    matrix_path: Path,
     analysis_path: Path,
     replay_path: Path,
-) -> None:
+    repository_root: Path,
+) -> dict[str, Any]:
+    receipt_audit = validate_native_completion_receipt(
+        completion_receipt_path=completion_path,
+        matrix_path=matrix_path,
+        replay_path=replay_path,
+        repository_root=repository_root,
+    )
     _require_m8(payload, label="holdout completion receipt")
     if payload.get("receipt_kind") != "native_completion" or payload.get("status") != "complete":
         raise ValueError("holdout completion receipt is not complete")
     if (
-        payload.get("analysis_sha256") != sha256_file(analysis_path)
+        _resolve_receipt_reference(
+            payload.get("analysis"),
+            receipt_path=completion_path,
+            repository_root=repository_root,
+            label="holdout completion analysis",
+        )
+        != analysis_path
+        or payload.get("analysis_sha256") != sha256_file(analysis_path)
         or payload.get("replay_validation_sha256") != sha256_file(replay_path)
     ):
         raise ValueError("holdout completion receipt does not bind this analysis/replay pair")
+    return receipt_audit
 
 
 def _validate_figure_manifest(
@@ -520,10 +567,46 @@ def generate_technical_report(
         != freeze.get("freeze_sha256")
     ):
         raise ValueError("analysis/replay do not bind the supplied immutable freeze")
-    _validate_completion_receipt(
+    completion_portability = _validate_completion_receipt(
         completion,
+        completion_path=paths["holdout completion receipt"],
+        matrix_path=holdout_matrix_path,
         analysis_path=paths["analysis"],
         replay_path=paths["replay"],
+        repository_root=root,
+    )
+    artifacts["holdout preflight receipt"] = _artifact_record(
+        completion_portability["preflight_receipt_path"],
+        repository_root=root,
+    )
+    artifacts["holdout installed-adapter evidence"] = _artifact_record(
+        completion_portability["installed_dynamic_adapter_evidence_path"],
+        repository_root=root,
+    )
+    artifacts["holdout installed-executor evidence"] = _artifact_record(
+        completion_portability["executor_evidence_path"],
+        repository_root=root,
+    )
+    artifacts["holdout runner evidence"] = _artifact_record(
+        completion_portability["runner_evidence_path"],
+        repository_root=root,
+    )
+    if completion_portability["runner_support_evidence_path"] is not None:
+        artifacts["holdout runner-support evidence"] = _artifact_record(
+            completion_portability["runner_support_evidence_path"],
+            repository_root=root,
+        )
+    artifacts["holdout external-environment evidence"] = _artifact_record(
+        completion_portability["external_environment_evidence_path"],
+        repository_root=root,
+    )
+    artifacts["holdout pixi.toml evidence"] = _artifact_record(
+        completion_portability["pixi_manifest_evidence_path"],
+        repository_root=root,
+    )
+    artifacts["holdout pixi.lock evidence"] = _artifact_record(
+        completion_portability["pixi_lock_evidence_path"],
+        repository_root=root,
     )
     _validate_figure_manifest(
         figures,
@@ -606,6 +689,9 @@ def generate_technical_report(
     task = protocol["task"]
     controller = protocol["controller"]
     runtime = protocol["runtime"]
+    native_environment = completion_portability["environment"]
+    native_runtime = completion_portability["runtime"]
+    native_gpu = completion_portability["selected_gpu_identity"]
 
     lines = [
         "# ActionStream M8-G0 dynamic-recovery report",
@@ -626,13 +712,22 @@ def generate_technical_report(
         f"The clean starting checkout was `{repository['branch']}` at `{repository['head']}` "
         f"tracking `{repository['upstream']}` ({repository['ahead']} ahead, "
         f"{repository['behind']} behind).",
-        f"Windows: {starting['windows']['edition']} build {starting['windows']['build']}; "
+        f"Starting audit host only (not the native holdout runtime): Windows "
+        f"{starting['windows']['edition']} build {starting['windows']['build']}; "
         f"Python {starting['windows']['python']}; PyTorch {starting['windows']['pytorch']}; "
         f"CUDA toolkit {starting['windows']['cuda_toolkit']}.",
-        f"GPU: {starting['gpu']['name']} with driver {starting['gpu']['driver']}. "
-        f"Isaac Sim {starting['isaac_ros_environment']['isaac_sim']}, ROS "
-        f"{starting['isaac_ros_environment']['ros_distribution']}, Pixi "
-        f"{starting['isaac_ros_environment']['pixi']}.",
+        f"Starting audit GPU only (not the native holdout runtime): "
+        f"`{starting['gpu']['name']}` with driver {starting['gpu']['driver']}.",
+        f"Native holdout runtime: GPU `{native_gpu['name']}` UUID "
+        f"`{native_gpu['uuid']}` with {native_gpu['memory_total_mib']} MiB and driver "
+        f"{native_gpu['driver_version']}; IsaacSim-ros_workspaces commit "
+        f"`{native_environment['workspace_commit']}`; Pixi "
+        f"{native_environment['pixi']['version']}; Python "
+        f"{native_runtime['python_version']}; Isaac Sim "
+        f"{native_runtime['packages']['isaacsim']}; ROS "
+        f"{native_runtime['ros_distribution']} with "
+        f"{native_runtime['rmw_implementation']} "
+        f"{native_runtime['rmw_zenoh_cpp']}.",
         "",
         "## Reused components and frozen ActionStream semantics",
         "",
@@ -809,15 +904,15 @@ def generate_technical_report(
             "",
             "## Exact reproduction commands",
             "",
-            "```powershell",
-            "& $py -m action_stream_benchmark.m8_cli freeze-validate --repository-root . `",
+            "```bash",
+            "python -m action_stream_benchmark.m8_cli freeze-validate --repository-root . \\",
             "  --manifest outputs/m8_g0/protocol/freeze_manifest.json",
-            ".\\scripts\\m8_run_isaac.ps1 `",
-            "  -MatrixSuiteManifest outputs/m8_g0/holdout/matrix.json `",
-            "  -IsaacWorkspace $isaacWs -PixiExe $pixi -Headless $true `",
-            "  -AuthorizeNativeGpuRun",
-            "& $py -m action_stream_benchmark.m8_cli validate `",
-            "  --manifest outputs/m8_g0/holdout/matrix.archive.json `",
+            "bash scripts/m8_run_isaac.sh \\",
+            "  --matrix-suite-manifest outputs/m8_g0/holdout/matrix.json \\",
+            "  --isaac-workspace \"$isaac_ws\" --pixi-exe \"$pixi\" \\",
+            "  --gpu-index 0 --headless true --authorize-native-gpu-run",
+            "python -m action_stream_benchmark.m8_cli validate \\",
+            "  --manifest outputs/m8_g0/holdout/matrix.archive.json \\",
             "  --output outputs/m8_g0/holdout/replay_validation.archive.json",
             "```",
             "",

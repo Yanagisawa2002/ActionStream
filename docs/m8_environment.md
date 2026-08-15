@@ -29,9 +29,21 @@ The host audit recorded:
 | Native Python / Isaac Sim | 3.12.13 / 6.0.1.0 |
 | ROS / middleware | Jazzy / rmw-zenoh-cpp 0.2.9 |
 
-The native environment is NVIDIA's `IsaacSim-ros_workspaces` `jazzy_ws` at
-commit `dd3eeede7912755996a18f4884285d9f50843f79`, with manifest SHA-256
+The formal native environment is the official
+`https://github.com/isaac-sim/IsaacSim-ros_workspaces.git` repository's
+`jazzy_ws` at commit `dd3eeede7912755996a18f4884285d9f50843f79`. The canonical
+Git blob for `jazzy_ws/pixi.toml` uses LF, is 5,467 bytes, and has SHA-256
+`b4e7a34c264e88f19ba6bfb3c7a72ee46b0843f3e6eb7e75619dc0ebb87b313d`.
+The audited all-CRLF form is 5,618 bytes with SHA-256
 `9649bf57644781a1fe0203ed6b80828ccb42ea07555475080e5d11a9b0c3e1ae`.
+Cross-platform checks must accept only those two byte forms after proving that
+CRLF-to-LF normalization equals the canonical blob; this is a newline
+portability rule, not permission to change manifest content.
+The same rule applies to `jazzy_ws/pixi.lock`: its canonical LF Git blob is
+1,491,808 bytes with SHA-256
+`ba8e59eef962cbf49a1ff06ff947ed5eaa4547d018389b048771a1e7d8bb890d`;
+the audited Windows CRLF working copy is 1,533,045 bytes with SHA-256
+`2c2f9097b129847735b5abb805045a22076a731e2138c8192caac95d09a2866e`.
 The installed supported manipulator path is
 `isaacsim.robot.experimental.manipulators.examples.franka.Franka`.  M8 uses
 its damped-least-squares end-effector controller and the official downward
@@ -107,6 +119,87 @@ $env:PYTHONPATH = "$repoSrc;$benchmarkSrc;$isaacSrc;$policySrc"
 
 ## Baseline, freeze, and native execution
 
+### Linux/cloud native runner
+
+`scripts/m8_run_isaac.sh` is the only runner accepted for a portable formal
+native receipt. It expects Linux, the exact official repository/commit above,
+a tracked and clean `jazzy_ws/pixi.toml` plus `jazzy_ws/pixi.lock`, Bash, host
+Python 3.9 or newer, `setsid`, `ps`, GNU `find`/`sort`, and a working
+`nvidia-smi`. It also requires the official Linux Pixi 0.75.0 executable:
+77,311,024 bytes, SHA-256
+`4383aed18b2d5569cf34a19638daf954aa4415cc87ad3a9da9f34059cc4a004c`,
+with literal version output `pixi 0.75.0`. Every Pixi launch uses
+`pixi run --frozen --manifest-path ...`; no lock update or solve is permitted.
+
+The cloud runner preserves the same matrix, protocol, seed, profile, scenario,
+and fault-trace bytes. It performs current-source `--validate-only` checks
+before touching the GPU, samples only the explicitly selected GPU before and
+after the build, requires the same GPU UUID both times, and binds every native
+process to that UUID. It fails if that GPU has any compute-process row or more
+than 4,096 MiB in use. It builds the current checkout, requires the Linux
+overlay's `setup.bash` and `local_setup.bash` to be nonempty regular non-symlink
+files, and locates the executor, Zenoh router, and installed adapter. It then
+copies the exact runner, runner-support module, installed adapter, built C++
+executor, `pixi.toml`, and `pixi.lock` bytes into the receipt directory. Its
+dependency-free receipt helpers use host Python 3.9+ when present, or only the
+Python executable inside the pinned Pixi `default` environment on a minimal
+host with no system Python.
+`external_environment.json` binds those copies to the official URL, commit,
+workspace, Pixi binary, Python 3.12.13, Isaac Sim packages 6.0.1.0, ROS Jazzy,
+`rclpy` 7.1.9, `rosgraph-msgs` 2.0.3, and `rmw_zenoh_cpp` 0.2.9. The preflight
+also cross-links the selected GPU index, UUID, name, driver, and total memory
+to both GPU snapshots and its top-level identity. These receipt-local copies
+remain independently verifiable after the rental install directory disappears.
+
+Each router, executor, and Kit-first adapter starts in a new `setsid` process
+group. Cleanup signals only the PID/PGID pairs created by that invocation; the
+script contains no process-name kill, GPU reset, or host shutdown operation.
+It refuses existing canonical replay/analysis/figure outputs and writes a
+timestamped failure, timeout, GPU-refusal, preflight, or completion receipt
+without overwriting a previous attempt.
+
+From either a fresh Linux checkout or a byte-for-byte verified minimal archive
+extraction whose `.git/ARCHIVE_CHECKOUT` marker records the local source commit
+and archive SHA-256, and whose M8 inputs match the intended local checkout:
+
+```bash
+cd /workspace/ActionStream
+
+isaac_ws=/workspace/IsaacSim-ros_workspaces/jazzy_ws
+pixi_exe="$(command -v pixi)"
+
+nvidia-smi \
+  --query-gpu=index,name,uuid,driver_version,memory.total,memory.used,utilization.gpu \
+  --format=csv,noheader,nounits
+test -f "$isaac_ws/pixi.toml"
+test -f "$isaac_ws/pixi.lock"
+
+bash scripts/m8_run_isaac.sh \
+  --matrix-suite-manifest \
+    outputs/m8_g0/baseline_gate/candidate_0/matrix.json \
+  --isaac-workspace "$isaac_ws" \
+  --pixi-exe "$pixi_exe" \
+  --gpu-index 0 \
+  --headless true \
+  --batch-timeout-seconds 14400 \
+  --authorize-native-gpu-run
+```
+
+The authorization flag approves native execution only. It does not authorize
+the runner to terminate unrelated processes, stop/delete the rental instance,
+advance the calibration ledger, create development/holdout matrices, or cross
+the 18/20 baseline gate. A successful baseline must still be copied back with
+its complete `native_run_logs/<successful-run>/` directory and raw episode
+artifacts, replayed locally, and passed to `baseline-record` below. The local
+structural and helper tests for this path do not themselves constitute a
+native-Isaac result.
+
+### Audited Windows runner (nonformal)
+
+The PowerShell runner remains for legacy Windows audits, but the portable
+formal validator rejects Windows completion receipts. It cannot substitute for
+the Linux runner's exact Pixi, manifest/lock, runtime, and selected-GPU proof.
+
 Make the source-layout packages visible once per PowerShell session:
 
 ```powershell
@@ -134,11 +227,17 @@ and signed-by-hash runner receipts.
   --split baseline_gate `
   --output-root outputs/m8_g0/baseline_gate/candidate_0/raw `
   --manifest outputs/m8_g0/baseline_gate/candidate_0/matrix.json
+```
 
-.\scripts\m8_run_isaac.ps1 `
-  -MatrixSuiteManifest outputs/m8_g0/baseline_gate/candidate_0/matrix.json `
-  -IsaacWorkspace $isaacWs -PixiExe $pixi -Headless $true `
-  -AuthorizeNativeGpuRun
+```bash
+bash scripts/m8_run_isaac.sh \
+  --matrix-suite-manifest outputs/m8_g0/baseline_gate/candidate_0/matrix.json \
+  --isaac-workspace /root/autodl-tmp/IsaacSim-ros_workspaces/jazzy_ws \
+  --pixi-exe /root/autodl-tmp/bin/pixi \
+  --gpu-index 0 \
+  --headless true \
+  --batch-timeout-seconds 14400 \
+  --authorize-native-gpu-run
 ```
 
 The runner refuses a busy GPU, rebuilds the current checkout into the native
@@ -147,7 +246,8 @@ stdout/stderr and source hashes, and independently writes
 `outputs/m8_g0/baseline_gate/candidate_0/replay_validation.json`. Record the
 successful native run before creating any development matrix; this command
 replays the raw evidence, requires at least 18/20 successes, validates the
-completion/preflight/source/runner/installed-adapter/process-log bindings, and
+completion/preflight/source/runner/installed-adapter/built-executor/process-log
+bindings, and
 requires an exact nonzero current-source validate-only result for every
 persistent batch with every validation log bound into the process-log archive.
 It then atomically advances only a pristine open ledger:
@@ -190,12 +290,20 @@ candidate 1, and candidate 2.
   --split development `
   --output-root outputs/m8_g0/development/candidate_0/raw `
   --manifest outputs/m8_g0/development/candidate_0/matrix.json
+```
 
-.\scripts\m8_run_isaac.ps1 `
-  -MatrixSuiteManifest outputs/m8_g0/development/candidate_0/matrix.json `
-  -IsaacWorkspace $isaacWs -PixiExe $pixi -Headless $true `
-  -AuthorizeNativeGpuRun
+```bash
+bash scripts/m8_run_isaac.sh \
+  --matrix-suite-manifest outputs/m8_g0/development/candidate_0/matrix.json \
+  --isaac-workspace /root/autodl-tmp/IsaacSim-ros_workspaces/jazzy_ws \
+  --pixi-exe /root/autodl-tmp/bin/pixi \
+  --gpu-index 0 \
+  --headless true \
+  --batch-timeout-seconds 14400 \
+  --authorize-native-gpu-run
+```
 
+```powershell
 & $py -m action_stream_benchmark.m8_cli candidate-record `
   --repository-root . `
   --calibration-ledger configs/m8_calibration_ledger.json `
@@ -350,7 +458,7 @@ two protocol status fields changed between the selected candidate and final
 contract. Any allowed differences from the baseline candidate must be the exact
 one- or two-change development chain recorded above.
 
-Create and execute the 60-seed frozen suite:
+Create the 60-seed frozen suite, then execute it with the formal Linux runner:
 
 ```powershell
 $freeze = Get-Content outputs/m8_g0/protocol/freeze_manifest.json -Raw | ConvertFrom-Json
@@ -369,10 +477,17 @@ $profile2 = ($freeze.inputs | Where-Object role -eq 'profile:profile_2_faults').
   --output-root outputs/m8_g0/holdout/raw `
   --manifest outputs/m8_g0/holdout/matrix.json
 
-.\scripts\m8_run_isaac.ps1 `
-  -MatrixSuiteManifest outputs/m8_g0/holdout/matrix.json `
-  -IsaacWorkspace $isaacWs -PixiExe $pixi -Headless $true `
-  -AuthorizeNativeGpuRun
+```
+
+```bash
+bash scripts/m8_run_isaac.sh \
+  --matrix-suite-manifest outputs/m8_g0/holdout/matrix.json \
+  --isaac-workspace /root/autodl-tmp/IsaacSim-ros_workspaces/jazzy_ws \
+  --pixi-exe /root/autodl-tmp/bin/pixi \
+  --gpu-index 0 \
+  --headless true \
+  --batch-timeout-seconds 14400 \
+  --authorize-native-gpu-run
 ```
 
 The runner must start `rmw_zenohd`, the compiled C++ executor, and one headless
@@ -384,7 +499,7 @@ systematic controller failure.
 
 ## Replay, analysis, figures, and archive
 
-For a frozen holdout, `m8_run_isaac.ps1` already creates the canonical
+For a frozen holdout, the formal Linux `m8_run_isaac.sh` runner creates the canonical
 `replay_validation.json`, `analysis.json`, and `figures/` outputs next to the
 matrix, and binds the replay and analysis hashes into its completion receipt.
 Do not rerun postprocessing into those paths. The following optional

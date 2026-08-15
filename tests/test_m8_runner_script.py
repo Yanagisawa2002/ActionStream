@@ -104,6 +104,20 @@ def test_runner_archives_logs_and_uses_local_overlay() -> None:
     assert "process_and_command_logs" not in source
 
 
+def test_runner_copies_portable_adapter_and_runner_evidence() -> None:
+    source = _source()
+    assert "installed_dynamic_adapter_evidence" in source
+    assert "installed_dynamic_adapter_evidence_sha256" in source
+    assert "runner_source" in source
+    assert "runner_evidence" in source
+    assert "runner_evidence_sha256" in source
+    assert "runner = $PSCommandPath" in source
+    assert "Copy-Item -LiteralPath $selectedInstalledAdapter" in source
+    assert "Copy-Item -LiteralPath $PSCommandPath" in source
+    assert "Portable installed-adapter evidence copy" in source
+    assert "Portable runner evidence copy" in source
+
+
 def test_runner_parses_on_windows_powershell() -> None:
     powershell = shutil.which("powershell.exe") or shutil.which("powershell")
     if powershell is None:
