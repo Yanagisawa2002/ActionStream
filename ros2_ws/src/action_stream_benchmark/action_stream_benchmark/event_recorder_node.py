@@ -39,6 +39,19 @@ def expanded_runtime_detail(milestone: str, detail: str) -> dict[str, Any]:
 
 
 def _detail_counts(detail: str) -> tuple[int, int]:
+    if detail.strip().startswith("{"):
+        try:
+            value = json.loads(detail)
+        except (TypeError, ValueError):
+            value = {}
+        if isinstance(value, dict):
+            try:
+                return int(value.get("expired", 0)), int(
+                    value.get("duplicates", 0)
+                )
+            except (TypeError, ValueError):
+                return 0, 0
+
     expired = 0
     duplicates = 0
     for item in detail.split(","):

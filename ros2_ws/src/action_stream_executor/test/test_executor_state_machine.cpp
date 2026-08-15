@@ -176,6 +176,17 @@ TEST(AlignedExecutorTest, RemovesArrivalAgePrefixUsingQueueInsertionStep)
   ASSERT_TRUE(command.has_value());
   EXPECT_EQ(command->source_target_step, 13U);
   EXPECT_EQ(machine.diagnostics(stamp(13U).steady_time_ns).expired_actions_removed, 2U);
+
+  const auto events = machine.drain_events();
+  const auto update = std::find_if(
+    events.begin(), events.end(), [](const RuntimeEventRecord & event) {
+      return event.event_type == "queue_updated";
+    });
+  ASSERT_NE(update, events.end());
+  EXPECT_EQ(update->actual_target_step, 12U);
+  EXPECT_EQ(
+    update->detail,
+    "{\"insertion_observation_step\":12,\"expired\":2,\"duplicates\":0}");
 }
 
 TEST(AlignedExecutorTest, RejectsCompletelyExpiredChunkWithoutDestroyingQueue)

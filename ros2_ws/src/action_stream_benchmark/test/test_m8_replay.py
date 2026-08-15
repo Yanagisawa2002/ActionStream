@@ -257,6 +257,43 @@ def test_queue_rebuild_uses_complete_log_not_cross_topic_arrival_order() -> None
     assert _audit(rows, summary)["passed"]
 
 
+def test_queue_rebuild_uses_executor_insertion_boundary_not_future_observation() -> None:
+    rows, summary = cloned_episode()
+    second_chunk = [row for row in rows if row["event_type"] == "chunk_arrived"][1]
+    second_queue = [row for row in rows if row["event_type"] == "queue_updated"][1]
+    action = [row for row in rows if row["event_type"] == "action_executed"][-1]
+    command = [row for row in rows if row["event_type"] == "command_executed"][-1]
+    future_observation = next(
+        row
+        for row in rows
+        if row["event_type"] == "observation" and row["observation_step"] == 102
+    )
+
+    second_chunk["actions"] = [
+        {"target_step": 101, "command": deepcopy(command["command"])},
+        {"target_step": 102, "command": deepcopy(command["command"])},
+    ]
+    second_queue["expired_actions_removed"] = 1
+    action["source_target_step"] = 102
+    action["actual_target_step"] = 102
+    command["source_target_step"] = 102
+    command["actual_target_step"] = 102
+    rows.remove(future_observation)
+    rows.insert(rows.index(second_queue), future_observation)
+    _renumber(rows)
+
+    without_snapshot = _audit(rows, summary)
+    assert "atomic_rebuild_queue_after_mismatch" in without_snapshot[
+        "invariant_violation_counts"
+    ]
+
+    second_queue["actual_target_step"] = 101
+    second_queue["detail"] = (
+        '{"insertion_observation_step":101,"expired":1,"duplicates":0}'
+    )
+    assert _audit(rows, summary)["passed"]
+
+
 def test_robot_command_may_precede_cross_topic_generation_events() -> None:
     rows, summary = cloned_episode()
     command_index = next(

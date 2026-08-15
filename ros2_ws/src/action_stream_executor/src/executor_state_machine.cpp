@@ -699,8 +699,14 @@ Decision ExecutorStateMachine::ingest_chunk_locked(const ChunkRecord & chunk)
   event.queue_length_before = queue_before;
   event.queue_length_after = queue_.size();
   event.action_count = queue_.size();
-  event.detail = "expired=" + std::to_string(expired) +
-    ",duplicates=" + std::to_string(duplicates);
+  // Snapshot the observation boundary used by make_valid_actions_locked().
+  // Runtime events and observations are published on separate ROS topics, so
+  // recorder arrival order cannot reconstruct this boundary reliably.
+  event.actual_target_step = latest_observation_step_;
+  event.detail = "{\"insertion_observation_step\":" +
+    std::to_string(latest_observation_step_) +
+    ",\"expired\":" + std::to_string(expired) +
+    ",\"duplicates\":" + std::to_string(duplicates) + "}";
   push_event_locked(std::move(event));
   return {
     true, update_reason, queue_.size(), expired, duplicates, queue_.size()};

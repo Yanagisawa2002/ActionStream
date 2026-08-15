@@ -1409,7 +1409,41 @@ def validate_episode_rows(
                     }
                 )
                 continue
-            insertion_step = latest_observation_step + 1
+            # The executor snapshots the observation boundary used for atomic
+            # replacement. Cross-topic recorder arrival order is not semantic:
+            # a later observation can be written before this RuntimeEvent.
+            queue_detail = _event_detail(row)
+            insertion_observation_step = queue_detail.get(
+                "insertion_observation_step"
+            )
+            if insertion_observation_step is None:
+                # Backward compatibility for fixtures and evidence recorded
+                # before the executor emitted the explicit boundary snapshot.
+                insertion_step = latest_observation_step + 1
+            else:
+                try:
+                    insertion_observation_step = int(insertion_observation_step)
+                except (TypeError, ValueError):
+                    insertion_observation_step = -1
+                if insertion_observation_step < 0:
+                    violations.append(
+                        {
+                            "event_index": row.get("event_index"),
+                            "reason": "queue_insertion_observation_step_invalid",
+                        }
+                    )
+                if (
+                    "actual_target_step" in row
+                    and int(row.get("actual_target_step", -1))
+                    != insertion_observation_step
+                ):
+                    violations.append(
+                        {
+                            "event_index": row.get("event_index"),
+                            "reason": "queue_insertion_observation_step_mismatch",
+                        }
+                    )
+                insertion_step = insertion_observation_step + 1
             expected: dict[int, dict[str, Any]] = {}
             expired = 0
             duplicates = 0

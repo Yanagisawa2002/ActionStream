@@ -5,6 +5,7 @@ from pathlib import Path
 import pytest
 
 from action_stream_benchmark.event_recorder_node import (
+    _detail_counts,
     expanded_runtime_detail,
     task_success_from_state,
 )
@@ -74,6 +75,10 @@ def test_legacy_recorder_helpers_preserve_m7_and_decode_m8() -> None:
     )
     assert detail == {"switch_step": 100, "scenario_sha256": "abc"}
     assert expanded_runtime_detail("M7-G0", '{"switch_step":100}') == {}
+    assert _detail_counts("expired=2,duplicates=1") == (2, 1)
+    assert _detail_counts(
+        '{"insertion_observation_step":12,"expired":2,"duplicates":1}'
+    ) == (2, 1)
 
 
 def test_fault_injector_dispatch_keeps_m7_offset_and_uses_m8_offset(tmp_path: Path) -> None:
