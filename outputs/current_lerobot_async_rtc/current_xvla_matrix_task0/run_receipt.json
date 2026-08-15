@@ -1,0 +1,60 @@
+{
+  "compatibility": [
+    {
+      "model_id": "lerobot/xvla-libero",
+      "model_key": "xvla",
+      "revision": "12e8783e996944f5c97e490d37d4c145484ed70a",
+      "rtc_expectation_match": true,
+      "rtc_expected": false,
+      "rtc_supported": false
+    }
+  ],
+  "completed_utc": "2026-08-15T09:12:45Z",
+  "experiment_id": "current_lerobot_async_rtc_20260815",
+  "metrics_path": "/root/autodl-tmp/results/current_xvla_matrix_task0/episodes.jsonl",
+  "metrics_sha256": "a01934b5b8e234422cd55364d09d137570d6f5169f91d78d72ebce23b0539610",
+  "protocol_path": "/root/autodl-tmp/actionstream-current/configs/current_lerobot_baselines.json",
+  "protocol_sha256": "76ed5e5a0d2a0780c2fb858741c9e8a16fdc36cac1f3c991977b9b11fd6a164a",
+  "record_count": 45,
+  "run_id": "xvla_task0_matrix_20260815",
+  "schema_version": 1,
+  "selection": {
+    "episode_length": 280,
+    "episodes_per_task": 3,
+    "initial_state_indices": [
+      0,
+      2,
+      4
+    ],
+    "models": [
+      "xvla"
+    ],
+    "profiles": [
+      "fixed_0000",
+      "fixed_0250",
+      "fixed_0500",
+      "fixed_0950",
+      "jitter_0500_pm0250"
+    ],
+    "runtimes": [
+      "lerobot_weighted_average",
+      "lerobot_latest_only",
+      "actionstream_aligned"
+    ],
+    "task_ids": [
+      0
+    ]
+  },
+  "source_commit": "edfdfcf3a32c6449fbfd8f7d326ec8294e30bb01",
+  "upstream": {
+    "checkout_clean": true,
+    "checkout_path": "/root/autodl-tmp/external/lerobot-current",
+    "commit": "6adf51511b7625090eade8d82d9f61a1846ebe56",
+    "commit_date": "2026-08-13T20:11:31+02:00",
+    "commit_subject": "feat(rollout): interactive sessions \u2014 chat-style CLI and programmatic rollout control (#4380)",
+    "exact_tag": null,
+    "nearest_tag_description": "6adf515",
+    "repository_url": "https://github.com/huggingface/lerobot.git",
+    "source_version": "0.6.2"
+  }
+}

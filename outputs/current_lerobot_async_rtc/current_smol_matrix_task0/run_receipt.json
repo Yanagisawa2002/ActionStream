@@ -1,0 +1,61 @@
+{
+  "compatibility": [
+    {
+      "model_id": "lerobot/smolvla_libero",
+      "model_key": "smolvla",
+      "revision": "31d453f7edd78c839a8bbc39744a292686daf0de",
+      "rtc_expectation_match": true,
+      "rtc_expected": true,
+      "rtc_supported": true
+    }
+  ],
+  "completed_utc": "2026-08-15T09:26:29Z",
+  "experiment_id": "current_lerobot_async_rtc_20260815",
+  "metrics_path": "/root/autodl-tmp/results/current_smol_matrix_task0/episodes.jsonl",
+  "metrics_sha256": "9daebf7632c6284495ad2cc70147c1016d0d9aa705454b5f6faed396faff85ed",
+  "protocol_path": "/root/autodl-tmp/actionstream-current/configs/current_lerobot_baselines.json",
+  "protocol_sha256": "76ed5e5a0d2a0780c2fb858741c9e8a16fdc36cac1f3c991977b9b11fd6a164a",
+  "record_count": 60,
+  "run_id": "smolvla_task0_matrix_20260815",
+  "schema_version": 1,
+  "selection": {
+    "episode_length": 280,
+    "episodes_per_task": 3,
+    "initial_state_indices": [
+      0,
+      2,
+      4
+    ],
+    "models": [
+      "smolvla"
+    ],
+    "profiles": [
+      "fixed_0000",
+      "fixed_0250",
+      "fixed_0500",
+      "fixed_0950",
+      "jitter_0500_pm0250"
+    ],
+    "runtimes": [
+      "lerobot_weighted_average",
+      "lerobot_latest_only",
+      "actionstream_aligned",
+      "lerobot_rtc"
+    ],
+    "task_ids": [
+      0
+    ]
+  },
+  "source_commit": "edfdfcf3a32c6449fbfd8f7d326ec8294e30bb01",
+  "upstream": {
+    "checkout_clean": true,
+    "checkout_path": "/root/autodl-tmp/external/lerobot-current",
+    "commit": "6adf51511b7625090eade8d82d9f61a1846ebe56",
+    "commit_date": "2026-08-13T20:11:31+02:00",
+    "commit_subject": "feat(rollout): interactive sessions \u2014 chat-style CLI and programmatic rollout control (#4380)",
+    "exact_tag": null,
+    "nearest_tag_description": "6adf515",
+    "repository_url": "https://github.com/huggingface/lerobot.git",
+    "source_version": "0.6.2"
+  }
+}

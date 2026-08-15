@@ -824,3 +824,61 @@ the final M6-G0 classification is **NO-GO** and the recommended next step is
 - [Aggregate metrics](outputs/m6_g0/metrics/aggregate_metrics.json)
 - [Machine-readable decision](outputs/m6_g0/decision.json)
 - [Formal artifact validation](outputs/m6_g0/report/report_validation.json)
+
+## Current LeRobot policy-driven Async/RTC evaluation
+
+The current policy-driven harness updates the synthetic M6 source audit to
+LeRobot `6adf51511b7625090eade8d82d9f61a1846ebe56` (source version `0.6.2`) and
+executes frozen policy checkpoints in LIBERO. It compares upstream
+`weighted_average`, upstream `latest_only`, ActionStream target-step alignment,
+and upstream RTC only when the loaded policy reports `supports_rtc()`. The
+protocol fixes 0/250/500/950 ms delivery delays and a seeded 500 +/- 250 ms
+jitter trace in
+[`current_lerobot_baselines.json`](configs/current_lerobot_baselines.json).
+
+Run a policy/runtime subset from a checkout of the pinned LeRobot source:
+
+```bash
+export PYTHONPATH="$PWD/src:/path/to/lerobot/src"
+export ACTIONSTREAM_SOURCE_COMMIT="$(git rev-parse HEAD)"
+
+python -m actionstream.current_baselines \
+  --lerobot-root /path/to/lerobot \
+  --output-dir outputs/current_lerobot_async_rtc/run \
+  --models xvla,smolvla \
+  --runtimes lerobot_weighted_average,lerobot_latest_only,actionstream_aligned,lerobot_rtc \
+  --profiles fixed_0000,fixed_0250,fixed_0500,fixed_0950,jitter_0500_pm0250 \
+  --task-ids 0 \
+  --episodes-per-task 3 \
+  --initial-state-indices 0,2,4 \
+  --episode-length 280 \
+  --capture
+
+python -m actionstream.current_results \
+  outputs/current_lerobot_async_rtc/run/episodes.jsonl \
+  --output-dir outputs/current_lerobot_async_rtc/report
+```
+
+The runner records environment-ready 7D actions, request/inference/delivery
+timestamps, queue merges, obsolete-prefix drops, holds, discontinuity and
+acceleration metrics, peak CUDA memory, hashes, and a first paired video per
+condition. Analysis is episode-paired within each policy; it never treats
+individual action frames as independent samples or ranks policy quality across
+different action representations. Short smoke truncations establish only
+compatibility. Native Isaac claims require a separate completed native receipt,
+fair same-reset pair, replay-valid traces, and live observation-conditioned
+policy video.
+
+The 2026-08-15 task-0 decision matrix contains 105 completed paired episodes,
+105 verified traces, 19,512 finite 7D actions, and 35 locally decoded videos.
+For X-VLA at 950 ms, aligned matched `latest_only` success (3/3) while finishing
+36.3 paired steps earlier on average; at zero delay it was 10.3 steps slower.
+For SmolVLA, RTC was 3/3 at zero delay but 0/3 at 500 ms, 950 ms, and jitter.
+These are compact three-pair findings, not cross-task generalization.
+
+- [Paired condition/effect table](outputs/current_lerobot_async_rtc/report/paired_analysis.md)
+- [Machine-readable paired analysis](outputs/current_lerobot_async_rtc/report/paired_analysis.json)
+- [Findings and limitations](outputs/current_lerobot_async_rtc/report/FINDINGS.md)
+- [Raw episode table](outputs/current_lerobot_async_rtc/report/raw_episodes.csv)
+- [Receipt and artifact validation](outputs/current_lerobot_async_rtc/report/receipt_validation.json)
+- [Native Isaac blocked-attempt summary](outputs/m8_g0/baseline_gate/candidate_0/native_run_logs/20260815T084328618745216Z/attempt_summary.md)

@@ -23,9 +23,12 @@ def _row(runtime: str, profile: str, episode: int) -> dict[str, object]:
     return {
         "status": "completed",
         "model_key": "xvla",
+        "model_id": "lerobot/xvla-libero",
         "model_revision": "revision",
+        "control_mode": "absolute",
         "runtime": runtime,
         "delay_profile": profile,
+        "delay_trace_sha256": "b" * 64,
         "task_id": 0,
         "episode_index": episode,
         "initial_state_index": 2 * episode,
@@ -43,6 +46,9 @@ def _row(runtime: str, profile: str, episode: int) -> dict[str, object]:
         "action_acceleration_max_l2": 0.03 + offset / 100,
         "peak_cuda_memory_mib": 1000,
         "wall_clock_episode_seconds": 5.0,
+        "controller_frequency_hz": 20.0,
+        "chunk_size": 30,
+        "request_interval_steps": 10,
         "source_commit": "a" * 40,
         "trace_path": f"/remote/trace_{runtime}_{profile}_{episode}.json",
         "video_path": None,
@@ -63,7 +69,20 @@ def _write_fixture(root: Path) -> Path:
             for episode in range(3):
                 row = _row(runtime, profile, episode)
                 trace = traces / Path(str(row["trace_path"])).name
-                trace.write_text("{}\n", encoding="utf-8")
+                trace.write_text(
+                    json.dumps(
+                        {
+                            "schema_version": 1,
+                            "actions": [
+                                {"action": [0.0] * 7}
+                                for _ in range(int(row["environment_steps"]))
+                            ],
+                            "inference_events": [],
+                        }
+                    )
+                    + "\n",
+                    encoding="utf-8",
+                )
                 row["trace_sha256"] = hashlib.sha256(trace.read_bytes()).hexdigest()
                 rows.append(row)
     path = root / "episodes.jsonl"
@@ -79,6 +98,7 @@ def test_current_results_validate_pair_and_build_effects(tmp_path: Path) -> None
 
     assert validation["episode_count"] == 18
     assert validation["trace_count_verified"] == 18
+    assert validation["final_7d_action_count_verified"] > 1_800
     comparison = next(
         item
         for item in report["paired_comparisons"]
@@ -96,6 +116,14 @@ def test_current_results_reject_unpaired_runtime_cell(tmp_path: Path) -> None:
     rows = read_episode_rows([path])
     rows.pop()
     with pytest.raises(ValueError, match="Unpaired runtime cells"):
+        validate_episode_rows(rows, verify_artifacts=False)
+
+
+def test_current_results_reject_pair_invariant_drift(tmp_path: Path) -> None:
+    path = _write_fixture(tmp_path)
+    rows = read_episode_rows([path])
+    rows[0]["delay_trace_sha256"] = "c" * 64
+    with pytest.raises(ValueError, match="Pair invariant mismatch.*delay_trace_sha256"):
         validate_episode_rows(rows, verify_artifacts=False)
 
 

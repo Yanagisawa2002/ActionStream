@@ -18,6 +18,16 @@ from actionstream.m4_analysis import paired_metric_effect
 
 
 PAIR_FIELDS = ("task_id", "episode_index", "initial_state_index", "seed")
+PAIR_INVARIANT_FIELDS = (
+    "source_commit",
+    "model_id",
+    "model_revision",
+    "control_mode",
+    "delay_trace_sha256",
+    "controller_frequency_hz",
+    "chunk_size",
+    "request_interval_steps",
+)
 RAW_FIELDS = (
     "model_key",
     "model_revision",
@@ -125,6 +135,7 @@ def validate_episode_rows(rows: list[dict[str, Any]], *, verify_artifacts: bool 
     models: dict[str, str] = {}
     trace_count = 0
     video_count = 0
+    action_count = 0
     for row in rows:
         location = f"{row['_episode_path']}:{row['_line_number']}"
         if row.get("status") != "completed":
@@ -156,8 +167,26 @@ def validate_episode_rows(rows: list[dict[str, Any]], *, verify_artifacts: bool 
                     raise ValueError(f"Missing artifact {artifact} referenced at {location}")
                 if expected != _sha256(artifact):
                     raise ValueError(f"Artifact hash mismatch for {artifact}")
-                trace_count += int(path_field == "trace_path")
-                video_count += int(path_field == "video_path")
+                if path_field == "trace_path":
+                    payload = json.loads(artifact.read_text(encoding="utf-8"))
+                    actions = payload.get("actions")
+                    events = payload.get("inference_events")
+                    if not isinstance(actions, list) or not isinstance(events, list):
+                        raise ValueError(f"Malformed trace payload in {artifact}")
+                    if len(actions) != int(row["environment_steps"]):
+                        raise ValueError(f"Trace/action count mismatch in {artifact}")
+                    for action_row in actions:
+                        vector = action_row.get("action") if isinstance(action_row, dict) else None
+                        if (
+                            not isinstance(vector, list)
+                            or len(vector) != 7
+                            or not all(math.isfinite(float(value)) for value in vector)
+                        ):
+                            raise ValueError(f"Non-finite or non-7D action in {artifact}")
+                    trace_count += 1
+                    action_count += len(actions)
+                else:
+                    video_count += 1
 
     grouped_pairs: dict[tuple[str, str], dict[str, set[tuple[int, int, int, int]]]] = defaultdict(dict)
     for row in rows:
@@ -171,13 +200,27 @@ def validate_episode_rows(rows: list[dict[str, Any]], *, verify_artifacts: bool 
             elif keys != expected:
                 raise ValueError(f"Unpaired runtime cells for {group}: {runtime}")
 
+    paired_rows: dict[
+        tuple[str, str, tuple[int, int, int, int]], list[dict[str, Any]]
+    ] = defaultdict(list)
+    for row in rows:
+        model, _, profile = _condition_key(row)
+        paired_rows[(model, profile, _pair_key(row))].append(row)
+    for key, pair in paired_rows.items():
+        for field in PAIR_INVARIANT_FIELDS:
+            values = {json.dumps(row.get(field), sort_keys=True) for row in pair}
+            if len(values) != 1:
+                raise ValueError(f"Pair invariant mismatch for {key}: {field}")
+
     return {
         "episode_count": len(rows),
         "source_commits": sorted(sources),
         "model_revisions": models,
         "trace_count_verified": trace_count,
+        "final_7d_action_count_verified": action_count,
         "video_count_verified": video_count,
         "pairing_fields": list(PAIR_FIELDS),
+        "pair_invariant_fields": list(PAIR_INVARIANT_FIELDS),
     }
 
 
@@ -339,7 +382,9 @@ def render_markdown(report: dict[str, Any]) -> str:
         "# Current LeRobot Async/RTC paired results",
         "",
         f"Validated {validation['episode_count']} completed episodes and "
-        f"{validation['trace_count_verified']} raw traces. The statistical unit is the "
+        f"{validation['trace_count_verified']} raw traces containing "
+        f"{validation['final_7d_action_count_verified']} finite 7D actions. "
+        "The statistical unit is the "
         "episode; task, initial state, episode index, and seed are paired within each model.",
         "",
         "These results are paired within a policy only. They do not rank policy quality "
@@ -348,7 +393,7 @@ def render_markdown(report: dict[str, Any]) -> str:
         "## Raw condition table",
         "",
         "| model | delay | runtime | n | success | steps mean±sd | hold mean±sd | "
-        "delivery p95 mean±sd | discontinuity mean±sd |",
+        "delivery p50 mean±sd | discontinuity mean±sd |",
         "|---|---|---|---:|---:|---:|---:|---:|---:|",
     ]
     for cell in report["analysis"]["condition_summaries"]:
@@ -360,8 +405,8 @@ def render_markdown(report: dict[str, Any]) -> str:
             f"{_fmt(metrics['environment_steps']['std'])} | "
             f"{_fmt(metrics['hold_fraction']['mean'])}±"
             f"{_fmt(metrics['hold_fraction']['std'])} | "
-            f"{_fmt(metrics['delivery_latency_p95_seconds']['mean'])}±"
-            f"{_fmt(metrics['delivery_latency_p95_seconds']['std'])} | "
+            f"{_fmt(metrics['delivery_latency_p50_seconds']['mean'])}±"
+            f"{_fmt(metrics['delivery_latency_p50_seconds']['std'])} | "
             f"{_fmt(metrics['action_discontinuity_mean_l2']['mean'])}±"
             f"{_fmt(metrics['action_discontinuity_mean_l2']['std'])} |"
         )
@@ -402,6 +447,8 @@ def render_markdown(report: dict[str, Any]) -> str:
         "- A 280-step horizon failure is a task outcome; a shorter intentional smoke "
         "truncation is not.",
         "- Cross-model comparisons are not paired and are not used for method claims.",
+        "- Per-episode delivery p95 includes the first cold inference and depends on the "
+        "number of inference calls, so the compact table uses p50; p95 remains in JSON/CSV.",
         "- Native Isaac evidence is reported separately and requires a completed native "
         "runner receipt plus a live observation-conditioned policy.",
         "",
@@ -430,11 +477,22 @@ def write_analysis(
     output = Path(output_dir)
     output.mkdir(parents=True, exist_ok=True)
     (output / "paired_analysis.json").write_text(
-        json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        json.dumps(report, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+        newline="\n",
     )
-    (output / "paired_analysis.md").write_text(render_markdown(report), encoding="utf-8")
+    (output / "paired_analysis.md").write_text(
+        render_markdown(report),
+        encoding="utf-8",
+        newline="\n",
+    )
     with (output / "raw_episodes.csv").open("w", encoding="utf-8", newline="") as stream:
-        writer = csv.DictWriter(stream, fieldnames=RAW_FIELDS, extrasaction="ignore")
+        writer = csv.DictWriter(
+            stream,
+            fieldnames=RAW_FIELDS,
+            extrasaction="ignore",
+            lineterminator="\n",
+        )
         writer.writeheader()
         writer.writerows(rows)
     return report

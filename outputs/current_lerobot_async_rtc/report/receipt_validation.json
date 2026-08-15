@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "validated_utc": "2026-08-15T09:33:00Z",
+  "protocol": {
+    "path": "configs/current_lerobot_baselines.json",
+    "sha256": "76ed5e5a0d2a0780c2fb858741c9e8a16fdc36cac1f3c991977b9b11fd6a164a"
+  },
+  "actionstream_source_commit": "edfdfcf3a32c6449fbfd8f7d326ec8294e30bb01",
+  "upstream_lerobot_commit": "6adf51511b7625090eade8d82d9f61a1846ebe56",
+  "runs": [
+    {
+      "run_id": "xvla_task0_matrix_20260815",
+      "record_count": 45,
+      "metrics_sha256": "a01934b5b8e234422cd55364d09d137570d6f5169f91d78d72ebce23b0539610",
+      "receipt_sha256": "53906619f15569f927027250e9b722192f48bdbb53998fc85a0ca7c7600e47af",
+      "record_count_matches": true,
+      "metrics_hash_matches": true,
+      "protocol_hash_matches": true,
+      "source_commit_matches": true
+    },
+    {
+      "run_id": "smolvla_task0_matrix_20260815",
+      "record_count": 60,
+      "metrics_sha256": "9daebf7632c6284495ad2cc70147c1016d0d9aa705454b5f6faed396faff85ed",
+      "receipt_sha256": "01a4de8a1e606b844787b8612d8a80e0bb1cde6ef04683f36e0d04944f737a05",
+      "record_count_matches": true,
+      "metrics_hash_matches": true,
+      "protocol_hash_matches": true,
+      "source_commit_matches": true
+    }
+  ],
+  "analysis": {
+    "paired_analysis_sha256": "c0b7da564684ede67e856c245dd0026003f8c30447891e59d66a55564ecbcf09",
+    "raw_episodes_csv_sha256": "4d4037b8887d8b6f262c69136f2e2c67e9118bc65148981263e99668489a0b1b",
+    "episode_count": 105,
+    "trace_count_verified": 105,
+    "final_7d_action_count_verified": 19512,
+    "video_hash_count_verified": 35
+  },
+  "passed": true
+}
