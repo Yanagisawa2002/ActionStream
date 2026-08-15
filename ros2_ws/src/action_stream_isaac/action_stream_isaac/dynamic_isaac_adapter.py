@@ -1109,6 +1109,13 @@ class DynamicIsaacScene:
             max_contact_count=256,
         )
 
+        # ``contact_filter_paths`` configures the tensor contact view, but
+        # Isaac Sim 6 does not implicitly apply PhysxContactReportAPI to the
+        # monitored rigid bodies.  Enable reporting before physics starts so
+        # the views can resolve the finger/link prims on the first ready event.
+        self._finger_contacts.set_enabled_contact_tracking([True], threshold=0.0)
+        self._disallowed_contacts.set_enabled_contact_tracking([True], threshold=0.0)
+
         SimulationManager.setup_simulation(dt=PHYSICS_DT_SECONDS, device="cpu")
         RenderingManager.set_dt(PHYSICS_DT_SECONDS)
         self._app.update()

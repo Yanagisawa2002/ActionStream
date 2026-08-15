@@ -97,6 +97,22 @@ def test_isaac_6_ground_contact_filter_targets_collision_child() -> None:
     )
 
 
+def test_scene_enables_contact_reporting_before_physics_setup() -> None:
+    source = inspect.getsource(DynamicIsaacScene.__init__)
+    finger_enable = (
+        "self._finger_contacts.set_enabled_contact_tracking([True], threshold=0.0)"
+    )
+    disallowed_enable = (
+        "self._disallowed_contacts.set_enabled_contact_tracking([True], threshold=0.0)"
+    )
+    setup = "SimulationManager.setup_simulation"
+
+    assert finger_enable in source
+    assert disallowed_enable in source
+    assert source.index(finger_enable) < source.index(setup)
+    assert source.index(disallowed_enable) < source.index(setup)
+
+
 def test_command_motion_audit_distinguishes_requested_and_applied_hold_target() -> None:
     payload = _command_motion_audit_payload(
         requested_command=(0.48, 0.18, 0.30, 3.14, 0.0, 0.0, 1.0),
