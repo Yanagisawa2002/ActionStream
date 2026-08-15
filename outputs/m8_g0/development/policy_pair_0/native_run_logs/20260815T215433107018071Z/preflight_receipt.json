@@ -1,0 +1,124 @@
+{
+  "batch_timeout_seconds": 14400,
+  "created_utc": "2026-08-15T21:55:04.834147Z",
+  "current_source_batch_validation_count": 2,
+  "current_source_batch_validation_logs": [
+    "batch_profile_1_fixed_naive_async.validate_only.log",
+    "batch_profile_1_fixed_aligned_async.validate_only.log"
+  ],
+  "current_source_batch_validation_passed": true,
+  "executor_evidence": "action_stream_executor_node",
+  "executor_evidence_sha256": "fc375ebec84d95e1f12984673ca32bd2121d58779aad361791a03259d150bd04",
+  "executor_path": "/root/autodl-tmp/IsaacSim-ros_workspaces/jazzy_ws/install/lib/action_stream_executor/action_stream_executor_node",
+  "executor_sha256": "fc375ebec84d95e1f12984673ca32bd2121d58779aad361791a03259d150bd04",
+  "external_environment_evidence": "external_environment.json",
+  "external_environment_evidence_sha256": "45d80c4614202a0029181bcf51a0b2fa089a43c4ee13120734801b4bd7b2f63d",
+  "frozen_live_inputs_validated": false,
+  "gpu_inventory": [
+    {
+      "driver_version": "595.71.05",
+      "index": 0,
+      "memory_total_mib": 32607,
+      "memory_used_mib": 2,
+      "name": "NVIDIA GeForce RTX 5090",
+      "utilization_gpu_percent": 0,
+      "uuid": "GPU-34b7b4fa-3bbd-aa20-57c9-94f8db8c40fe"
+    }
+  ],
+  "gpu_memory_refusal_threshold_mib": 4096,
+  "initial_gpu_preflight": {
+    "actionable_compute_processes": [],
+    "blocking_compute_processes": [],
+    "captured_utc": "2026-08-15T21:54:34.856631Z",
+    "gpu_inventory": [
+      {
+        "driver_version": "595.71.05",
+        "index": 0,
+        "memory_total_mib": 32607,
+        "memory_used_mib": 2,
+        "name": "NVIDIA GeForce RTX 5090",
+        "utilization_gpu_percent": 0,
+        "uuid": "GPU-34b7b4fa-3bbd-aa20-57c9-94f8db8c40fe"
+      }
+    ],
+    "occupied_gpus": [],
+    "passed": true,
+    "phase": "initial_pre_build",
+    "reported_compute_processes": [],
+    "selected_gpu_index": 0,
+    "unknown_memory_compute_processes": []
+  },
+  "installed_dynamic_adapter": "/root/autodl-tmp/IsaacSim-ros_workspaces/jazzy_ws/install/lib/python3.12/site-packages/action_stream_isaac/dynamic_isaac_adapter.py",
+  "installed_dynamic_adapter_evidence": "installed_dynamic_adapter.py",
+  "installed_dynamic_adapter_evidence_sha256": "a584eadb952cd0041b27521a5c72f0bf25be1721c7e0e2ee88ad3433a11757d9",
+  "installed_dynamic_adapter_sha256": "a584eadb952cd0041b27521a5c72f0bf25be1721c7e0e2ee88ad3433a11757d9",
+  "milestone": "M8-G0",
+  "operator_authorized_native_gpu_run": true,
+  "planned_process_logs": [
+    "colcon_build.log",
+    "replay_validate.log",
+    "router.stdout.log",
+    "router.stderr.log",
+    "batch_profile_1_fixed_naive_async.validate_only.log",
+    "batch_profile_1_fixed_aligned_async.validate_only.log",
+    "batch_profile_1_fixed_naive_async.executor.stdout.log",
+    "batch_profile_1_fixed_naive_async.executor.stderr.log",
+    "batch_profile_1_fixed_naive_async.adapter.stdout.log",
+    "batch_profile_1_fixed_naive_async.adapter.stderr.log",
+    "batch_profile_1_fixed_aligned_async.executor.stdout.log",
+    "batch_profile_1_fixed_aligned_async.executor.stderr.log",
+    "batch_profile_1_fixed_aligned_async.adapter.stdout.log",
+    "batch_profile_1_fixed_aligned_async.adapter.stderr.log"
+  ],
+  "post_build_gpu_preflight": {
+    "actionable_compute_processes": [],
+    "blocking_compute_processes": [],
+    "captured_utc": "2026-08-15T21:55:03.553496Z",
+    "gpu_inventory": [
+      {
+        "driver_version": "595.71.05",
+        "index": 0,
+        "memory_total_mib": 32607,
+        "memory_used_mib": 2,
+        "name": "NVIDIA GeForce RTX 5090",
+        "utilization_gpu_percent": 0,
+        "uuid": "GPU-34b7b4fa-3bbd-aa20-57c9-94f8db8c40fe"
+      }
+    ],
+    "occupied_gpus": [],
+    "passed": true,
+    "phase": "post_build_pre_launch",
+    "reported_compute_processes": [],
+    "selected_gpu_index": 0,
+    "unknown_memory_compute_processes": []
+  },
+  "preexisting_compute_processes": [],
+  "receipt_kind": "native_preflight",
+  "reported_compute_processes": [],
+  "router_path": "/root/autodl-tmp/IsaacSim-ros_workspaces/jazzy_ws/.pixi/envs/default/lib/rmw_zenoh_cpp/rmw_zenohd",
+  "router_sha256": "85c4d84877d4f5507539732b08dd323dad208e525d5c8d0012f5b02aec7638a3",
+  "runner": "/root/autodl-tmp/actionstream-run-ee2c840/scripts/m8_run_isaac.sh",
+  "runner_evidence": "m8_run_isaac.runner.sh",
+  "runner_evidence_sha256": "7e4cac9bf0b62360ac5b685a94f0d917b667467971f452f48db908daeec6bca7",
+  "runner_sha256": "7e4cac9bf0b62360ac5b685a94f0d917b667467971f452f48db908daeec6bca7",
+  "runner_source": "scripts/m8_run_isaac.sh",
+  "runner_support_evidence": "m8_linux_runner_support.py",
+  "runner_support_evidence_sha256": "304da243f5c9efdeb7896a52c90d96f9d308ae3e9355bdff4e78fc5b7c38ab39",
+  "runner_support_sha256": "304da243f5c9efdeb7896a52c90d96f9d308ae3e9355bdff4e78fc5b7c38ab39",
+  "runner_support_source": "scripts/m8_linux_runner_support.py",
+  "schema_version": 1,
+  "selected_gpu_identity": {
+    "driver_version": "595.71.05",
+    "index": 0,
+    "memory_total_mib": 32607,
+    "name": "NVIDIA GeForce RTX 5090",
+    "uuid": "GPU-34b7b4fa-3bbd-aa20-57c9-94f8db8c40fe"
+  },
+  "selected_gpu_index": 0,
+  "selected_gpu_uuid": "GPU-34b7b4fa-3bbd-aa20-57c9-94f8db8c40fe",
+  "source_file_count": 100,
+  "source_manifest_sha256": "47a08bb27d31d6f239cef8d08639c42a5f34337320d5267d33fc33b138883251",
+  "source_root": "ros2_ws/src",
+  "suite_manifest": "outputs/m8_g0/development/policy_pair_0/matrix.json",
+  "suite_manifest_sha256": "535269bdc8f4aed432e4109f2d3ad490b98d42829642411303ffa2f82e6fa20a"
+}

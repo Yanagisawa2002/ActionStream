@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "milestone": "M8-G0",
+  "created_at": "2026-08-16T06:01:30+08:00",
+  "evidence_class": "native_isaac_viewport_capture",
+  "profile_id": "profile_1_fixed",
+  "seed": 2026081100,
+  "source_commit": "ee2c8407d5b7474b8c95fa0f5fa89882c5689c9c",
+  "completion_receipt": "native_run_logs/20260815T215433107018071Z/completion_receipt.json",
+  "ffmpeg": "8.1.1-essentials_build-www.gyan.dev",
+  "full_decode_passed": true,
+  "files": [
+    {
+      "path": "videos/batch_profile_1_fixed_naive_async.mp4",
+      "strategy": "naive_async",
+      "sha256": "44176f9bda1427df9066341f80d15bcb536ec732c81eb010844c09cd24a548d7",
+      "size_bytes": 6378640,
+      "codec": "h264",
+      "width": 1280,
+      "height": 720,
+      "fps": 20,
+      "duration_seconds": 4.05,
+      "decode_passed": true
+    },
+    {
+      "path": "videos/batch_profile_1_fixed_aligned_async.mp4",
+      "strategy": "aligned_async",
+      "sha256": "2f0f48304935a6a4579193726cd209d032637b2a4579897c9e0cedd7078a34d9",
+      "size_bytes": 11906584,
+      "codec": "h264",
+      "width": 1280,
+      "height": 720,
+      "fps": 20,
+      "duration_seconds": 7.45,
+      "decode_passed": true
+    },
+    {
+      "path": "videos/m8_profile1_seed2026081100_naive_vs_aligned.mp4",
+      "strategy": "paired_composite",
+      "sha256": "235a1cde7d28faadca27740c01968d72c4c0aba59b3a4ae6d6a37245bd82bf0e",
+      "size_bytes": 397271,
+      "codec": "h264",
+      "width": 1280,
+      "height": 360,
+      "fps": 20,
+      "duration_seconds": 7.45,
+      "decode_passed": true
+    }
+  ],
+  "tracked_final_frame": {
+    "path": "paired_final.png",
+    "sha256": "d5648774e6c23e41631d229ee679eefa24d5bd7635234386452dbe9814f12252",
+    "size_bytes": 454545
+  },
+  "visual_review": {
+    "performed": true,
+    "naive": "Approached but did not grasp the cube; terminated before the destination switch.",
+    "aligned": "Grasped and lifted the cube, observed the red-to-green destination switch, and moved toward the new target before a joint/workspace guard stopped the episode.",
+    "task_success_claim": false
+  }
+}

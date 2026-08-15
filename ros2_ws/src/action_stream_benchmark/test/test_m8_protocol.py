@@ -39,6 +39,7 @@ from action_stream_benchmark.schema import canonical_sha256, read_json, write_js
 
 
 ROOT = Path(__file__).resolve().parents[4]
+OPEN_LEDGER_FIXTURE = Path(__file__).with_name("fixtures") / "m8_calibration_ledger_open.json"
 TEST_PIXI_TOML_BYTES = b"[workspace]\nname = 'test'\n"
 TEST_PIXI_LOCK_BYTES = b"version: 7\n"
 
@@ -197,7 +198,10 @@ def test_holdout_freeze_refuses_open_candidate_ledger() -> None:
             ],
         )
     ledger = json.loads((ROOT / "configs/m8_calibration_ledger.json").read_text())
-    assert validate_calibration_ledger(ledger)["status"] == "open_before_native_baseline"
+    assert (
+        validate_calibration_ledger(ledger)["status"]
+        == "baseline_passed_development_open"
+    )
 
 
 def test_split_aware_persistent_matrix_is_portable(tmp_path: Path) -> None:
@@ -1971,7 +1975,7 @@ def _write_open_calibration_ledger(repository_root: Path) -> Path:
     ledger_path.parent.mkdir(parents=True, exist_ok=True)
     write_json_atomic(
         ledger_path,
-        json.loads((ROOT / "configs/m8_calibration_ledger.json").read_text()),
+        json.loads(OPEN_LEDGER_FIXTURE.read_text(encoding="utf-8")),
     )
     return ledger_path
 

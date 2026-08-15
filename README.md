@@ -6,59 +6,60 @@ tests whether compensating for observation age when an asynchronous action
 chunk arrives is safer and more efficient than replacing the queue with the
 entire stale chunk.
 
-## M8-G0: dynamic-recovery validation — NO-GO (native unavailable)
+## M8-G0: native baseline passed; paired result is directional
 
-M8 implements the next causal benchmark: a native Isaac Sim 6.0.1 Franka must
-grasp a cube and place it in the destination that becomes active after a
-seeded mid-episode switch. Old chunks still point toward destination A; a new
-observation-conditioned chunk redirects toward B. This makes obsolete actions
-physically wrong rather than merely inefficient. The deterministic controller
-uses current end-effector/object poses, grasp state, task phase, destination,
-and generation; sensitivity tests prove each relevant observation change
-changes its bounded 30-step Cartesian/gripper output.
+M8 runs a native Isaac Sim 6.0.1 Franka pick-and-place task with a seeded
+mid-episode destination switch. Old chunks point toward destination A while a
+new observation-conditioned chunk redirects toward B, making stale execution
+physically wrong rather than merely inefficient. The shared policy is a
+deterministic live Cartesian waypoint controller using end-effector/object
+poses, grasp state, phase, destination, and generation; it is not a learned
+VLA and does not replay a recorded trajectory.
 
-The engineering and pre-native gates passed, but the experiment did not run.
-The final 20-seed candidate-0 Profile-0 matrix passed strict current-source
-validation in the official Isaac Pixi environment, then the fail-closed runner
-found 16,022 MiB of RTX 4090 memory in use by unrelated Unity Editor sessions,
-above its fixed 4,096 MiB threshold. Isaac was not started and no process was
-killed. Therefore Profile 0 success, the sync/naive/aligned holdout, paired
-confidence intervals, recovery metrics, analytical figures, and a meaningful
-native demo are **unavailable, not zero**. No ROS test-plant result substitutes
-for native physics. Under the preregistered fallback, M8-G0 is **NO-GO because
-native evaluation was unavailable/not run**.
+The exact ROS Jazzy/Isaac workspace passed its native gate on an RTX 5090:
+Profile-0 `sync_hold` completed 20/20 tasks, all 20 independent replay audits,
+fairness checks, source/runtime bindings, and completion-receipt validation.
+Completion ranged from 201 to 251 control steps with a median of 231. The
+calibration ledger now records `baseline_passed_development_open`.
 
-The M4-to-C++ differential probe replayed 74 events with exact common-domain
-equivalence and zero unresolved discrepancies. It found and fixed an
-old-generation queue-retention migration defect before benchmark design. A
-later native-path audit also found and fixed a zero-delay ROS cross-topic race:
-the C++ executor now buffers one response until matching request provenance is
-registered, with generation, duplicate, reset, persistent same-ID, and
-100-iteration concurrency regressions.
+The requested one-seed policy-driven paired capture then ran under the frozen
+850 ms Profile 1 delay with an exact same reset:
 
-Validation completed without claiming simulator performance:
+| Metric | `naive_async` | `aligned_async` |
+|---|---:|---:|
+| Full task success | 0/1 | 0/1 |
+| Termination | failed approach, step 81 | joint/workspace guard, step 149 |
+| Grasp achieved | No | Yes |
+| Switch recovery | Not reached | 13 steps |
+| Expired actions executed | 71 | 0 |
+| Mean action age | 38.676 steps | 17.230 steps |
+| Maximum applied target delta | 0.2341 m | 0.1291 m |
 
-- local Python: 312 passed, 2 declared environment skips;
-- native Windows ROS Jazzy: 5 packages, 198 clean reported results;
-- read-only Linux ROS Jazzy Docker: 5 packages, the same 198 clean results;
-- differential replay, scoped Ruff, Python compilation, PowerShell parsing,
-  72 scoped JSON files (configs, compact M8 evidence, ROS benchmark configs, and the
-  M8 dynamic-policy config), and `git diff --check`: passed.
+This is a real but bounded positive result: aligned execution grasped and
+lifted the cube, survived the step-110 destination switch, progressed toward
+the new green target, and executed no expired action. Naive execution never
+grasped the cube and failed before the switch. It is not a task-success win:
+aligned later hit the joint/workspace guard, both methods scored 0/1, and one
+development pair supports no confidence interval or reliability claim. A
+frozen M8 holdout has not been run, so M8 remains **in progress**, not GO.
 
-The seed contract remains ready for a clean-GPU resume: 20 baseline seeds, at
-most 12 development seeds and two bounded behavioral changes, then 60 disjoint
-holdout seeds. Profile 1 is fixed at 850 ms; Profile 2 adds frozen jitter,
-drops, extra delay, duplicates, and pauses. The calibration ledger remains
-pristine because no native baseline completion receipt exists.
+![Native Profile-1 paired final frame](outputs/m8_g0/development/policy_pair_0/paired_final.png)
 
-Evidence: [technical report](outputs/m8_g0/report/m8_g0_report.md),
-[machine-readable decision](outputs/m8_g0/report/m8_g0_unavailable.json),
-[differential report](outputs/m8_g0/differential/differential_replay_report.json),
-[CPU/ROS validation](outputs/m8_g0/audit/cpu_validation.json),
-[native contract audit](outputs/m8_g0/audit/native_runtime_contract_audit.json),
-[redacted native preflight receipt](outputs/m8_g0/audit/native_preflight_refusal.json),
+Both raw 1280x720/20 fps viewport MP4s and a labelled side-by-side composite
+are retained locally and decode end-to-end. Git keeps the compact final frame,
+hash/codec validation, raw JSONL, summaries, replay, and native receipts while
+ignoring MP4 payloads.
+
+Evidence: [current machine-readable status](outputs/m8_g0/report/m8_g0_current.json),
+[technical report](outputs/m8_g0/report/m8_g0_report.md),
+[20-seed baseline replay](outputs/m8_g0/baseline_gate/candidate_0/replay_validation.json),
+[paired findings](outputs/m8_g0/development/policy_pair_0/PAIRED_FINDINGS.md),
+[paired replay](outputs/m8_g0/development/policy_pair_0/replay_validation.json),
+[video validation](outputs/m8_g0/development/policy_pair_0/video_validation.json),
 [architecture](docs/m8_architecture.md), and
-[exact reproduction/resume commands](docs/m8_environment.md).
+[reproduction commands](docs/m8_environment.md). The older
+`m8_g0_unavailable.json` and RTX-4090 refusal remain historical records, not the
+current result.
 
 This does not change M4's original positive asynchronous result or M7's static
 36/36 saturation. M4, M7, and M8 use different endpoints and denominators; no
