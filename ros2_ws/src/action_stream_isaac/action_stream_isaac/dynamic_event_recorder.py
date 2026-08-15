@@ -47,13 +47,23 @@ def _json_detail(value: object) -> dict[str, Any]:
 
 
 def _queue_detail(value: object) -> dict[str, int]:
-    """Decode the stable C++ ``expired=N,duplicates=N`` detail."""
+    """Decode current JSON and legacy key-value C++ queue details."""
 
     result = {
         "expired_actions_removed": 0,
         "duplicate_target_actions_removed": 0,
     }
     if not isinstance(value, str):
+        return result
+    decoded = _json_detail(value)
+    if decoded:
+        try:
+            result["expired_actions_removed"] = int(decoded.get("expired", 0))
+            result["duplicate_target_actions_removed"] = int(
+                decoded.get("duplicates", 0)
+            )
+        except (TypeError, ValueError):
+            pass
         return result
     for item in value.split(","):
         key, separator, raw = item.partition("=")

@@ -9,6 +9,7 @@ from action_stream_benchmark.schema import read_jsonl
 from action_stream_isaac.dynamic_event_recorder import (
     DynamicM8RecorderCore,
     DynamicRecorderConfig,
+    _queue_detail,
 )
 from action_stream_isaac.dynamic_isaac_adapter import _finalize_episode_summary
 from action_stream_isaac.dynamic_task import scenario_for_seed, scenario_payload
@@ -126,6 +127,19 @@ def test_single_authority_recorder_buffers_start_and_commits_end_last(tmp_path: 
     assert rows[0]["fault_trace_sha256"] == fairness["fault_trace_sha256"]
     assert rows[0]["protocol_sha256"] == fairness["protocol_sha256"]
     assert [row["event_index"] for row in rows] == list(range(len(rows)))
+
+
+def test_queue_detail_decodes_current_snapshot_and_legacy_counts() -> None:
+    assert _queue_detail("expired=2,duplicates=1") == {
+        "expired_actions_removed": 2,
+        "duplicate_target_actions_removed": 1,
+    }
+    assert _queue_detail(
+        '{"insertion_observation_step":12,"expired":2,"duplicates":1}'
+    ) == {
+        "expired_actions_removed": 2,
+        "duplicate_target_actions_removed": 1,
+    }
 
 
 def test_adapter_finalizer_recomputes_summary_from_committed_raw(tmp_path: Path) -> None:
