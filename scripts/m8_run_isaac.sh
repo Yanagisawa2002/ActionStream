@@ -615,7 +615,9 @@ bind_installed_runtime_and_write_preflight() {
     ROUTER="$("$PIXI_EXE" run --frozen --manifest-path "$ISAAC_WORKSPACE/pixi.toml" -- \
         bash -c '
 set -Eeuo pipefail
+set +u
 source "$1"
+set -u
 router="$(type -P rmw_zenohd 2>/dev/null || true)"
 if [[ -z "$router" ]]; then
     package_prefix="$(ros2 pkg prefix rmw_zenoh_cpp)"
@@ -773,7 +775,9 @@ install_setup=$1
 executor=$2
 strategy=$3
 gpu_uuid=$4
+set +u
 source "$install_setup"
+set -u
 export OMNI_KIT_ACCEPT_EULA=YES
 export ROS_DISTRO=jazzy
 export RMW_IMPLEMENTATION=rmw_zenoh_cpp
@@ -809,7 +813,9 @@ strategy=$4
 headless=$5
 gpu_uuid=$6
 video_output=$7
+set +u
 source "$install_setup"
+set -u
 export OMNI_KIT_ACCEPT_EULA=YES
 export ROS_DISTRO=jazzy
 export RMW_IMPLEMENTATION=rmw_zenoh_cpp
@@ -853,7 +859,9 @@ install_setup=$1
 repository_root=$2
 suite=$3
 replay=$4
+set +u
 source "$install_setup"
+set -u
 export ROS_DISTRO=jazzy
 export RMW_IMPLEMENTATION=rmw_zenoh_cpp
 cd "$repository_root"
@@ -872,7 +880,9 @@ suite=$3
 replay=$4
 analysis=$5
 figures=$6
+set +u
 source "$install_setup"
+set -u
 export ROS_DISTRO=jazzy
 export RMW_IMPLEMENTATION=rmw_zenoh_cpp
 cd "$repository_root"
@@ -908,7 +918,9 @@ log_directory=$3
 member_list=$4
 archive=$5
 manifest=$6
+set +u
 source "$install_setup"
+set -u
 export ROS_DISTRO=jazzy
 export RMW_IMPLEMENTATION=rmw_zenoh_cpp
 cd "$repository_root"

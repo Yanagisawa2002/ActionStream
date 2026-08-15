@@ -174,6 +174,8 @@ def test_linux_runner_resolves_the_standard_ros_package_executable_layout() -> N
     assert "ros2 pkg prefix rmw_zenoh_cpp" in source
     assert 'router="$package_prefix/lib/rmw_zenoh_cpp/rmw_zenohd"' in source
     assert '[[ -x "$router" ]]' in source
+    assert 'set +u\nsource "$1"\nset -u' in source
+    assert source.count('set +u\nsource "$install_setup"\nset -u') == 5
 
 
 def test_linux_runner_captures_only_unambiguous_single_episode_batches() -> None:
