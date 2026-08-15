@@ -319,12 +319,22 @@ class CurrentLeRobotBackend:
             raise RuntimeError(f"Policy {self.spec.key} does not declare RTC support")
         if not self.supports_rtc:
             return
+        self.policy.config.rtc_config = None
+        if not enabled:
+            # LeRobot's initializer only attaches a processor when a config is
+            # present; it does not clear a processor from an earlier RTC cell.
+            # Clear both references so runtime ordering cannot contaminate the
+            # following non-RTC baseline.
+            self.policy.rtc_processor = None
+            model = getattr(self.policy, "model", None)
+            if model is not None:
+                model.rtc_processor = None
+            return
         from lerobot.policies.rtc.configuration_rtc import RTCConfig
 
-        self.policy.config.rtc_config = (
-            RTCConfig(enabled=True, execution_horizon=self.spec.rtc_execution_horizon)
-            if enabled
-            else None
+        self.policy.config.rtc_config = RTCConfig(
+            enabled=True,
+            execution_horizon=self.spec.rtc_execution_horizon,
         )
         initializer = getattr(self.policy, "init_rtc_processor", None)
         if not callable(initializer):

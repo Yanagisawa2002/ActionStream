@@ -3,12 +3,13 @@ from __future__ import annotations
 import json
 import time
 from pathlib import Path
+from types import SimpleNamespace
 
 import numpy as np
 import pytest
 import torch
 
-from actionstream.current_baselines import DelayTrace, load_protocol
+from actionstream.current_baselines import CurrentLeRobotBackend, DelayTrace, load_protocol
 from actionstream.runtime import (
     InferencePayload,
     InferenceRequest,
@@ -52,6 +53,23 @@ def test_no_grad_allows_current_lerobot_rtc_to_reenable_autograd() -> None:
             output = value.square()
             gradient = torch.autograd.grad(output, value)[0]
     assert gradient.item() == pytest.approx(4.0)
+
+
+def test_disabling_rtc_clears_upstream_processor_references() -> None:
+    backend = CurrentLeRobotBackend.__new__(CurrentLeRobotBackend)
+    backend.spec = SimpleNamespace(key="fake")
+    backend.policy = SimpleNamespace(
+        supports_rtc=lambda: True,
+        config=SimpleNamespace(rtc_config=object()),
+        rtc_processor=object(),
+        model=SimpleNamespace(rtc_processor=object()),
+    )
+
+    backend.configure_rtc(enabled=False)
+
+    assert backend.policy.config.rtc_config is None
+    assert backend.policy.rtc_processor is None
+    assert backend.policy.model.rtc_processor is None
 
 
 def test_seeded_jitter_trace_is_bounded_deterministic_and_nonrepeating() -> None:
