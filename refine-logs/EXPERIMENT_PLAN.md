@@ -88,6 +88,19 @@ Anti-claims to rule out:
 | M4 | Close native Isaac gap | 20-episode sync baseline gate, then one paired development seed | Native receipt, fairness, replay, and video pass | 2-6 GPU-hours plus install | Isaac/ROS installation |
 | M5 | Optional expansion | Ten episodes/task and SmolVLA | Run only if M3/M4 produce interpretable evidence | 20+ GPU-hours | Weak return on compute |
 
+### 2026-08-16 X-VLA expansion decision
+
+- Promote the X-VLA portion of M5 to MUST-RUN because task-0 produced a
+  directional 950 ms crossover against the strongest official baseline.
+- Freeze LIBERO Object tasks 0-2, ten new paired seeds `2026081600..2026081609`,
+  and initial-state indices `1,3,5,6,7,8,9,10,11,12`.
+- Compare only current LeRobot `latest_only` and ActionStream aligned at zero
+  delay, 950 ms, and the existing immutable 500 +/- 250 ms jitter trace.
+- Keep the 280-step horizon and capture the first pair for every task/profile.
+- Count the claim as replicated only if task-level paired outcomes show that
+  the high-delay benefit is not confined to task 0; report heterogeneous or
+  negative tasks without pooling them away.
+
 ## Compute and Data Budget
 
 - Initial must-run budget: one RTX 5090, approximately 12-24 GPU-hours after dependencies are cached.

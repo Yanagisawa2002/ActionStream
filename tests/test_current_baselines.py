@@ -43,6 +43,38 @@ def test_current_protocol_freezes_models_delays_and_rtc_boundary() -> None:
     }
 
 
+def test_xvla_task_seed_expansion_is_disjoint_and_paired() -> None:
+    original = load_protocol(ROOT / "configs" / "current_lerobot_baselines.json")
+    expansion = load_protocol(
+        ROOT / "configs" / "xvla_task_seed_expansion_20260816.json"
+    )
+
+    assert expansion.raw["experiment_id"] == "xvla_task_seed_expansion_20260816"
+    assert set(expansion.models) == {"xvla"}
+    assert expansion.raw["environment"]["task_ids"] == [0, 1, 2]
+    assert expansion.raw["environment"]["episode_length"] == 280
+    assert expansion.raw["compact_matrix"] == {
+        "episodes_per_task": 10,
+        "paired": True,
+        "reuse_delay_trace_across_runtimes": True,
+    }
+    assert expansion.raw["runtimes"] == [
+        "lerobot_latest_only",
+        "actionstream_aligned",
+    ]
+    assert set(expansion.delays) == {
+        "fixed_0000",
+        "fixed_0950",
+        "jitter_0500_pm0250",
+    }
+    assert expansion.raw["environment"]["base_seed"] > original.raw["environment"][
+        "base_seed"
+    ]
+    assert set(expansion.raw["environment"]["initial_state_indices"]).isdisjoint(
+        original.raw["environment"]["initial_state_indices"]
+    )
+
+
 def test_no_grad_allows_current_lerobot_rtc_to_reenable_autograd() -> None:
     # Current RTC computes a guidance correction inside torch.enable_grad().
     # This is the exact semantic distinction from torch.inference_mode(), which

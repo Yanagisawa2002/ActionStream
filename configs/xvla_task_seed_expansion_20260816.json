@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "experiment_id": "xvla_task_seed_expansion_20260816",
+  "frozen_utc": "2026-08-16T00:00:00Z",
+  "source": {
+    "repository_url": "https://github.com/huggingface/lerobot.git",
+    "commit": "6adf51511b7625090eade8d82d9f61a1846ebe56",
+    "source_version": "0.6.2"
+  },
+  "environment": {
+    "type": "libero",
+    "suite": "libero_object",
+    "task_ids": [0, 1, 2],
+    "episode_length": 280,
+    "control_frequency_hz": 20.0,
+    "initial_state_indices": [1, 3, 5, 6, 7, 8, 9, 10, 11, 12],
+    "base_seed": 2026081600
+  },
+  "models": [
+    {
+      "key": "xvla",
+      "model_id": "lerobot/xvla-libero",
+      "revision": "12e8783e996944f5c97e490d37d4c145484ed70a",
+      "control_mode": "absolute",
+      "chunk_size": 30,
+      "request_interval_steps": 10,
+      "rtc_expected": false,
+      "required": true,
+      "rename_map": {}
+    }
+  ],
+  "runtimes": [
+    "lerobot_latest_only",
+    "actionstream_aligned"
+  ],
+  "delay_profiles": [
+    {"key": "fixed_0000", "kind": "fixed", "milliseconds": 0},
+    {"key": "fixed_0950", "kind": "fixed", "milliseconds": 950},
+    {
+      "key": "jitter_0500_pm0250",
+      "kind": "seeded_uniform",
+      "center_milliseconds": 500,
+      "half_width_milliseconds": 250,
+      "seed": 2026081517,
+      "trace_length": 1024
+    }
+  ],
+  "compact_matrix": {
+    "episodes_per_task": 10,
+    "paired": true,
+    "reuse_delay_trace_across_runtimes": true
+  },
+  "evidence_boundary": {
+    "primary_claim": "Tests whether the task-0 X-VLA high-delay crossover reproduces across three LIBERO Object tasks and ten new paired states/seeds per task.",
+    "official_async": "Calls the pinned upstream PolicyServer timing and RobotClient latest-only aggregation paths directly.",
+    "pairing": "Runtime comparisons share task, episode index, initial state, policy seed, checkpoint, and delay trace.",
+    "scope": "This expansion does not rank policies, generalize beyond LIBERO Object tasks 0-2, or substitute for native Isaac evidence."
+  }
+}
