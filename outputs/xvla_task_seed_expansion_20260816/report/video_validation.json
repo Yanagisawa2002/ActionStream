@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "validated_utc": "2026-08-15T20:16:14Z",
+  "decoder": "ffmpeg 8.1.1 essentials build",
+  "raw_videos": {
+    "decoded": 18,
+    "failed": 0,
+    "width": 640,
+    "height": 640,
+    "fps": 20
+  },
+  "paired_composites": [
+    {
+      "path": "../paired_videos/task0__fixed_0950__latest_vs_aligned.mp4",
+      "sha256": "4d7ab7353bcb07b466e628970dc030fb7f3c225de544ff69b10c52d51a530e1d",
+      "codec": "h264",
+      "width": 1280,
+      "height": 640,
+      "fps": 20,
+      "frames": 169,
+      "duration_seconds": 8.45
+    },
+    {
+      "path": "../paired_videos/task0__jitter_0500_pm0250__latest_vs_aligned.mp4",
+      "sha256": "23ac7b7629e08b1cbb82061a8032d0a4a8e66cc558d5e130c2376d769aadf3b7",
+      "codec": "h264",
+      "width": 1280,
+      "height": 640,
+      "fps": 20,
+      "frames": 156,
+      "duration_seconds": 7.8
+    },
+    {
+      "path": "../paired_videos/task1__fixed_0950__latest_vs_aligned.mp4",
+      "sha256": "2f0ac517a95f76db2a09f9947f1899d4a3d5cd00f63f7ed08904504426b288d8",
+      "codec": "h264",
+      "width": 1280,
+      "height": 640,
+      "fps": 20,
+      "frames": 163,
+      "duration_seconds": 8.15
+    },
+    {
+      "path": "../paired_videos/task1__jitter_0500_pm0250__latest_vs_aligned.mp4",
+      "sha256": "9b554405085b38598fc94dcfee4bacaa88a9db508d6ca8b427e3a3c41211cc5d",
+      "codec": "h264",
+      "width": 1280,
+      "height": 640,
+      "fps": 20,
+      "frames": 135,
+      "duration_seconds": 6.75
+    },
+    {
+      "path": "../paired_videos/task2__fixed_0950__latest_vs_aligned.mp4",
+      "sha256": "8b63efe8b0cf9a1f4a987770146389ec4e5b9167d7abc0b7b8ee010799809a23",
+      "codec": "h264",
+      "width": 1280,
+      "height": 640,
+      "fps": 20,
+      "frames": 164,
+      "duration_seconds": 8.2
+    },
+    {
+      "path": "../paired_videos/task2__jitter_0500_pm0250__latest_vs_aligned.mp4",
+      "sha256": "bcd81aa2230445b2aa050bbe17924af93c43d256f1f8b65270597ef5527591d0",
+      "codec": "h264",
+      "width": 1280,
+      "height": 640,
+      "fps": 20,
+      "frames": 139,
+      "duration_seconds": 6.95
+    }
+  ],
+  "note": "Raw and paired MP4 files are intentionally local and gitignored; metrics, traces, hashes, and this receipt are versioned."
+}

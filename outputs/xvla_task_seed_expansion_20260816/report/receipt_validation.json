@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "validated_utc": "2026-08-15T20:16:14Z",
+  "protocol": {
+    "path": "configs/xvla_task_seed_expansion_20260816.json",
+    "sha256": "554d1c12257a5065496836b8d6e1d4f1a0278900d0d33e078a72455ae8aff355"
+  },
+  "actionstream_source_commit": "0d6ec639e17c4bf2dc4d9aedc764fb1e0842e8bc",
+  "upstream_lerobot_commit": "6adf51511b7625090eade8d82d9f61a1846ebe56",
+  "runs": [
+    {
+      "run_id": "xvla_task0_expansion_20260816",
+      "record_count": 60,
+      "metrics_sha256": "7e7460b1083d3b08741dc346fae73bb81c73d3486c105f7b71f103529ef904ad",
+      "receipt_sha256": "d8b21e2f38d7d3422e07bf9f981e5007de472956984a54cfa442ac925e33282c",
+      "record_count_matches": true,
+      "metrics_hash_matches": true,
+      "protocol_hash_matches": true,
+      "source_commit_matches": true
+    },
+    {
+      "run_id": "xvla_task1_expansion_20260816",
+      "record_count": 60,
+      "metrics_sha256": "fa6c43248120464b8b4b2a20b32f6bd73d7c2fa4133a372d61d9b23359555046",
+      "receipt_sha256": "fe61d5de25ee21a7e063a64feb89bd445818988f0c3e36b2d06ea8ea58f786ee",
+      "record_count_matches": true,
+      "metrics_hash_matches": true,
+      "protocol_hash_matches": true,
+      "source_commit_matches": true
+    },
+    {
+      "run_id": "xvla_task2_expansion_20260816",
+      "record_count": 60,
+      "metrics_sha256": "3eb3e6742c95ae458687ff075998fa46c50be97c64783c76bb99bf8c589e6348",
+      "receipt_sha256": "2e21fed15be9f4fdb046b09a5034458acdc95634b63aa807a0c665f3252c4773",
+      "record_count_matches": true,
+      "metrics_hash_matches": true,
+      "protocol_hash_matches": true,
+      "source_commit_matches": true
+    }
+  ],
+  "analysis": {
+    "paired_analysis_sha256": "95f7ab0fd738b4092c1765fce7bab54722bf552b30f36556ac00b2b6dbbea707",
+    "raw_episodes_csv_sha256": "e4ce331e3be586dc912faf6dee7b503ad3049c70b5632b8d27927d47a7f351ff",
+    "episode_count": 180,
+    "trace_count_verified": 180,
+    "final_7d_action_count_verified": 25003,
+    "video_hash_count_verified": 18
+  },
+  "passed": true
+}
