@@ -168,6 +168,13 @@ def test_linux_runner_launches_only_the_preflighted_gpu_uuid() -> None:
     assert 'export CUDA_VISIBLE_DEVICES="$gpu_index"' not in source
 
 
+def test_linux_runner_resolves_the_standard_ros_package_executable_layout() -> None:
+    source = _linux_source()
+    assert "ros2 pkg prefix rmw_zenoh_cpp" in source
+    assert 'router="$package_prefix/lib/rmw_zenoh_cpp/rmw_zenohd"' in source
+    assert '[[ -x "$router" ]]' in source
+
+
 def test_linux_runner_captures_only_unambiguous_single_episode_batches() -> None:
     source = _linux_source()
     assert "--capture-single-episode-videos" in source

@@ -613,7 +613,17 @@ bind_installed_runtime_and_write_preflight() {
     require_executable "$EXECUTOR" "fresh C++ ActionStream executor"
 
     ROUTER="$("$PIXI_EXE" run --frozen --manifest-path "$ISAAC_WORKSPACE/pixi.toml" -- \
-        bash -c 'set -Eeuo pipefail; source "$1"; type -P rmw_zenohd' m8-pixi "$INSTALL_SETUP")"
+        bash -c '
+set -Eeuo pipefail
+source "$1"
+router="$(type -P rmw_zenohd 2>/dev/null || true)"
+if [[ -z "$router" ]]; then
+    package_prefix="$(ros2 pkg prefix rmw_zenoh_cpp)"
+    router="$package_prefix/lib/rmw_zenoh_cpp/rmw_zenohd"
+fi
+[[ -x "$router" ]]
+printf "%s\n" "$router"
+' m8-pixi "$INSTALL_SETUP")"
     ROUTER="$(printf '%s\n' "$ROUTER" | tail -n 1)"
     [[ "$ROUTER" == /* ]] || die "rmw_zenohd did not resolve to an absolute executable path"
     require_executable "$ROUTER" "Zenoh router executable"
