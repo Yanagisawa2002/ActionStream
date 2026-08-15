@@ -466,7 +466,11 @@ class CurrentLeRobotBackend:
         if torch.cuda.is_available():
             torch.cuda.synchronize()
         started = time.perf_counter()
-        with torch.inference_mode():
+        # Do not use inference_mode here. Current LeRobot RTC temporarily
+        # re-enables autograd inside RTCProcessor.denoise_step() to compute the
+        # guidance correction. inference_mode is stronger than no_grad and
+        # makes that upstream path fail even inside torch.enable_grad().
+        with torch.no_grad():
             raw_chunk = self.policy.predict_action_chunk(batch, **kwargs)
         if torch.cuda.is_available():
             torch.cuda.synchronize()

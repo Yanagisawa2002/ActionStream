@@ -6,6 +6,7 @@ from pathlib import Path
 
 import numpy as np
 import pytest
+import torch
 
 from actionstream.current_baselines import DelayTrace, load_protocol
 from actionstream.runtime import (
@@ -25,6 +26,13 @@ def test_current_protocol_freezes_models_delays_and_rtc_boundary() -> None:
     assert protocol.models["xvla"].rtc_expected is False
     assert protocol.models["pi05"].rtc_expected is True
     assert protocol.models["pi05"].control_mode == "relative"
+    smol = next(model for model in protocol.raw["models"] if model["key"] == "smolvla")
+    assert smol["dependencies"] == [
+        {
+            "model_id": "HuggingFaceTB/SmolVLM2-500M-Video-Instruct",
+            "revision": "7b375e1b73b11138ff12fe22c8f2822d8fe03467",
+        }
+    ]
     assert set(protocol.delays) == {
         "fixed_0000",
         "fixed_0250",
@@ -32,6 +40,18 @@ def test_current_protocol_freezes_models_delays_and_rtc_boundary() -> None:
         "fixed_0950",
         "jitter_0500_pm0250",
     }
+
+
+def test_no_grad_allows_current_lerobot_rtc_to_reenable_autograd() -> None:
+    # Current RTC computes a guidance correction inside torch.enable_grad().
+    # This is the exact semantic distinction from torch.inference_mode(), which
+    # cannot be overridden by the upstream RTC block.
+    with torch.no_grad():
+        with torch.enable_grad():
+            value = torch.tensor(2.0, requires_grad=True)
+            output = value.square()
+            gradient = torch.autograd.grad(output, value)[0]
+    assert gradient.item() == pytest.approx(4.0)
 
 
 def test_seeded_jitter_trace_is_bounded_deterministic_and_nonrepeating() -> None:

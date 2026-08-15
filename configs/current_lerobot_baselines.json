@@ -50,6 +50,12 @@
       "rtc_expected": true,
       "rtc_execution_horizon": 10,
       "required": false,
+      "dependencies": [
+        {
+          "model_id": "HuggingFaceTB/SmolVLM2-500M-Video-Instruct",
+          "revision": "7b375e1b73b11138ff12fe22c8f2822d8fe03467"
+        }
+      ],
       "rename_map": {
         "observation.images.image": "observation.images.camera1",
         "observation.images.image2": "observation.images.camera2"
