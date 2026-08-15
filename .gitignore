@@ -15,6 +15,7 @@ outputs/**/videos/
 outputs/**/recordings/
 outputs/**/*.mp4
 outputs/**/*.avi
+outputs/**/*.tar.gz
 outputs/**/*.npz
 outputs/**/*.log
 

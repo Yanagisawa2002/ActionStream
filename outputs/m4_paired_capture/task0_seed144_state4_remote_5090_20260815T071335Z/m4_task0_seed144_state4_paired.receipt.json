@@ -1,0 +1,44 @@
+{
+  "after": {
+    "environment_steps": 139,
+    "receipt": "/root/autodl-tmp/actionstream_m4_capture/artifacts/task0_seed144_state4_20260815T071335Z/after_aligned/async_aligned.receipt.json",
+    "success": true
+  },
+  "artifact_type": "m4_paired_behavior_capture",
+  "before": {
+    "environment_steps": 800,
+    "receipt": "/root/autodl-tmp/actionstream_m4_capture/artifacts/task0_seed144_state4_20260815T071335Z/before_naive/async_naive.receipt.json",
+    "success": false
+  },
+  "evidence_boundary": "Fresh same-condition visualization rerun. It is not original M4 episode footage and does not replace the frozen M4 headline statistics.",
+  "parameters": {
+    "base_seed": 142,
+    "episode_index": 2,
+    "episode_length": 800,
+    "episode_seed": 144,
+    "initial_state_index": 4,
+    "injected_delay_ms": 950,
+    "mode": "async_naive",
+    "model_id": "lerobot/xvla-libero",
+    "model_revision": "12e8783e996944f5c97e490d37d4c145484ed70a",
+    "modes": [
+      "async_naive",
+      "async_aligned"
+    ],
+    "replan_interval_steps": 10,
+    "suite": "libero_object",
+    "task_id": 0
+  },
+  "schema_version": 1,
+  "video": {
+    "codec": "h264/libx264",
+    "duration_seconds": 40.05,
+    "fps": 20,
+    "frame_count": 801,
+    "height": 720,
+    "path": "m4_task0_seed144_state4_paired.mp4",
+    "sha256": "17a4877b4da21fda5cfdee302962cb954786d108b7eb53743334025e327d8281",
+    "shorter_side_last_frame_held": true,
+    "width": 1280
+  }
+}
