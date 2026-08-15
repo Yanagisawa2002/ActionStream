@@ -313,6 +313,26 @@ class CurrentLeRobotBackend:
         capability = getattr(self.policy, "supports_rtc", None)
         return bool(callable(capability) and capability())
 
+    def configure_rtc(self, *, enabled: bool) -> None:
+        """Match LeRobot's rollout context: attach RTCProcessor only for RTC cells."""
+        if enabled and not self.supports_rtc:
+            raise RuntimeError(f"Policy {self.spec.key} does not declare RTC support")
+        if not self.supports_rtc:
+            return
+        from lerobot.policies.rtc.configuration_rtc import RTCConfig
+
+        self.policy.config.rtc_config = (
+            RTCConfig(enabled=True, execution_horizon=self.spec.rtc_execution_horizon)
+            if enabled
+            else None
+        )
+        initializer = getattr(self.policy, "init_rtc_processor", None)
+        if not callable(initializer):
+            raise RuntimeError(
+                f"Policy {self.spec.key} declares RTC support without init_rtc_processor()"
+            )
+        initializer()
+
     def _env(self, task_id: int) -> Any:
         try:
             return self.envs[self.suite][task_id]
@@ -1261,6 +1281,7 @@ def run(args: argparse.Namespace) -> list[dict[str, Any]]:
                                 }
                             )
                             continue
+                        backend.configure_rtc(enabled=runtime == "lerobot_rtc")
                         for task_id in task_ids:
                             for episode_index in range(episodes):
                                 state = state_indices[episode_index]

@@ -3,7 +3,7 @@
   "experiment_id": "current_lerobot_async_rtc_20260815",
   "frozen_utc": "2026-08-15T08:00:00Z",
   "source": {
-    "repository_url": "https://github.com/huggingface/lerobot",
+    "repository_url": "https://github.com/huggingface/lerobot.git",
     "commit": "6adf51511b7625090eade8d82d9f61a1846ebe56",
     "source_version": "0.6.2"
   },
