@@ -168,6 +168,21 @@ def test_linux_runner_launches_only_the_preflighted_gpu_uuid() -> None:
     assert 'export CUDA_VISIBLE_DEVICES="$gpu_index"' not in source
 
 
+def test_linux_runner_captures_only_unambiguous_single_episode_batches() -> None:
+    source = _linux_source()
+    assert "--capture-single-episode-videos" in source
+    assert (
+        'die "--capture-single-episode-videos requires exactly one episode per batch"'
+        in source
+    )
+    assert 'require_absent "$VIDEO_DIRECTORY" "native viewport video directory"' in source
+    assert 'video_arguments+=(--video-output "$video_output")' in source
+    assert (
+        'require_regular_nonempty_file "$video_output" "native viewport video"'
+        in source
+    )
+
+
 def _load_support_module():
     spec = importlib.util.spec_from_file_location("m8_linux_runner_support", SUPPORT)
     assert spec is not None and spec.loader is not None

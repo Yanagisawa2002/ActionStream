@@ -30,6 +30,7 @@ BATCH_TIMEOUT_SECONDS="$DEFAULT_BATCH_TIMEOUT_SECONDS"
 GPU_INDEX=0
 SELECTED_GPU_UUID=""
 AUTHORIZE_NATIVE_GPU_RUN=0
+CAPTURE_SINGLE_EPISODE_VIDEOS=0
 
 SUITE_PATH=""
 SUITE_DIRECTORY=""
@@ -43,6 +44,7 @@ GPU_REFUSAL_RECEIPT_PATH=""
 INITIAL_GPU_SNAPSHOT_PATH=""
 POST_BUILD_GPU_SNAPSHOT_PATH=""
 EXTERNAL_ENVIRONMENT_EVIDENCE_PATH=""
+VIDEO_DIRECTORY=""
 SOURCE_MANIFEST_SHA256=""
 CURRENT_STAGE="argument_parse"
 CURRENT_BATCH=""
@@ -73,6 +75,7 @@ Usage:
     [--gpu-index INDEX] \
     [--headless true|false] \
     [--batch-timeout-seconds 60..86400] \
+    [--capture-single-episode-videos] \
     --authorize-native-gpu-run
 
 The Isaac workspace must contain the official Linux pixi.toml.  The runner
@@ -294,6 +297,10 @@ parse_arguments() {
                 ;;
             --authorize-native-gpu-run)
                 AUTHORIZE_NATIVE_GPU_RUN=1
+                shift
+                ;;
+            --capture-single-episode-videos)
+                CAPTURE_SINGLE_EPISODE_VIDEOS=1
                 shift
                 ;;
             -h|--help)
@@ -730,11 +737,20 @@ exec "$router"
 
 run_native_batches() {
     local index stem strategy executor_pid executor_pgid adapter_pid adapter_pgid
+    local video_output
+    if ((CAPTURE_SINGLE_EPISODE_VIDEOS)); then
+        mkdir -- "$VIDEO_DIRECTORY"
+    fi
     for index in "${!BATCH_PATHS[@]}"; do
         CURRENT_STAGE="batch_prepare"
         CURRENT_BATCH=${BATCH_PATHS[$index]}
         strategy=${BATCH_STRATEGIES[$index]}
         stem=${BATCH_STEMS[$index]}
+        video_output=""
+        if ((CAPTURE_SINGLE_EPISODE_VIDEOS)); then
+            video_output="$VIDEO_DIRECTORY/$stem.mp4"
+            require_absent "$video_output" "native viewport video"
+        fi
         printf 'Starting native M8 batch: %s / %s (%s episodes)\n' \
             "${BATCH_PROFILES[$index]}" "$strategy" "${BATCH_EPISODE_COUNTS[$index]}"
 
@@ -782,22 +798,32 @@ batch_manifest=$3
 strategy=$4
 headless=$5
 gpu_uuid=$6
+video_output=$7
 source "$install_setup"
 export OMNI_KIT_ACCEPT_EULA=YES
 export ROS_DISTRO=jazzy
 export RMW_IMPLEMENTATION=rmw_zenoh_cpp
 export CUDA_VISIBLE_DEVICES="$gpu_uuid"
 cd "$repository_root"
+video_arguments=()
+if [[ -n "$video_output" ]]; then
+    video_arguments+=(--video-output "$video_output")
+fi
 exec python -m action_stream_isaac.dynamic_isaac_adapter \
     --matrix-manifest "$batch_manifest" \
     --expected-strategy "$strategy" \
-    --headless "$headless"
-' "$INSTALL_SETUP" "$REPOSITORY_ROOT" "$CURRENT_BATCH" "$strategy" "$HEADLESS" "$SELECTED_GPU_UUID"
+    --headless "$headless" \
+    "${video_arguments[@]}"
+' "$INSTALL_SETUP" "$REPOSITORY_ROOT" "$CURRENT_BATCH" "$strategy" \
+            "$HEADLESS" "$SELECTED_GPU_UUID" "$video_output"
         adapter_pid=$STARTED_PID
         adapter_pgid=$STARTED_PGID
 
         CURRENT_STAGE="batch_adapter_wait"
         wait_owned_with_timeout "$adapter_pid" "$adapter_pgid" "$BATCH_TIMEOUT_SECONDS" "dynamic Isaac adapter"
+        if ((CAPTURE_SINGLE_EPISODE_VIDEOS)); then
+            require_regular_nonempty_file "$video_output" "native viewport video"
+        fi
         stop_owned_process_group "$executor_pid" "$executor_pgid"
 
         CURRENT_STAGE="batch_artifact_validation"
@@ -918,8 +944,20 @@ main() {
     resolve_inputs
     load_suite_records
 
+    if ((CAPTURE_SINGLE_EPISODE_VIDEOS)); then
+        local episode_count
+        for episode_count in "${BATCH_EPISODE_COUNTS[@]}"; do
+            [[ "$episode_count" == "1" ]] || \
+                die "--capture-single-episode-videos requires exactly one episode per batch"
+        done
+    fi
+
     CURRENT_STAGE="output_guard"
     SUITE_DIRECTORY="$(dirname -- "$SUITE_PATH")"
+    if ((CAPTURE_SINGLE_EPISODE_VIDEOS)); then
+        VIDEO_DIRECTORY="$SUITE_DIRECTORY/videos"
+        require_absent "$VIDEO_DIRECTORY" "native viewport video directory"
+    fi
     REPLAY_PATH="$SUITE_DIRECTORY/replay_validation.json"
     ANALYSIS_PATH=""
     FIGURE_DIRECTORY=""
