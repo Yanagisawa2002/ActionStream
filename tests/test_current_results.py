@@ -111,6 +111,33 @@ def test_current_results_validate_pair_and_build_effects(tmp_path: Path) -> None
     assert comparison["metrics"]["success"]["paired_mean_difference"] == 1
 
 
+def test_current_results_preserve_task_stratified_effects(tmp_path: Path) -> None:
+    path = _write_fixture(tmp_path)
+    task_zero = read_episode_rows([path])
+    task_one = []
+    for row in task_zero:
+        copied = dict(row)
+        copied["task_id"] = 1
+        copied["environment_steps"] = int(copied["environment_steps"]) + 20
+        task_one.append(copied)
+
+    report = build_analysis([*task_zero, *task_one])
+
+    assert {item["task_id"] for item in report["task_condition_summaries"]} == {0, 1}
+    effects = [
+        item
+        for item in report["task_paired_comparisons"]
+        if item["delay_profile"] == "fixed_0000"
+        and item["estimate_runtime"] == "actionstream_aligned"
+        and item["reference_runtime"] == "lerobot_latest_only"
+    ]
+    assert [item["task_id"] for item in effects] == [0, 1]
+    assert all(
+        item["metrics"]["environment_steps"]["paired_mean_difference"] == -2
+        for item in effects
+    )
+
+
 def test_current_results_reject_unpaired_runtime_cell(tmp_path: Path) -> None:
     path = _write_fixture(tmp_path)
     rows = read_episode_rows([path])

@@ -110,6 +110,15 @@ def _condition_key(row: dict[str, Any]) -> tuple[str, str, str]:
     return str(row["model_key"]), str(row["runtime"]), str(row["delay_profile"])
 
 
+def _task_condition_key(row: dict[str, Any]) -> tuple[str, int, str, str]:
+    return (
+        str(row["model_key"]),
+        int(row["task_id"]),
+        str(row["runtime"]),
+        str(row["delay_profile"]),
+    )
+
+
 def _metric_value(row: dict[str, Any], metric: str) -> float:
     value = float(bool(row[metric])) if metric == "success" else float(row[metric])
     if not math.isfinite(value):
@@ -272,6 +281,13 @@ def build_analysis(rows: list[dict[str, Any]]) -> dict[str, Any]:
     for row in rows:
         indexed[_condition_key(row)][_pair_key(row)] = row
 
+    task_indexed: dict[
+        tuple[str, int, str, str],
+        dict[tuple[int, int, int, int], dict[str, Any]],
+    ] = defaultdict(dict)
+    for row in rows:
+        task_indexed[_task_condition_key(row)][_pair_key(row)] = row
+
     summaries = []
     for model, runtime, profile in _sorted_conditions(indexed):
         cell = indexed[(model, runtime, profile)]
@@ -321,6 +337,58 @@ def build_analysis(rows: list[dict[str, Any]]) -> dict[str, Any]:
                     }
                 )
 
+    runtime_rank = {name: index for index, name in enumerate(RUNTIME_ORDER)}
+    profile_rank = {name: index for index, name in enumerate(PROFILE_ORDER)}
+    task_summaries = []
+    for model, task_id, runtime, profile in sorted(
+        task_indexed,
+        key=lambda item: (
+            item[0],
+            item[1],
+            profile_rank.get(item[3], len(profile_rank)),
+            runtime_rank.get(item[2], len(runtime_rank)),
+        ),
+    ):
+        cell = task_indexed[(model, task_id, runtime, profile)]
+        task_summaries.append(
+            {
+                "model_key": model,
+                "task_id": task_id,
+                "runtime": runtime,
+                "delay_profile": profile,
+                "metrics": {
+                    metric: _summary(_metric_value(row, metric) for row in cell.values())
+                    for metric in METRICS
+                },
+            }
+        )
+
+    task_comparisons = []
+    task_groups = sorted({(key[0], key[1], key[3]) for key in task_indexed})
+    for model, task_id, profile in task_groups:
+        for estimate, reference in comparison_pairs:
+            estimate_key = model, task_id, estimate, profile
+            reference_key = model, task_id, reference, profile
+            if estimate_key not in task_indexed or reference_key not in task_indexed:
+                continue
+            task_comparisons.append(
+                {
+                    "comparison_type": "runtime_by_task",
+                    "model_key": model,
+                    "task_id": task_id,
+                    "delay_profile": profile,
+                    "difference_definition": "estimate minus reference",
+                    "estimate_runtime": estimate,
+                    "reference_runtime": reference,
+                    "metrics": {
+                        metric: _paired_effect(
+                            task_indexed[reference_key], task_indexed[estimate_key], metric
+                        )
+                        for metric in METRICS
+                    },
+                }
+            )
+
     for model in models:
         runtimes = sorted({key[1] for key in indexed if key[0] == model})
         for runtime in runtimes:
@@ -369,6 +437,8 @@ def build_analysis(rows: list[dict[str, Any]]) -> dict[str, Any]:
         },
         "condition_summaries": summaries,
         "paired_comparisons": comparisons,
+        "task_condition_summaries": task_summaries,
+        "task_paired_comparisons": task_comparisons,
     }
 
 
@@ -413,10 +483,30 @@ def render_markdown(report: dict[str, Any]) -> str:
 
     lines += [
         "",
+        "## Task-stratified raw condition table",
+        "",
+        "| model | task | delay | runtime | n | success | steps mean±sd | "
+        "hold mean±sd |",
+        "|---|---:|---|---|---:|---:|---:|---:|",
+    ]
+    for cell in report["analysis"]["task_condition_summaries"]:
+        metrics = cell["metrics"]
+        lines.append(
+            f"| {cell['model_key']} | {cell['task_id']} | {cell['delay_profile']} | "
+            f"{cell['runtime']} | {metrics['success']['count']} | "
+            f"{_fmt(metrics['success']['mean'])} | "
+            f"{_fmt(metrics['environment_steps']['mean'])}±"
+            f"{_fmt(metrics['environment_steps']['std'])} | "
+            f"{_fmt(metrics['hold_fraction']['mean'])}±"
+            f"{_fmt(metrics['hold_fraction']['std'])} |"
+        )
+
+    lines += [
+        "",
         "## Paired runtime effects",
         "",
-        "Differences are estimate minus reference. With three pairs, intervals are "
-        "descriptive and coarse; raw outcomes remain the primary evidence.",
+        "Differences are estimate minus reference. Intervals are descriptive; raw "
+        "outcomes and task-stratified effects remain the primary evidence.",
         "",
         "| model | delay | estimate - reference | n | success Δ [95% CI] | "
         "steps Δ [95% CI] | discontinuity Δ [95% CI] |",
@@ -437,6 +527,30 @@ def render_markdown(report: dict[str, Any]) -> str:
             f"{comparison['estimate_runtime']} - {comparison['reference_runtime']} | "
             f"{metrics['success']['paired_episode_count']} | {effect('success')} | "
             f"{effect('environment_steps')} | {effect('action_discontinuity_mean_l2')} |"
+        )
+
+    lines += [
+        "",
+        "## Task-stratified paired runtime effects",
+        "",
+        "| model | task | delay | estimate - reference | n | success Δ [95% CI] | "
+        "steps Δ [95% CI] | hold Δ [95% CI] |",
+        "|---|---:|---|---|---:|---:|---:|---:|",
+    ]
+    for comparison in report["analysis"]["task_paired_comparisons"]:
+        metrics = comparison["metrics"]
+
+        def task_effect(name: str) -> str:
+            metric = metrics[name]
+            low, high = metric["paired_mean_difference_95pct_bootstrap_ci"]
+            return f"{_fmt(metric['paired_mean_difference'])} [{_fmt(low)}, {_fmt(high)}]"
+
+        lines.append(
+            f"| {comparison['model_key']} | {comparison['task_id']} | "
+            f"{comparison['delay_profile']} | {comparison['estimate_runtime']} - "
+            f"{comparison['reference_runtime']} | "
+            f"{metrics['success']['paired_episode_count']} | {task_effect('success')} | "
+            f"{task_effect('environment_steps')} | {task_effect('hold_fraction')} |"
         )
 
     lines += [
