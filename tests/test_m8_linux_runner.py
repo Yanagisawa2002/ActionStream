@@ -105,6 +105,7 @@ def test_linux_runner_has_fail_closed_runtime_order() -> None:
     assert 'CURRENT_STAGE="post_build_activation_validation"' in source
     assert '"$ISAAC_WORKSPACE/install/setup.bash"' in source
     assert '"$ISAAC_WORKSPACE/install/local_setup.bash"' in source
+    assert 'INSTALL_SETUP="$ISAAC_WORKSPACE/install/setup.bash"' in source
     assert '[[ -f "$path" && ! -L "$path" && -s "$path" ]]' in source
     assert source.count("capture_gpu_snapshot ") == 2
     assert "--validate-only" in source

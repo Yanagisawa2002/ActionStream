@@ -607,9 +607,9 @@ validate_post_build_activation_scripts() {
 
 bind_installed_runtime_and_write_preflight() {
     CURRENT_STAGE="installed_runtime_binding"
-    INSTALL_SETUP="$ISAAC_WORKSPACE/install/local_setup.bash"
+    INSTALL_SETUP="$ISAAC_WORKSPACE/install/setup.bash"
     EXECUTOR="$ISAAC_WORKSPACE/install/lib/action_stream_executor/action_stream_executor_node"
-    require_file "$INSTALL_SETUP" "fresh colcon local overlay setup"
+    require_file "$INSTALL_SETUP" "fresh colcon workspace setup"
     require_executable "$EXECUTOR" "fresh C++ ActionStream executor"
 
     ROUTER="$("$PIXI_EXE" run --frozen --manifest-path "$ISAAC_WORKSPACE/pixi.toml" -- \
