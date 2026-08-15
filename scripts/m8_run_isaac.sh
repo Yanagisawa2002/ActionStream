@@ -585,6 +585,7 @@ colcon build \
         action_stream_benchmark \
         action_stream_isaac \
     --merge-install \
+    --cmake-clean-cache \
     --cmake-args \
         -DBUILD_TESTING=ON \
         -DPython_FIND_VIRTUALENV=ONLY \

@@ -111,6 +111,7 @@ def test_linux_runner_has_fail_closed_runtime_order() -> None:
     assert "--validate-only" in source
     assert "freeze-validate" in source
     assert "colcon build" in source
+    assert "--cmake-clean-cache" in source
     assert "-DPython_FIND_VIRTUALENV=ONLY" in source
     assert "-DPython3_FIND_VIRTUALENV=ONLY" in source
     assert "action_stream_benchmark.m8_cli validate" in source
