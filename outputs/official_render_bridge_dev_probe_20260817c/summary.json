@@ -1,0 +1,189 @@
+{
+  "bridge": {
+    "applied_arm_qpos": [
+      0.0028213119787597572,
+      -0.151242550407264,
+      0.012645383831605638,
+      -2.4749251801705223,
+      0.004063081301885158,
+      2.2655590833971084,
+      0.7994399773033769
+    ],
+    "applied_arm_qvel": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "applied_gripper_qpos": [
+      0.039998870342969894,
+      -0.039998870342969894
+    ],
+    "applied_gripper_qvel": [
+      0.0,
+      0.0
+    ],
+    "arm_qpos_indexes": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "arm_qvel_indexes": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "gripper_qpos_indexes": [
+      7,
+      8
+    ],
+    "gripper_qvel_indexes": [
+      7,
+      8
+    ],
+    "ik": {
+      "converged": true,
+      "damping": 0.001,
+      "initial_arm_qpos": [
+        -0.010455465055773711,
+        -0.15085802062450737,
+        -0.0034093369714298244,
+        -2.4708202229048126,
+        -0.001283899954024249,
+        2.261866446144037,
+        0.7738904432831809
+      ],
+      "iterations": 3,
+      "maximum_joint_step_rad": 0.08,
+      "method": "damped_least_squares_eef_pose_retargeting",
+      "orientation_error_l2_rad": 2.291214942104598e-08,
+      "orientation_tolerance_rad": 0.001,
+      "position_error_l2_m": 5.332319592804075e-08,
+      "position_tolerance_m": 0.0001,
+      "render_arm_qvel": "zeroed because no physics step is taken",
+      "rendered_eef_position": [
+        -0.15345804639200228,
+        0.0070854341492078195,
+        0.2471916778381634
+      ],
+      "solved_arm_qpos": [
+        0.0028213119787597572,
+        -0.151242550407264,
+        0.012645383831605638,
+        -2.4749251801705223,
+        0.004063081301885158,
+        2.2655590833971084,
+        0.7994399773033769
+      ],
+      "target_eef_position": [
+        -0.153458034992218,
+        0.0070854173973202705,
+        0.24719172716140747
+      ]
+    },
+    "physics_steps_after_write": 0,
+    "pose_mode": "eef_ik",
+    "rendered_eef_pos": [
+      -0.15345804639200228,
+      0.0070854341492078195,
+      0.2471916778381634
+    ],
+    "requested_robot_state": {
+      "eef": {
+        "mat": [
+          [
+            0.000982098451,
+            0.998309689,
+            -0.0581102388
+          ],
+          [
+            0.999999481,
+            -0.000964611704,
+            0.000328973525
+          ],
+          [
+            0.000272363641,
+            -0.0581105317,
+            -0.998310118
+          ]
+        ],
+        "pos": [
+          -0.153458034992218,
+          0.0070854173973202705,
+          0.24719172716140747
+        ],
+        "quat": [
+          0.9995766444610013,
+          -0.000492136737,
+          -0.02909065429600386,
+          -0.000152263753
+        ]
+      },
+      "gripper": {
+        "qpos": [
+          0.039998870342969894,
+          -0.039998870342969894
+        ],
+        "qvel": [
+          0.0,
+          0.0
+        ]
+      },
+      "joints": {
+        "pos": [
+          0.8024293392025398,
+          -0.13136330579065514,
+          -0.7793332467396205,
+          -2.449119669807739,
+          0.07627562554802546,
+          2.182334072282715,
+          -0.8627951902346741
+        ],
+        "vel": [
+          0.04279064014554024,
+          -0.003960433881729841,
+          -0.07462553679943085,
+          0.01217607967555523,
+          -0.018352044746279716,
+          -0.018894946202635765,
+          -0.032137252390384674
+        ]
+      }
+    },
+    "requested_vs_rendered_eef_position_l2_m": 5.332319592804075e-08,
+    "scope": "matching official reset objects plus Isaac-mapped Panda EEF/gripper state",
+    "write_errors": {
+      "gripper_qpos_max_abs": 0.0,
+      "gripper_qvel_max_abs": 0.0
+    },
+    "writeback_exact_at_1e-12": true
+  },
+  "environment_seed": 2026081601,
+  "evidence_class": "development_render_only_official_libero_isaac_state_bridge_probe",
+  "image_hashes": {
+    "bridge_image2_sha256": "0407261dbb0de566909de1c14a0e7e3c3461f08362db8530dfe51f75106521ba",
+    "bridge_image_sha256": "1ea12436b65a96a4f7cf7754be1e461923cda89ea4e00734bf99c4d65bdc0dd8",
+    "reference_image2_sha256": "5b3e7f5becfa62667c9cd563a6f7bfcd74d498ae7c2d6b8bc1b83ea6f7824caa",
+    "reference_image_sha256": "5e4c361d237eb2fcf686c4d6a752894658bcfc09a00b8c5b64393e9b4f892ac5"
+  },
+  "initial_state_index": 0,
+  "native_summary_path": "/root/autodl-tmp/results/learned_isaac_libero_visual_canary_v2_capture/summary.json",
+  "native_summary_sha256": "fff86a9198f7612323f1835e23147c2acd01e739f9567a180c783f036e0c27d7",
+  "policy_inference_executed": false,
+  "pose_mode": "eef_ik",
+  "schema_version": 1,
+  "suite": "libero_object",
+  "task_id": 0,
+  "task_success_evidence": false
+}
