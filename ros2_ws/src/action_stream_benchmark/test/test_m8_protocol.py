@@ -243,6 +243,34 @@ def test_split_aware_persistent_matrix_is_portable(tmp_path: Path) -> None:
     assert development["expected_episode_count"] == 36
     assert development["persistent_batch_count"] == 3
 
+    multi_profile_output = tmp_path / "development-multi-profile"
+    multi_profile = build_matrix_manifest(
+        repository_root=ROOT,
+        freeze_manifest_path=None,
+        candidate_protocol_path=ROOT / "configs/m8_g0.json",
+        seed_path=ROOT / "configs/m8_development_seeds.json",
+        profile_paths=[
+            ROOT / "ros2_ws/src/action_stream_benchmark/config/m8_profile_1_fixed.json",
+            ROOT / "ros2_ws/src/action_stream_benchmark/config/m8_profile_2_faults.json",
+        ],
+        output_root=multi_profile_output / "raw",
+        manifest_path=multi_profile_output / "matrix_suite.json",
+        split="development",
+        request_count=32,
+    )
+    assert multi_profile["expected_episode_count"] == 72
+    assert multi_profile["persistent_batch_count"] == 6
+    for record in multi_profile["batch_manifests"]:
+        batch_path = multi_profile_output / record["path"]
+        batch = json.loads(batch_path.read_text(encoding="utf-8"))
+        assert set(batch["profiles"]) == {record["profile_id"]}
+        assert {
+            trace["profile_id"] for trace in batch["fault_traces"]
+        } == {record["profile_id"]}
+        assert {
+            episode["profile_id"] for episode in batch["episodes"]
+        } == {record["profile_id"]}
+
     demo_seed_path = tmp_path / "demo_seed.json"
     write_json_atomic(
         demo_seed_path,

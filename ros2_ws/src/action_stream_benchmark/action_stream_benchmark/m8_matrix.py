@@ -329,8 +329,14 @@ def build_matrix_manifest(
         ]
         if len(batch_episodes) != len(seeds):
             raise RuntimeError("persistent batch must contain exactly one episode per seed")
+        batch_profiles = {profile_id: profile_records[profile_id]}
+        batch_fault_traces = [
+            record for record in trace_records if record["profile_id"] == profile_id
+        ]
         batch = {
             **common,
+            "profiles": batch_profiles,
+            "fault_traces": batch_fault_traces,
             "native_results_status_at_creation": "not_run",
             "batch_strategy": strategy,
             "batch_profile_id": profile_id,
