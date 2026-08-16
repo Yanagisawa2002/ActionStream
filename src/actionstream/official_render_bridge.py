@@ -2,9 +2,9 @@
 
 The bridge deliberately owns rendering only.  Isaac remains the source of the
 measured policy state and physics, while the pinned official LIBERO environment
-provides the two camera images.  The first implementation is reset-scoped: task
-objects remain at the matching official initial state and only the Panda arm
-and gripper state are written back before rendering.
+provides the two camera images.  The bridge can retain the matching official
+reset objects or overwrite named free-joint object poses from the current Isaac
+measurement.  No official-environment physics step is taken before rendering.
 """
 
 from __future__ import annotations
@@ -54,6 +54,53 @@ def validate_unbatched_bridge_state(value: Mapping[str, Any]) -> dict[str, Any]:
     }
 
 
+def validate_unbatched_object_states(
+    value: Mapping[str, Any] | None,
+) -> dict[str, dict[str, list[float]]]:
+    """Validate named object poses/velocities for deterministic render sync."""
+
+    if value is None:
+        return {}
+    if not isinstance(value, Mapping):
+        raise ValueError("bridge object_states must be a mapping")
+    validated: dict[str, dict[str, list[float]]] = {}
+    for name in sorted(value):
+        if not isinstance(name, str) or not name.strip():
+            raise ValueError("bridge object state names must be non-empty strings")
+        raw = value[name]
+        if not isinstance(raw, Mapping):
+            raise ValueError(f"bridge object state {name!r} must be a mapping")
+        position = _finite_vector(
+            raw.get("position_xyz"), 3, label=f"bridge object {name}.position_xyz"
+        )
+        quaternion = _finite_vector(
+            raw.get("orientation_wxyz"),
+            4,
+            label=f"bridge object {name}.orientation_wxyz",
+        )
+        quaternion_norm = float(np.linalg.norm(quaternion))
+        if quaternion_norm <= 1e-12:
+            raise ValueError(f"bridge object {name}.orientation_wxyz is degenerate")
+        quaternion = quaternion / quaternion_norm
+        linear_velocity = _finite_vector(
+            raw.get("linear_velocity_xyz", (0.0, 0.0, 0.0)),
+            3,
+            label=f"bridge object {name}.linear_velocity_xyz",
+        )
+        angular_velocity = _finite_vector(
+            raw.get("angular_velocity_xyz", (0.0, 0.0, 0.0)),
+            3,
+            label=f"bridge object {name}.angular_velocity_xyz",
+        )
+        validated[name] = {
+            "position_xyz": position.tolist(),
+            "orientation_wxyz": quaternion.tolist(),
+            "linear_velocity_xyz": linear_velocity.tolist(),
+            "angular_velocity_xyz": angular_velocity.tolist(),
+        }
+    return validated
+
+
 @dataclass(frozen=True)
 class OfficialRenderBridgeResult:
     observation: dict[str, Any]
@@ -70,6 +117,59 @@ def _robot_indexes(robot: Any, name: str, length: int) -> np.ndarray:
             f"got {indexes.shape}"
         )
     return indexes
+
+
+def _joint_indexes(model: Any, joint_name: str, *, state: str, length: int) -> np.ndarray:
+    accessor_name = f"get_joint_{state}_addr"
+    accessor = getattr(model, accessor_name, None)
+    if not callable(accessor):
+        raise RuntimeError(f"official LIBERO model lacks {accessor_name}")
+    address = accessor(joint_name)
+    if isinstance(address, tuple):
+        if len(address) != 2:
+            raise RuntimeError(f"unexpected {state} address for joint {joint_name!r}")
+        start, stop = (int(value) for value in address)
+        indexes = np.arange(start, stop, dtype=np.int64)
+    else:
+        indexes = np.asarray([int(address)], dtype=np.int64)
+    if indexes.shape != (length,):
+        raise RuntimeError(
+            f"official LIBERO object joint {joint_name!r} {state} span must have "
+            f"length {length}, got {indexes.tolist()}"
+        )
+    return indexes
+
+
+def _object_joint_indexes(
+    inner: Any, sim: Any, object_name: str
+) -> tuple[str, np.ndarray, np.ndarray]:
+    objects = getattr(inner, "objects_dict", None)
+    if not isinstance(objects, Mapping) or object_name not in objects:
+        available = sorted(objects) if isinstance(objects, Mapping) else []
+        raise RuntimeError(
+            f"official LIBERO object {object_name!r} is unavailable; "
+            f"available={available}"
+        )
+    joints = list(getattr(objects[object_name], "joints", ()))
+    if len(joints) != 1 or not isinstance(joints[0], str):
+        raise RuntimeError(
+            f"official LIBERO object {object_name!r} must own exactly one named joint"
+        )
+    joint_name = joints[0]
+    model = sim.model
+    joint_id = int(model.joint_name2id(joint_name))
+    joint_type = int(np.asarray(model.jnt_type)[joint_id])
+    # MuJoCo mjJNT_FREE is 0. Requiring it prevents an articulated object from
+    # being silently treated as a rigid pose.
+    if joint_type != 0:
+        raise RuntimeError(
+            f"official LIBERO object {object_name!r} joint {joint_name!r} is not free"
+        )
+    return (
+        joint_name,
+        _joint_indexes(model, joint_name, state="qpos", length=7),
+        _joint_indexes(model, joint_name, state="qvel", length=6),
+    )
 
 
 def _orientation_error(desired: np.ndarray, current: np.ndarray) -> np.ndarray:
@@ -202,8 +302,9 @@ def apply_isaac_state_to_official_renderer(
     robot_state: Mapping[str, Any],
     *,
     pose_mode: str = "eef_ik",
+    object_states: Mapping[str, Any] | None = None,
 ) -> OfficialRenderBridgeResult:
-    """Write one mapped Isaac robot state into a reset official LIBERO env.
+    """Write mapped Isaac robot/object state into a reset official LIBERO env.
 
     ``sub_env`` is the synchronous LeRobot ``LiberoEnv`` beneath its vector
     wrapper.  The caller must reset it to the frozen task/initial-state first.
@@ -212,6 +313,7 @@ def apply_isaac_state_to_official_renderer(
     """
 
     state = validate_unbatched_bridge_state(robot_state)
+    objects = validate_unbatched_object_states(object_states)
     wrapped = getattr(sub_env, "_env", None)
     if wrapped is None:
         raise RuntimeError("official LIBERO sub-environment has not been reset")
@@ -249,6 +351,34 @@ def apply_isaac_state_to_official_renderer(
         )
     sim.data.qpos[gripper_qpos] = requested_gripper_qpos
     sim.data.qvel[gripper_qvel] = requested_gripper_qvel
+    object_provenance: dict[str, Any] = {}
+    for object_name, object_state in objects.items():
+        joint_name, object_qpos, object_qvel = _object_joint_indexes(
+            inner, sim, object_name
+        )
+        requested_object_qpos = np.asarray(
+            [
+                *object_state["position_xyz"],
+                *object_state["orientation_wxyz"],
+            ],
+            dtype=np.float64,
+        )
+        requested_object_qvel = np.asarray(
+            [
+                *object_state["linear_velocity_xyz"],
+                *object_state["angular_velocity_xyz"],
+            ],
+            dtype=np.float64,
+        )
+        sim.data.qpos[object_qpos] = requested_object_qpos
+        sim.data.qvel[object_qvel] = requested_object_qvel
+        object_provenance[object_name] = {
+            "joint_name": joint_name,
+            "qpos_indexes": object_qpos.tolist(),
+            "qvel_indexes": object_qvel.tolist(),
+            "requested_qpos": requested_object_qpos.tolist(),
+            "requested_qvel": requested_object_qvel.tolist(),
+        }
     sim.forward()
     inner._update_observables(force=True)
     raw_observation = inner._get_observations()
@@ -266,6 +396,10 @@ def apply_isaac_state_to_official_renderer(
                 f"official bridge {key} must be uint8 HxWx3, got {image.shape}/{image.dtype}"
             )
         images[key] = image.copy()
+    formatted_robot_state = formatted.get("robot_state")
+    if not isinstance(formatted_robot_state, Mapping):
+        raise RuntimeError("official bridge formatted observation has no robot_state")
+    rendered_robot_state = validate_unbatched_bridge_state(formatted_robot_state)
 
     applied_arm_qpos = np.asarray(sim.data.qpos[arm_qpos], dtype=np.float64).copy()
     applied_arm_qvel = np.asarray(sim.data.qvel[arm_qvel], dtype=np.float64).copy()
@@ -287,6 +421,27 @@ def apply_isaac_state_to_official_renderer(
             np.max(np.abs(applied_gripper_qvel - requested_gripper_qvel))
         ),
     }
+    for object_name, provenance in object_provenance.items():
+        qpos_indexes = np.asarray(provenance["qpos_indexes"], dtype=np.int64)
+        qvel_indexes = np.asarray(provenance["qvel_indexes"], dtype=np.int64)
+        applied_qpos = np.asarray(sim.data.qpos[qpos_indexes], dtype=np.float64).copy()
+        applied_qvel = np.asarray(sim.data.qvel[qvel_indexes], dtype=np.float64).copy()
+        qpos_error = float(
+            np.max(np.abs(applied_qpos - np.asarray(provenance["requested_qpos"])))
+        )
+        qvel_error = float(
+            np.max(np.abs(applied_qvel - np.asarray(provenance["requested_qvel"])))
+        )
+        provenance.update(
+            {
+                "applied_qpos": applied_qpos.tolist(),
+                "applied_qvel": applied_qvel.tolist(),
+                "qpos_max_abs_write_error": qpos_error,
+                "qvel_max_abs_write_error": qvel_error,
+            }
+        )
+        write_errors[f"object.{object_name}.qpos_max_abs"] = qpos_error
+        write_errors[f"object.{object_name}.qvel_max_abs"] = qvel_error
     if pose_mode == "joint_replay":
         write_errors.update(
             {
@@ -301,17 +456,27 @@ def apply_isaac_state_to_official_renderer(
     return OfficialRenderBridgeResult(
         observation={
             "pixels": images,
-            "robot_state": copy.deepcopy(state),
+            # Policy state must describe the robot that actually appears in the
+            # official frames. This also preserves LIBERO's body-frame eef.quat
+            # convention instead of guessing it from an Isaac world quaternion.
+            "robot_state": copy.deepcopy(rendered_robot_state),
+            "object_states": copy.deepcopy(objects),
         },
         provenance={
-            "scope": "matching official reset objects plus Isaac-mapped Panda EEF/gripper state",
+            "scope": (
+                "Isaac-mapped Panda EEF/gripper plus dynamically synchronized named objects"
+                if objects
+                else "matching official reset objects plus Isaac-mapped Panda EEF/gripper state"
+            ),
             "pose_mode": pose_mode,
             "physics_steps_after_write": 0,
+            "dynamic_object_state_count": len(objects),
             "arm_qpos_indexes": arm_qpos.tolist(),
             "arm_qvel_indexes": arm_qvel.tolist(),
             "gripper_qpos_indexes": gripper_qpos.tolist(),
             "gripper_qvel_indexes": gripper_qvel.tolist(),
             "requested_robot_state": state,
+            "rendered_robot_state": rendered_robot_state,
             "applied_arm_qpos": applied_arm_qpos.tolist(),
             "applied_arm_qvel": applied_arm_qvel.tolist(),
             "applied_gripper_qpos": applied_gripper_qpos.tolist(),
@@ -321,6 +486,7 @@ def apply_isaac_state_to_official_renderer(
                 np.linalg.norm(requested_eef - rendered_eef)
             ),
             "ik": ik_provenance,
+            "objects": object_provenance,
             "write_errors": write_errors,
             "writeback_exact_at_1e-12": all(error <= 1e-12 for error in write_errors.values()),
         },

@@ -355,6 +355,11 @@ class CurrentLeRobotBackend:
             raise RuntimeError(f"Expected one synchronous sub-environment, got {len(env.envs)}")
         return env.envs[0]
 
+    def official_render_sub_env(self, task_id: int) -> Any:
+        """Expose the reset synchronous sub-env for audited state-only rendering."""
+
+        return self._sub_env(task_id)
+
     def reset_episode(
         self,
         *,

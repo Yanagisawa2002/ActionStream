@@ -32,6 +32,7 @@ from actionstream.isaac_libero_task import (
     VISUAL_ASSETS,
     _diffuse_only_table_mtl,
     isaac_agentview_pose,
+    isaac_to_libero_position,
     libero_to_isaac_position,
     task0_scene_payload,
     task0_scene_sha256,
@@ -52,6 +53,9 @@ def test_libero_task_geometry_uses_robot_base_anchored_translation() -> None:
 
     mapped_home = libero_to_isaac_position(LIBERO_REFERENCE_EEF_XYZ)
     assert mapped_home == pytest.approx((0.4474475362, -0.00627673, 0.2484475446))
+    assert isaac_to_libero_position(mapped_home) == pytest.approx(
+        LIBERO_REFERENCE_EEF_XYZ
+    )
 
 
 def test_agentview_preserves_audited_forward_direction_and_fov() -> None:

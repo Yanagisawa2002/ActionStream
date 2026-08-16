@@ -23,6 +23,7 @@ import torch
 
 from actionstream.current_baselines import CurrentLeRobotBackend, load_protocol
 from actionstream.isaac_learned import validate_worker_request
+from actionstream.official_render_bridge import apply_isaac_state_to_official_renderer
 
 
 def _sha256_file(path: Path) -> str:
@@ -75,6 +76,16 @@ def _batch_robot_state(value: Mapping[str, Any]) -> dict[str, Any]:
     }
 
 
+def _save_rendered_rgb(
+    directory: Path, request_id: int, key: str, image: np.ndarray
+) -> tuple[Path, str]:
+    path = directory / f"request_{request_id:06d}_{key}.png"
+    if path.exists():
+        raise RuntimeError(f"refusing to overwrite official render frame: {path}")
+    Image.fromarray(image, mode="RGB").save(path)
+    return path, _sha256_file(path)
+
+
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--protocol", type=Path, required=True)
@@ -82,8 +93,10 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--suite", default="libero_object")
     parser.add_argument("--task-id", type=int, default=0)
     parser.add_argument("--seed", type=int, default=2026081601)
+    parser.add_argument("--initial-state-index", type=int, default=0)
     parser.add_argument("--episode-length", type=int, default=800)
     parser.add_argument("--device", default="cuda")
+    parser.add_argument("--render-output-directory", type=Path, default=None)
     return parser
 
 
@@ -93,7 +106,11 @@ def _emit(value: Mapping[str, Any]) -> None:
 
 def main() -> int:
     args = _parser().parse_args()
+    render_output_directory: Path | None = None
     try:
+        if args.render_output_directory is not None:
+            render_output_directory = args.render_output_directory.expanduser().resolve()
+            render_output_directory.mkdir(parents=True, exist_ok=False)
         protocol = load_protocol(args.protocol)
         if args.model not in protocol.models:
             raise ValueError(f"unknown model {args.model!r}")
@@ -112,7 +129,7 @@ def main() -> int:
             _template, _info, template_instruction = backend.reset_episode(
                 task_id=args.task_id,
                 seed=args.seed,
-                initial_state_index=0,
+                initial_state_index=args.initial_state_index,
             )
         _emit(
             {
@@ -123,6 +140,9 @@ def main() -> int:
                 "chunk_size": spec.chunk_size,
                 "supports_rtc": backend.supports_rtc,
                 "template_instruction": template_instruction,
+                "suite": args.suite,
+                "task_id": args.task_id,
+                "initial_state_index": args.initial_state_index,
                 "cuda_available": torch.cuda.is_available(),
                 "cuda_device": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,
             }
@@ -142,11 +162,51 @@ def main() -> int:
                 _emit({"event": "closed"})
                 break
             validate_worker_request(request)
-            image, image_sha256 = _load_rgb(request["image"])
-            image2, image2_sha256 = _load_rgb(request["image2"])
+            render_request = request.get("official_render_bridge")
+            bridge_provenance: dict[str, Any] | None = None
+            image_path: Path
+            image2_path: Path
+            if render_request is not None:
+                if render_output_directory is None:
+                    raise RuntimeError(
+                        "official render request requires --render-output-directory"
+                    )
+                with redirect_stdout(sys.stderr):
+                    bridge_result = apply_isaac_state_to_official_renderer(
+                        backend.official_render_sub_env(args.task_id),
+                        request["robot_state"],
+                        pose_mode=str(render_request.get("pose_mode", "eef_ik")),
+                        object_states=render_request["object_states"],
+                    )
+                unbatched_image = bridge_result.observation["pixels"]["image"]
+                unbatched_image2 = bridge_result.observation["pixels"]["image2"]
+                image_path, image_sha256 = _save_rendered_rgb(
+                    render_output_directory,
+                    int(request["request_id"]),
+                    "image",
+                    unbatched_image,
+                )
+                image2_path, image2_sha256 = _save_rendered_rgb(
+                    render_output_directory,
+                    int(request["request_id"]),
+                    "image2",
+                    unbatched_image2,
+                )
+                image = unbatched_image[None, ...]
+                image2 = unbatched_image2[None, ...]
+                bridge_provenance = bridge_result.provenance
+                policy_robot_state = bridge_result.observation["robot_state"]
+                observation_source = "dynamic_official_render_bridge"
+            else:
+                image_path = Path(str(request["image"])).resolve()
+                image2_path = Path(str(request["image2"])).resolve()
+                image, image_sha256 = _load_rgb(image_path)
+                image2, image2_sha256 = _load_rgb(image2_path)
+                policy_robot_state = request["robot_state"]
+                observation_source = "supplied_rgb_files"
             observation = {
                 "pixels": {"image": image, "image2": image2},
-                "robot_state": _batch_robot_state(request["robot_state"]),
+                "robot_state": _batch_robot_state(policy_robot_state),
             }
             with redirect_stdout(sys.stderr):
                 output = backend.infer_action_chunk(
@@ -165,8 +225,12 @@ def main() -> int:
                     "raw_shape": list(output.raw_shape),
                     "raw_dtype": output.raw_dtype,
                     "model_latency_seconds": output.model_latency_seconds,
+                    "observation_source": observation_source,
+                    "image_path": str(image_path),
+                    "image2_path": str(image2_path),
                     "image_sha256": image_sha256,
                     "image2_sha256": image2_sha256,
+                    "official_render_bridge": bridge_provenance,
                     "peak_cuda_memory_mib": backend.peak_cuda_memory_mib,
                 }
             )

@@ -15,6 +15,7 @@ from actionstream.isaac_learned import (
     adapter_contract_sha256,
     libero_state_from_isaac,
     map_xvla_chunk_to_isaac,
+    validate_worker_request,
 )
 from actionstream.learned_isaac_smoke import POLICY_OBSERVATION_SETTLE_UPDATES
 
@@ -38,6 +39,55 @@ def test_reference_state_maps_back_to_libero_home() -> None:
 
 def test_policy_observation_renderer_has_bounded_temporal_settling() -> None:
     assert POLICY_OBSERVATION_SETTLE_UPDATES == 4
+
+
+def test_dynamic_eef_orientation_is_normalized_and_mapped_to_matrix() -> None:
+    state = libero_state_from_isaac(
+        end_effector_xyz=ISAAC_REFERENCE_EEF_XYZ,
+        end_effector_wxyz=[2.0, 0.0, 0.0, 0.0],
+        gripper_aperture_m=0.08,
+        joint_positions=ISAAC_REFERENCE_JOINT_POS,
+        joint_velocities=[0.0] * 7,
+    )
+    assert state["eef"]["quat"] == pytest.approx([0.0, 0.0, 0.0, 1.0])
+    assert np.asarray(state["eef"]["mat"]) == pytest.approx(np.eye(3))
+
+
+def test_worker_request_accepts_exactly_one_image_source() -> None:
+    state = libero_state_from_isaac(
+        end_effector_xyz=ISAAC_REFERENCE_EEF_XYZ,
+        gripper_aperture_m=0.08,
+        joint_positions=ISAAC_REFERENCE_JOINT_POS,
+        joint_velocities=[0.0] * 7,
+    )
+    validate_worker_request(
+        {
+            "request_id": 0,
+            "instruction": "pick the object",
+            "robot_state": state,
+            "official_render_bridge": {
+                "object_states": {
+                    "alphabet_soup_1": {
+                        "position_xyz": [0.0, 0.0, 0.0],
+                        "orientation_wxyz": [1.0, 0.0, 0.0, 0.0],
+                    }
+                }
+            },
+        }
+    )
+    with pytest.raises(ValueError, match="cannot combine"):
+        validate_worker_request(
+            {
+                "request_id": 0,
+                "instruction": "pick the object",
+                "robot_state": state,
+                "image": "a.png",
+                "image2": "b.png",
+                "official_render_bridge": {
+                    "object_states": {"alphabet_soup_1": {}}
+                },
+            }
+        )
 
 
 def test_joint_state_offset_is_explicit_and_additive() -> None:

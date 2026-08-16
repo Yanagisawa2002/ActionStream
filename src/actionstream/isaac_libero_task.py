@@ -303,6 +303,18 @@ def libero_to_isaac_position(position: Sequence[float]) -> tuple[float, float, f
     )
 
 
+def isaac_to_libero_position(position: Sequence[float]) -> tuple[float, float, float]:
+    values = tuple(float(value) for value in position)
+    if len(values) != 3 or not all(math.isfinite(value) for value in values):
+        raise ValueError("Isaac position must contain three finite values")
+    return tuple(
+        value - offset
+        for value, offset in zip(
+            values, LIBERO_TO_ISAAC_TASK_TRANSLATION_XYZ, strict=True
+        )
+    )
+
+
 def _normalized_quaternion_wxyz(
     value: Sequence[float], *, name: str
 ) -> tuple[float, float, float, float]:
@@ -883,6 +895,23 @@ class LiberoObjectTask0Scene:
                 Gf.Vec3f(*measurement.object_wxyz[1:]),
             )
         )
+
+    def official_object_states(self, measurement: Any) -> dict[str, Any]:
+        """Map the current Isaac target visual back to its official free joint."""
+
+        visual_isaac_position = (
+            float(measurement.object_xyz[0]),
+            float(measurement.object_xyz[1]),
+            float(measurement.object_xyz[2]) + self._target_visual_z_offset,
+        )
+        return {
+            "alphabet_soup_1": {
+                "position_xyz": list(isaac_to_libero_position(visual_isaac_position)),
+                "orientation_wxyz": [
+                    float(component) for component in measurement.object_wxyz
+                ],
+            }
+        }
 
     @staticmethod
     def task_success(measurement: Any) -> bool:

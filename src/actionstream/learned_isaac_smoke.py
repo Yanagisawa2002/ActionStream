@@ -271,6 +271,10 @@ class _PolicyWorker:
         output_directory: Path,
         timeout_seconds: float,
         seed: int,
+        suite: str,
+        task_id: int,
+        initial_state_index: int,
+        render_output_directory: Path | None,
     ) -> None:
         self._timeout_seconds = float(timeout_seconds)
         self._stderr_stream = (output_directory / "policy_worker.stderr.log").open(
@@ -293,18 +297,29 @@ class _PolicyWorker:
         environment["PYTHONPATH"] = os.pathsep.join(
             (source_path, str(venv_site_packages))
         )
+        command = [
+            str(python),
+            "-m",
+            "actionstream.learned_policy_worker",
+            "--protocol",
+            str(protocol),
+            "--model",
+            "xvla",
+            "--suite",
+            suite,
+            "--task-id",
+            str(task_id),
+            "--seed",
+            str(seed),
+            "--initial-state-index",
+            str(initial_state_index),
+        ]
+        if render_output_directory is not None:
+            command.extend(
+                ["--render-output-directory", str(render_output_directory)]
+            )
         self._process = subprocess.Popen(
-            [
-                str(python),
-                "-m",
-                "actionstream.learned_policy_worker",
-                "--protocol",
-                str(protocol),
-                "--model",
-                "xvla",
-                "--seed",
-                str(seed),
-            ],
+            command,
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=self._stderr_stream,
@@ -381,6 +396,9 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--policy-python", type=Path, required=True)
     parser.add_argument("--output-directory", type=Path, required=True)
     parser.add_argument("--seed", type=int, default=2026081601)
+    parser.add_argument("--suite", default="libero_object")
+    parser.add_argument("--task-id", type=int, default=0)
+    parser.add_argument("--initial-state-index", type=int, default=0)
     parser.add_argument(
         "--instruction", default="pick up the blue cube and place it on the green marker"
     )
@@ -399,6 +417,12 @@ def _parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--libero-assets-root", type=Path, default=None)
     parser.add_argument("--asset-cache-directory", type=Path, default=None)
+    parser.add_argument(
+        "--official-render-bridge",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="infer from official LIBERO cameras after dynamic Isaac robot/object writes",
+    )
     return parser
 
 
@@ -432,6 +456,18 @@ def _validate_args(args: Any) -> tuple[Path, Path, Path, Path]:
         args.libero_assets_root is not None or args.asset_cache_directory is not None
     ):
         raise ValueError("LIBERO asset arguments require --libero-object-task0-scene")
+    if args.official_render_bridge and not args.libero_object_task0_scene:
+        raise ValueError(
+            "--official-render-bridge currently requires --libero-object-task0-scene"
+        )
+    if args.libero_object_task0_scene and (
+        args.suite != "libero_object" or args.task_id != 0
+    ):
+        raise ValueError(
+            "--libero-object-task0-scene requires --suite libero_object --task-id 0"
+        )
+    if args.initial_state_index < 0:
+        raise ValueError("initial state index must be non-negative")
     return protocol, scene_protocol, policy_python, output
 
 
@@ -476,6 +512,14 @@ def main(argv: Sequence[str] | None = None) -> int:
             output_directory=output,
             timeout_seconds=args.worker_timeout_seconds,
             seed=args.seed,
+            suite=args.suite,
+            task_id=args.task_id,
+            initial_state_index=args.initial_state_index,
+            render_output_directory=(
+                output / "official_policy_frames"
+                if args.official_render_bridge
+                else None
+            ),
         )
 
         from isaacsim import SimulationApp
@@ -521,7 +565,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             camera_fovy = LIBERO_AGENTVIEW_FOVY_DEGREES
             coordinate_translation_xyz = LIBERO_TO_ISAAC_TASK_TRANSLATION_XYZ
             camera_2_source = (
-                "audited_libero_camera_to_eef_rigid_transform_in_native_isaac"
+                "official_libero_renderer_dynamic_state_bridge"
+                if args.official_render_bridge
+                else "audited_libero_camera_to_eef_rigid_transform_in_native_isaac"
             )
             learned_scene_provenance = learned_task_scene.provenance
             if effective_instruction == (
@@ -541,7 +587,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         )
         policy_frame_directory: Path | None = None
         policy_wrist_frame_directory: Path | None = None
-        if learned_task_scene is not None:
+        if learned_task_scene is not None and not args.official_render_bridge:
             policy_frame_directory = output / "policy_frames"
             policy_frame_directory.mkdir(exist_ok=False)
             policy_wrist_frame_directory = output / "policy_wrist_frames"
@@ -565,6 +611,18 @@ def main(argv: Sequence[str] | None = None) -> int:
                 "eye_in_hand_static_settle_updates": (
                     LIBERO_WRIST_CAMERA_SETTLE_UPDATES
                 ),
+            }
+        elif learned_task_scene is not None:
+            if learned_scene_provenance is None:
+                raise RuntimeError("learned task scene has no provenance")
+            learned_scene_provenance["policy_observation_transform"] = {
+                "agentview": "official LeRobot/LIBERO formatted observation",
+                "eye_in_hand": "official LeRobot/LIBERO formatted observation",
+            }
+            learned_scene_provenance["policy_observation_render_contract"] = {
+                "renderer": "official pinned LIBERO MuJoCo EGL",
+                "state_source": "current native Isaac measurement at every policy request",
+                "physics_steps_after_state_write": 0,
             }
         initial_eef = np.asarray(reset_measurement.end_effector_xyz, dtype=np.float64)
         maximum_eef_displacement = 0.0
@@ -614,6 +672,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                     joint_positions, joint_velocities = scene.arm_joint_state()
                     robot_state = libero_state_from_isaac(
                         end_effector_xyz=measurement.end_effector_xyz,
+                        end_effector_wxyz=measurement.end_effector_wxyz,
                         gripper_aperture_m=measurement.gripper_aperture_m,
                         joint_positions=joint_positions,
                         joint_velocities=joint_velocities,
@@ -622,10 +681,26 @@ def main(argv: Sequence[str] | None = None) -> int:
                     request = {
                         "request_id": len(requests),
                         "instruction": effective_instruction,
-                        "image": str(policy_observation_frame),
-                        "image2": str(policy_wrist_observation_frame),
                         "robot_state": robot_state,
                     }
+                    if args.official_render_bridge:
+                        if learned_task_scene is None:
+                            raise RuntimeError(
+                                "official render bridge has no learned task scene"
+                            )
+                        request["official_render_bridge"] = {
+                            "pose_mode": "eef_ik",
+                            "object_states": learned_task_scene.official_object_states(
+                                measurement
+                            ),
+                        }
+                    else:
+                        request.update(
+                            {
+                                "image": str(policy_observation_frame),
+                                "image2": str(policy_wrist_observation_frame),
+                            }
+                        )
                     response = worker.infer(request)
                     mapped = map_xvla_chunk_to_isaac(
                         response["actions"],
@@ -657,12 +732,10 @@ def main(argv: Sequence[str] | None = None) -> int:
                             "mapped_translation_limits": mapped.limited_translation_rows,
                             "robot_state": robot_state,
                             "robot_state_sha256": _sha256_json(robot_state),
-                            "policy_image_sha256": _sha256_file(
-                                policy_observation_frame
-                            ),
-                            "policy_image2_sha256": _sha256_file(
-                                policy_wrist_observation_frame
-                            ),
+                            "policy_image_path": response["image_path"],
+                            "policy_image2_path": response["image2_path"],
+                            "policy_image_sha256": response["image_sha256"],
+                            "policy_image2_sha256": response["image2_sha256"],
                         }
                     )
                     requests.append(request_record)
@@ -746,6 +819,37 @@ def main(argv: Sequence[str] | None = None) -> int:
                 for line in events_path.read_text(encoding="utf-8").splitlines()
             ),
         }
+        if args.official_render_bridge:
+            bridge_records = [
+                item.get("official_render_bridge") for item in requests
+            ]
+            checks.update(
+                {
+                    "official_render_bridge_every_request": bool(bridge_records)
+                    and all(isinstance(item, Mapping) for item in bridge_records),
+                    "dynamic_object_state_every_request": bool(bridge_records)
+                    and all(
+                        isinstance(item, Mapping)
+                        and int(item.get("dynamic_object_state_count", 0)) >= 1
+                        for item in bridge_records
+                    ),
+                    "official_state_writeback_exact": bool(bridge_records)
+                    and all(
+                        isinstance(item, Mapping)
+                        and bool(item.get("writeback_exact_at_1e-12"))
+                        for item in bridge_records
+                    ),
+                    "official_eef_ik_within_frozen_tolerance": bool(bridge_records)
+                    and all(
+                        isinstance(item, Mapping)
+                        and isinstance(item.get("ik"), Mapping)
+                        and bool(item["ik"].get("converged"))
+                        and float(item["ik"].get("position_error_l2_m", float("inf")))
+                        <= 1e-4
+                        for item in bridge_records
+                    ),
+                }
+            )
         source_root = Path(__file__).resolve().parents[2]
         source_state = _git_source_state(
             (
@@ -753,6 +857,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 source_root / "src/actionstream/isaac_learned.py",
                 source_root / "src/actionstream/isaac_libero_task.py",
                 source_root / "src/actionstream/learned_policy_worker.py",
+                source_root / "src/actionstream/official_render_bridge.py",
                 source_root
                 / "ros2_ws/src/action_stream_isaac/action_stream_isaac/dynamic_isaac_adapter.py",
             )
@@ -760,11 +865,20 @@ def main(argv: Sequence[str] | None = None) -> int:
         known_limitations = [
             "development smoke only; no manipulation task success is claimed",
             "coordinate calibration uses one development reset reference",
-            "policy frames apply an explicit vertical row-order transform for LIBERO parity",
             "canonical distractors are visual-only development geometry",
             "basket collision uses box proxies rather than converted MuJoCo collision meshes",
             "formal paired runtimes and network profiles have not yet run",
         ]
+        if args.official_render_bridge:
+            known_limitations.insert(
+                2,
+                "official images are rendered from synchronized state but physics remains native Isaac",
+            )
+        else:
+            known_limitations.insert(
+                2,
+                "policy frames apply an explicit vertical row-order transform for LIBERO parity",
+            )
         if learned_task_scene is None:
             known_limitations.insert(
                 1, "camera2 duplicates the external viewport and is not a wrist camera"
@@ -779,6 +893,10 @@ def main(argv: Sequence[str] | None = None) -> int:
             "checks": checks,
             "instruction": effective_instruction,
             "seed": args.seed,
+            "suite": args.suite,
+            "task_id": args.task_id,
+            "initial_state_index": args.initial_state_index,
+            "official_render_bridge": bool(args.official_render_bridge),
             "control_steps": args.control_steps,
             "request_interval_steps": args.request_interval_steps,
             "worker_ready": worker_ready,

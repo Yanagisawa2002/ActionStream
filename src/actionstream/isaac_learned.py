@@ -173,6 +173,7 @@ def libero_state_from_isaac(
     gripper_aperture_m: float,
     joint_positions: Sequence[float],
     joint_velocities: Sequence[float],
+    end_effector_wxyz: Sequence[float] | None = None,
     coordinate_translation_xyz: Sequence[float] = LIBERO_TO_ISAAC_TRANSLATION_XYZ,
 ) -> dict[str, Any]:
     """Map measured Franka state into the frozen LIBERO processor schema."""
@@ -190,11 +191,24 @@ def libero_state_from_isaac(
     if not math.isfinite(aperture) or aperture < 0:
         raise ValueError("gripper_aperture_m must be finite and non-negative")
     half = 0.5 * aperture
+    if end_effector_wxyz is None:
+        eef_mat = np.asarray(LIBERO_REFERENCE_EEF_MAT, dtype=np.float64)
+        eef_quat_xyzw = np.asarray(LIBERO_REFERENCE_EEF_QUAT_XYZW, dtype=np.float64)
+    else:
+        eef_wxyz = _finite_vector(
+            end_effector_wxyz, length=4, name="end_effector_wxyz"
+        )
+        norm = float(np.linalg.norm(eef_wxyz))
+        if norm <= 1e-12:
+            raise ValueError("end_effector_wxyz must be nonzero")
+        w, x, y, z = eef_wxyz / norm
+        eef_quat_xyzw = np.asarray([x, y, z, w], dtype=np.float64)
+        eef_mat = _rotation_matrix_from_xyzw(eef_quat_xyzw)
     return {
         "eef": {
-            "mat": [list(row) for row in LIBERO_REFERENCE_EEF_MAT],
+            "mat": eef_mat.tolist(),
             "pos": (eef - translation).tolist(),
-            "quat": list(LIBERO_REFERENCE_EEF_QUAT_XYZW),
+            "quat": eef_quat_xyzw.tolist(),
         },
         "gripper": {
             "qpos": [half, -half],
@@ -268,9 +282,29 @@ def map_xvla_chunk_to_isaac(
 
 
 def validate_worker_request(value: Mapping[str, Any]) -> None:
-    required = {"request_id", "instruction", "image", "image2", "robot_state"}
+    required = {"request_id", "instruction", "robot_state"}
     missing = required - set(value)
     if missing:
         raise ValueError(f"worker request is missing {sorted(missing)}")
     if not str(value["instruction"]).strip():
         raise ValueError("worker instruction must be non-empty")
+    render_bridge = value.get("official_render_bridge")
+    supplied_images = {"image", "image2"} & set(value)
+    if render_bridge is None:
+        missing_images = {"image", "image2"} - set(value)
+        if missing_images:
+            raise ValueError(
+                f"worker request is missing {sorted(missing_images)}"
+            )
+    else:
+        if not isinstance(render_bridge, Mapping):
+            raise ValueError("worker official_render_bridge must be a mapping")
+        if supplied_images:
+            raise ValueError(
+                "worker request cannot combine supplied images with official_render_bridge"
+            )
+        object_states = render_bridge.get("object_states")
+        if not isinstance(object_states, Mapping) or not object_states:
+            raise ValueError(
+                "worker official_render_bridge requires non-empty object_states"
+            )
