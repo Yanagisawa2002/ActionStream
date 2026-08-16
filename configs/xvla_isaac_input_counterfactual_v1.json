@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "experiment_id": "xvla_isaac_input_counterfactual_v1",
+  "frozen_utc": "2026-08-16T14:55:27Z",
+  "freeze_status": "frozen_before_formal_inference",
+  "causal_question": "For the native-Isaac zero-success smoke, how much of the first X-VLA action-chunk shift is attributable to rendered images versus the mapped robot state?",
+  "policy": {
+    "key": "xvla",
+    "model_id": "lerobot/xvla-libero",
+    "revision": "12e8783e996944f5c97e490d37d4c145484ed70a",
+    "processor_source": "pinned CurrentLeRobotBackend from configs/current_lerobot_baselines.json",
+    "protocol_path": "configs/current_lerobot_baselines.json",
+    "protocol_sha256": "76ed5e5a0d2a0780c2fb858741c9e8a16fdc36cac1f3c991977b9b11fd6a164a",
+    "device": "cuda"
+  },
+  "official_observation": {
+    "suite": "libero_object",
+    "task_id": 0,
+    "initial_state_index": 0,
+    "environment_seed": 2026081601,
+    "instruction": "pick up the alphabet soup and place it in the basket",
+    "source": "exact observation returned by CurrentLeRobotBackend.reset_episode"
+  },
+  "native_observation": {
+    "summary_path": "outputs/learned_isaac_libero_taskcap_rigidcamera_300_v1/summary.json",
+    "summary_sha256": "9d21a63ca8b4aa0712c03f3069febbf0cde6a825a7a8f894d3f5c2477186231c",
+    "image_path": "outputs/learned_isaac_libero_taskcap_rigidcamera_300_v1/policy_frames/frame_000000.png",
+    "image_sha256": "31ee19b4b8b5126069e49ec28c93ac4e835a9b8cc3a60d42fc1b6e2961acb759",
+    "image2_path": "outputs/learned_isaac_libero_taskcap_rigidcamera_300_v1/policy_wrist_frames/frame_000000.png",
+    "image2_sha256": "faef461b1c0a7388b9bb7b8e0cb64458dca4e457061defaf5efcefac370aee12",
+    "robot_state_source": "request_records[0].robot_state",
+    "instruction": "pick up the alphabet soup and place it in the basket"
+  },
+  "conditions": [
+    {
+      "key": "official_images__official_state",
+      "images": "official",
+      "robot_state": "official"
+    },
+    {
+      "key": "native_images__official_state",
+      "images": "native",
+      "robot_state": "official"
+    },
+    {
+      "key": "official_images__native_state",
+      "images": "official",
+      "robot_state": "native"
+    },
+    {
+      "key": "native_images__native_state",
+      "images": "native",
+      "robot_state": "native"
+    }
+  ],
+  "paired_schedule": [
+    {
+      "inference_seed": 2026081617,
+      "condition_order": [
+        "official_images__official_state",
+        "native_images__official_state",
+        "official_images__native_state",
+        "native_images__native_state"
+      ]
+    },
+    {
+      "inference_seed": 2026081618,
+      "condition_order": [
+        "native_images__native_state",
+        "official_images__native_state",
+        "native_images__official_state",
+        "official_images__official_state"
+      ]
+    },
+    {
+      "inference_seed": 2026081619,
+      "condition_order": [
+        "official_images__native_state",
+        "official_images__official_state",
+        "native_images__native_state",
+        "native_images__official_state"
+      ]
+    }
+  ],
+  "reference_success_trace": {
+    "path": "outputs/current_lerobot_async_rtc/current_xvla_matrix_task0/traces/xvla__lerobot_latest_only__fixed_0000__task0__ep0.json",
+    "sha256": "f10d1f52324e292c9023456e57430704e50cb6dc4e82456ae1163d97c26221cb",
+    "first_action": [
+      -0.14722998440265656,
+      -0.004152105189859867,
+      0.24164126813411713,
+      -2.1859326362609863,
+      -2.2036967277526855,
+      0.06284639984369278,
+      -1.0
+    ],
+    "use": "context only; not a tuning target because its episode seed differs"
+  },
+  "primary_metrics": [
+    "paired_full_chunk_rmse",
+    "paired_first_action_xyz_l2",
+    "paired_first_action_7d_l2",
+    "gripper_sign_fraction"
+  ],
+  "analysis_contract": {
+    "reference_condition": "official_images__official_state",
+    "image_effect_holding_official_state": "native_images__official_state minus official_images__official_state",
+    "state_effect_holding_official_images": "official_images__native_state minus official_images__official_state",
+    "joint_shift": "native_images__native_state minus official_images__official_state",
+    "formal_output_is_diagnostic_not_task_success": true,
+    "no_post_result_input_tuning": true
+  }
+}
