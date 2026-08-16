@@ -898,6 +898,41 @@ compatibility. Native Isaac claims require a separate completed native receipt,
 fair same-reset pair, replay-valid traces, and live observation-conditioned
 policy video.
 
+### Learned-policy native Isaac development bridge
+
+`actionstream.learned_isaac_smoke` keeps the already-provisioned Isaac and
+LeRobot environments separate. A persistent LeRobot worker loads the pinned
+X-VLA checkpoint and its official LIBERO processors; the Isaac process owns the
+official Franka scene, measured state, safety bounds, viewport, and command
+execution. The bridge records both policy-space chunks and mapped Isaac
+commands so a coordinate adapter cannot hide or rewrite a failed policy output.
+
+```bash
+export PYTHONPATH="$PWD/src:$PWD/ros2_ws/src/action_stream_isaac:$PWD/ros2_ws/src/action_stream_policy"
+export HF_HOME=/path/to/hf-cache
+export MUJOCO_GL=egl
+export PYOPENGL_PLATFORM=egl
+
+/path/to/isaac-python -m actionstream.learned_isaac_smoke \
+  --protocol configs/current_lerobot_baselines.json \
+  --scene-protocol configs/m8_g0.json \
+  --policy-python /path/to/lerobot-venv/bin/python \
+  --output-directory /outside/git/learned_isaac_dev_smoke \
+  --seed 2026081601 \
+  --control-steps 20 \
+  --request-interval-steps 10
+```
+
+This command is deliberately a development smoke, not a task-success or paired
+benchmark. Its current adapter uses one development reset calibration, fixes a
+safe downward wrist orientation, inverts the simulator-specific gripper sign,
+and duplicates the external viewport as camera 2. The smoke must pass learned
+GPU inference, finite varying actions, native Franka movement, collision checks,
+and playable video before a multi-task protocol is frozen. Formal evidence must
+replace the duplicate camera, freeze task assets and coordinate calibration,
+and then run sync/latest-only/upstream Async/upstream RTC where supported and
+ActionStream aligned on disjoint initial states and network traces.
+
 The 2026-08-15 task-0 decision matrix contains 105 completed paired episodes,
 105 verified traces, 19,512 finite 7D actions, and 35 locally decoded videos.
 For X-VLA at 950 ms, aligned matched `latest_only` success (3/3) while finishing

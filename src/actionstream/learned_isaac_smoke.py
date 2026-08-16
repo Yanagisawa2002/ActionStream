@@ -1,0 +1,695 @@
+"""Bounded learned X-VLA -> native Isaac development smoke.
+
+The smoke proves four things before any paired protocol can be frozen: the
+exact learned checkpoint performs GPU inference, its finite action chunk passes
+through an explicit adapter, the resulting commands physically move the native
+Isaac Franka, and the same viewport frames form a playable video.  It is not a
+task-success benchmark and its duplicate second camera is development-only.
+"""
+
+from __future__ import annotations
+
+import argparse
+import asyncio
+import hashlib
+import json
+import math
+import os
+from pathlib import Path
+import selectors
+import shutil
+import subprocess
+import sys
+import time
+import traceback
+from typing import Any, Mapping, Sequence
+
+import numpy as np
+
+from actionstream.isaac_learned import (
+    adapter_contract_payload,
+    adapter_contract_sha256,
+    libero_state_from_isaac,
+    map_xvla_chunk_to_isaac,
+)
+
+
+def _sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _sha256_json(value: Any) -> str:
+    encoded = json.dumps(
+        value, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False
+    ).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def _git_commit() -> str:
+    override = os.environ.get("ACTIONSTREAM_SOURCE_COMMIT")
+    if override:
+        return override
+    completed = subprocess.run(
+        ["git", "rev-parse", "HEAD"], check=False, capture_output=True, text=True
+    )
+    return completed.stdout.strip() if completed.returncode == 0 else "uncommitted"
+
+
+def _git_source_state(source_files: Sequence[Path]) -> dict[str, Any]:
+    status = subprocess.run(
+        ["git", "status", "--porcelain=v1", "--untracked-files=all"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    lines = sorted(line for line in status.stdout.splitlines() if line.strip())
+    hashes = {
+        str(path.resolve()): _sha256_file(path.resolve())
+        for path in source_files
+        if path.resolve().is_file()
+    }
+    return {
+        "git_commit": _git_commit(),
+        "git_dirty": bool(lines) if status.returncode == 0 else None,
+        "git_status_porcelain": lines,
+        "source_file_sha256": hashes,
+        "source_manifest_sha256": _sha256_json(hashes),
+    }
+
+
+class _ViewportRecorder:
+    """Synchronous LDR viewport frames plus NVIDIA-bundled MP4 encoding."""
+
+    _EXTENSIONS = (
+        "omni.kit.renderer.capture",
+        "omni.kit.viewport.utility",
+        "omni.videoencoding",
+    )
+
+    def __init__(
+        self,
+        simulation_app: Any,
+        *,
+        output_directory: Path,
+        width: int,
+        height: int,
+        fps: int,
+        timeout_seconds: float,
+    ) -> None:
+        import omni.kit.app
+
+        manager = omni.kit.app.get_app().get_extension_manager()
+        for extension in self._EXTENSIONS:
+            manager.set_extension_enabled_immediate(extension, True)
+            simulation_app.update()
+            if not manager.is_extension_enabled(extension):
+                raise RuntimeError(f"Isaac capture extension {extension!r} is unavailable")
+
+        from omni.kit.viewport.utility import capture_viewport_to_file, get_active_viewport
+        from omni.kit.viewport.utility.camera_state import ViewportCameraState
+        from pxr import Gf, UsdLux
+
+        viewport = get_active_viewport()
+        if viewport is None or viewport.stage is None:
+            raise RuntimeError("Isaac has no active viewport/stage")
+        light = UsdLux.DomeLight.Define(viewport.stage, "/World/LearnedSmokeDomeLight")
+        light.CreateIntensityAttr(1000.0)
+        light.CreateColorAttr(Gf.Vec3f(1.0, 1.0, 1.0))
+        self.frame_directory = output_directory / "frames"
+        self.frame_directory.mkdir(parents=True, exist_ok=False)
+        self.output_path = output_directory / "learned_isaac_smoke.mp4"
+        self._capture_viewport_to_file = capture_viewport_to_file
+        self._viewport = viewport
+        self._original_resolution = tuple(viewport.resolution)
+        self._restored = False
+        self._fps = int(fps)
+        self._timeout_seconds = float(timeout_seconds)
+        self._frame_paths: list[Path] = []
+        self.encoder: str | None = None
+        self.encoder_fallback_reason: str | None = None
+        viewport.resolution = (int(width), int(height))
+        simulation_app.update()
+        camera = ViewportCameraState(viewport=viewport)
+        camera.set_position_world(Gf.Vec3d(1.35, 1.20, 1.05), rotate=False)
+        camera.set_target_world(Gf.Vec3d(0.38, 0.0, 0.24), rotate=True)
+        simulation_app.update()
+        simulation_app.update()
+
+    def capture(self, simulation_app: Any) -> Path:
+        path = self.frame_directory / f"frame_{len(self._frame_paths):06d}.png"
+        helper = self._capture_viewport_to_file(
+            self._viewport, file_path=str(path), is_hdr=False
+        )
+        task = asyncio.ensure_future(helper.wait_for_result(completion_frames=0))
+        deadline = time.monotonic() + self._timeout_seconds
+        while not task.done() or not path.is_file() or path.stat().st_size <= 0:
+            if task.cancelled():
+                raise RuntimeError("Isaac viewport frame capture was cancelled")
+            if task.done() and task.exception() is not None:
+                raise RuntimeError("Isaac viewport frame capture failed") from task.exception()
+            if not simulation_app.is_running():
+                raise RuntimeError("Isaac stopped during viewport frame capture")
+            if time.monotonic() >= deadline:
+                raise RuntimeError("Isaac viewport frame capture timed out")
+            simulation_app.update()
+        self._frame_paths.append(path)
+        return path
+
+    def _restore(self) -> None:
+        if not self._restored:
+            self._viewport.resolution = self._original_resolution
+            self._restored = True
+
+    def finish(self, simulation_app: Any) -> Path:
+        if not self._frame_paths:
+            raise RuntimeError("cannot encode a zero-frame smoke video")
+        self._restore()
+        import omni.kit.renderer_capture
+        from video_encoding import encode_image_file_sequence
+
+        omni.kit.renderer_capture.acquire_renderer_capture_interface().wait_async_capture()
+        frame_pattern = str(self.frame_directory / "frame_%06d.png")
+        native_partial = self.output_path.with_name(
+            f".{self.output_path.stem}.nvenc.partial.mp4"
+        )
+        try:
+            encoded = encode_image_file_sequence(
+                frame_pattern, 0, self._fps, str(native_partial), False
+            )
+            if (
+                not encoded
+                or not native_partial.is_file()
+                or native_partial.stat().st_size <= 0
+            ):
+                raise RuntimeError("Isaac video encoder produced no non-empty MP4")
+            native_partial.replace(self.output_path)
+            self.encoder = "isaac_omni_videoencoding"
+        except RuntimeError as exc:
+            self.encoder_fallback_reason = f"{type(exc).__name__}: {exc}"
+            if native_partial.exists():
+                native_partial.unlink()
+            ffmpeg = shutil.which("ffmpeg")
+            if ffmpeg is None:
+                raise RuntimeError(
+                    "Isaac video encoding failed and ffmpeg is unavailable"
+                ) from exc
+            ffmpeg_partial = self.output_path.with_name(
+                f".{self.output_path.stem}.ffmpeg.partial.mp4"
+            )
+            completed = subprocess.run(
+                [
+                    ffmpeg,
+                    "-hide_banner",
+                    "-loglevel",
+                    "error",
+                    "-framerate",
+                    str(self._fps),
+                    "-i",
+                    frame_pattern,
+                    "-c:v",
+                    "libx264",
+                    "-pix_fmt",
+                    "yuv420p",
+                    "-movflags",
+                    "+faststart",
+                    "-y",
+                    str(ffmpeg_partial),
+                ],
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+            if (
+                completed.returncode != 0
+                or not ffmpeg_partial.is_file()
+                or ffmpeg_partial.stat().st_size <= 0
+            ):
+                raise RuntimeError(
+                    "both Isaac and CPU ffmpeg video encoding failed: "
+                    f"ffmpeg_exit={completed.returncode}, stderr={completed.stderr[-500:]}"
+                ) from exc
+            ffmpeg_partial.replace(self.output_path)
+            self.encoder = "ffmpeg_libx264_cpu_fallback"
+        return self.output_path
+
+    def close(self) -> None:
+        self._restore()
+
+
+class _PolicyWorker:
+    def __init__(
+        self,
+        *,
+        python: Path,
+        protocol: Path,
+        output_directory: Path,
+        timeout_seconds: float,
+        seed: int,
+    ) -> None:
+        self._timeout_seconds = float(timeout_seconds)
+        self._stderr_stream = (output_directory / "policy_worker.stderr.log").open(
+            "w", encoding="utf-8"
+        )
+        environment = os.environ.copy()
+        # SimulationApp sets interpreter hints for Kit's embedded Python.  They
+        # must not leak into the separately provisioned LeRobot virtualenv.
+        environment.pop("PYTHONHOME", None)
+        environment["VIRTUAL_ENV"] = str(python.parent.parent)
+        environment["PATH"] = str(python.parent) + os.pathsep + environment.get("PATH", "")
+        source_path = str(Path(__file__).resolve().parents[1])
+        venv_site_packages = python.parent.parent / "lib" / "python3.12" / "site-packages"
+        if not venv_site_packages.is_dir():
+            raise RuntimeError(
+                f"policy virtualenv site-packages is missing: {venv_site_packages}"
+            )
+        # Do not inherit Kit/ROS PYTHONPATH entries.  Explicitly bind the worker
+        # to ActionStream source plus the already-provisioned LeRobot venv.
+        environment["PYTHONPATH"] = os.pathsep.join(
+            (source_path, str(venv_site_packages))
+        )
+        self._process = subprocess.Popen(
+            [
+                str(python),
+                "-m",
+                "actionstream.learned_policy_worker",
+                "--protocol",
+                str(protocol),
+                "--model",
+                "xvla",
+                "--seed",
+                str(seed),
+            ],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=self._stderr_stream,
+            text=True,
+            bufsize=1,
+            env=environment,
+        )
+        self.ready = self._read()
+        if self.ready.get("event") != "ready":
+            raise RuntimeError(f"learned policy worker did not become ready: {self.ready}")
+
+    def _read(self) -> dict[str, Any]:
+        if self._process.stdout is None:
+            raise RuntimeError("policy worker stdout is closed")
+        selector = selectors.DefaultSelector()
+        selector.register(self._process.stdout, selectors.EVENT_READ)
+        try:
+            events = selector.select(timeout=self._timeout_seconds)
+        finally:
+            selector.close()
+        if not events:
+            raise TimeoutError(
+                f"policy worker produced no response within {self._timeout_seconds:.1f}s"
+            )
+        line = self._process.stdout.readline()
+        if not line:
+            raise RuntimeError(f"policy worker exited with code {self._process.poll()}")
+        response = json.loads(line)
+        if response.get("event") == "fatal":
+            raise RuntimeError(f"policy worker fatal response: {response.get('error')}")
+        return response
+
+    def infer(self, request: Mapping[str, Any]) -> dict[str, Any]:
+        if self._process.stdin is None:
+            raise RuntimeError("policy worker stdin is closed")
+        self._process.stdin.write(
+            json.dumps(dict(request), sort_keys=True, separators=(",", ":"), allow_nan=False)
+            + "\n"
+        )
+        self._process.stdin.flush()
+        response = self._read()
+        if response.get("event") != "inference":
+            raise RuntimeError(f"unexpected policy worker response: {response}")
+        if int(response.get("request_id", -1)) != int(request["request_id"]):
+            raise RuntimeError("policy worker request/response ID mismatch")
+        return response
+
+    def close(self) -> None:
+        process = self._process
+        try:
+            if process.poll() is None and process.stdin is not None:
+                process.stdin.write('{"command":"close"}\n')
+                process.stdin.flush()
+                try:
+                    process.wait(timeout=10.0)
+                except subprocess.TimeoutExpired:
+                    process.terminate()
+                    process.wait(timeout=10.0)
+        finally:
+            self._stderr_stream.close()
+
+
+def _write_json(path: Path, value: Any) -> None:
+    path.write_text(
+        json.dumps(value, indent=2, sort_keys=True, ensure_ascii=False, allow_nan=False) + "\n",
+        encoding="utf-8",
+    )
+
+
+def _parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--protocol", type=Path, required=True)
+    parser.add_argument("--scene-protocol", type=Path, required=True)
+    parser.add_argument("--policy-python", type=Path, required=True)
+    parser.add_argument("--output-directory", type=Path, required=True)
+    parser.add_argument("--seed", type=int, default=2026081601)
+    parser.add_argument(
+        "--instruction", default="pick up the blue cube and place it on the green marker"
+    )
+    parser.add_argument("--control-steps", type=int, default=30)
+    parser.add_argument("--request-interval-steps", type=int, default=10)
+    parser.add_argument("--headless", action=argparse.BooleanOptionalAction, default=True)
+    parser.add_argument("--video-width", type=int, default=640)
+    parser.add_argument("--video-height", type=int, default=480)
+    parser.add_argument("--worker-timeout-seconds", type=float, default=300.0)
+    parser.add_argument("--capture-timeout-seconds", type=float, default=60.0)
+    return parser
+
+
+def _validate_args(args: Any) -> tuple[Path, Path, Path, Path]:
+    protocol = args.protocol.resolve()
+    scene_protocol = args.scene_protocol.resolve()
+    # Preserve the virtualenv launcher path.  Path.resolve() dereferences its
+    # symlink to the base interpreter and loses the pyvenv/site-packages root.
+    policy_python = Path(os.path.abspath(args.policy_python.expanduser()))
+    output = args.output_directory.resolve()
+    for path, name in (
+        (protocol, "protocol"),
+        (scene_protocol, "scene protocol"),
+        (policy_python, "policy Python"),
+    ):
+        if not path.is_file():
+            raise ValueError(f"{name} does not exist: {path}")
+    if output.exists():
+        raise ValueError(f"refusing to reuse smoke output directory: {output}")
+    if not 1 <= args.control_steps <= 100:
+        raise ValueError("control steps must lie in [1,100]")
+    if not 1 <= args.request_interval_steps <= args.control_steps:
+        raise ValueError("request interval must lie in [1,control steps]")
+    if not str(args.instruction).strip():
+        raise ValueError("instruction must be non-empty")
+    if not 64 <= args.video_width <= 2048 or not 64 <= args.video_height <= 2048:
+        raise ValueError("video dimensions must lie in [64,2048]")
+    return protocol, scene_protocol, policy_python, output
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    args = _parser().parse_args(argv)
+    try:
+        protocol, scene_protocol_path, policy_python, output = _validate_args(args)
+    except ValueError as exc:
+        print(f"invalid learned Isaac smoke configuration: {exc}", file=sys.stderr)
+        return 2
+    output.mkdir(parents=True)
+    events_path = output / "events.jsonl"
+    policy_actions_path = output / "policy_actions.jsonl"
+    simulation_app: Any | None = None
+    scene: Any | None = None
+    worker: _PolicyWorker | None = None
+    recorder: _ViewportRecorder | None = None
+    started_ns = time.time_ns()
+    try:
+        from action_stream_isaac.capability_probe import probe
+        from action_stream_isaac.dynamic_isaac_adapter import (
+            CONTROL_DT_SECONDS,
+            PHYSICS_STEPS_PER_CONTROL,
+            DynamicIsaacScene,
+            runtime_configs_from_protocol,
+        )
+
+        capability = probe(require_ros_imports=False)
+        if not capability.ready:
+            raise RuntimeError(f"native Isaac capability probe failed: {capability.to_dict()}")
+        scene_protocol = json.loads(scene_protocol_path.read_text(encoding="utf-8"))
+        task_config, policy_config = runtime_configs_from_protocol(scene_protocol)
+
+        # Start LeRobot before Kit.  SimulationApp mutates process-wide Python
+        # interpreter hints for its embedded runtime; a worker forked afterward
+        # can otherwise resolve Kit's site-packages instead of its own venv.
+        worker = _PolicyWorker(
+            python=policy_python,
+            protocol=protocol,
+            output_directory=output,
+            timeout_seconds=args.worker_timeout_seconds,
+            seed=args.seed,
+        )
+
+        from isaacsim import SimulationApp
+
+        simulation_app = SimulationApp({"headless": bool(args.headless)})
+        scene = DynamicIsaacScene(
+            simulation_app, task_config=task_config, policy_config=policy_config
+        )
+        from action_stream_isaac.dynamic_task import scenario_for_seed, scenario_payload
+
+        scenario = scenario_for_seed(args.seed, task_config)
+        reset_measurement = scene.reset(scenario)
+        recorder = _ViewportRecorder(
+            simulation_app,
+            output_directory=output,
+            width=args.video_width,
+            height=args.video_height,
+            fps=round(1.0 / CONTROL_DT_SECONDS),
+            timeout_seconds=args.capture_timeout_seconds,
+        )
+        initial_eef = np.asarray(reset_measurement.end_effector_xyz, dtype=np.float64)
+        maximum_eef_displacement = 0.0
+        maximum_command_delta = 0.0
+        mapped_commands: list[list[float]] = []
+        requests: list[dict[str, Any]] = []
+        active_chunk: np.ndarray | None = None
+        active_chunk_offset = 0
+        total_workspace_clips = 0
+        total_translation_limits = 0
+
+        with (
+            events_path.open("w", encoding="utf-8") as events,
+            policy_actions_path.open("w", encoding="utf-8") as policy_actions,
+        ):
+            for control_step in range(args.control_steps):
+                observation_frame = recorder.capture(simulation_app)
+                if control_step % args.request_interval_steps == 0:
+                    measurement = scene.measure()
+                    joint_positions, joint_velocities = scene.arm_joint_state()
+                    robot_state = libero_state_from_isaac(
+                        end_effector_xyz=measurement.end_effector_xyz,
+                        gripper_aperture_m=measurement.gripper_aperture_m,
+                        joint_positions=joint_positions,
+                        joint_velocities=joint_velocities,
+                    )
+                    request = {
+                        "request_id": len(requests),
+                        "instruction": args.instruction,
+                        "image": str(observation_frame),
+                        "image2": str(observation_frame),
+                        "robot_state": robot_state,
+                    }
+                    response = worker.infer(request)
+                    mapped = map_xvla_chunk_to_isaac(
+                        response["actions"],
+                        initial_target_xyz=scene.current_command[:3],
+                        workspace_xyz=(
+                            policy_config.workspace_x_m,
+                            policy_config.workspace_y_m,
+                            policy_config.workspace_z_m,
+                        ),
+                        maximum_translation_per_step_m=(
+                            policy_config.maximum_translation_per_step_m
+                        ),
+                    )
+                    active_chunk = mapped.commands
+                    active_chunk_offset = 0
+                    total_workspace_clips += mapped.clipped_workspace_rows
+                    total_translation_limits += mapped.limited_translation_rows
+                    request_record = {
+                        key: value for key, value in response.items() if key != "actions"
+                    }
+                    request_record.update(
+                        {
+                            "control_step": control_step,
+                            "mapped_actions_sha256": hashlib.sha256(
+                                mapped.commands.astype(np.float64).tobytes(order="C")
+                            ).hexdigest(),
+                            "mapped_workspace_clips": mapped.clipped_workspace_rows,
+                            "mapped_translation_limits": mapped.limited_translation_rows,
+                        }
+                    )
+                    requests.append(request_record)
+                    policy_actions.write(
+                        json.dumps(
+                            {
+                                "event": "learned_action_chunk",
+                                "control_step": control_step,
+                                "request_id": int(response["request_id"]),
+                                "policy_actions": response["actions"],
+                                "mapped_commands": mapped.commands.tolist(),
+                                "policy_actions_sha256": response["actions_sha256"],
+                                "mapped_actions_sha256": request_record[
+                                    "mapped_actions_sha256"
+                                ],
+                            },
+                            sort_keys=True,
+                            separators=(",", ":"),
+                            allow_nan=False,
+                        )
+                        + "\n"
+                    )
+                    policy_actions.flush()
+                if active_chunk is None or active_chunk_offset >= len(active_chunk):
+                    raise RuntimeError("learned policy produced no executable action")
+
+                before_target = np.asarray(scene.current_command[:3], dtype=np.float64)
+                command = active_chunk[active_chunk_offset]
+                active_chunk_offset += 1
+                scene.set_command(command)
+                for _ in range(PHYSICS_STEPS_PER_CONTROL):
+                    scene.step()
+                measurement = scene.measure()
+                maximum_command_delta = max(
+                    maximum_command_delta,
+                    float(np.linalg.norm(command[:3] - before_target)),
+                )
+                maximum_eef_displacement = max(
+                    maximum_eef_displacement,
+                    float(np.linalg.norm(np.asarray(measurement.end_effector_xyz) - initial_eef)),
+                )
+                mapped_commands.append(command.tolist())
+                event = {
+                    "event": "control_step",
+                    "control_step": control_step,
+                    "sim_time_seconds": scene.sim_time_seconds(),
+                    "command": command.tolist(),
+                    "measured_end_effector_xyz": list(measurement.end_effector_xyz),
+                    "measured_object_xyz": list(measurement.object_xyz),
+                    "gripper_aperture_m": measurement.gripper_aperture_m,
+                    "collision": measurement.collision,
+                    "joint_or_workspace_limit": measurement.joint_or_workspace_limit,
+                }
+                events.write(json.dumps(event, sort_keys=True, separators=(",", ":")) + "\n")
+                events.flush()
+
+        recorder.capture(simulation_app)
+        video = recorder.finish(simulation_app)
+        worker_ready = dict(worker.ready)
+        peak_memory = max(float(item["peak_cuda_memory_mib"]) for item in requests)
+        actions_array = np.asarray(mapped_commands, dtype=np.float64)
+        unique_actions = int(len(np.unique(np.round(actions_array, decimals=6), axis=0)))
+        checks = {
+            "learned_checkpoint_loaded": worker_ready.get("event") == "ready",
+            "gpu_inference": bool(worker_ready.get("cuda_available")) and peak_memory > 0.0,
+            "finite_policy_actions": bool(np.isfinite(actions_array).all()),
+            "policy_action_varies": unique_actions >= 2,
+            "policy_command_applied": maximum_command_delta > 1e-5,
+            "native_franka_moved": maximum_eef_displacement > 0.002,
+            "video_recorded": video.is_file() and video.stat().st_size > 0,
+            "no_disqualifying_collision": not any(
+                json.loads(line)["collision"]
+                for line in events_path.read_text(encoding="utf-8").splitlines()
+            ),
+        }
+        source_root = Path(__file__).resolve().parents[2]
+        source_state = _git_source_state(
+            (
+                Path(__file__),
+                source_root / "src/actionstream/isaac_learned.py",
+                source_root / "src/actionstream/learned_policy_worker.py",
+                source_root
+                / "ros2_ws/src/action_stream_isaac/action_stream_isaac/dynamic_isaac_adapter.py",
+            )
+        )
+        summary = {
+            "schema_version": 1,
+            "evidence_class": "development_learned_policy_native_isaac_smoke",
+            "headline_or_holdout_eligible": False,
+            "task_success_claimed": False,
+            "smoke_pass": all(checks.values()),
+            "checks": checks,
+            "instruction": args.instruction,
+            "seed": args.seed,
+            "control_steps": args.control_steps,
+            "request_interval_steps": args.request_interval_steps,
+            "worker_ready": worker_ready,
+            "request_records": requests,
+            "metrics": {
+                "request_count": len(requests),
+                "unique_mapped_actions": unique_actions,
+                "maximum_command_delta_m": maximum_command_delta,
+                "maximum_measured_eef_displacement_m": maximum_eef_displacement,
+                "peak_cuda_memory_mib": peak_memory,
+                "workspace_clipped_chunk_rows": total_workspace_clips,
+                "translation_limited_chunk_rows": total_translation_limits,
+            },
+            "video_encoder": recorder.encoder,
+            "video_encoder_fallback_reason": recorder.encoder_fallback_reason,
+            "adapter_contract": adapter_contract_payload(),
+            "adapter_contract_sha256": adapter_contract_sha256(),
+            "provenance": {
+                "actionstream_source": source_state,
+                "protocol_path": str(protocol),
+                "protocol_sha256": _sha256_file(protocol),
+                "scene_protocol_path": str(scene_protocol_path),
+                "scene_protocol_sha256": _sha256_file(scene_protocol_path),
+                "scenario_sha256": _sha256_json(scenario_payload(scenario)),
+                "video_path": str(video),
+                "video_sha256": _sha256_file(video),
+                "events_path": str(events_path),
+                "events_sha256": _sha256_file(events_path),
+                "policy_actions_path": str(policy_actions_path),
+                "policy_actions_sha256": _sha256_file(policy_actions_path),
+                "started_wall_time_ns": started_ns,
+                "finished_wall_time_ns": time.time_ns(),
+            },
+            "known_limitations": [
+                "development smoke only; no manipulation task success is claimed",
+                "camera2 duplicates the external viewport and is not a wrist camera",
+                "coordinate calibration uses one development reset reference",
+                "formal paired runtimes and network profiles have not yet run",
+            ],
+        }
+        _write_json(output / "summary.json", summary)
+        print(json.dumps({"smoke_pass": summary["smoke_pass"], "summary": str(output / 'summary.json')}))
+        return 0 if summary["smoke_pass"] else 4
+    except Exception as exc:
+        failure = {
+            "schema_version": 1,
+            "evidence_class": "development_learned_policy_native_isaac_smoke_failure",
+            "error": f"{type(exc).__name__}: {exc}",
+            "traceback": traceback.format_exc(),
+            "started_wall_time_ns": started_ns,
+            "failed_wall_time_ns": time.time_ns(),
+        }
+        _write_json(output / "failure.json", failure)
+        print(f"FATAL: learned Isaac smoke failed: {failure['error']}", file=sys.stderr)
+        traceback.print_exc()
+        return 1
+    finally:
+        if worker is not None:
+            try:
+                worker.close()
+            except Exception:
+                traceback.print_exc()
+        if recorder is not None:
+            try:
+                recorder.close()
+            except Exception:
+                traceback.print_exc()
+        if scene is not None:
+            try:
+                scene.close()
+            except Exception:
+                traceback.print_exc()
+        if simulation_app is not None:
+            try:
+                simulation_app.close()
+            except Exception:
+                traceback.print_exc()
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

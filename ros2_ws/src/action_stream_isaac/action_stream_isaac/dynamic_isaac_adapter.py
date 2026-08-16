@@ -1291,6 +1291,19 @@ class DynamicIsaacScene:
             _flat_finite(orientations, length=4, name="end-effector orientation"),
         )
 
+    def arm_joint_state(
+        self,
+    ) -> tuple[tuple[float, ...], tuple[float, ...]]:
+        """Return measured seven-DOF arm state for learned-policy observations."""
+
+        positions = _flat_finite(
+            self._articulation.get_dof_positions(), length=9, name="DOF positions"
+        )
+        velocities = _flat_finite(
+            self._articulation.get_dof_velocities(), length=9, name="DOF velocities"
+        )
+        return positions[:7], velocities[:7]
+
     def _joint_limit_reached(self, eef_xyz: Sequence[float]) -> bool:
         positions = _flat_finite(
             self._articulation.get_dof_positions(), length=9, name="DOF positions"
