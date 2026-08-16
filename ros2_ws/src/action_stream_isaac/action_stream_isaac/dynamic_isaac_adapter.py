@@ -1141,7 +1141,7 @@ class DynamicIsaacScene:
                 xformable = UsdGeom.Xformable(cube)
                 xformable.AddTranslateOp().Set(Gf.Vec3d(*box["position_xyz"]))
                 w, x, y, z = box["orientation_wxyz"]
-                xformable.AddOrientOp().Set(Gf.Quatd(w, Gf.Vec3d(x, y, z)))
+                xformable.AddOrientOp().Set(Gf.Quatf(w, Gf.Vec3f(x, y, z)))
                 half_x, half_y, half_z = box["half_extents_xyz"]
                 xformable.AddScaleOp().Set(
                     Gf.Vec3d(2.0 * half_x, 2.0 * half_y, 2.0 * half_z)
