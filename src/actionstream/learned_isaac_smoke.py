@@ -4,7 +4,8 @@ The smoke proves four things before any paired protocol can be frozen: the
 exact learned checkpoint performs GPU inference, its finite action chunk passes
 through an explicit adapter, the resulting commands physically move the native
 Isaac Franka, and the same viewport frames form a playable video.  It is not a
-task-success benchmark and its duplicate second camera is development-only.
+task-success benchmark.  The optional LIBERO task scene adds a separately
+rendered hand-mounted camera; the generic smoke retains its duplicate camera2.
 """
 
 from __future__ import annotations
@@ -27,11 +28,18 @@ from typing import Any, Mapping, Sequence
 import numpy as np
 
 from actionstream.isaac_learned import (
+    LIBERO_TO_ISAAC_TRANSLATION_XYZ,
     adapter_contract_payload,
     adapter_contract_sha256,
     libero_state_from_isaac,
     map_xvla_chunk_to_isaac,
 )
+
+# Isaac's headless viewport forces DLSS even when the launcher requests a
+# spatial anti-aliasing mode. Render several static frames before capture so the
+# temporal accumulator converges instead of exposing multi-frame robot ghosts
+# to the learned policy.
+POLICY_OBSERVATION_SETTLE_UPDATES = 4
 
 
 def _sha256_file(path: Path) -> str:
@@ -99,6 +107,9 @@ class _ViewportRecorder:
         height: int,
         fps: int,
         timeout_seconds: float,
+        camera_position_xyz: Sequence[float] = (1.35, 1.20, 1.05),
+        camera_target_xyz: Sequence[float] = (0.38, 0.0, 0.24),
+        camera_vertical_fov_degrees: float | None = None,
     ) -> None:
         import omni.kit.app
 
@@ -111,7 +122,7 @@ class _ViewportRecorder:
 
         from omni.kit.viewport.utility import capture_viewport_to_file, get_active_viewport
         from omni.kit.viewport.utility.camera_state import ViewportCameraState
-        from pxr import Gf, UsdLux
+        from pxr import Gf, UsdGeom, UsdLux
 
         viewport = get_active_viewport()
         if viewport is None or viewport.stage is None:
@@ -134,12 +145,23 @@ class _ViewportRecorder:
         viewport.resolution = (int(width), int(height))
         simulation_app.update()
         camera = ViewportCameraState(viewport=viewport)
-        camera.set_position_world(Gf.Vec3d(1.35, 1.20, 1.05), rotate=False)
-        camera.set_target_world(Gf.Vec3d(0.38, 0.0, 0.24), rotate=True)
+        camera.set_position_world(Gf.Vec3d(*camera_position_xyz), rotate=False)
+        camera.set_target_world(Gf.Vec3d(*camera_target_xyz), rotate=True)
+        if camera_vertical_fov_degrees is not None:
+            fov = float(camera_vertical_fov_degrees)
+            if not 5.0 <= fov <= 150.0:
+                raise ValueError("camera vertical field of view must lie in [5,150]")
+            camera_prim = viewport.stage.GetPrimAtPath(viewport.camera_path)
+            usd_camera = UsdGeom.Camera(camera_prim)
+            vertical_aperture = float(usd_camera.GetVerticalApertureAttr().Get())
+            focal_length = 0.5 * vertical_aperture / math.tan(math.radians(fov) / 2.0)
+            usd_camera.GetFocalLengthAttr().Set(focal_length)
         simulation_app.update()
         simulation_app.update()
 
     def capture(self, simulation_app: Any) -> Path:
+        for _ in range(POLICY_OBSERVATION_SETTLE_UPDATES):
+            simulation_app.update()
         path = self.frame_directory / f"frame_{len(self._frame_paths):06d}.png"
         helper = self._capture_viewport_to_file(
             self._viewport, file_path=str(path), is_hdr=False
@@ -369,6 +391,14 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--video-height", type=int, default=480)
     parser.add_argument("--worker-timeout-seconds", type=float, default=300.0)
     parser.add_argument("--capture-timeout-seconds", type=float, default=60.0)
+    parser.add_argument(
+        "--libero-object-task0-scene",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="apply the development-only canonical LIBERO Object task-0 scene",
+    )
+    parser.add_argument("--libero-assets-root", type=Path, default=None)
+    parser.add_argument("--asset-cache-directory", type=Path, default=None)
     return parser
 
 
@@ -388,14 +418,20 @@ def _validate_args(args: Any) -> tuple[Path, Path, Path, Path]:
             raise ValueError(f"{name} does not exist: {path}")
     if output.exists():
         raise ValueError(f"refusing to reuse smoke output directory: {output}")
-    if not 1 <= args.control_steps <= 100:
-        raise ValueError("control steps must lie in [1,100]")
+    if not 1 <= args.control_steps <= 300:
+        raise ValueError("control steps must lie in [1,300]")
     if not 1 <= args.request_interval_steps <= args.control_steps:
         raise ValueError("request interval must lie in [1,control steps]")
     if not str(args.instruction).strip():
         raise ValueError("instruction must be non-empty")
     if not 64 <= args.video_width <= 2048 or not 64 <= args.video_height <= 2048:
         raise ValueError("video dimensions must lie in [64,2048]")
+    if args.libero_object_task0_scene and args.libero_assets_root is None:
+        raise ValueError("--libero-object-task0-scene requires --libero-assets-root")
+    if not args.libero_object_task0_scene and (
+        args.libero_assets_root is not None or args.asset_cache_directory is not None
+    ):
+        raise ValueError("LIBERO asset arguments require --libero-object-task0-scene")
     return protocol, scene_protocol, policy_python, output
 
 
@@ -413,6 +449,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     scene: Any | None = None
     worker: _PolicyWorker | None = None
     recorder: _ViewportRecorder | None = None
+    learned_task_scene: Any | None = None
+    wrist_camera: Any | None = None
     started_ns = time.time_ns()
     try:
         from action_stream_isaac.capability_probe import probe
@@ -450,6 +488,46 @@ def main(argv: Sequence[str] | None = None) -> int:
 
         scenario = scenario_for_seed(args.seed, task_config)
         reset_measurement = scene.reset(scenario)
+        effective_instruction = args.instruction
+        camera_position = (1.35, 1.20, 1.05)
+        camera_target = (0.38, 0.0, 0.24)
+        camera_fovy: float | None = None
+        coordinate_translation_xyz = LIBERO_TO_ISAAC_TRANSLATION_XYZ
+        camera_2_source = "duplicate_external_view_development_smoke_only"
+        learned_scene_provenance: dict[str, Any] | None = None
+        if args.libero_object_task0_scene:
+            from actionstream.isaac_libero_task import (
+                LIBERO_AGENTVIEW_FOVY_DEGREES,
+                LIBERO_TASK_INSTRUCTION,
+                LIBERO_TO_ISAAC_TASK_TRANSLATION_XYZ,
+                LIBERO_WRIST_CAMERA_SETTLE_UPDATES,
+                LiberoWristCamera,
+                LiberoObjectTask0Scene,
+                isaac_agentview_pose,
+            )
+
+            learned_task_scene = LiberoObjectTask0Scene(
+                simulation_app,
+                scene,
+                assets_root=args.libero_assets_root,
+                cache_directory=(
+                    args.asset_cache_directory
+                    if args.asset_cache_directory is not None
+                    else output / "converted_assets"
+                ),
+            )
+            reset_measurement = scene.measure()
+            camera_position, camera_target = isaac_agentview_pose()
+            camera_fovy = LIBERO_AGENTVIEW_FOVY_DEGREES
+            coordinate_translation_xyz = LIBERO_TO_ISAAC_TASK_TRANSLATION_XYZ
+            camera_2_source = (
+                "audited_libero_camera_to_eef_rigid_transform_in_native_isaac"
+            )
+            learned_scene_provenance = learned_task_scene.provenance
+            if effective_instruction == (
+                "pick up the blue cube and place it on the green marker"
+            ):
+                effective_instruction = LIBERO_TASK_INSTRUCTION
         recorder = _ViewportRecorder(
             simulation_app,
             output_directory=output,
@@ -457,7 +535,37 @@ def main(argv: Sequence[str] | None = None) -> int:
             height=args.video_height,
             fps=round(1.0 / CONTROL_DT_SECONDS),
             timeout_seconds=args.capture_timeout_seconds,
+            camera_position_xyz=camera_position,
+            camera_target_xyz=camera_target,
+            camera_vertical_fov_degrees=camera_fovy,
         )
+        policy_frame_directory: Path | None = None
+        policy_wrist_frame_directory: Path | None = None
+        if learned_task_scene is not None:
+            policy_frame_directory = output / "policy_frames"
+            policy_frame_directory.mkdir(exist_ok=False)
+            policy_wrist_frame_directory = output / "policy_wrist_frames"
+            policy_wrist_frame_directory.mkdir(exist_ok=False)
+            wrist_camera = LiberoWristCamera(
+                simulation_app,
+                output_directory=output / "wrist_frames",
+                width=args.video_width,
+                height=args.video_height,
+                timeout_seconds=args.capture_timeout_seconds,
+            )
+            if learned_scene_provenance is None:
+                raise RuntimeError("learned task scene has no provenance")
+            learned_scene_provenance["policy_observation_transform"] = {
+                "agentview": "vertical_flip_to_match_hf_libero_raw_mujoco_gl_row_order",
+                "eye_in_hand": "vertical_flip_to_match_hf_libero_raw_mujoco_gl_row_order",
+            }
+            learned_scene_provenance["policy_observation_render_contract"] = {
+                "anti_aliasing": "Isaac headless viewport default DLSS",
+                "agentview_static_settle_updates": POLICY_OBSERVATION_SETTLE_UPDATES,
+                "eye_in_hand_static_settle_updates": (
+                    LIBERO_WRIST_CAMERA_SETTLE_UPDATES
+                ),
+            }
         initial_eef = np.asarray(reset_measurement.end_effector_xyz, dtype=np.float64)
         maximum_eef_displacement = 0.0
         maximum_command_delta = 0.0
@@ -474,6 +582,33 @@ def main(argv: Sequence[str] | None = None) -> int:
         ):
             for control_step in range(args.control_steps):
                 observation_frame = recorder.capture(simulation_app)
+                policy_observation_frame = observation_frame
+                policy_wrist_observation_frame = observation_frame
+                if policy_frame_directory is not None:
+                    from PIL import Image
+
+                    if wrist_camera is None or policy_wrist_frame_directory is None:
+                        raise RuntimeError("learned task scene has no wrist camera")
+                    policy_observation_frame = (
+                        policy_frame_directory / f"frame_{control_step:06d}.png"
+                    )
+                    with Image.open(observation_frame) as image:
+                        image.transpose(Image.Transpose.FLIP_TOP_BOTTOM).save(
+                            policy_observation_frame
+                        )
+                    wrist_measurement = scene.measure()
+                    wrist_observation_frame = wrist_camera.capture(
+                        simulation_app,
+                        end_effector_xyz=wrist_measurement.end_effector_xyz,
+                        end_effector_wxyz=wrist_measurement.end_effector_wxyz,
+                    )
+                    policy_wrist_observation_frame = (
+                        policy_wrist_frame_directory / f"frame_{control_step:06d}.png"
+                    )
+                    with Image.open(wrist_observation_frame) as image:
+                        image.transpose(Image.Transpose.FLIP_TOP_BOTTOM).save(
+                            policy_wrist_observation_frame
+                        )
                 if control_step % args.request_interval_steps == 0:
                     measurement = scene.measure()
                     joint_positions, joint_velocities = scene.arm_joint_state()
@@ -482,12 +617,13 @@ def main(argv: Sequence[str] | None = None) -> int:
                         gripper_aperture_m=measurement.gripper_aperture_m,
                         joint_positions=joint_positions,
                         joint_velocities=joint_velocities,
+                        coordinate_translation_xyz=coordinate_translation_xyz,
                     )
                     request = {
                         "request_id": len(requests),
-                        "instruction": args.instruction,
-                        "image": str(observation_frame),
-                        "image2": str(observation_frame),
+                        "instruction": effective_instruction,
+                        "image": str(policy_observation_frame),
+                        "image2": str(policy_wrist_observation_frame),
                         "robot_state": robot_state,
                     }
                     response = worker.infer(request)
@@ -502,6 +638,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                         maximum_translation_per_step_m=(
                             policy_config.maximum_translation_per_step_m
                         ),
+                        coordinate_translation_xyz=coordinate_translation_xyz,
                     )
                     active_chunk = mapped.commands
                     active_chunk_offset = 0
@@ -518,6 +655,14 @@ def main(argv: Sequence[str] | None = None) -> int:
                             ).hexdigest(),
                             "mapped_workspace_clips": mapped.clipped_workspace_rows,
                             "mapped_translation_limits": mapped.limited_translation_rows,
+                            "robot_state": robot_state,
+                            "robot_state_sha256": _sha256_json(robot_state),
+                            "policy_image_sha256": _sha256_file(
+                                policy_observation_frame
+                            ),
+                            "policy_image2_sha256": _sha256_file(
+                                policy_wrist_observation_frame
+                            ),
                         }
                     )
                     requests.append(request_record)
@@ -551,6 +696,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                 for _ in range(PHYSICS_STEPS_PER_CONTROL):
                     scene.step()
                 measurement = scene.measure()
+                if learned_task_scene is not None:
+                    learned_task_scene.sync(measurement)
                 maximum_command_delta = max(
                     maximum_command_delta,
                     float(np.linalg.norm(command[:3] - before_target)),
@@ -580,6 +727,12 @@ def main(argv: Sequence[str] | None = None) -> int:
         peak_memory = max(float(item["peak_cuda_memory_mib"]) for item in requests)
         actions_array = np.asarray(mapped_commands, dtype=np.float64)
         unique_actions = int(len(np.unique(np.round(actions_array, decimals=6), axis=0)))
+        final_measurement = scene.measure()
+        development_task_success = (
+            learned_task_scene.task_success(final_measurement)
+            if learned_task_scene is not None
+            else None
+        )
         checks = {
             "learned_checkpoint_loaded": worker_ready.get("event") == "ready",
             "gpu_inference": bool(worker_ready.get("cuda_available")) and peak_memory > 0.0,
@@ -598,19 +751,33 @@ def main(argv: Sequence[str] | None = None) -> int:
             (
                 Path(__file__),
                 source_root / "src/actionstream/isaac_learned.py",
+                source_root / "src/actionstream/isaac_libero_task.py",
                 source_root / "src/actionstream/learned_policy_worker.py",
                 source_root
                 / "ros2_ws/src/action_stream_isaac/action_stream_isaac/dynamic_isaac_adapter.py",
             )
         )
+        known_limitations = [
+            "development smoke only; no manipulation task success is claimed",
+            "coordinate calibration uses one development reset reference",
+            "policy frames apply an explicit vertical row-order transform for LIBERO parity",
+            "canonical distractors are visual-only development geometry",
+            "basket collision uses box proxies rather than converted MuJoCo collision meshes",
+            "formal paired runtimes and network profiles have not yet run",
+        ]
+        if learned_task_scene is None:
+            known_limitations.insert(
+                1, "camera2 duplicates the external viewport and is not a wrist camera"
+            )
         summary = {
             "schema_version": 1,
             "evidence_class": "development_learned_policy_native_isaac_smoke",
             "headline_or_holdout_eligible": False,
             "task_success_claimed": False,
+            "development_task_success_observed": development_task_success,
             "smoke_pass": all(checks.values()),
             "checks": checks,
-            "instruction": args.instruction,
+            "instruction": effective_instruction,
             "seed": args.seed,
             "control_steps": args.control_steps,
             "request_interval_steps": args.request_interval_steps,
@@ -624,11 +791,19 @@ def main(argv: Sequence[str] | None = None) -> int:
                 "peak_cuda_memory_mib": peak_memory,
                 "workspace_clipped_chunk_rows": total_workspace_clips,
                 "translation_limited_chunk_rows": total_translation_limits,
+                "final_object_xyz": list(final_measurement.object_xyz),
             },
             "video_encoder": recorder.encoder,
             "video_encoder_fallback_reason": recorder.encoder_fallback_reason,
-            "adapter_contract": adapter_contract_payload(),
-            "adapter_contract_sha256": adapter_contract_sha256(),
+            "adapter_contract": adapter_contract_payload(
+                coordinate_translation_xyz=coordinate_translation_xyz,
+                camera_2_source=camera_2_source,
+            ),
+            "adapter_contract_sha256": adapter_contract_sha256(
+                coordinate_translation_xyz=coordinate_translation_xyz,
+                camera_2_source=camera_2_source,
+            ),
+            "learned_task_scene": learned_scene_provenance,
             "provenance": {
                 "actionstream_source": source_state,
                 "protocol_path": str(protocol),
@@ -645,12 +820,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 "started_wall_time_ns": started_ns,
                 "finished_wall_time_ns": time.time_ns(),
             },
-            "known_limitations": [
-                "development smoke only; no manipulation task success is claimed",
-                "camera2 duplicates the external viewport and is not a wrist camera",
-                "coordinate calibration uses one development reset reference",
-                "formal paired runtimes and network profiles have not yet run",
-            ],
+            "known_limitations": known_limitations,
         }
         _write_json(output / "summary.json", summary)
         print(json.dumps({"smoke_pass": summary["smoke_pass"], "summary": str(output / 'summary.json')}))
@@ -677,6 +847,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         if recorder is not None:
             try:
                 recorder.close()
+            except Exception:
+                traceback.print_exc()
+        if wrist_camera is not None:
+            try:
+                wrist_camera.close()
             except Exception:
                 traceback.print_exc()
         if scene is not None:

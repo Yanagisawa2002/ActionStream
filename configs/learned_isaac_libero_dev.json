@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "milestone": "learned-policy-native-isaac-development",
+  "title": "Development-only X-VLA LIBERO scene calibration",
+  "protocol_status": "development_only_not_holdout_frozen",
+  "derived_from": "configs/m8_g0_frozen.json",
+  "runtime": {
+    "maximum_episode_steps": 320
+  },
+  "learned_task_override": {
+    "suite": "libero_object",
+    "task_id": 0,
+    "task_family": "pick_object_into_container",
+    "instruction": "pick up the alphabet soup and place it in the basket",
+    "initial_state_index": 0,
+    "action_source": "lerobot/xvla-libero checkpoint absolute 7D policy output",
+    "scene_status": "development_only_not_holdout_frozen",
+    "success": "alphabet-soup target physically contained by basket",
+    "note": "The inherited dynamic-task controller fields below supply native workspace and safety limits; the learned smoke runner replaces its waypoint action source with X-VLA."
+  },
+  "task": {
+    "task_id": "dynamic_target_pick_place_v1",
+    "primary_disturbance": "destination_switch",
+    "object_x_range_m": [0.42, 0.48],
+    "object_y_range_m": [-0.04, 0.04],
+    "cube_side_m": 0.0515,
+    "zone_a_xy_m": [0.48, -0.22],
+    "zone_b_xy_m": [0.48, 0.22],
+    "switch_steps": [90, 100, 110],
+    "placement_tolerance_m": 0.04,
+    "placement_height_tolerance_m": 0.035,
+    "stable_placement_steps": 20,
+    "stable_linear_speed_mps": 0.03,
+    "stable_angular_speed_rps": 0.5,
+    "lift_clearance_m": 0.10,
+    "collision_threshold_n": 40.0,
+    "success": "grasp, lift, post-switch destination placement, release within tolerance, 20 stable steps, no disqualifying collision, within 320 steps",
+    "failure_reasons": [
+      "failed_approach",
+      "grasp_miss",
+      "unstable_grasp",
+      "dropped_object",
+      "moved_toward_obsolete_destination",
+      "released_at_obsolete_destination",
+      "destination_switch_recovery_timeout",
+      "switch_precondition_missed",
+      "collision",
+      "joint_or_workspace_limit",
+      "task_timeout",
+      "invalid_command",
+      "simulator_or_transport_failure"
+    ]
+  },
+  "controller": {
+    "type": "deterministic_observation_conditioned_cartesian_waypoint",
+    "approach_height_m": 0.20,
+    "grasp_hand_offset_m": 0.10,
+    "carry_hand_height_m": 0.32,
+    "recovery_hover_offset_m": 0.13,
+    "maximum_translation_per_step_m": 0.01,
+    "maximum_translation_scope": "adjacent rows in the planned chunk; expired-prefix selection is measured separately at execution",
+    "workspace_x_m": [0.25, 0.70],
+    "workspace_y_m": [-0.35, 0.35],
+    "workspace_z_m": [0.02, 0.60],
+    "downward_axis_angle_xyz": [3.141592653589793, 0.0, 0.0]
+  },
+  "evidence_boundary": {
+    "headline_or_holdout_eligible": false,
+    "task_success_claimed": false,
+    "calibration_change": "robot-base-anchored LIBERO coordinates, separately audited LIBERO EEF matrix and quaternion fields, explicit one-reset additive Panda joint-state calibration, identity-mapped absolute policy orientation, canonical initial wrist orientation, rigid EEF-relative wrist-camera tracking with explicit Isaac mesh clearance, lower workspace z bound, bounded temporal render settling, and task-surface z-fighting clearance",
+    "next_gate": "An Isaac-trained or domain-adapted learned checkpoint, or an exact canonical visual/physics recreation, must demonstrate native task capability before any paired protocol freeze."
+  }
+}

@@ -1241,6 +1241,37 @@ class DynamicIsaacScene:
             orientations=(1.0, 0.0, 0.0, 0.0),
         )
 
+    def set_object_pose(
+        self,
+        *,
+        position_xyz: Sequence[float],
+        orientation_wxyz: Sequence[float],
+        settle_steps: int = 0,
+    ) -> None:
+        """Set one audited object pose for a learned-scene development reset."""
+
+        position = tuple(float(value) for value in position_xyz)
+        orientation = tuple(float(value) for value in orientation_wxyz)
+        if len(position) != 3 or not all(math.isfinite(value) for value in position):
+            raise ValueError("object position must contain three finite values")
+        if len(orientation) != 4 or not all(
+            math.isfinite(value) for value in orientation
+        ):
+            raise ValueError("object orientation must contain four finite values")
+        norm = math.sqrt(sum(value * value for value in orientation))
+        if norm <= 1e-12:
+            raise ValueError("object orientation quaternion must be nonzero")
+        if not isinstance(settle_steps, int) or not 0 <= settle_steps <= 120:
+            raise ValueError("object settle steps must be an integer in [0,120]")
+        normalized = tuple(value / norm for value in orientation)
+        self._object.set_world_poses(positions=position, orientations=normalized)
+        self._object.set_velocities(
+            linear_velocities=(0.0, 0.0, 0.0),
+            angular_velocities=(0.0, 0.0, 0.0),
+        )
+        for _ in range(settle_steps):
+            self._raw_step()
+
     def set_command(self, command: Sequence[float]) -> None:
         values = tuple(float(value) for value in command)
         if len(values) != 7 or not all(math.isfinite(value) for value in values):

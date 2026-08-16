@@ -93,6 +93,24 @@ This does not change M4's original positive asynchronous result or M7's static
 36/36 saturation. M4, M7, and M8 use different endpoints and denominators; no
 numbers are merged across them.
 
+## Learned X-VLA native Isaac development gate — BLOCKED
+
+The first genuine `lerobot/xvla-libero` policy-driven native Isaac development
+gate ran on 2026-08-16. The checkpoint loaded on GPU, produced changing 7D
+actions, drove the native Franka for 300 steps, and recorded a valid 301-frame
+video with no collision or workspace-limit event. The task-capability gate did
+not pass: the arm approached the wrong object region, never contacted the
+alphabet-soup target, and the target moved 0.0 m. Closest measured EEF-to-target
+distance was 0.2001 m.
+
+This is a **partial integration result, not a learned-policy task success**.
+The formal sync/latest-only/LeRobot async/RTC/ActionStream paired holdout was
+not opened because an all-zero native policy would not provide a meaningful
+runtime comparison. The exact adapter work, hashes, failure classification,
+local video evidence, and recovery gate are recorded in
+[the learned Isaac status](docs/learned_isaac_status.md). M8's positive scripted
+runtime result above is unchanged and remains separately scoped.
+
 ## M7-G0: ROS 2 / Isaac Sim runtime integration — NO-GO
 
 M7 adds a mixed C++17/Python ROS 2 Jazzy runtime and an official Isaac Sim
@@ -925,12 +943,14 @@ export PYOPENGL_PLATFORM=egl
 
 This command is deliberately a development smoke, not a task-success or paired
 benchmark. Its current adapter uses one development reset calibration, fixes a
-safe downward wrist orientation, inverts the simulator-specific gripper sign,
-and duplicates the external viewport as camera 2. The smoke must pass learned
+safe downward wrist orientation, and inverts the simulator-specific gripper
+sign. With `--libero-object-task0-scene`, camera 2 is a separately rendered,
+EEF-tracked wrist view whose audited LIBERO mount and Isaac mesh-clearance
+compensation are recorded independently. The smoke must pass learned
 GPU inference, finite varying actions, native Franka movement, collision checks,
 and playable video before a multi-task protocol is frozen. Formal evidence must
-replace the duplicate camera, freeze task assets and coordinate calibration,
-and then run sync/latest-only/upstream Async/upstream RTC where supported and
+freeze task assets and coordinate calibration, and then run
+sync/latest-only/upstream Async/upstream RTC where supported and
 ActionStream aligned on disjoint initial states and network traces.
 
 The 2026-08-15 task-0 decision matrix contains 105 completed paired episodes,
