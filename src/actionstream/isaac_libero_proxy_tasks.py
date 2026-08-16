@@ -218,6 +218,7 @@ class LiberoProxyTaskScene:
     def __init__(self, simulation_app: Any, scene: Any, *, spec: LiberoProxyTaskSpec) -> None:
         import omni.usd
         from isaacsim.core.experimental.objects import Cube
+        from isaacsim.core.experimental.prims import GeomPrim
         from pxr import Gf, UsdGeom
 
         spec.validate()
@@ -268,17 +269,21 @@ class LiberoProxyTaskScene:
         if spec.native_target_kind == "placement":
             assert spec.official_target_position_xyz is not None
             target = spec.map_position(spec.official_target_position_xyz)
-            Cube(
+            plate_proxy = Cube(
                 paths="/World/LiberoProxyTask/PlacementTarget",
-                positions=(target[0], target[1], 0.002),
+                positions=(target[0], target[1], 0.00325),
                 sizes=1.0,
-                scales=(0.145, 0.145, 0.004),
+                scales=(0.145, 0.145, 0.0065),
                 colors=(0.90, 0.90, 0.90),
             )
+            GeomPrim(paths=plate_proxy.paths, apply_collision_apis=True)
             target_geometry = {
-                "kind": "visual_only_plate_footprint",
-                "center_xyz": [target[0], target[1], 0.002],
-                "scale_xyz": [0.145, 0.145, 0.004],
+                "kind": "static_colliding_plate_footprint",
+                "center_xyz": [target[0], target[1], 0.00325],
+                "scale_xyz": [0.145, 0.145, 0.0065],
+                "height_source": (
+                    "official predicate sweep: on(bowl,plate) first accepts root z=0.905 m"
+                ),
             }
         else:
             assert spec.official_goal_region_xyxy is not None
