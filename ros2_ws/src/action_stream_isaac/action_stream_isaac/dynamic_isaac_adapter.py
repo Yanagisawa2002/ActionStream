@@ -1069,10 +1069,14 @@ class DynamicIsaacScene:
             quaternion_norm = math.sqrt(
                 sum(value * value for value in normalized["orientation_wxyz"])
             )
-            if not math.isclose(quaternion_norm, 1.0, abs_tol=2e-4):
+            if not math.isclose(quaternion_norm, 1.0, abs_tol=5e-3):
                 raise ValueError(
                     f"object collision box {index} quaternion is not normalized"
                 )
+            normalized["orientation_wxyz"] = tuple(
+                value / quaternion_norm
+                for value in normalized["orientation_wxyz"]
+            )
             normalized_collision_boxes.append(normalized)
         self.object_collision_boxes = tuple(normalized_collision_boxes)
         if object_mass_kg is not None:

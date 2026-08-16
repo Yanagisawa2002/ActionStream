@@ -45,7 +45,9 @@ class CollisionBoxSpec:
         if any(value <= 0.0 or value > 0.25 for value in self.half_extents_xyz):
             raise ValueError("collision box half extents must lie in (0,0.25]")
         quaternion_norm = math.sqrt(sum(value * value for value in self.orientation_wxyz))
-        if not math.isclose(quaternion_norm, 1.0, abs_tol=2e-4):
+        # MuJoCo normalizes XML quaternions at compile time.  The canonical
+        # plate asset stores one quaternion rounded to a norm of 1.002875.
+        if not math.isclose(quaternion_norm, 1.0, abs_tol=5e-3):
             raise ValueError("collision box orientation must be a unit quaternion")
 
 
