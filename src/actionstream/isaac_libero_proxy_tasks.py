@@ -164,10 +164,20 @@ LIBERO_PROXY_TASK_SPECS: Mapping[str, LiberoProxyTaskSpec] = {
             5.90520400510994e-06,
             0.7071067522302282,
         ),
-        collision_scale_xyz=(0.130, 0.130, 0.012),
-        reference_root_to_proxy_world_xyz=(0.0, 0.0, 0.0034936614709535),
+        collision_scale_xyz=(
+            0.13762122220335729,
+            0.1374699120165223,
+            0.01894636973086458,
+        ),
+        reference_root_to_proxy_world_xyz=(
+            -0.0003476524887801814,
+            0.000817412000833161,
+            0.00696,
+        ),
         collision_proxy_source=(
-            "full plate footprint and thickness from the canonical asset envelope"
+            "axis-aligned union envelope of the ten box collision geoms in the "
+            "canonical LIBERO plate.xml; local min=(-0.0679931908,-0.0683873229,"
+            "-0.0025131849), max=(0.0696280313,0.0690825891,0.0164331849) m"
         ),
         native_target_kind="push_region",
         official_goal_region_xyxy=(-0.09, 0.17, -0.01, 0.25),
