@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import numpy as np
 import pytest
 
 from actionstream.isaac_libero_proxy_tasks import (
     LIBERO_PROXY_TASK_SPECS,
+    _rotation_matrix_wxyz,
     proxy_task_spec,
     proxy_task_specs_sha256,
 )
@@ -41,3 +43,22 @@ def test_goal5_region_maps_to_a_positive_native_rectangle() -> None:
     native_max = spec.map_position((x1, y1, 0.90))
     assert native_min == pytest.approx((0.57, 0.17, 0.0))
     assert native_max == pytest.approx((0.65, 0.25, 0.0))
+
+
+def test_spatial2_proxy_is_an_explicit_graspable_rim_contact_patch() -> None:
+    spec = proxy_task_spec("spatial2")
+    assert spec.collision_scale_xyz == pytest.approx((0.024, 0.020, 0.040))
+    mapped_root = spec.map_position(spec.official_object_position_xyz)
+    proxy_center = tuple(
+        root + offset
+        for root, offset in zip(
+            mapped_root, spec.reference_root_to_proxy_world_xyz, strict=True
+        )
+    )
+    assert proxy_center == pytest.approx((0.5910084, 0.0539612, 0.0210071))
+    rotation = _rotation_matrix_wxyz(spec.official_object_orientation_wxyz)
+    proxy_to_root_local = rotation.T @ (
+        np.asarray(mapped_root) - np.asarray(proxy_center)
+    )
+    reconstructed = np.asarray(proxy_center) + rotation @ proxy_to_root_local
+    assert reconstructed == pytest.approx(mapped_root)

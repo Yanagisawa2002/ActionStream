@@ -40,6 +40,8 @@ class LiberoProxyTaskSpec:
     official_object_position_xyz: tuple[float, float, float]
     official_object_orientation_wxyz: tuple[float, float, float, float]
     collision_scale_xyz: tuple[float, float, float]
+    reference_root_to_proxy_world_xyz: tuple[float, float, float]
+    collision_proxy_source: str
     native_target_kind: str
     official_target_position_xyz: tuple[float, float, float] | None = None
     official_goal_region_xyxy: tuple[float, float, float, float] | None = None
@@ -56,11 +58,14 @@ class LiberoProxyTaskSpec:
             ("official_object_position_xyz", self.official_object_position_xyz, 3),
             ("official_object_orientation_wxyz", self.official_object_orientation_wxyz, 4),
             ("collision_scale_xyz", self.collision_scale_xyz, 3),
+            ("reference_root_to_proxy_world_xyz", self.reference_root_to_proxy_world_xyz, 3),
         ):
             if len(value) != length or not all(math.isfinite(float(item)) for item in value):
                 raise ValueError(f"{name} must contain {length} finite values")
         if any(value <= 0.0 or value > 0.25 for value in self.collision_scale_xyz):
             raise ValueError("collision_scale_xyz must lie in (0,0.25]")
+        if not self.collision_proxy_source.strip():
+            raise ValueError("collision_proxy_source must be non-empty")
         if self.native_target_kind == "placement":
             if self.official_target_position_xyz is None:
                 raise ValueError("placement proxy task requires a target position")
@@ -121,7 +126,12 @@ LIBERO_PROXY_TASK_SPECS: Mapping[str, LiberoProxyTaskSpec] = {
             1.6673002289947323e-06,
             0.7071067792293566,
         ),
-        collision_scale_xyz=(0.080, 0.080, 0.050),
+        collision_scale_xyz=(0.024, 0.020, 0.040),
+        reference_root_to_proxy_world_xyz=(0.006, 0.039, 0.0226),
+        collision_proxy_source=(
+            "graspable bowl-rim contact patch centered at the first close pose from the "
+            "successful official X-VLA sync capability episode"
+        ),
         native_target_kind="placement",
         official_target_position_xyz=(
             0.07160358130313628,
@@ -155,6 +165,10 @@ LIBERO_PROXY_TASK_SPECS: Mapping[str, LiberoProxyTaskSpec] = {
             0.7071067522302282,
         ),
         collision_scale_xyz=(0.130, 0.130, 0.012),
+        reference_root_to_proxy_world_xyz=(0.0, 0.0, 0.0034936614709535),
+        collision_proxy_source=(
+            "full plate footprint and thickness from the canonical asset envelope"
+        ),
         native_target_kind="push_region",
         official_goal_region_xyxy=(-0.09, 0.17, -0.01, 0.25),
         official_fixture_position_xyz=(-0.4057642106346003, 0.21998013266492758, 0.905),
@@ -178,6 +192,24 @@ def proxy_task_specs_sha256() -> str:
     payload = {key: asdict(value) for key, value in LIBERO_PROXY_TASK_SPECS.items()}
     encoded = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
     return hashlib.sha256(encoded).hexdigest()
+
+
+def _rotation_matrix_wxyz(value: Sequence[float]) -> np.ndarray:
+    quaternion = np.asarray(value, dtype=np.float64)
+    if quaternion.shape != (4,) or not np.isfinite(quaternion).all():
+        raise ValueError("proxy orientation must be a finite scalar-first quaternion")
+    norm = float(np.linalg.norm(quaternion))
+    if norm <= 1e-12:
+        raise ValueError("proxy orientation quaternion must be nonzero")
+    w, x, y, z = quaternion / norm
+    return np.asarray(
+        [
+            [1.0 - 2.0 * (y * y + z * z), 2.0 * (x * y - z * w), 2.0 * (x * z + y * w)],
+            [2.0 * (x * y + z * w), 1.0 - 2.0 * (x * x + z * z), 2.0 * (y * z - x * w)],
+            [2.0 * (x * z - y * w), 2.0 * (y * z + x * w), 1.0 - 2.0 * (x * x + y * y)],
+        ],
+        dtype=np.float64,
+    )
 
 
 class LiberoProxyTaskScene:
@@ -212,10 +244,13 @@ class LiberoProxyTaskScene:
                 f"expected={spec.collision_scale_xyz}, actual={scene.object_collision_scale_xyz}"
             )
         mapped_reference = spec.map_position(spec.official_object_position_xyz)
-        physical_position = (
-            mapped_reference[0],
-            mapped_reference[1],
-            0.5 * spec.collision_scale_xyz[2],
+        physical_position = tuple(
+            root + offset
+            for root, offset in zip(
+                mapped_reference,
+                spec.reference_root_to_proxy_world_xyz,
+                strict=True,
+            )
         )
         scene.set_object_pose(
             position_xyz=physical_position,
@@ -223,11 +258,10 @@ class LiberoProxyTaskScene:
             settle_steps=12,
         )
         settled = scene.measure()
-        self._official_pose_offset_isaac_xyz = tuple(
-            mapped - measured
-            for mapped, measured in zip(
-                mapped_reference, settled.object_xyz, strict=True
-            )
+        settled_rotation = _rotation_matrix_wxyz(settled.object_wxyz)
+        self._proxy_to_official_root_local_xyz = settled_rotation.T @ (
+            np.asarray(mapped_reference, dtype=np.float64)
+            - np.asarray(settled.object_xyz, dtype=np.float64)
         )
 
         target_geometry: dict[str, Any]
@@ -319,7 +353,9 @@ class LiberoProxyTaskScene:
                 "static_target_geometry": target_geometry,
                 "static_target_geometry_policy_input": False,
             },
-            "official_pose_offset_isaac_xyz": list(self._official_pose_offset_isaac_xyz),
+            "proxy_to_official_root_local_xyz": (
+                self._proxy_to_official_root_local_xyz.tolist()
+            ),
             "aligned_home_measurement": {
                 "policy_eef_command_xyz": list(aligned_home),
                 "isaac_hand_command_xyz": aligned_hand_position.tolist(),
@@ -332,13 +368,10 @@ class LiberoProxyTaskScene:
         """The native rigid proxy is already the visible moving object."""
 
     def official_object_states(self, measurement: Any) -> dict[str, Any]:
-        mapped_isaac_position = tuple(
-            float(value) + offset
-            for value, offset in zip(
-                measurement.object_xyz,
-                self._official_pose_offset_isaac_xyz,
-                strict=True,
-            )
+        rotation = _rotation_matrix_wxyz(measurement.object_wxyz)
+        mapped_isaac_position = (
+            np.asarray(measurement.object_xyz, dtype=np.float64)
+            + rotation @ self._proxy_to_official_root_local_xyz
         )
         return {
             self.spec.official_object_name: {
