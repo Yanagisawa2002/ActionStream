@@ -55,7 +55,9 @@ def test_spatial2_proxy_is_an_explicit_graspable_rim_contact_patch() -> None:
             mapped_root, spec.reference_root_to_proxy_world_xyz, strict=True
         )
     )
-    assert proxy_center == pytest.approx((0.5910084, 0.0539612, 0.0210071))
+    assert proxy_center == pytest.approx(
+        (0.5910084, 0.0539612, 0.0210071), abs=1e-7
+    )
     rotation = _rotation_matrix_wxyz(spec.official_object_orientation_wxyz)
     proxy_to_root_local = rotation.T @ (
         np.asarray(mapped_root) - np.asarray(proxy_center)
