@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 
@@ -104,3 +105,43 @@ def test_summary_computes_paired_effects_per_seed() -> None:
         "mean"
     ] == pytest.approx(2.0)
     assert aggregate["joint_shift"]["full_chunk_rmse"]["mean"] == pytest.approx(3.0)
+
+
+def test_frozen_result_is_complete_and_recomputes_to_reported_effects() -> None:
+    result_path = ROOT / "outputs" / "xvla_isaac_input_counterfactual_v1" / "summary.json"
+    summary = json.loads(result_path.read_text(encoding="utf-8"))
+    config_path = ROOT / "configs" / "xvla_isaac_input_counterfactual_v1.json"
+    config_sha256 = hashlib.sha256(config_path.read_bytes()).hexdigest()
+
+    assert summary["evidence_class"] == "offline_first_chunk_input_counterfactual"
+    assert summary["task_success_evidence"] is False
+    assert summary["config_sha256"] == config_sha256
+    assert len(summary["records"]) == 12
+    assert summary["official_observation"]["image_sha256"] == (
+        "5e4c361d237eb2fcf686c4d6a752894658bcfc09a00b8c5b64393e9b4f892ac5"
+    )
+    assert summary["official_observation"]["image2_sha256"] == (
+        "5b3e7f5becfa62667c9cd563a6f7bfcd74d498ae7c2d6b8bc1b83ea6f7824caa"
+    )
+
+    recomputed = summarize_records(summary["records"])
+    assert recomputed == summary["analysis"]
+    aggregate = recomputed["aggregate"]
+    image_effect = aggregate["image_effect_holding_official_state"]
+    state_effect = aggregate["state_effect_holding_official_images"]
+    assert image_effect["full_chunk_rmse"]["mean"] == pytest.approx(0.7608883155)
+    assert state_effect["full_chunk_rmse"]["mean"] == pytest.approx(0.0052385180)
+    assert image_effect["full_chunk_rmse"]["mean"] > 100 * state_effect[
+        "full_chunk_rmse"
+    ]["mean"]
+    assert image_effect["first_action_xyz_l2"]["mean"] > 8 * state_effect[
+        "first_action_xyz_l2"
+    ]["mean"]
+
+    for record in summary["records"]:
+        if record["image_source"] == "official":
+            assert record["descriptors"]["gripper_negative_fraction"] == 1.0
+            assert record["descriptors"]["gripper_positive_fraction"] == 0.0
+        else:
+            assert record["descriptors"]["gripper_negative_fraction"] == 0.0
+            assert record["descriptors"]["gripper_positive_fraction"] == 1.0

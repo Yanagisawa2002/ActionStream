@@ -149,7 +149,7 @@ def save_rgb_batch(value: Any, path: Path) -> str:
             array = np.rint(array * 255.0)
         array = np.clip(array, 0, 255).astype(np.uint8)
     path.parent.mkdir(parents=True, exist_ok=True)
-    Image.fromarray(array[0], mode="RGB").save(path)
+    Image.fromarray(array[0]).save(path)
     return sha256_file(path)
 
 

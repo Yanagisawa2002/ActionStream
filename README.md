@@ -111,6 +111,19 @@ local video evidence, and recovery gate are recorded in
 [the learned Isaac status](docs/learned_isaac_status.md). M8's positive scripted
 runtime result above is unchanged and remains separately scoped.
 
+A frozen 2x2 first-chunk counterfactual now explains the immediate failure.
+Holding official state fixed, native Isaac images move the X-VLA chunk by
+0.760888 RMSE, versus 0.005239 when only native state is substituted: a 145.25x
+contrast. The images alone also change first commanded Z from about 0.242 m to
+0.126 m and flip all 30 raw gripper signs from -1 to +1. The result identifies
+visual/camera domain mismatch as the dominant initial error, while remaining an
+offline attribution diagnostic rather than task-success evidence.
+
+![X-VLA official/native input counterfactual](outputs/xvla_isaac_input_counterfactual_v1/input_counterfactual.png)
+
+Evidence: [counterfactual report](outputs/xvla_isaac_input_counterfactual_v1/report.md)
+and [raw 12-inference summary](outputs/xvla_isaac_input_counterfactual_v1/summary.json).
+
 ## M7-G0: ROS 2 / Isaac Sim runtime integration — NO-GO
 
 M7 adds a mixed C++17/Python ROS 2 Jazzy runtime and an official Isaac Sim

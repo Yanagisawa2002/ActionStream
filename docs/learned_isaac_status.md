@@ -69,6 +69,30 @@ Isaac candidate begins near
 The remaining position and gripper divergence is therefore a real
 observation/domain capability gap, not a queue-runtime result.
 
+## Frozen image/state counterfactual
+
+A result-frozen four-cell diagnostic now isolates that gap at the first X-VLA
+action chunk. Across three paired inference seeds, replacing only the official
+LIBERO images with the native Isaac agent/wrist images produced 0.760888
+full-chunk RMSE and 0.115453 m first-action XYZ displacement. Replacing only the
+official state with the native mapped state produced 0.005239 RMSE and 0.013787
+m displacement. The image intervention is 145.25x larger by chunk RMSE.
+
+More concretely, official images produce an initial Z near 0.242 m and 30/30
+negative gripper rows under either state. Native images produce Z near 0.126 m
+and 30/30 positive gripper rows under either state. This reproduces the failed
+rollout's low approach and premature close without involving any async runtime.
+The official/official first action remains within 0.000399 L2 of the prior
+successful official task-0 trace, which validates the diagnostic path.
+
+This is a **positive attribution result, not a task-success result**. It shows
+that visual/camera domain mismatch is the dominant immediate source of the
+first-chunk error. The mapped joint-position mismatch (native-vs-official L2
+1.988671) remains real and should be corrected, but its controlled initial
+effect is much smaller; later-episode effects are not ruled out. See the
+[counterfactual report](../outputs/xvla_isaac_input_counterfactual_v1/report.md)
+and [content-level figure](../outputs/xvla_isaac_input_counterfactual_v1/input_counterfactual.png).
+
 ## Evidence and provenance
 
 Local small evidence root (kept outside normal Git staging):
@@ -78,6 +102,12 @@ Local small evidence root (kept outside normal Git staging):
 - `outputs/learned_isaac_libero_taskcap_rigidcamera_300_v1/policy_actions.jsonl`
 - `outputs/learned_isaac_libero_taskcap_rigidcamera_300_v1/learned_isaac_smoke.mp4`
 - `outputs/learned_isaac_libero_taskcap_rigidcamera_300_v1/video_contact_sheet.jpg`
+
+Frozen counterfactual evidence:
+
+- `outputs/xvla_isaac_input_counterfactual_v1/summary.json`
+- `outputs/xvla_isaac_input_counterfactual_v1/report.md`
+- `outputs/xvla_isaac_input_counterfactual_v1/input_counterfactual.png`
 
 Remote complete evidence root:
 `/root/autodl-tmp/results/learned_isaac_libero_taskcap_rigidcamera_300_v1`
