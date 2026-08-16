@@ -579,6 +579,24 @@ def main(argv: Sequence[str] | None = None) -> int:
                 if proxy_scene_spec is not None
                 else None
             ),
+            object_collision_boxes=(
+                [
+                    {
+                        "position_xyz": box.position_xyz,
+                        "orientation_wxyz": box.orientation_wxyz,
+                        "half_extents_xyz": box.half_extents_xyz,
+                    }
+                    for box in proxy_scene_spec.compound_collision_boxes
+                ]
+                if proxy_scene_spec is not None
+                and proxy_scene_spec.compound_collision_boxes
+                else None
+            ),
+            object_mass_kg=(
+                proxy_scene_spec.object_mass_kg
+                if proxy_scene_spec is not None
+                else None
+            ),
         )
         from action_stream_isaac.dynamic_task import scenario_for_seed, scenario_payload
 

@@ -1012,6 +1012,8 @@ class DynamicIsaacScene:
         task_config: DynamicTaskConfig,
         policy_config: DynamicPolicyConfig,
         object_collision_scale_xyz: Sequence[float] | None = None,
+        object_collision_boxes: Sequence[Mapping[str, Sequence[float]]] | None = None,
+        object_mass_kg: float | None = None,
     ) -> None:
         # All Isaac imports intentionally occur only after SimulationApp starts.
         import numpy as np
@@ -1038,6 +1040,46 @@ class DynamicIsaacScene:
                     "object_collision_scale_xyz must contain three finite values in (0,0.25]"
                 )
         self.object_collision_scale_xyz = object_scale
+        normalized_collision_boxes: list[dict[str, tuple[float, ...]]] = []
+        for index, raw_box in enumerate(object_collision_boxes or ()):
+            if not isinstance(raw_box, Mapping):
+                raise ValueError(f"object collision box {index} must be a mapping")
+            normalized: dict[str, tuple[float, ...]] = {}
+            for key, length in (
+                ("position_xyz", 3),
+                ("orientation_wxyz", 4),
+                ("half_extents_xyz", 3),
+            ):
+                values = tuple(float(value) for value in raw_box.get(key, ()))
+                if len(values) != length or not all(
+                    math.isfinite(value) for value in values
+                ):
+                    raise ValueError(
+                        f"object collision box {index} {key} must contain "
+                        f"{length} finite values"
+                    )
+                normalized[key] = values
+            if any(
+                value <= 0.0 or value > 0.25
+                for value in normalized["half_extents_xyz"]
+            ):
+                raise ValueError(
+                    f"object collision box {index} half extents must lie in (0,0.25]"
+                )
+            quaternion_norm = math.sqrt(
+                sum(value * value for value in normalized["orientation_wxyz"])
+            )
+            if not math.isclose(quaternion_norm, 1.0, abs_tol=2e-4):
+                raise ValueError(
+                    f"object collision box {index} quaternion is not normalized"
+                )
+            normalized_collision_boxes.append(normalized)
+        self.object_collision_boxes = tuple(normalized_collision_boxes)
+        if object_mass_kg is not None:
+            object_mass_kg = float(object_mass_kg)
+            if not math.isfinite(object_mass_kg) or not 0.0 < object_mass_kg <= 10.0:
+                raise ValueError("object_mass_kg must be finite and lie in (0,10]")
+        self.object_mass_kg = object_mass_kg
         app_utils.enable_extension("isaacsim.robot.experimental.manipulators.examples")
         simulation_app.update()
         from isaacsim.robot.experimental.manipulators.examples.franka import Franka
@@ -1070,16 +1112,52 @@ class DynamicIsaacScene:
         self._franka = Franka(robot_path=FRANKA_PATH, create_robot=True)
         self._articulation = self._franka
 
-        cube = Cube(
-            paths=OBJECT_PATH,
-            positions=[0.45, 0.0, self.config.object_center_z_m],
-            orientations=[1.0, 0.0, 0.0, 0.0],
-            sizes=1.0,
-            scales=self.object_collision_scale_xyz,
-            colors="blue",
-        )
-        GeomPrim(paths=cube.paths, apply_collision_apis=True)
-        self._object = RigidPrim(paths=cube.paths)
+        if self.object_collision_boxes:
+            import omni.usd
+            from pxr import Gf, UsdGeom, UsdPhysics
+
+            # A tiny non-colliding root Gprim gives RigidPrim a stable body path;
+            # each visible child cube carries one canonical compound collider.
+            body = Cube(
+                paths=OBJECT_PATH,
+                positions=[0.45, 0.0, self.config.object_center_z_m],
+                orientations=[1.0, 0.0, 0.0, 0.0],
+                sizes=0.001,
+                scales=(1.0, 1.0, 1.0),
+                colors="blue",
+            )
+            stage = omni.usd.get_context().get_stage()
+            if stage is None:
+                raise RuntimeError("Isaac has no stage for compound object collision")
+            for index, box in enumerate(self.object_collision_boxes):
+                path = f"{OBJECT_PATH}/CollisionBox{index:02d}"
+                cube = UsdGeom.Cube.Define(stage, path)
+                cube.CreateSizeAttr(1.0)
+                cube.CreateDisplayColorAttr([Gf.Vec3f(0.08, 0.18, 0.90)])
+                xformable = UsdGeom.Xformable(cube)
+                xformable.AddTranslateOp().Set(Gf.Vec3d(*box["position_xyz"]))
+                w, x, y, z = box["orientation_wxyz"]
+                xformable.AddOrientOp().Set(Gf.Quatd(w, Gf.Vec3d(x, y, z)))
+                half_x, half_y, half_z = box["half_extents_xyz"]
+                xformable.AddScaleOp().Set(
+                    Gf.Vec3d(2.0 * half_x, 2.0 * half_y, 2.0 * half_z)
+                )
+                UsdPhysics.CollisionAPI.Apply(cube.GetPrim())
+            if self.object_mass_kg is not None:
+                mass_api = UsdPhysics.MassAPI.Apply(stage.GetPrimAtPath(OBJECT_PATH))
+                mass_api.CreateMassAttr(float(self.object_mass_kg))
+            self._object = RigidPrim(paths=body.paths)
+        else:
+            cube = Cube(
+                paths=OBJECT_PATH,
+                positions=[0.45, 0.0, self.config.object_center_z_m],
+                orientations=[1.0, 0.0, 0.0, 0.0],
+                sizes=1.0,
+                scales=self.object_collision_scale_xyz,
+                colors="blue",
+            )
+            GeomPrim(paths=cube.paths, apply_collision_apis=True)
+            self._object = RigidPrim(paths=cube.paths)
 
         marker_z = 0.003
         zone_scale = [2.0 * self.config.placement_tolerance_m] * 2 + [0.004]

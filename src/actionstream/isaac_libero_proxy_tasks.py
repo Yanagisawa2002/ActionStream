@@ -27,6 +27,29 @@ from actionstream.isaac_learned import (
 
 
 @dataclass(frozen=True, slots=True)
+class CollisionBoxSpec:
+    position_xyz: tuple[float, float, float]
+    orientation_wxyz: tuple[float, float, float, float]
+    half_extents_xyz: tuple[float, float, float]
+
+    def validate(self) -> None:
+        for name, values, length in (
+            ("position_xyz", self.position_xyz, 3),
+            ("orientation_wxyz", self.orientation_wxyz, 4),
+            ("half_extents_xyz", self.half_extents_xyz, 3),
+        ):
+            if len(values) != length or not all(
+                math.isfinite(float(value)) for value in values
+            ):
+                raise ValueError(f"collision box {name} must contain {length} finite values")
+        if any(value <= 0.0 or value > 0.25 for value in self.half_extents_xyz):
+            raise ValueError("collision box half extents must lie in (0,0.25]")
+        quaternion_norm = math.sqrt(sum(value * value for value in self.orientation_wxyz))
+        if not math.isclose(quaternion_norm, 1.0, abs_tol=2e-4):
+            raise ValueError("collision box orientation must be a unit quaternion")
+
+
+@dataclass(frozen=True, slots=True)
 class LiberoProxyTaskSpec:
     key: str
     suite: str
@@ -46,6 +69,8 @@ class LiberoProxyTaskSpec:
     official_target_position_xyz: tuple[float, float, float] | None = None
     official_goal_region_xyxy: tuple[float, float, float, float] | None = None
     official_fixture_position_xyz: tuple[float, float, float] | None = None
+    compound_collision_boxes: tuple[CollisionBoxSpec, ...] = ()
+    object_mass_kg: float | None = None
 
     def validate(self) -> None:
         if not self.key or not self.suite or not self.instruction:
@@ -66,6 +91,12 @@ class LiberoProxyTaskSpec:
             raise ValueError("collision_scale_xyz must lie in (0,0.25]")
         if not self.collision_proxy_source.strip():
             raise ValueError("collision_proxy_source must be non-empty")
+        for box in self.compound_collision_boxes:
+            box.validate()
+        if self.object_mass_kg is not None and not (
+            math.isfinite(self.object_mass_kg) and 0.0 < self.object_mass_kg <= 10.0
+        ):
+            raise ValueError("object_mass_kg must be finite and lie in (0,10]")
         if self.native_target_kind == "placement":
             if self.official_target_position_xyz is None:
                 raise ValueError("placement proxy task requires a target position")
@@ -169,19 +200,67 @@ LIBERO_PROXY_TASK_SPECS: Mapping[str, LiberoProxyTaskSpec] = {
             0.1374699120165223,
             0.01894636973086458,
         ),
-        reference_root_to_proxy_world_xyz=(
-            -0.0003476524887801814,
-            0.000817412000833161,
-            0.00696,
-        ),
+        reference_root_to_proxy_world_xyz=(0.0, 0.0, 0.0),
         collision_proxy_source=(
-            "axis-aligned union envelope of the ten box collision geoms in the "
-            "canonical LIBERO plate.xml; local min=(-0.0679931908,-0.0683873229,"
-            "-0.0025131849), max=(0.0696280313,0.0690825891,0.0164331849) m"
+            "the ten oriented box collision geoms and compiled body mass from the "
+            "canonical LIBERO stable_scanned_objects/plate/plate.xml"
         ),
         native_target_kind="push_region",
         official_goal_region_xyxy=(-0.09, 0.17, -0.01, 0.25),
         official_fixture_position_xyz=(-0.4057642106346003, 0.21998013266492758, 0.905),
+        compound_collision_boxes=(
+            CollisionBoxSpec(
+                position_xyz=(0.0, 0.0, 0.00313),
+                orientation_wxyz=(0.499356, 0.49356, -0.50636, 0.50636),
+                half_extents_xyz=(0.00222, 0.02851, 0.03057),
+            ),
+            CollisionBoxSpec(
+                position_xyz=(0.0, 0.04828, 0.00696),
+                orientation_wxyz=(0.70574, 0.12139, 0.68790, 0.11832),
+                half_extents_xyz=(0.00254, 0.01913, 0.02851),
+            ),
+            CollisionBoxSpec(
+                position_xyz=(0.0, 0.04828, 0.00696),
+                orientation_wxyz=(0.70574, 0.12139, 0.68790, 0.11832),
+                half_extents_xyz=(0.00254, 0.01913, 0.02851),
+            ),
+            CollisionBoxSpec(
+                position_xyz=(0.03237, 0.03583, 0.00696),
+                orientation_wxyz=(0.70114, 0.36036, 0.59839, -0.14306),
+                half_extents_xyz=(0.00254, 0.01913, 0.02851),
+            ),
+            CollisionBoxSpec(
+                position_xyz=(0.04818, 0.00314, 0.00696),
+                orientation_wxyz=(0.59590, 0.55892, 0.41899, -0.39618),
+                half_extents_xyz=(0.00254, 0.01913, 0.02851),
+            ),
+            CollisionBoxSpec(
+                position_xyz=(0.03658, -0.03152, 0.00696),
+                orientation_wxyz=(0.67591, -0.40164, 0.59224, 0.17629),
+                half_extents_xyz=(0.00254, 0.01913, 0.02851),
+            ),
+            CollisionBoxSpec(
+                position_xyz=(0.00230, -0.04823, 0.00696),
+                orientation_wxyz=(0.13507, 0.69059, -0.10500, -0.70272),
+                half_extents_xyz=(0.00254, 0.01913, 0.02851),
+            ),
+            CollisionBoxSpec(
+                position_xyz=(-0.03334, -0.03492, 0.00696),
+                orientation_wxyz=(0.59339, 0.15267, 0.69911, -0.36855),
+                half_extents_xyz=(0.00254, 0.01913, 0.02851),
+            ),
+            CollisionBoxSpec(
+                position_xyz=(-0.04827, -0.00130, 0.00696),
+                orientation_wxyz=(0.40827, 0.40746, 0.58825, -0.56679),
+                half_extents_xyz=(0.00254, 0.01913, 0.02851),
+            ),
+            CollisionBoxSpec(
+                position_xyz=(-0.03442, 0.03386, 0.00696),
+                orientation_wxyz=(0.60516, -0.15392, 0.68136, 0.38190),
+                half_extents_xyz=(0.00254, 0.01913, 0.02851),
+            ),
+        ),
+        object_mass_kg=0.011522081577600004,
     ),
 }
 
@@ -365,6 +444,10 @@ class LiberoProxyTaskScene:
             "physics": {
                 "source": "native Isaac",
                 "dynamic_object_collision_proxy_scale_xyz": list(spec.collision_scale_xyz),
+                "dynamic_object_compound_collision_boxes": [
+                    asdict(box) for box in spec.compound_collision_boxes
+                ],
+                "dynamic_object_mass_kg": spec.object_mass_kg,
                 "static_target_geometry": target_geometry,
                 "static_target_geometry_policy_input": False,
             },

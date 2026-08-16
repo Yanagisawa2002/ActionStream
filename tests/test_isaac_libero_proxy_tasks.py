@@ -50,17 +50,16 @@ def test_goal5_proxy_uses_the_frozen_official_plate_collision_envelope() -> None
     assert spec.collision_scale_xyz == pytest.approx(
         (0.13762122220335729, 0.1374699120165223, 0.01894636973086458)
     )
-    mapped_root = spec.map_position(spec.official_object_position_xyz)
-    proxy_center = tuple(
-        root + offset
-        for root, offset in zip(
-            mapped_root, spec.reference_root_to_proxy_world_xyz, strict=True
-        )
+    assert spec.reference_root_to_proxy_world_xyz == (0.0, 0.0, 0.0)
+    assert len(spec.compound_collision_boxes) == 10
+    assert spec.object_mass_kg == pytest.approx(0.011522081577600004)
+    assert spec.compound_collision_boxes[0].half_extents_xyz == pytest.approx(
+        (0.00222, 0.02851, 0.03057)
     )
-    assert proxy_center == pytest.approx(
-        (0.7115115904151907, -0.027675710927846743, 0.00946633852904651)
+    assert spec.compound_collision_boxes[-1].position_xyz == pytest.approx(
+        (-0.03442, 0.03386, 0.00696)
     )
-    assert "ten box collision geoms" in spec.collision_proxy_source
+    assert "ten oriented box collision geoms" in spec.collision_proxy_source
 
 
 def test_spatial2_proxy_is_an_explicit_graspable_rim_contact_patch() -> None:
