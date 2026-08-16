@@ -206,7 +206,11 @@ class LiberoProxyTaskScene:
             if prim.IsValid() and prim.IsA(UsdGeom.Imageable):
                 UsdGeom.Imageable(prim).MakeInvisible()
 
-        scene.set_object_collision_scale(spec.collision_scale_xyz)
+        if tuple(scene.object_collision_scale_xyz) != tuple(spec.collision_scale_xyz):
+            raise RuntimeError(
+                "native object collision scale was not frozen before physics setup: "
+                f"expected={spec.collision_scale_xyz}, actual={scene.object_collision_scale_xyz}"
+            )
         mapped_reference = spec.map_position(spec.official_object_position_xyz)
         physical_position = (
             mapped_reference[0],

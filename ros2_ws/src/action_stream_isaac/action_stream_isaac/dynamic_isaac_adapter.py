@@ -1011,6 +1011,7 @@ class DynamicIsaacScene:
         *,
         task_config: DynamicTaskConfig,
         policy_config: DynamicPolicyConfig,
+        object_collision_scale_xyz: Sequence[float] | None = None,
     ) -> None:
         # All Isaac imports intentionally occur only after SimulationApp starts.
         import numpy as np
@@ -1026,6 +1027,17 @@ class DynamicIsaacScene:
         self.config.validate()
         self.policy_config = policy_config
         self.policy_config.validate()
+        if object_collision_scale_xyz is None:
+            object_scale = (self.config.cube_side_m,) * 3
+        else:
+            object_scale = tuple(float(value) for value in object_collision_scale_xyz)
+            if len(object_scale) != 3 or not all(
+                math.isfinite(value) and 0.0 < value <= 0.25 for value in object_scale
+            ):
+                raise ValueError(
+                    "object_collision_scale_xyz must contain three finite values in (0,0.25]"
+                )
+        self.object_collision_scale_xyz = object_scale
         app_utils.enable_extension("isaacsim.robot.experimental.manipulators.examples")
         simulation_app.update()
         from isaacsim.robot.experimental.manipulators.examples.franka import Franka
@@ -1063,7 +1075,7 @@ class DynamicIsaacScene:
             positions=[0.45, 0.0, self.config.object_center_z_m],
             orientations=[1.0, 0.0, 0.0, 0.0],
             sizes=1.0,
-            scales=[self.config.cube_side_m] * 3,
+            scales=self.object_collision_scale_xyz,
             colors="blue",
         )
         GeomPrim(paths=cube.paths, apply_collision_apis=True)
@@ -1269,31 +1281,6 @@ class DynamicIsaacScene:
             linear_velocities=(0.0, 0.0, 0.0),
             angular_velocities=(0.0, 0.0, 0.0),
         )
-        for _ in range(settle_steps):
-            self._raw_step()
-
-    def set_object_collision_scale(
-        self,
-        scale_xyz: Sequence[float],
-        *,
-        settle_steps: int = 0,
-    ) -> None:
-        """Resize the single native rigid proxy for an audited learned task.
-
-        The base M8 task intentionally uses a cube.  Learned LIBERO tasks can
-        instead require a bowl-sized or plate-shaped contact footprint.  Keep
-        that bounded geometry change explicit on the native rigid body rather
-        than hiding it in a rendered mesh or changing policy observations.
-        """
-
-        scale = tuple(float(value) for value in scale_xyz)
-        if len(scale) != 3 or not all(math.isfinite(value) and value > 0 for value in scale):
-            raise ValueError("object collision scale must contain three positive finite values")
-        if any(value > 0.25 for value in scale):
-            raise ValueError("object collision scale is outside the bounded 0.25 m envelope")
-        if not isinstance(settle_steps, int) or not 0 <= settle_steps <= 120:
-            raise ValueError("object scale settle steps must be an integer in [0,120]")
-        self._object.set_local_scales(scale)
         for _ in range(settle_steps):
             self._raw_step()
 

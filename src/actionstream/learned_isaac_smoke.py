@@ -542,6 +542,11 @@ def main(argv: Sequence[str] | None = None) -> int:
             raise RuntimeError(f"native Isaac capability probe failed: {capability.to_dict()}")
         scene_protocol = json.loads(scene_protocol_path.read_text(encoding="utf-8"))
         task_config, policy_config = runtime_configs_from_protocol(scene_protocol)
+        proxy_scene_spec: Any | None = None
+        if task_scene_key in {"spatial2", "goal5"}:
+            from actionstream.isaac_libero_proxy_tasks import proxy_task_spec
+
+            proxy_scene_spec = proxy_task_spec(task_scene_key)
 
         # Start LeRobot before Kit.  SimulationApp mutates process-wide Python
         # interpreter hints for its embedded runtime; a worker forked afterward
@@ -566,7 +571,14 @@ def main(argv: Sequence[str] | None = None) -> int:
 
         simulation_app = SimulationApp({"headless": bool(args.headless)})
         scene = DynamicIsaacScene(
-            simulation_app, task_config=task_config, policy_config=policy_config
+            simulation_app,
+            task_config=task_config,
+            policy_config=policy_config,
+            object_collision_scale_xyz=(
+                proxy_scene_spec.collision_scale_xyz
+                if proxy_scene_spec is not None
+                else None
+            ),
         )
         from action_stream_isaac.dynamic_task import scenario_for_seed, scenario_payload
 
@@ -620,13 +632,14 @@ def main(argv: Sequence[str] | None = None) -> int:
         elif task_scene_key is not None:
             from actionstream.isaac_libero_proxy_tasks import (
                 LiberoProxyTaskScene,
-                proxy_task_spec,
             )
 
+            if proxy_scene_spec is None:
+                raise RuntimeError("proxy task scene has no frozen task specification")
             learned_task_scene = LiberoProxyTaskScene(
                 simulation_app,
                 scene,
-                spec=proxy_task_spec(task_scene_key),
+                spec=proxy_scene_spec,
             )
             reset_measurement = scene.measure()
             camera_position = learned_task_scene.camera_position_xyz
