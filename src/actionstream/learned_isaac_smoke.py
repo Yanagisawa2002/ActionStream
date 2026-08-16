@@ -715,6 +715,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         active_chunk_offset = 0
         total_workspace_clips = 0
         total_translation_limits = 0
+        task_success_control_step: int | None = None
 
         with (
             events_path.open("w", encoding="utf-8") as events,
@@ -845,6 +846,13 @@ def main(argv: Sequence[str] | None = None) -> int:
                         + "\n"
                     )
                     policy_actions.flush()
+                    bridge_at_request = response.get("official_render_bridge")
+                    if (
+                        isinstance(bridge_at_request, Mapping)
+                        and bridge_at_request.get("official_task_success") is True
+                    ):
+                        task_success_control_step = control_step
+                        break
                 if active_chunk is None or active_chunk_offset >= len(active_chunk):
                     raise RuntimeError("learned policy produced no executable action")
 
@@ -1031,6 +1039,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             "task_scene_key": task_scene_key,
             "official_render_bridge": bool(args.official_render_bridge),
             "control_steps": args.control_steps,
+            "executed_control_steps": len(mapped_commands),
+            "task_success_control_step": task_success_control_step,
             "request_interval_steps": args.request_interval_steps,
             "worker_ready": worker_ready,
             "request_records": requests,
