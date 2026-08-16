@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "experiment_id": "xvla_isaac_visual_canary_v2_inference",
+  "frozen_utc": "2026-08-16T16:37:05Z",
+  "freeze_status": "frozen_before_formal_inference",
+  "causal_question": "Does the predeclared official-table native-Isaac visual candidate restore the first X-VLA action chunk toward the paired official LIBERO observation strongly enough to enter a sync capability gate?",
+  "canary_contract": {
+    "path": "configs/xvla_isaac_visual_canary_v2.json",
+    "sha256": "cefc43e94e7fd8ec319d05e9a4dd6b7369530bbc58565d6e07bea112b532f9d5"
+  },
+  "policy": {
+    "key": "xvla",
+    "model_id": "lerobot/xvla-libero",
+    "revision": "12e8783e996944f5c97e490d37d4c145484ed70a",
+    "processor_source": "pinned CurrentLeRobotBackend from configs/current_lerobot_baselines.json",
+    "protocol_path": "configs/current_lerobot_baselines.json",
+    "protocol_sha256": "76ed5e5a0d2a0780c2fb858741c9e8a16fdc36cac1f3c991977b9b11fd6a164a",
+    "device": "cuda"
+  },
+  "official_observation": {
+    "suite": "libero_object",
+    "task_id": 0,
+    "initial_state_index": 0,
+    "environment_seed": 2026081601,
+    "instruction": "pick up the alphabet soup and place it in the basket",
+    "source": "exact observation returned by CurrentLeRobotBackend.reset_episode"
+  },
+  "native_observation": {
+    "candidate_key": "official_living_room_table_visual_v2",
+    "summary_path": "outputs/xvla_isaac_visual_canary_v1/learned_isaac_libero_visual_canary_v2_capture/summary.json",
+    "summary_sha256": "fff86a9198f7612323f1835e23147c2acd01e739f9567a180c783f036e0c27d7",
+    "image_path": "outputs/xvla_isaac_visual_canary_v1/learned_isaac_libero_visual_canary_v2_capture/policy_frames/frame_000000.png",
+    "image_sha256": "d367b385740ba80dfb5fcd059681f1539d3a8ba315d2155f5f70a606b3419840",
+    "image2_path": "outputs/xvla_isaac_visual_canary_v1/learned_isaac_libero_visual_canary_v2_capture/policy_wrist_frames/frame_000000.png",
+    "image2_sha256": "545189d26927da1b4eeee4a1c79ff1648022a4f786c53add6faf19c0103d5f14",
+    "robot_state_source": "request_records[0].robot_state",
+    "instruction": "pick up the alphabet soup and place it in the basket"
+  },
+  "conditions": [
+    {
+      "key": "official_images__official_state",
+      "images": "official",
+      "robot_state": "official"
+    },
+    {
+      "key": "native_images__official_state",
+      "images": "native",
+      "robot_state": "official"
+    },
+    {
+      "key": "official_images__native_state",
+      "images": "official",
+      "robot_state": "native"
+    },
+    {
+      "key": "native_images__native_state",
+      "images": "native",
+      "robot_state": "native"
+    }
+  ],
+  "paired_schedule": [
+    {
+      "inference_seed": 2026081701,
+      "condition_order": [
+        "official_images__official_state",
+        "native_images__official_state",
+        "official_images__native_state",
+        "native_images__native_state"
+      ]
+    },
+    {
+      "inference_seed": 2026081702,
+      "condition_order": [
+        "native_images__native_state",
+        "official_images__native_state",
+        "native_images__official_state",
+        "official_images__official_state"
+      ]
+    },
+    {
+      "inference_seed": 2026081703,
+      "condition_order": [
+        "official_images__native_state",
+        "official_images__official_state",
+        "native_images__native_state",
+        "native_images__official_state"
+      ]
+    }
+  ],
+  "reference_success_trace": {
+    "path": "outputs/current_lerobot_async_rtc/current_xvla_matrix_task0/traces/xvla__lerobot_latest_only__fixed_0000__task0__ep0.json",
+    "sha256": "f10d1f52324e292c9023456e57430704e50cb6dc4e82456ae1163d97c26221cb",
+    "use": "context only; not a tuning target because its episode seed differs"
+  },
+  "primary_metrics": [
+    "paired_full_chunk_rmse",
+    "paired_first_action_xyz_l2",
+    "paired_first_action_7d_l2",
+    "gripper_sign_fraction"
+  ],
+  "acceptance": {
+    "all_required": true,
+    "aggregate_mean_full_chunk_rmse_max": 0.25,
+    "aggregate_mean_first_action_xyz_l2_max_m": 0.05,
+    "aggregate_mean_first_action_7d_l2_max": 0.75,
+    "candidate_gripper_negative_fraction_min_each_seed": 0.9
+  },
+  "analysis_contract": {
+    "reference_condition": "official_images__official_state",
+    "image_effect_holding_official_state": "native_images__official_state minus official_images__official_state",
+    "state_effect_holding_official_images": "official_images__native_state minus official_images__official_state",
+    "joint_shift": "native_images__native_state minus official_images__official_state",
+    "formal_output_is_diagnostic_not_task_success": true,
+    "no_post_result_input_tuning": true
+  }
+}

@@ -15,6 +15,7 @@ import hashlib
 import json
 import math
 from pathlib import Path
+import shutil
 import time
 from typing import Any, Sequence
 
@@ -128,6 +129,23 @@ ISAAC_WRIST_CAMERA_PARENT_PATH = "/World"
 ISAAC_TASK_SURFACE_RENDER_CLEARANCE_M = 0.001
 LIBERO_WRIST_CAMERA_SETTLE_UPDATES = 4
 
+# The task is staged on LIBERO's living-room table, not a flat brown proxy.
+# These values are audited from
+# ``scenes/libero_living_room_tabletop_base_style.xml`` and the source OBJ.
+# The OBJ's dominant tabletop plane is placed at the normalized task surface
+# (Z=0), while preserving the XML-authored 1.5 scale, child translation, and
+# Z rotation. The audited maximum Z is retained to document the raised edge
+# that invalidated the first capture candidate.
+LIBERO_TABLE_VISUAL_SOURCE_POSITION_XYZ = (-0.25, 0.25, 0.0)
+LIBERO_TABLE_VISUAL_SOURCE_ORIENTATION_WXYZ = (
+    0.7071067811865476,
+    0.0,
+    0.0,
+    0.7071067811865476,
+)
+LIBERO_TABLE_VISUAL_SOURCE_TABLETOP_Z_M = 0.267306
+LIBERO_TABLE_VISUAL_SOURCE_MAX_Z_M = 0.299668
+
 
 @dataclass(frozen=True, slots=True)
 class LiberoVisualAsset:
@@ -209,6 +227,68 @@ VISUAL_ASSETS: tuple[LiberoVisualAsset, ...] = (
         0.0075,
     ),
 )
+
+LIBERO_TABLE_VISUAL_ASSET = LiberoVisualAsset(
+    "living_room_table_visual",
+    "scenes/living_room_table/living_room_table.obj",
+    (
+        "scenes/living_room_table/living_room_table.mtl",
+        "scenes/living_room_table/living_room_table_texture.png",
+        "scenes/living_room_table/living_room_table.xml",
+        "scenes/libero_living_room_tabletop_base_style.xml",
+    ),
+    1.5,
+)
+
+
+def _diffuse_only_table_mtl(source: str) -> tuple[str, tuple[str, ...]]:
+    """Remove the one MTL dependency absent from the canonical asset package."""
+
+    kept: list[str] = []
+    removed: list[str] = []
+    for line in source.splitlines():
+        if line.lstrip().lower().startswith("map_bump "):
+            removed.append(line.strip())
+        else:
+            kept.append(line)
+    if len(removed) != 1:
+        raise ValueError(
+            "expected exactly one missing living-room table map_Bump directive, "
+            f"found {len(removed)}"
+        )
+    return "\n".join(kept) + "\n", tuple(removed)
+
+
+def _prepare_table_converter_source(
+    *, assets_root: Path, cache_directory: Path
+) -> tuple[Path, dict[str, Any]]:
+    """Make a deterministic diffuse-only OBJ bundle for Isaac conversion."""
+
+    source_obj = assets_root / LIBERO_TABLE_VISUAL_ASSET.obj_relative_path
+    source_mtl = assets_root / LIBERO_TABLE_VISUAL_ASSET.auxiliary_relative_paths[0]
+    source_texture = assets_root / LIBERO_TABLE_VISUAL_ASSET.auxiliary_relative_paths[1]
+    source_mtl_sha256 = _sha256_file(source_mtl)
+    key = f"{_sha256_file(source_obj)[:12]}_{source_mtl_sha256[:12]}"
+    prepared = cache_directory / "prepared_sources" / f"living_room_table_{key}"
+    prepared.mkdir(parents=True, exist_ok=True)
+    prepared_obj = prepared / source_obj.name
+    prepared_mtl = prepared / source_mtl.name
+    prepared_texture = prepared / source_texture.name
+    shutil.copy2(source_obj, prepared_obj)
+    shutil.copy2(source_texture, prepared_texture)
+    sanitized, removed = _diffuse_only_table_mtl(
+        source_mtl.read_text(encoding="utf-8")
+    )
+    prepared_mtl.write_text(sanitized, encoding="utf-8")
+    provenance = {
+        "reason": "canonical asset package omits MTL map_Bump target; official XML uses the diffuse texture",
+        "removed_mtl_directives": list(removed),
+        "source_mtl_sha256": source_mtl_sha256,
+        "prepared_mtl_sha256": _sha256_file(prepared_mtl),
+        "prepared_obj_sha256": _sha256_file(prepared_obj),
+        "prepared_texture_sha256": _sha256_file(prepared_texture),
+    }
+    return prepared_obj, provenance
 
 
 def libero_to_isaac_position(position: Sequence[float]) -> tuple[float, float, float]:
@@ -348,6 +428,17 @@ def task0_scene_payload() -> dict[str, Any]:
             "vertical_fov_degrees": LIBERO_AGENTVIEW_FOVY_DEGREES,
             "source": "hf-libero canonical task reset camera transform",
         },
+        "table_visual": {
+            "source_asset": LIBERO_TABLE_VISUAL_ASSET.obj_relative_path,
+            "source_position_xyz": list(LIBERO_TABLE_VISUAL_SOURCE_POSITION_XYZ),
+            "source_orientation_wxyz": list(
+                LIBERO_TABLE_VISUAL_SOURCE_ORIENTATION_WXYZ
+            ),
+            "source_scale": LIBERO_TABLE_VISUAL_ASSET.scale,
+            "source_tabletop_z_m": LIBERO_TABLE_VISUAL_SOURCE_TABLETOP_Z_M,
+            "source_max_z_m": LIBERO_TABLE_VISUAL_SOURCE_MAX_Z_M,
+            "normalization": "dominant source tabletop plane mapped to Isaac task surface Z",
+        },
         "wrist_camera": {
             "source_parent": LIBERO_WRIST_CAMERA_SOURCE_PARENT,
             "source_local_translation_xyz": list(
@@ -408,7 +499,7 @@ def _sha256_file(path: Path) -> str:
 def validate_assets_root(root: Path) -> dict[str, str]:
     resolved = root.expanduser().resolve()
     hashes: dict[str, str] = {}
-    for spec in VISUAL_ASSETS:
+    for spec in (*VISUAL_ASSETS, LIBERO_TABLE_VISUAL_ASSET):
         for relative in (spec.obj_relative_path, *spec.auxiliary_relative_paths):
             path = resolved / relative
             if not path.is_file() or path.stat().st_size <= 0:
@@ -600,9 +691,20 @@ class LiberoObjectTask0Scene:
         context.use_meter_as_world_unit = True
         converter = omni.kit.asset_converter.get_instance()
         converted: dict[str, Path] = {}
-        for spec in VISUAL_ASSETS:
+        self.table_material_preparation: dict[str, Any] | None = None
+        for spec in (*VISUAL_ASSETS, LIBERO_TABLE_VISUAL_ASSET):
             source = self._assets_root / spec.obj_relative_path
             fingerprint = self.asset_source_sha256[spec.obj_relative_path][:12]
+            if spec == LIBERO_TABLE_VISUAL_ASSET:
+                source, self.table_material_preparation = (
+                    _prepare_table_converter_source(
+                        assets_root=self._assets_root,
+                        cache_directory=cache,
+                    )
+                )
+                fingerprint += (
+                    "_" + self.table_material_preparation["prepared_mtl_sha256"][:12]
+                )
             output = cache / f"{spec.name}_{fingerprint}.usd"
             if not output.is_file() or output.stat().st_size <= 0:
                 conversion = converter.create_converter_task(
@@ -637,19 +739,32 @@ class LiberoObjectTask0Scene:
                 UsdGeom.Imageable(prim).MakeInvisible()
 
         table_top_z = task0_scene_payload()["table_top_z_m"]
-        table_thickness = 0.004
-        Cube(
-            paths="/World/LiberoTask0/Table",
-            positions=[
-                0.35,
-                0.0,
-                table_top_z
-                + ISAAC_TASK_SURFACE_RENDER_CLEARANCE_M
-                - 0.5 * table_thickness,
-            ],
-            sizes=1.0,
-            scales=[2.4, 1.8, table_thickness],
-            colors=[0.34, 0.22, 0.14],
+        table_position = list(
+            libero_to_isaac_position(LIBERO_TABLE_VISUAL_SOURCE_POSITION_XYZ)
+        )
+        table_position[2] = (
+            table_top_z
+            + ISAAC_TASK_SURFACE_RENDER_CLEARANCE_M
+            - LIBERO_TABLE_VISUAL_ASSET.scale
+            * LIBERO_TABLE_VISUAL_SOURCE_TABLETOP_Z_M
+        )
+        table_root = self._stage.DefinePrim(
+            "/World/LiberoTask0/TableVisual", "Xform"
+        )
+        table_xform = UsdGeom.Xformable(table_root)
+        table_xform.AddTranslateOp().Set(Gf.Vec3d(*table_position))
+        table_quaternion = LIBERO_TABLE_VISUAL_SOURCE_ORIENTATION_WXYZ
+        table_xform.AddOrientOp().Set(
+            Gf.Quatf(float(table_quaternion[0]), Gf.Vec3f(*table_quaternion[1:]))
+        )
+        table_xform.AddScaleOp().Set(
+            Gf.Vec3f(*([LIBERO_TABLE_VISUAL_ASSET.scale] * 3))
+        )
+        table_asset = self._stage.DefinePrim(
+            "/World/LiberoTask0/TableVisual/Asset", "Xform"
+        )
+        table_asset.GetReferences().AddReference(
+            str(converted[LIBERO_TABLE_VISUAL_ASSET.name])
         )
 
         # The canonical basket mesh is visual. Five simple static colliders give
@@ -739,6 +854,14 @@ class LiberoObjectTask0Scene:
             "asset_source_sha256": self.asset_source_sha256,
             "converted_asset_sha256": self.converted_asset_sha256,
             "converted_asset_cache": str(cache),
+            "table_material_preparation": self.table_material_preparation,
+            "table_visual_transform": {
+                "position_xyz": table_position,
+                "orientation_wxyz": list(
+                    LIBERO_TABLE_VISUAL_SOURCE_ORIENTATION_WXYZ
+                ),
+                "scale": LIBERO_TABLE_VISUAL_ASSET.scale,
+            },
             "aligned_home_measurement": self.aligned_home_measurement,
         }
 

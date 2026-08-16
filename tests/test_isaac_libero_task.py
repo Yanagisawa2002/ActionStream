@@ -15,6 +15,11 @@ from actionstream.isaac_libero_task import (
     LIBERO_AGENTVIEW_FOVY_DEGREES,
     LIBERO_BODY_POSES,
     LIBERO_TABLE_Z_M,
+    LIBERO_TABLE_VISUAL_ASSET,
+    LIBERO_TABLE_VISUAL_SOURCE_MAX_Z_M,
+    LIBERO_TABLE_VISUAL_SOURCE_ORIENTATION_WXYZ,
+    LIBERO_TABLE_VISUAL_SOURCE_POSITION_XYZ,
+    LIBERO_TABLE_VISUAL_SOURCE_TABLETOP_Z_M,
     LIBERO_TO_ISAAC_TASK_TRANSLATION_XYZ,
     LIBERO_WRIST_CAMERA_FOVY_DEGREES,
     LIBERO_WRIST_CAMERA_AUDITED_EEF_OFFSET_WORLD_XYZ,
@@ -25,6 +30,7 @@ from actionstream.isaac_libero_task import (
     LIBERO_WRIST_CAMERA_SETTLE_UPDATES,
     LIBERO_WRIST_CAMERA_WORLD_QUATERNION_WXYZ,
     VISUAL_ASSETS,
+    _diffuse_only_table_mtl,
     isaac_agentview_pose,
     libero_to_isaac_position,
     task0_scene_payload,
@@ -67,6 +73,33 @@ def test_scene_payload_covers_every_visual_asset() -> None:
         LIBERO_REFERENCE_EEF_AXIS_ANGLE_XYZ
     )
     assert len(task0_scene_sha256()) == 64
+
+
+def test_table_visual_preserves_official_living_room_asset_contract() -> None:
+    payload = task0_scene_payload()["table_visual"]
+    assert LIBERO_TABLE_VISUAL_ASSET.obj_relative_path == (
+        "scenes/living_room_table/living_room_table.obj"
+    )
+    assert LIBERO_TABLE_VISUAL_ASSET.scale == pytest.approx(1.5)
+    assert LIBERO_TABLE_VISUAL_SOURCE_POSITION_XYZ == pytest.approx((-0.25, 0.25, 0.0))
+    assert LIBERO_TABLE_VISUAL_SOURCE_ORIENTATION_WXYZ == pytest.approx(
+        (math.sqrt(0.5), 0.0, 0.0, math.sqrt(0.5))
+    )
+    assert LIBERO_TABLE_VISUAL_SOURCE_MAX_Z_M == pytest.approx(0.299668)
+    assert LIBERO_TABLE_VISUAL_SOURCE_TABLETOP_Z_M == pytest.approx(0.267306)
+    assert payload["source_asset"] == LIBERO_TABLE_VISUAL_ASSET.obj_relative_path
+    assert payload["normalization"] == (
+        "dominant source tabletop plane mapped to Isaac task surface Z"
+    )
+
+
+def test_missing_table_bump_map_is_removed_without_changing_diffuse_map() -> None:
+    sanitized, removed = _diffuse_only_table_mtl(
+        "newmtl table\nmap_Kd living_room_table_texture.png\n"
+        "map_Bump -bm 1.000 missing.jpg\n"
+    )
+    assert sanitized == "newmtl table\nmap_Kd living_room_table_texture.png\n"
+    assert removed == ("map_Bump -bm 1.000 missing.jpg",)
 
 
 def test_wrist_camera_contract_is_normalized_and_hand_local() -> None:

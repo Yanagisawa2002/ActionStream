@@ -81,7 +81,8 @@ m displacement. The image intervention is 145.25x larger by chunk RMSE.
 More concretely, official images produce an initial Z near 0.242 m and 30/30
 negative gripper rows under either state. Native images produce Z near 0.126 m
 and 30/30 positive gripper rows under either state. This reproduces the failed
-rollout's low approach and premature close without involving any async runtime.
+rollout's low approach and opposite gripper command without involving any async
+runtime.
 The official/official first action remains within 0.000399 L2 of the prior
 successful official task-0 trace, which validates the diagnostic path.
 
@@ -92,6 +93,36 @@ first-chunk error. The mapped joint-position mismatch (native-vs-official L2
 effect is much smaller; later-episode effects are not ruled out. See the
 [counterfactual report](../outputs/xvla_isaac_input_counterfactual_v1/report.md)
 and [content-level figure](../outputs/xvla_isaac_input_counterfactual_v1/input_counterfactual.png).
+
+## Frozen visual-canary result (2026-08-17)
+
+One bounded development candidate replaced the plain brown Isaac surface with
+the canonical LIBERO living-room table OBJ and diffuse texture. The first
+capture was rejected before policy comparison because aligning the OBJ's raised
+maximum-Z edge hid the dominant tabletop below the native ground. V2 instead
+mapped the audited 0.267306 m tabletop plane to the task surface and removed
+only the missing upstream `map_Bump` dependency; both choices are recorded in
+the frozen candidate contract.
+
+The valid V2 frames visibly restore a wood surface, but retain different table
+extent, exposed blue ground, lighting, and Panda/hand appearance. On three
+paired inference seeds, holding official robot state fixed, V2 obtained:
+
+| Metric | Plain native | V2 | Frozen V2 threshold | Result |
+|---|---:|---:|---:|---|
+| Full-chunk RMSE | 0.760888 | 0.761554 +/- 0.000003 | <= 0.25 | fail |
+| First-action XYZ L2 | 0.115453 m | 0.079303 +/- 0.000046 m | <= 0.05 m | fail |
+| First-action 7D L2 | 2.003562 | 2.001838 +/- 0.000005 | <= 0.75 | fail |
+| Candidate close fraction | 0.00 | 0.00 | >= 0.90 each seed | fail |
+
+The 31.3% smaller first-action XYZ error is a reproducible partial positive:
+table appearance recovers some of the vertical cue. It does **not** restore the
+chunk: full-chunk error is unchanged and all 30 candidate gripper commands have
+the opposite sign from official in every seed. Per the preregistered stop rule,
+no sync capability gate or async holdout was launched. See the
+[canary findings](../outputs/xvla_isaac_visual_canary_v1/CANARY_FINDINGS.md),
+[input comparison](../outputs/xvla_isaac_visual_canary_v1/visual_input_comparison.png),
+and [action comparison](../outputs/xvla_isaac_visual_canary_v1/first_chunk_action_comparison.png).
 
 ## Evidence and provenance
 
@@ -108,6 +139,14 @@ Frozen counterfactual evidence:
 - `outputs/xvla_isaac_input_counterfactual_v1/summary.json`
 - `outputs/xvla_isaac_input_counterfactual_v1/report.md`
 - `outputs/xvla_isaac_input_counterfactual_v1/input_counterfactual.png`
+
+Frozen visual-canary evidence:
+
+- `outputs/xvla_isaac_visual_canary_v1/CANARY_FINDINGS.md`
+- `outputs/xvla_isaac_visual_canary_v1/canary_evaluation.json`
+- `outputs/xvla_isaac_visual_canary_v1/visual_input_comparison.png`
+- `outputs/xvla_isaac_visual_canary_v1/first_chunk_action_comparison.png`
+- `outputs/xvla_isaac_visual_canary_v1/xvla_isaac_visual_canary_v2_inference/summary.json`
 
 Remote complete evidence root:
 `/root/autodl-tmp/results/learned_isaac_libero_taskcap_rigidcamera_300_v1`
@@ -136,7 +175,9 @@ The next valid gate is one of:
 2. an exact canonical LIBERO visual, camera, collision, and control-domain
    recreation with demonstrated native task success; or
 3. a short, predeclared adaptation stage followed by a fresh disjoint capability
-   gate.
+   gate; or
+4. an official-render/Isaac-state observation bridge that first passes the same
+   image/state first-chunk canary without changing its frozen thresholds.
 
 Only after learned sync/native task capability is nonzero should the candidate
 be frozen and the multi-task paired runtime protocol be opened.

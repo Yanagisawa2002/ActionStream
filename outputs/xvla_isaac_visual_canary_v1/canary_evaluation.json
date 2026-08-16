@@ -1,0 +1,149 @@
+{
+  "acceptance_checks": {
+    "first_action_7d_l2": {
+      "margin": -1.2518380980802593,
+      "operator": "<=",
+      "pass": false,
+      "threshold": 0.75,
+      "value": 2.0018380980802593
+    },
+    "first_action_xyz_l2_m": {
+      "margin": -0.0293034517593585,
+      "operator": "<=",
+      "pass": false,
+      "threshold": 0.05,
+      "value": 0.0793034517593585
+    },
+    "full_chunk_rmse": {
+      "margin": -0.5115540604816647,
+      "operator": "<=",
+      "pass": false,
+      "threshold": 0.25,
+      "value": 0.7615540604816647
+    },
+    "gripper_negative_fraction_each_seed": {
+      "margin": -0.9,
+      "operator": ">=",
+      "pass": false,
+      "threshold": 0.9,
+      "value": 0.0
+    }
+  },
+  "aggregate_image_effect": {
+    "chunk_7d_mean_l2": {
+      "mean": 2.0148378465284273,
+      "std": 7.92389321208074e-06,
+      "values": [
+        2.014837803590962,
+        2.0148457918031215,
+        2.0148299441911983
+      ]
+    },
+    "chunk_xyz_mean_l2": {
+      "mean": 0.20545287966133943,
+      "std": 3.940342363766704e-05,
+      "values": [
+        0.20544395435161542,
+        0.20549598017236764,
+        0.20541870446003532
+      ]
+    },
+    "first_action_7d_l2": {
+      "mean": 2.0018380980802593,
+      "std": 4.5410994743470735e-06,
+      "values": [
+        2.001840407626625,
+        2.0018410202030923,
+        2.0018328664110605
+      ]
+    },
+    "first_action_xyz_l2": {
+      "mean": 0.0793034517593585,
+      "std": 4.604456978177469e-05,
+      "values": [
+        0.07933074593085063,
+        0.07932931889331002,
+        0.07925029045391488
+      ]
+    },
+    "full_chunk_rmse": {
+      "mean": 0.7615540604816647,
+      "std": 2.998852254723647e-06,
+      "values": [
+        0.7615540384054099,
+        0.7615570703111029,
+        0.7615510727284815
+      ]
+    }
+  },
+  "all_acceptance_checks_pass": false,
+  "claim_boundary": {
+    "formal_output_is_diagnostic_not_task_success": true,
+    "image_effect_holding_official_state": "native_images__official_state minus official_images__official_state",
+    "joint_shift": "native_images__native_state minus official_images__official_state",
+    "no_post_result_input_tuning": true,
+    "reference_condition": "official_images__official_state",
+    "state_effect_holding_official_images": "official_images__native_state minus official_images__official_state"
+  },
+  "experiment_id": "xvla_isaac_visual_canary_v2_inference",
+  "provenance": {
+    "current_summary": "outputs\\xvla_isaac_visual_canary_v1\\xvla_isaac_visual_canary_v2_inference\\summary.json",
+    "current_summary_sha256": "682863d524d4468006e8091b26d447dc7304327b5df011583d2b5cc19a4318c8",
+    "inference_config": "configs\\xvla_isaac_visual_canary_v2_inference.json",
+    "inference_config_sha256": "579316d71e8da8c4d54b3ec214735dcff5b487eb24126786c0b207d470a1d4b8",
+    "previous_summary": "outputs\\xvla_isaac_input_counterfactual_v1\\summary.json",
+    "previous_summary_sha256": "ffa7f87147e7b659229e0cf05eeb8acc291e77180dacf3737d9a01034e7df29d"
+  },
+  "raw_seed_table": [
+    {
+      "candidate_first_action_z_m": 0.16270776093006134,
+      "candidate_gripper_negative_fraction": 0.0,
+      "first_action_7d_l2": 2.001840407626625,
+      "first_action_xyz_l2_m": 0.07933074593085063,
+      "full_chunk_rmse": 0.7615540384054099,
+      "inference_seed": 2026081701,
+      "official_first_action_z_m": 0.2415768951177597,
+      "official_gripper_negative_fraction": 1.0
+    },
+    {
+      "candidate_first_action_z_m": 0.16277606785297394,
+      "candidate_gripper_negative_fraction": 0.0,
+      "first_action_7d_l2": 2.0018410202030923,
+      "first_action_xyz_l2_m": 0.07932931889331002,
+      "full_chunk_rmse": 0.7615570703111029,
+      "inference_seed": 2026081702,
+      "official_first_action_z_m": 0.24164417386054993,
+      "official_gripper_negative_fraction": 1.0
+    },
+    {
+      "candidate_first_action_z_m": 0.16282306611537933,
+      "candidate_gripper_negative_fraction": 0.0,
+      "first_action_7d_l2": 2.0018328664110605,
+      "first_action_xyz_l2_m": 0.07925029045391488,
+      "full_chunk_rmse": 0.7615510727284815,
+      "inference_seed": 2026081703,
+      "official_first_action_z_m": 0.24161100387573242,
+      "official_gripper_negative_fraction": 1.0
+    }
+  ],
+  "relative_to_plain_native": {
+    "first_action_7d_l2": {
+      "candidate_v2_mean": 2.0018380980802593,
+      "plain_native_mean": 2.0035615210364406,
+      "smaller_is_better_relative_improvement_percent": 0.08601797040351451
+    },
+    "first_action_xyz_l2": {
+      "candidate_v2_mean": 0.0793034517593585,
+      "plain_native_mean": 0.11545267717082734,
+      "smaller_is_better_relative_improvement_percent": 31.310859390450798
+    },
+    "full_chunk_rmse": {
+      "candidate_v2_mean": 0.7615540604816647,
+      "plain_native_mean": 0.7608883155301699,
+      "smaller_is_better_relative_improvement_percent": -0.08749575172947358
+    }
+  },
+  "schema_version": 1,
+  "status": "failed_frozen_canary",
+  "stop_action": "No sync capability gate or async holdout was launched."
+}

@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "experiment_id": "xvla_isaac_visual_canary_v1",
+  "frozen_utc": "2026-08-16T16:19:09Z",
+  "freeze_status": "candidate_and_acceptance_frozen_before_capture",
+  "evidence_class": "development_offline_first_chunk_visual_canary",
+  "claim_boundary": "This canary can accept or reject one native-Isaac visual candidate. It is not episode success, a task holdout, or evidence for an async runtime comparison.",
+  "policy": {
+    "key": "xvla",
+    "model_id": "lerobot/xvla-libero",
+    "revision": "12e8783e996944f5c97e490d37d4c145484ed70a",
+    "protocol_path": "configs/current_lerobot_baselines.json",
+    "protocol_sha256": "76ed5e5a0d2a0780c2fb858741c9e8a16fdc36cac1f3c991977b9b11fd6a164a",
+    "device": "cuda"
+  },
+  "candidate": {
+    "key": "official_living_room_table_visual_v1",
+    "changes": [
+      "replace the plain native brown surface with LIBERO's living-room table OBJ, MTL, texture, XML-authored 1.5 scale, child translation, and Z rotation",
+      "normalize the source OBJ maximum Z to the existing Isaac task-surface Z with the pre-existing 1 mm render clearance"
+    ],
+    "held_fixed": [
+      "task geometry and initial object poses",
+      "agentview pose and 45 degree vertical FOV",
+      "wrist-camera rigid pose, 75 degree vertical FOV, and explicit Isaac-mesh clearance",
+      "robot state mapping, instruction, policy checkpoint, and processors"
+    ],
+    "reason_wrist_pose_is_held": "The native and official wrist views already register the basket and target objects closely; the remaining large hand cue is robot-mesh appearance rather than a justified camera-pose calibration target."
+  },
+  "capture": {
+    "suite": "libero_object",
+    "task_id": 0,
+    "initial_state_index": 0,
+    "environment_seed": 2026081601,
+    "control_steps": 1,
+    "policy_frames_used": [
+      "policy_frames/frame_000000.png",
+      "policy_wrist_frames/frame_000000.png"
+    ],
+    "incidental_smoke_action_is_excluded_from_acceptance": true
+  },
+  "paired_inference_seeds": [
+    2026081701,
+    2026081702,
+    2026081703
+  ],
+  "comparison": {
+    "candidate_condition": "candidate_images__official_state",
+    "reference_condition": "official_images__official_state",
+    "same_official_reset_observation": true,
+    "same_policy_rng_seed_within_each_pair": true
+  },
+  "acceptance": {
+    "all_required": true,
+    "aggregate_mean_full_chunk_rmse_max": 0.25,
+    "aggregate_mean_first_action_xyz_l2_max_m": 0.05,
+    "aggregate_mean_first_action_7d_l2_max": 0.75,
+    "candidate_gripper_negative_fraction_min_each_seed": 0.9,
+    "on_pass": "freeze a disjoint native-Isaac sync capability gate before executing it",
+    "on_fail": "stop before any holdout or async matrix and preserve the exact visual blocker"
+  },
+  "anti_tuning": {
+    "single_candidate_only": true,
+    "no_threshold_changes_after_candidate_capture": true,
+    "no_claim_from_incidental_smoke_action": true
+  }
+}

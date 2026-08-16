@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "experiment_id": "xvla_isaac_visual_canary_v2",
+  "frozen_utc": "2026-08-16T16:31:51Z",
+  "freeze_status": "candidate_and_acceptance_frozen_before_capture",
+  "evidence_class": "development_offline_first_chunk_visual_canary",
+  "claim_boundary": "This canary can accept or reject one native-Isaac visual candidate. It is not episode success, a task holdout, or evidence for an async runtime comparison.",
+  "supersedes_invalid_capture": {
+    "experiment_id": "xvla_isaac_visual_canary_v1",
+    "capture_summary_sha256": "d05f222c220db671513682b79cd96e203e0ffeef51d4383ab7f0c93064260535",
+    "invalid_reason": "The OBJ maximum Z is a raised decorative edge, so aligning it to the task surface left the dominant tabletop plane below the native ground and exposed the blue grid. The upstream MTL also referenced a bump map absent from the canonical asset package.",
+    "policy_canary_executed": false
+  },
+  "policy": {
+    "key": "xvla",
+    "model_id": "lerobot/xvla-libero",
+    "revision": "12e8783e996944f5c97e490d37d4c145484ed70a",
+    "protocol_path": "configs/current_lerobot_baselines.json",
+    "protocol_sha256": "76ed5e5a0d2a0780c2fb858741c9e8a16fdc36cac1f3c991977b9b11fd6a164a",
+    "device": "cuda"
+  },
+  "candidate": {
+    "key": "official_living_room_table_visual_v2",
+    "changes": [
+      "replace the plain native brown surface with LIBERO's living-room table OBJ, MTL, diffuse texture, XML-authored 1.5 scale, child translation, and Z rotation",
+      "map the OBJ's dominant 0.267306 m tabletop plane to the existing Isaac task-surface Z with the pre-existing 1 mm render clearance",
+      "remove only the MTL map_Bump directive whose target is absent from the canonical asset package; retain and hash the official diffuse map used by the official XML"
+    ],
+    "held_fixed": [
+      "task geometry and initial object poses",
+      "agentview pose and 45 degree vertical FOV",
+      "wrist-camera rigid pose, 75 degree vertical FOV, and explicit Isaac-mesh clearance",
+      "robot state mapping, instruction, policy checkpoint, and processors"
+    ],
+    "reason_wrist_pose_is_held": "The native and official wrist views already register the basket and target objects closely; the remaining large hand cue is robot-mesh appearance rather than a justified camera-pose calibration target."
+  },
+  "capture": {
+    "suite": "libero_object",
+    "task_id": 0,
+    "initial_state_index": 0,
+    "environment_seed": 2026081601,
+    "control_steps": 1,
+    "policy_frames_used": [
+      "policy_frames/frame_000000.png",
+      "policy_wrist_frames/frame_000000.png"
+    ],
+    "incidental_smoke_action_is_excluded_from_acceptance": true
+  },
+  "paired_inference_seeds": [
+    2026081701,
+    2026081702,
+    2026081703
+  ],
+  "comparison": {
+    "candidate_condition": "candidate_images__official_state",
+    "reference_condition": "official_images__official_state",
+    "same_official_reset_observation": true,
+    "same_policy_rng_seed_within_each_pair": true
+  },
+  "acceptance": {
+    "all_required": true,
+    "aggregate_mean_full_chunk_rmse_max": 0.25,
+    "aggregate_mean_first_action_xyz_l2_max_m": 0.05,
+    "aggregate_mean_first_action_7d_l2_max": 0.75,
+    "candidate_gripper_negative_fraction_min_each_seed": 0.9,
+    "on_pass": "freeze a disjoint native-Isaac sync capability gate before executing it",
+    "on_fail": "stop before any holdout or async matrix and preserve the exact visual blocker"
+  },
+  "anti_tuning": {
+    "single_candidate_only": true,
+    "no_threshold_changes_after_candidate_capture": true,
+    "no_claim_from_incidental_smoke_action": true
+  }
+}
