@@ -1,0 +1,1318 @@
+{
+  "baseline_gate": {
+    "baseline_candidate_protocol_file_sha256": "5b3a7d5fb013b639fa6de0ee709b67f905a59754217fe900383e42e77ecbfe99",
+    "baseline_candidate_protocol_path": "configs/m8_g0.json",
+    "baseline_candidate_protocol_sha256": "c7f5686e4187238310f65ceb589527b9eda863314fd884f39f7c802428a89b54",
+    "behavioral_protocol_contract_sha256": "fed3a2addb5ebddb7f441b9d541721ee7e883a1342e95802fd55c783ac68f771",
+    "bounded_calibration_change_count": 0,
+    "completion_receipt_path": "outputs/m8_g0/baseline_gate/source_v3/native_run_logs/20260816T051543205723486Z/completion_receipt.json",
+    "completion_receipt_sha256": "eb189744098c8eae981377d1195c0c55000d9716ed24848cc27f5f3c73e962e4",
+    "evidence_class": "ros_cpp_isaac_sim",
+    "executor_evidence_sha256": "dec2423adf253928b5c7f431efd6577524f240856fb078a2620ba8c1f032bad9",
+    "executor_sha256": "dec2423adf253928b5c7f431efd6577524f240856fb078a2620ba8c1f032bad9",
+    "external_environment_evidence_sha256": "0eb73e264eafc3df868810f6376befa84be42866accb9d8a4c24d5d7e039795c",
+    "installed_dynamic_adapter_evidence_sha256": "a584eadb952cd0041b27521a5c72f0bf25be1721c7e0e2ee88ad3433a11757d9",
+    "installed_dynamic_adapter_sha256": "a584eadb952cd0041b27521a5c72f0bf25be1721c7e0e2ee88ad3433a11757d9",
+    "isaac_workspace_commit": "dd3eeede7912755996a18f4884285d9f50843f79",
+    "isaacsim_version": "6.0.1.0",
+    "matrix_path": "outputs/m8_g0/baseline_gate/source_v3/matrix.json",
+    "matrix_sha256": "dfe61569c74fd8faf942871c5f9675f4b0c8f2063e48b44f70cc58ddcc328c4e",
+    "native_isaac_physics": true,
+    "observed_success_rate": 1.0,
+    "pixi_lock_evidence_sha256": "ba8e59eef962cbf49a1ff06ff947ed5eaa4547d018389b048771a1e7d8bb890d",
+    "pixi_manifest_evidence_sha256": "b4e7a34c264e88f19ba6bfb3c7a72ee46b0843f3e6eb7e75619dc0ebb87b313d",
+    "pixi_version": "0.75.0",
+    "preflight_receipt_sha256": "8e9d6cbcfd3f92279a209f5889dfe67e64ef081ec67e40d55746054ee523eefd",
+    "process_log_archive_sha256": "cb652de465f37a12b4d5edc4fdf4f943a6ae91b36e5fd11705d60df1f516fa1c",
+    "process_log_manifest_sha256": "dd1d68a84fe44267379e103143d8fee2ca4054eaab89857cbd0a87bb5612f6f0",
+    "profile_id": "profile_0_sanity",
+    "profile_path": "ros2_ws/src/action_stream_benchmark/config/m8_profile_0_sanity.json",
+    "profile_sha256": "6ed5d115855037a5805976a653eb36ff5a329ed43a7102a0d21c2a7a0ec3db60",
+    "protocol_sha256": "9f36e72b27b0b2b1ef7628a15364c97d88b1efc94846a2284b2b727c034bd6ea",
+    "python_version": "3.12.13",
+    "replay_path": "outputs/m8_g0/baseline_gate/source_v3/replay_validation.json",
+    "replay_sha256": "f0d04e971c5b3801a374e9add0a66d7b50aac01316a48f6af5544391674566e5",
+    "replay_validated": true,
+    "required_success_rate": 0.9,
+    "rmw_implementation": "rmw_zenoh_cpp",
+    "rmw_zenoh_cpp_version": "0.2.9",
+    "ros_distribution": "jazzy",
+    "router_sha256": "85c4d84877d4f5507539732b08dd323dad208e525d5c8d0012f5b02aec7638a3",
+    "runner_evidence_sha256": "7e4cac9bf0b62360ac5b685a94f0d917b667467971f452f48db908daeec6bca7",
+    "runner_sha256": "7e4cac9bf0b62360ac5b685a94f0d917b667467971f452f48db908daeec6bca7",
+    "runner_source": "scripts/m8_run_isaac.sh",
+    "runner_support_evidence_sha256": "304da243f5c9efdeb7896a52c90d96f9d308ae3e9355bdff4e78fc5b7c38ab39",
+    "runner_support_sha256": "304da243f5c9efdeb7896a52c90d96f9d308ae3e9355bdff4e78fc5b7c38ab39",
+    "runner_support_source": "scripts/m8_linux_runner_support.py",
+    "seed_count": 20,
+    "seed_file_path": "configs/m8_baseline_gate_seeds.json",
+    "seed_file_sha256": "3850f361b3fdeebc27c36e501d258ef18bc100207d73c721500515ec01d45b87",
+    "selected_development_candidate_id": "candidate_0",
+    "selected_gpu_driver_version": "580.76.05",
+    "selected_gpu_memory_total_mib": 32607,
+    "selected_gpu_name": "NVIDIA GeForce RTX 5090",
+    "selected_gpu_uuid": "GPU-81d81329-c2d4-2f0f-d141-2871873dac1e",
+    "source_file_count": 101,
+    "source_manifest_sha256": "25aebbe24f6f87149f9a18f24f1d00aa493ef6dbd91fc5a256c5d7a4c9c46c96",
+    "status": "passed",
+    "strategy": "sync_hold",
+    "success_count": 20,
+    "trial_count": 20
+  },
+  "development_calibration": {
+    "bounded_calibration_change_count": 0,
+    "candidate_count": 1,
+    "candidates": [
+      {
+        "candidate_id": "candidate_0",
+        "contract_sha256": "fed3a2addb5ebddb7f441b9d541721ee7e883a1342e95802fd55c783ac68f771",
+        "matrix_sha256": "deb16f17fa7d8a874f318cd14ae5a768664bbd4201325f84c4f94594c732e4b2",
+        "protocol_sha256": "c7f5686e4187238310f65ceb589527b9eda863314fd884f39f7c802428a89b54",
+        "replay_sha256": "7769bfd174552cd2a22460169bc5db40e98fed592b1d562a1f45aef7d050b394",
+        "seed_count": 12
+      }
+    ],
+    "selected_candidate_id": "candidate_0",
+    "selected_candidate_protocol_file_sha256": "5b3a7d5fb013b639fa6de0ee709b67f905a59754217fe900383e42e77ecbfe99",
+    "selected_candidate_protocol_path": "configs/m8_g0.json",
+    "selected_candidate_protocol_role": "baseline_candidate_protocol",
+    "selected_contract_sha256": "fed3a2addb5ebddb7f441b9d541721ee7e883a1342e95802fd55c783ac68f771",
+    "selected_protocol_sha256": "c7f5686e4187238310f65ceb589527b9eda863314fd884f39f7c802428a89b54"
+  },
+  "freeze_sha256": "4d63b6b6f2af1458c063ed52eb73e1a2bcb82f412bb0a9b19d352659bbca923f",
+  "frozen_before_first_holdout_result": true,
+  "headline_evidence_class": "ros_cpp_isaac_sim",
+  "inputs": [
+    {
+      "path": "configs/m8_baseline_gate_seeds.json",
+      "role": "baseline_seeds",
+      "sha256": "3850f361b3fdeebc27c36e501d258ef18bc100207d73c721500515ec01d45b87",
+      "size_bytes": 567
+    },
+    {
+      "path": "configs/m8_calibration_ledger_v3.json",
+      "role": "calibration_ledger",
+      "sha256": "6e8687e51b0273f55b1073214024955a698a0760dc85e528447e43c37bc432c0",
+      "size_bytes": 5815
+    },
+    {
+      "path": "configs/m8_development_seeds.json",
+      "role": "development_seeds",
+      "sha256": "545c42c404aa8c704a66ef89ec3d7a773a603e99559d18cb5f8e5fc13d738277",
+      "size_bytes": 529
+    },
+    {
+      "path": "configs/m8_g0.json",
+      "role": "baseline_candidate_protocol",
+      "sha256": "5b3a7d5fb013b639fa6de0ee709b67f905a59754217fe900383e42e77ecbfe99",
+      "size_bytes": 6199
+    },
+    {
+      "path": "configs/m8_g0_frozen.json",
+      "role": "protocol",
+      "sha256": "759a4d9e00e5c09a8f01848d2819e0c94d24cec8265926a1dde7c803e8e120f8",
+      "size_bytes": 6161
+    },
+    {
+      "path": "configs/m8_holdout_seeds.json",
+      "role": "holdout_seeds",
+      "sha256": "951a340a51ff15c037cd9c4af2f8446e4a2cdcbf2110256b991790ecabb72591",
+      "size_bytes": 1291
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/matrix.json",
+      "role": "baseline_matrix",
+      "sha256": "dfe61569c74fd8faf942871c5f9675f4b0c8f2063e48b44f70cc58ddcc328c4e",
+      "size_bytes": 20364
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/native_run_logs/20260816T051543205723486Z/action_stream_executor_node",
+      "role": "baseline_installed_executor_evidence",
+      "sha256": "dec2423adf253928b5c7f431efd6577524f240856fb078a2620ba8c1f032bad9",
+      "size_bytes": 2017104
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/native_run_logs/20260816T051543205723486Z/completion_receipt.json",
+      "role": "baseline_completion_receipt",
+      "sha256": "eb189744098c8eae981377d1195c0c55000d9716ed24848cc27f5f3c73e962e4",
+      "size_bytes": 848
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/native_run_logs/20260816T051543205723486Z/external_environment.json",
+      "role": "baseline_external_environment",
+      "sha256": "0eb73e264eafc3df868810f6376befa84be42866accb9d8a4c24d5d7e039795c",
+      "size_bytes": 2254
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/native_run_logs/20260816T051543205723486Z/installed_dynamic_adapter.py",
+      "role": "baseline_installed_dynamic_adapter_evidence",
+      "sha256": "a584eadb952cd0041b27521a5c72f0bf25be1721c7e0e2ee88ad3433a11757d9",
+      "size_bytes": 115619
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/native_run_logs/20260816T051543205723486Z/isaac_workspace.pixi.lock",
+      "role": "baseline_pixi_lock_evidence",
+      "sha256": "ba8e59eef962cbf49a1ff06ff947ed5eaa4547d018389b048771a1e7d8bb890d",
+      "size_bytes": 1491808
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/native_run_logs/20260816T051543205723486Z/isaac_workspace.pixi.toml",
+      "role": "baseline_pixi_manifest_evidence",
+      "sha256": "b4e7a34c264e88f19ba6bfb3c7a72ee46b0843f3e6eb7e75619dc0ebb87b313d",
+      "size_bytes": 5467
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/native_run_logs/20260816T051543205723486Z/m8_linux_runner_support.py",
+      "role": "baseline_runner_support_evidence",
+      "sha256": "304da243f5c9efdeb7896a52c90d96f9d308ae3e9355bdff4e78fc5b7c38ab39",
+      "size_bytes": 52219
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/native_run_logs/20260816T051543205723486Z/m8_run_isaac.runner.sh",
+      "role": "baseline_runner_evidence",
+      "sha256": "7e4cac9bf0b62360ac5b685a94f0d917b667467971f452f48db908daeec6bca7",
+      "size_bytes": 36451
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/native_run_logs/20260816T051543205723486Z/preflight_receipt.json",
+      "role": "baseline_preflight_receipt",
+      "sha256": "8e9d6cbcfd3f92279a209f5889dfe67e64ef081ec67e40d55746054ee523eefd",
+      "size_bytes": 5152
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/native_run_logs/20260816T051543205723486Z/process_logs.manifest.json",
+      "role": "baseline_process_log_manifest",
+      "sha256": "dd1d68a84fe44267379e103143d8fee2ca4054eaab89857cbd0a87bb5612f6f0",
+      "size_bytes": 1852
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/native_run_logs/20260816T051543205723486Z/process_logs.tar.gz",
+      "role": "baseline_process_log_archive",
+      "sha256": "cb652de465f37a12b4d5edc4fdf4f943a6ae91b36e5fd11705d60df1f516fa1c",
+      "size_bytes": 15382
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081000-sync_hold.jsonl",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081000-sync_hold.jsonl",
+      "sha256": "b7b12085a64373cdb8c8008a28f6b2be220ef4d7cda6bb9018bf62121864b1c3",
+      "size_bytes": 2038763
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081001-sync_hold.jsonl",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081001-sync_hold.jsonl",
+      "sha256": "8d8cba95ce7ee766eb26f6a9ca9116989f27f10b8688b72470e653064a25aec0",
+      "size_bytes": 2127300
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081002-sync_hold.jsonl",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081002-sync_hold.jsonl",
+      "sha256": "17d55eef57f72a0e1f04066f9ffa11cc839ebb8500e76c8b1275817d6032722a",
+      "size_bytes": 2035804
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081003-sync_hold.jsonl",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081003-sync_hold.jsonl",
+      "sha256": "45e6ced5ab235b22bdea45be5105aed08d6b39198a4045cb9af883dece5e93c3",
+      "size_bytes": 1864851
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081004-sync_hold.jsonl",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081004-sync_hold.jsonl",
+      "sha256": "590f40ef6675cdeba93b2eb9ddaf2d489381081d7f83c038b2634e4d084650c3",
+      "size_bytes": 1864801
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081005-sync_hold.jsonl",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081005-sync_hold.jsonl",
+      "sha256": "732a729e675bafec364efe5bcc1e741fd90658eed97577e77b69424985758379",
+      "size_bytes": 2040311
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081006-sync_hold.jsonl",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081006-sync_hold.jsonl",
+      "sha256": "7dd68c621addff7cb079b1582845470a05a13633965c3ec81cc01af193156ffb",
+      "size_bytes": 2124134
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081007-sync_hold.jsonl",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081007-sync_hold.jsonl",
+      "sha256": "58a3c2e7bb457ba48e12355814623b59ab0c1bfd94428ef93f2359ca5c2894a2",
+      "size_bytes": 2038933
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081008-sync_hold.jsonl",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081008-sync_hold.jsonl",
+      "sha256": "a6d2af7723e178f6b56eb1086a1e53a9b484c5441ea073e1e25325750fc9cb35",
+      "size_bytes": 1862504
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081009-sync_hold.jsonl",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081009-sync_hold.jsonl",
+      "sha256": "657fd943c714ef7f9f80ebdb1cb457ab0a2ca8ce91a8cd1ea01a333eb3e37344",
+      "size_bytes": 2125522
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081010-sync_hold.jsonl",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081010-sync_hold.jsonl",
+      "sha256": "f95f6825ede94a8af5eff66e1fce7853dce8233bf7a4d9d4d0ed5b10212542db",
+      "size_bytes": 1777241
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081011-sync_hold.jsonl",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081011-sync_hold.jsonl",
+      "sha256": "f7d9323f4dbcecbeaa04ee2f8d941b07f42fcf549636e701398f00225f83c10c",
+      "size_bytes": 2215906
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081012-sync_hold.jsonl",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081012-sync_hold.jsonl",
+      "sha256": "f330685c1e4ef2add39748efe998243f681875256da6d2281cd9919785650f8d",
+      "size_bytes": 2040439
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081013-sync_hold.jsonl",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081013-sync_hold.jsonl",
+      "sha256": "f62836976c72321e52a20d3083a66edcda512389b164b5b0c0030791269970f8",
+      "size_bytes": 2124448
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081014-sync_hold.jsonl",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081014-sync_hold.jsonl",
+      "sha256": "448b5656b3e563f18bf81b249c9a70b8b69fbe50161866db425f89f38ea742fb",
+      "size_bytes": 2034408
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081015-sync_hold.jsonl",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081015-sync_hold.jsonl",
+      "sha256": "967b1873df48fe4efe825340657bf46a1b40949ee8812e2bdc0b271d2de3b135",
+      "size_bytes": 2208239
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081016-sync_hold.jsonl",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081016-sync_hold.jsonl",
+      "sha256": "20f81556c8988e9cd61f1e9857197e65993952393bc878fcd5772b5873834148",
+      "size_bytes": 2124114
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081017-sync_hold.jsonl",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081017-sync_hold.jsonl",
+      "sha256": "08314692408b566740a73348c1ef691591258eb3b4ed5e71cd73030f0e71ef5c",
+      "size_bytes": 1948697
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081018-sync_hold.jsonl",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081018-sync_hold.jsonl",
+      "sha256": "a23c57da633e50a328683a06aa7fa26626649e033cc2b78ea6b11d512c27774e",
+      "size_bytes": 2211678
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081019-sync_hold.jsonl",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081019-sync_hold.jsonl",
+      "sha256": "d7e39411a26de70d50131feba50aac2462e0ee36615841e2e3f36d0af940bee0",
+      "size_bytes": 1954345
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081000.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081000.json",
+      "sha256": "f048bc5f4cddc83cb56c08711336d62e5862d9b86e51fd73efaff836ca6731d5",
+      "size_bytes": 124334
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081001.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081001.json",
+      "sha256": "c286219861eff6d63c262db32276adcc5da962bb87bf817e1d3f07d32324dbbc",
+      "size_bytes": 124334
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081002.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081002.json",
+      "sha256": "0ade6d73d199389690ca4e9f4f338d2ee11f6c02806db49ddf149a286072b7d6",
+      "size_bytes": 124334
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081003.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081003.json",
+      "sha256": "88dd7c49eeb94617439d958cc05a477681cda55df201439385e3f47d92561ede",
+      "size_bytes": 124334
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081004.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081004.json",
+      "sha256": "01d2cbd5aebfccaadb110562742cbd3e3b2a68eb22086fcca82f90699ee97816",
+      "size_bytes": 124334
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081005.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081005.json",
+      "sha256": "87a094fb1a400971a8d6325db72acb83f8ba4c4bfa217e5e817e79ae668a1447",
+      "size_bytes": 124334
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081006.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081006.json",
+      "sha256": "abc5d95f0cbe0d43f9f5017eaf9fea6d70d894db072627807792361dd1f7fb4e",
+      "size_bytes": 124334
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081007.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081007.json",
+      "sha256": "2cdd4d71a1afa31c67fb2312af54a3489fa3d5abed7eba41c77a1f0b7290afa0",
+      "size_bytes": 124334
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081008.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081008.json",
+      "sha256": "f7fbf09dd370c35db673fe02f0d4702aad654058ddb6353a83857c3234b81bb0",
+      "size_bytes": 124334
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081009.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081009.json",
+      "sha256": "b061fd05a78f72d63d0f31db558f2bb9b2816704ceb7f7ce47f94251582ac09a",
+      "size_bytes": 124334
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081010.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081010.json",
+      "sha256": "0f6c10ab320011d784666afa2c87f098b8e0124e0d9e69079234e0a983dc7210",
+      "size_bytes": 124334
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081011.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081011.json",
+      "sha256": "2e065b6b55539be93fce03649d1958f9380578bed94db2d38ba65fa9620b9d93",
+      "size_bytes": 124334
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081012.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081012.json",
+      "sha256": "f746f9944d9de23902fde7a981c40416ebcf69cffd9e415e9b1bc758b869606d",
+      "size_bytes": 124334
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081013.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081013.json",
+      "sha256": "ebf17d5e8464811b07c3e5f3381611bb72e168abf73dc0634bd0af3d43fd3f51",
+      "size_bytes": 124334
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081014.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081014.json",
+      "sha256": "9f01826e960822d31d9897e463976ca72c4b4defc7113045a8716aa594bf0596",
+      "size_bytes": 124334
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081015.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081015.json",
+      "sha256": "dd1d48ab7bf1c4c21db1fbf289f0e392c1baab92ae03fbdc21703b18822e862c",
+      "size_bytes": 124334
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081016.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081016.json",
+      "sha256": "06563edd4c9ae23e83fd9584b6150efdff8cd6afe9455a6c8f7e740c8b1aa85a",
+      "size_bytes": 124334
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081017.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081017.json",
+      "sha256": "a1eb730cdfdb92b9c2a42d074a9e91112c7a01dc4bc8fb6d94a9e7ccd5a13b2a",
+      "size_bytes": 124334
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081018.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081018.json",
+      "sha256": "68fb9072cf28acf84b678a03cb27e17a9d1f79a86924cdfd2e7d9e5633e56305",
+      "size_bytes": 124334
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081019.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081019.json",
+      "sha256": "a6fe62d024edefd1b8484242f6f039bf7b5118ac739e52d2d4532a44c93e2b83",
+      "size_bytes": 124334
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081000.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081000.json",
+      "sha256": "8a17d1706fbdcaa17063b739e1e7d65a0cab763984bc09f4b67ea238ded443dc",
+      "size_bytes": 864
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081001.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081001.json",
+      "sha256": "7350bef49903e6fd323acc039b1ace0bdf50b6ce0a6d9b6e853e25e4e06ec7b0",
+      "size_bytes": 866
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081002.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081002.json",
+      "sha256": "2fd3d8c6f5bb15611ff638afe963031869ee21f958b13ca5debd86e75c5e8837",
+      "size_bytes": 863
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081003.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081003.json",
+      "sha256": "19c17a269c181a7c6d6c998f0d17d2893eb1e0f40295384276dd5c6b952861e9",
+      "size_bytes": 862
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081004.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081004.json",
+      "sha256": "d45d81444e423e92ebbc6644e6a5f8516b6367c68c393540e42fa0360ca12f0b",
+      "size_bytes": 863
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081005.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081005.json",
+      "sha256": "db128bf3c97dd59c5ca1dd5d674b55ff275f5ea1c36cea7987975b595cbaf7e9",
+      "size_bytes": 868
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081006.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081006.json",
+      "sha256": "5e07ef6b2d8d2ae3c2f41ac1fe8e74af99d67dce03b043c8b76d42fdfa993716",
+      "size_bytes": 864
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081007.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081007.json",
+      "sha256": "6318c11a6d59a45bb8546f9ace9d7a5b60626ab4ce0b0d5e8cdda4fc69e98ff4",
+      "size_bytes": 866
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081008.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081008.json",
+      "sha256": "ab293472cbbd53cbdbbda94f3a3f9771c227d36f4e75923d91b6a054d15719ff",
+      "size_bytes": 864
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081009.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081009.json",
+      "sha256": "97bc5149e06c84fc2251c2cf8ce06b34e9dbb35f28cfe1847879609d37de5a83",
+      "size_bytes": 864
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081010.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081010.json",
+      "sha256": "e960dc344f99dfc97557b53345403efc911b3c4893ca600d83c4239a4374f4f7",
+      "size_bytes": 861
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081011.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081011.json",
+      "sha256": "75a08ca2f427266bd753a2001f3622c59335b6ce809f826056f07e5a488c3d3c",
+      "size_bytes": 866
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081012.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081012.json",
+      "sha256": "fca35a9d2a60a19e6cf586ff0d1c14156b404d1a309504f6d4f17703e3b34dfc",
+      "size_bytes": 864
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081013.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081013.json",
+      "sha256": "bff718bcecf9ea09e7df5edc037e699347849b9797dc989baa37d725546fcb59",
+      "size_bytes": 866
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081014.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081014.json",
+      "sha256": "df191e18c2fae38fc6cc7db759efc5e0c944c40a787584cd3d2d557eaa0c0303",
+      "size_bytes": 864
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081015.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081015.json",
+      "sha256": "5a94e4f2eb1214c40dd181edf27eefa599646c9c1bebfa3aca933e48f4f0cb96",
+      "size_bytes": 863
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081016.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081016.json",
+      "sha256": "ab985a381c81f8be82e6176485730f62179829f2518416c56a2b198afe5bddaa",
+      "size_bytes": 865
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081017.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081017.json",
+      "sha256": "230f4b431a9369cd066d51e1ba5e7a4bb7b2a699c0b352864f470b2bdee5b4e9",
+      "size_bytes": 864
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081018.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081018.json",
+      "sha256": "49b0ba0874c53d9cde581d3f6a0d5929b1827c3e3aea15ecfd40e84e3e90bee4",
+      "size_bytes": 864
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081019.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081019.json",
+      "sha256": "34797e2803aa8f1488d9bcb442f2bae88e8c9efe95e0adfcd9bbe81119977a9d",
+      "size_bytes": 865
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081000-sync_hold.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081000-sync_hold.json",
+      "sha256": "9f2b2b6921369b85895173f79d9ba4c76cfa1ee1be83949cef439a326c6c885a",
+      "size_bytes": 3393
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081001-sync_hold.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081001-sync_hold.json",
+      "sha256": "89390da38ef51f85b46453887d3bee238bd86e72341cdb1082b7dad2bff5f0cb",
+      "size_bytes": 3382
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081002-sync_hold.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081002-sync_hold.json",
+      "sha256": "fe956e645d549174bedd8458c2651354016706391562eb3c2465d21d47e39bf7",
+      "size_bytes": 3376
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081003-sync_hold.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081003-sync_hold.json",
+      "sha256": "e5a85bb754d4a6e5f33e90bd01a392e55caf509c5c34f5e87c68ee88a54ccae8",
+      "size_bytes": 3410
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081004-sync_hold.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081004-sync_hold.json",
+      "sha256": "f946e7d48e603275d1a7fb543e71f7ee1dbd3d54f99165bae922ed7fb05db4e7",
+      "size_bytes": 3382
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081005-sync_hold.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081005-sync_hold.json",
+      "sha256": "70ef57ab04f369a3be694e5a1adcb0473f356760573a8b8b68ac5984a898db50",
+      "size_bytes": 3410
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081006-sync_hold.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081006-sync_hold.json",
+      "sha256": "f8482363e0d5dc5daf81d687ce91713f0075a2007fea45d2eab2d9249ad5d8c2",
+      "size_bytes": 3378
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081007-sync_hold.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081007-sync_hold.json",
+      "sha256": "c7869373e991f425f294a6f3495f46e6a219216851e77b0aa14e7158533916d3",
+      "size_bytes": 3391
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081008-sync_hold.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081008-sync_hold.json",
+      "sha256": "7427d8361869a407b932eaea0d781847abdc095edc03383fd9b2fffffe1a8e5b",
+      "size_bytes": 3385
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081009-sync_hold.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081009-sync_hold.json",
+      "sha256": "70f074e40e05071a5e4cc4eb0f759bdd1b5b95172f7cde7f71eaca12b9c0efb3",
+      "size_bytes": 3395
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081010-sync_hold.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081010-sync_hold.json",
+      "sha256": "a681fe8da9f69a3726ab35abe6e346d4a38870b84c0a930ce485b5aff060668d",
+      "size_bytes": 3375
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081011-sync_hold.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081011-sync_hold.json",
+      "sha256": "f26dfd71f36687cd4f9f2632d14825b5e39818567604bd0156d1ae678099a831",
+      "size_bytes": 3379
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081012-sync_hold.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081012-sync_hold.json",
+      "sha256": "05fcf1318ebfee40994b846359b8d670f8db414db5459a6b14d08239a9b6f1b4",
+      "size_bytes": 3391
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081013-sync_hold.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081013-sync_hold.json",
+      "sha256": "f8a142d3f3a9fb579dee51f70f630eded038f0c257b8c2b1adb0b9e68cba4411",
+      "size_bytes": 3400
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081014-sync_hold.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081014-sync_hold.json",
+      "sha256": "6542c5d8d0d24638bce38b41e0891622ca3622a70bc60de84fc35e22a6f3496c",
+      "size_bytes": 3388
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081015-sync_hold.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081015-sync_hold.json",
+      "sha256": "8b1aaf9d6768ceac1a286e31fcf981e2b4f5363e96ec3c5ad2cd686ed401c270",
+      "size_bytes": 3381
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081016-sync_hold.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081016-sync_hold.json",
+      "sha256": "962cbdf25a7d7bacba62cdc7e6a86c70c116ee5761f19259fb1d4843c04f2cad",
+      "size_bytes": 3374
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081017-sync_hold.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081017-sync_hold.json",
+      "sha256": "6bce6213d57995fb1b97e8d77e511bdb8da09aa11ce60acc0f338d48593602f9",
+      "size_bytes": 3403
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081018-sync_hold.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081018-sync_hold.json",
+      "sha256": "9ba08f4add86b8d861a282704013ced9e81d6b0cd2ab91154dd110f7274522f7",
+      "size_bytes": 3388
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081019-sync_hold.json",
+      "role": "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081019-sync_hold.json",
+      "sha256": "7ef27bf1b8f2f2cbb7ee6e32a210a7b5b5f100881d24751e9076114e9c2b9185",
+      "size_bytes": 3389
+    },
+    {
+      "path": "outputs/m8_g0/baseline_gate/source_v3/replay_validation.json",
+      "role": "baseline_replay",
+      "sha256": "f0d04e971c5b3801a374e9add0a66d7b50aac01316a48f6af5544391674566e5",
+      "size_bytes": 61059
+    },
+    {
+      "path": "outputs/m8_g0/development/candidate_0_v3/matrix.json",
+      "role": "development:candidate_0:matrix",
+      "sha256": "deb16f17fa7d8a874f318cd14ae5a768664bbd4201325f84c4f94594c732e4b2",
+      "size_bytes": 42401
+    },
+    {
+      "path": "outputs/m8_g0/development/candidate_0_v3/replay_validation.json",
+      "role": "development:candidate_0:replay",
+      "sha256": "7769bfd174552cd2a22460169bc5db40e98fed592b1d562a1f45aef7d050b394",
+      "size_bytes": 164643
+    },
+    {
+      "path": "ros2_ws/src/action_stream_benchmark/action_stream_benchmark/__init__.py",
+      "role": "source:ros2_ws/src/action_stream_benchmark/action_stream_benchmark/__init__.py",
+      "sha256": "7dbd057ebb04c5143700ca3f53b172481f6d5d7bb3838640d23b1ae086680ed1",
+      "size_bytes": 314
+    },
+    {
+      "path": "ros2_ws/src/action_stream_benchmark/action_stream_benchmark/fault_injector_node.py",
+      "role": "source:ros2_ws/src/action_stream_benchmark/action_stream_benchmark/fault_injector_node.py",
+      "sha256": "a1c6e422b97a591119406ae47608839985334f7958f53fe3db14e850c6613259",
+      "size_bytes": 8331
+    },
+    {
+      "path": "ros2_ws/src/action_stream_benchmark/action_stream_benchmark/faults.py",
+      "role": "source:ros2_ws/src/action_stream_benchmark/action_stream_benchmark/faults.py",
+      "sha256": "a4b7cd39ec29790156c1c56915c54a07cbd257ac38b0984e9da15d3c8cd47596",
+      "size_bytes": 7675
+    },
+    {
+      "path": "ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_analysis.py",
+      "role": "source:ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_analysis.py",
+      "sha256": "acd782b6803283dc6ee28c7cb46fd2ee0630979a61bc5c7ce55cd9add85385e4",
+      "size_bytes": 20031
+    },
+    {
+      "path": "ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_archive.py",
+      "role": "source:ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_archive.py",
+      "sha256": "cd51f72004344b6152da45b3deb4a39fbc3bbd683287bf5ac2dbd45b2e3c1c90",
+      "size_bytes": 20877
+    },
+    {
+      "path": "ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_cli.py",
+      "role": "source:ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_cli.py",
+      "sha256": "7ec9c53c7edbeefe7a5e4fc0dc6f8568054c10a2dcd6dc1f87b94f1cde9d28ee",
+      "size_bytes": 16163
+    },
+    {
+      "path": "ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_faults.py",
+      "role": "source:ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_faults.py",
+      "sha256": "d01eac1b4acf3eeed767025dd1fbc08a1db90303be167e1f5e486db85ae6a128",
+      "size_bytes": 9236
+    },
+    {
+      "path": "ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_figures.py",
+      "role": "source:ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_figures.py",
+      "sha256": "e1397a4ccf0f01f1b3623ad710072f7413b6519d4db22c70dde07dd1c416e4d7",
+      "size_bytes": 14895
+    },
+    {
+      "path": "ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_matrix.py",
+      "role": "source:ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_matrix.py",
+      "sha256": "352059cc509c47a85ac5708d29bf1027e66fca3cb6792acb055a45c0736de85e",
+      "size_bytes": 16533
+    },
+    {
+      "path": "ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_protocol.py",
+      "role": "source:ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_protocol.py",
+      "sha256": "afc11cafa9863b0ec72fa935532867e0a19f60ca12fe9c1cde974983fa0bfc21",
+      "size_bytes": 164348
+    },
+    {
+      "path": "ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_recorder.py",
+      "role": "source:ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_recorder.py",
+      "sha256": "e4b1bf5700f6290d0a21ac8ac22977740f45ad73a5c124df9b06e730e090d52b",
+      "size_bytes": 9088
+    },
+    {
+      "path": "ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_replay.py",
+      "role": "source:ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_replay.py",
+      "sha256": "b4efb7b778d91c8cb077a226f1016d01870ad122504f82772991b53974233954",
+      "size_bytes": 129130
+    },
+    {
+      "path": "ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_report.py",
+      "role": "source:ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_report.py",
+      "sha256": "1ef65c9530e6353cc12f591a2afed2d00e8b47113989f915b254bc592be0acf0",
+      "size_bytes": 43006
+    },
+    {
+      "path": "ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_scenario.py",
+      "role": "source:ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_scenario.py",
+      "sha256": "a67da84b410aa32317a5f284db8585e8c8d1346a996d6f03ae3516cffb9898b2",
+      "size_bytes": 11756
+    },
+    {
+      "path": "ros2_ws/src/action_stream_benchmark/action_stream_benchmark/plant.py",
+      "role": "source:ros2_ws/src/action_stream_benchmark/action_stream_benchmark/plant.py",
+      "sha256": "c929182a4918520354077d6336b0c840fd1d2e32148e307a5773f9c9275cc9c9",
+      "size_bytes": 6490
+    },
+    {
+      "path": "ros2_ws/src/action_stream_benchmark/action_stream_benchmark/schema.py",
+      "role": "source:ros2_ws/src/action_stream_benchmark/action_stream_benchmark/schema.py",
+      "sha256": "e7ceb84714f18869836470af798bbf32530c2ecec013264d98acd9ccb6192e37",
+      "size_bytes": 4638
+    },
+    {
+      "path": "ros2_ws/src/action_stream_benchmark/config/m8_profile_0_sanity.json",
+      "role": "profile:profile_0_sanity",
+      "sha256": "6ed5d115855037a5805976a653eb36ff5a329ed43a7102a0d21c2a7a0ec3db60",
+      "size_bytes": 491
+    },
+    {
+      "path": "ros2_ws/src/action_stream_benchmark/config/m8_profile_1_fixed.json",
+      "role": "profile:profile_1_fixed",
+      "sha256": "996010206f7ca48321c4df2ac7ebfbf95933b66b0beb869c45109f198e05cda4",
+      "size_bytes": 532
+    },
+    {
+      "path": "ros2_ws/src/action_stream_benchmark/config/m8_profile_2_faults.json",
+      "role": "profile:profile_2_faults",
+      "sha256": "0ecb35143cdd9f0e4b263be4ce67cb0739b735d80e6bb334e1e710e345612dc2",
+      "size_bytes": 544
+    },
+    {
+      "path": "ros2_ws/src/action_stream_benchmark/package.xml",
+      "role": "source:ros2_ws/src/action_stream_benchmark/package.xml",
+      "sha256": "0cd0771e0f3d973172b767e03ade0455dc7d99ec74dd90d06e1664e8f8e5ba91",
+      "size_bytes": 956
+    },
+    {
+      "path": "ros2_ws/src/action_stream_benchmark/resource/action_stream_benchmark",
+      "role": "source:ros2_ws/src/action_stream_benchmark/resource/action_stream_benchmark",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "size_bytes": 1
+    },
+    {
+      "path": "ros2_ws/src/action_stream_benchmark/setup.cfg",
+      "role": "source:ros2_ws/src/action_stream_benchmark/setup.cfg",
+      "sha256": "35a7ddd670dbbd2b70e8eb32bd8258c8c1bcc7487c35dbb9fe706bf9f2fa7f40",
+      "size_bytes": 147
+    },
+    {
+      "path": "ros2_ws/src/action_stream_benchmark/setup.py",
+      "role": "source:ros2_ws/src/action_stream_benchmark/setup.py",
+      "sha256": "c264bbc1e1c93f454f9223c2cd258eade3d66ff380aa0e692963623a970a6658",
+      "size_bytes": 1237
+    },
+    {
+      "path": "ros2_ws/src/action_stream_executor/CMakeLists.txt",
+      "role": "source:ros2_ws/src/action_stream_executor/CMakeLists.txt",
+      "sha256": "0840db9c64ad13e9f94ceb3fa9414b941ec962bc8ccfd8183964ef05dd40343a",
+      "size_bytes": 2209
+    },
+    {
+      "path": "ros2_ws/src/action_stream_executor/include/action_stream_executor/executor_node.hpp",
+      "role": "source:ros2_ws/src/action_stream_executor/include/action_stream_executor/executor_node.hpp",
+      "sha256": "6bdb5b9b39e8bf691c740900fe1aa6fbdd41f1a0255b72a3f72c0afd655c152d",
+      "size_bytes": 2655
+    },
+    {
+      "path": "ros2_ws/src/action_stream_executor/include/action_stream_executor/executor_state_machine.hpp",
+      "role": "source:ros2_ws/src/action_stream_executor/include/action_stream_executor/executor_state_machine.hpp",
+      "sha256": "833fd3f93eefb678a4c08d6db455fe09a3256975818611c8cf3a44883a03166a",
+      "size_bytes": 10758
+    },
+    {
+      "path": "ros2_ws/src/action_stream_executor/package.xml",
+      "role": "source:ros2_ws/src/action_stream_executor/package.xml",
+      "sha256": "d623340bb53fc2a7c8f5cf8b50356dba022e3cf52f4912c83f781e4368747da8",
+      "size_bytes": 601
+    },
+    {
+      "path": "ros2_ws/src/action_stream_executor/src/differential_replay_probe.cpp",
+      "role": "source:ros2_ws/src/action_stream_executor/src/differential_replay_probe.cpp",
+      "sha256": "27d445c1cd0588a5db91cf16b23033c2127beb97270349817b319d3b0b6becce",
+      "size_bytes": 11419
+    },
+    {
+      "path": "ros2_ws/src/action_stream_executor/src/executor_node.cpp",
+      "role": "source:ros2_ws/src/action_stream_executor/src/executor_node.cpp",
+      "sha256": "d42efc626ffb7f4db5725b8ba5b35adbd3e714799f9ec923573f7ba00bfd0a0a",
+      "size_bytes": 16467
+    },
+    {
+      "path": "ros2_ws/src/action_stream_executor/src/executor_state_machine.cpp",
+      "role": "source:ros2_ws/src/action_stream_executor/src/executor_state_machine.cpp",
+      "sha256": "8e4ae4484a85079d2d9ac8b768ac50eae6edbd402e8be71bca0edc04a7ca83d8",
+      "size_bytes": 39843
+    },
+    {
+      "path": "ros2_ws/src/action_stream_executor/src/main.cpp",
+      "role": "source:ros2_ws/src/action_stream_executor/src/main.cpp",
+      "sha256": "2418aab05ce465c9f4d996fd54fe53b22a38878b7304690e001c6307577c04d2",
+      "size_bytes": 470
+    },
+    {
+      "path": "ros2_ws/src/action_stream_isaac/action_stream_isaac/__init__.py",
+      "role": "source:ros2_ws/src/action_stream_isaac/action_stream_isaac/__init__.py",
+      "sha256": "dbd4a27177b8e23c0ba66524de5b7627740abc61e30837a14dafd02ab7dc1dd2",
+      "size_bytes": 196
+    },
+    {
+      "path": "ros2_ws/src/action_stream_isaac/action_stream_isaac/capability_probe.py",
+      "role": "source:ros2_ws/src/action_stream_isaac/action_stream_isaac/capability_probe.py",
+      "sha256": "00a9131cae20b9eb5f14892901757f002ffe36d18b0771bd2ee3657bad4f9765",
+      "size_bytes": 11640
+    },
+    {
+      "path": "ros2_ws/src/action_stream_isaac/action_stream_isaac/dynamic_event_recorder.py",
+      "role": "source:ros2_ws/src/action_stream_isaac/action_stream_isaac/dynamic_event_recorder.py",
+      "sha256": "600c4ec9102ce90591132c95c6bc0537aefb11f8475fb89f8ab3eac56dbdd745",
+      "size_bytes": 20611
+    },
+    {
+      "path": "ros2_ws/src/action_stream_isaac/action_stream_isaac/dynamic_isaac_adapter.py",
+      "role": "source:ros2_ws/src/action_stream_isaac/action_stream_isaac/dynamic_isaac_adapter.py",
+      "sha256": "a584eadb952cd0041b27521a5c72f0bf25be1721c7e0e2ee88ad3433a11757d9",
+      "size_bytes": 115619
+    },
+    {
+      "path": "ros2_ws/src/action_stream_isaac/action_stream_isaac/dynamic_request_driver.py",
+      "role": "source:ros2_ws/src/action_stream_isaac/action_stream_isaac/dynamic_request_driver.py",
+      "sha256": "9bed562fd97446af328508f6ee2e8375b51a630a55086049378e75781f61529e",
+      "size_bytes": 18206
+    },
+    {
+      "path": "ros2_ws/src/action_stream_isaac/action_stream_isaac/dynamic_task.py",
+      "role": "source:ros2_ws/src/action_stream_isaac/action_stream_isaac/dynamic_task.py",
+      "sha256": "82da945e28ede3545709ede15834714690519177e24ee916abf1514c7256ff48",
+      "size_bytes": 34453
+    },
+    {
+      "path": "ros2_ws/src/action_stream_isaac/action_stream_isaac/ros_contract.py",
+      "role": "source:ros2_ws/src/action_stream_isaac/action_stream_isaac/ros_contract.py",
+      "sha256": "d3c8a2571f99bd660a365d9df898819253c4756b3e730e9fd109daf45fc02e37",
+      "size_bytes": 4074
+    },
+    {
+      "path": "ros2_ws/src/action_stream_isaac/action_stream_isaac/task_logic.py",
+      "role": "source:ros2_ws/src/action_stream_isaac/action_stream_isaac/task_logic.py",
+      "sha256": "223404e5c7925832cb04785f5a52d6369349cd51655a9a044f8c825cce02907d",
+      "size_bytes": 13375
+    },
+    {
+      "path": "ros2_ws/src/action_stream_isaac/launch/franka_dynamic_recovery.launch.py",
+      "role": "source:ros2_ws/src/action_stream_isaac/launch/franka_dynamic_recovery.launch.py",
+      "sha256": "8691ffc9bea658ffdd3ecfcc264778ed1ee5c65d07d9c4d9790c62fa5c0504f2",
+      "size_bytes": 3426
+    },
+    {
+      "path": "ros2_ws/src/action_stream_isaac/package.xml",
+      "role": "source:ros2_ws/src/action_stream_isaac/package.xml",
+      "sha256": "2e8f9a7ed25027fdfeefc627d855e1ee04c7b18163b733028fd97ce782d635d0",
+      "size_bytes": 868
+    },
+    {
+      "path": "ros2_ws/src/action_stream_isaac/resource/action_stream_isaac",
+      "role": "source:ros2_ws/src/action_stream_isaac/resource/action_stream_isaac",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "size_bytes": 1
+    },
+    {
+      "path": "ros2_ws/src/action_stream_isaac/setup.cfg",
+      "role": "source:ros2_ws/src/action_stream_isaac/setup.cfg",
+      "sha256": "e5e77ceea32665f1514e223949569f5200c597903622b5b73497b414e7703dff",
+      "size_bytes": 170
+    },
+    {
+      "path": "ros2_ws/src/action_stream_isaac/setup.py",
+      "role": "source:ros2_ws/src/action_stream_isaac/setup.py",
+      "sha256": "bc48a6bed06bda6a778c097cf79693fa6b0ddab1f6399019dbcfbc15a67901df",
+      "size_bytes": 1014
+    },
+    {
+      "path": "ros2_ws/src/action_stream_msgs/CMakeLists.txt",
+      "role": "source:ros2_ws/src/action_stream_msgs/CMakeLists.txt",
+      "sha256": "3109ac3c28ef8f20785638712bbd886990e2a91dacd361ecb7f0d970442a69d9",
+      "size_bytes": 620
+    },
+    {
+      "path": "ros2_ws/src/action_stream_msgs/msg/ActionChunk.msg",
+      "role": "source:ros2_ws/src/action_stream_msgs/msg/ActionChunk.msg",
+      "sha256": "175582745dfdc22e5ef601fbb4b54ddeac6b10b33e79a1200c17a78c79fb489a",
+      "size_bytes": 698
+    },
+    {
+      "path": "ros2_ws/src/action_stream_msgs/msg/EpisodeControl.msg",
+      "role": "source:ros2_ws/src/action_stream_msgs/msg/EpisodeControl.msg",
+      "sha256": "978bc8e932997ede4f31d3aa385adf3104e86a36bea487ab759ddbe23a11b088",
+      "size_bytes": 424
+    },
+    {
+      "path": "ros2_ws/src/action_stream_msgs/msg/ExecutorDiagnostics.msg",
+      "role": "source:ros2_ws/src/action_stream_msgs/msg/ExecutorDiagnostics.msg",
+      "sha256": "4d7708b8e59b104cc2f65cacb3d7614925a2fac7633033a1ed074fa3404557f3",
+      "size_bytes": 880
+    },
+    {
+      "path": "ros2_ws/src/action_stream_msgs/msg/InferenceRequest.msg",
+      "role": "source:ros2_ws/src/action_stream_msgs/msg/InferenceRequest.msg",
+      "sha256": "c726b6799b1bd7c4cda4f9422a9095ed9d798023487f82573e14dff5ccce53cd",
+      "size_bytes": 453
+    },
+    {
+      "path": "ros2_ws/src/action_stream_msgs/msg/Observation.msg",
+      "role": "source:ros2_ws/src/action_stream_msgs/msg/Observation.msg",
+      "sha256": "ba6bfd549b6d1b89f3d573f0acdce3861d96b054c5c0c81d38d44c25cb8a89ca",
+      "size_bytes": 354
+    },
+    {
+      "path": "ros2_ws/src/action_stream_msgs/msg/RobotCommand.msg",
+      "role": "source:ros2_ws/src/action_stream_msgs/msg/RobotCommand.msg",
+      "sha256": "7304519c835514de23d2c925b00b0c9494dda43620ebb8ed3f5946d7256c96da",
+      "size_bytes": 409
+    },
+    {
+      "path": "ros2_ws/src/action_stream_msgs/msg/RuntimeEvent.msg",
+      "role": "source:ros2_ws/src/action_stream_msgs/msg/RuntimeEvent.msg",
+      "sha256": "a9d1a27b9370b54675443e6cc6d3d129b475e123f8cfcb8e3ac9fbd5425f20db",
+      "size_bytes": 459
+    },
+    {
+      "path": "ros2_ws/src/action_stream_msgs/msg/TargetAction.msg",
+      "role": "source:ros2_ws/src/action_stream_msgs/msg/TargetAction.msg",
+      "sha256": "67af3bb4539051ba7dad6399fb18f8c80b68b8db7e12809a47d6cfb03b492ff7",
+      "size_bytes": 116
+    },
+    {
+      "path": "ros2_ws/src/action_stream_msgs/package.xml",
+      "role": "source:ros2_ws/src/action_stream_msgs/package.xml",
+      "sha256": "8234fad9645855b75c52e20d8130bfb9e4eb808c8a5c2448a18040e98451636c",
+      "size_bytes": 675
+    },
+    {
+      "path": "ros2_ws/src/action_stream_policy/action_stream_policy/__init__.py",
+      "role": "source:ros2_ws/src/action_stream_policy/action_stream_policy/__init__.py",
+      "sha256": "afd3153c24bcb23bc2d5f6814d9c21d2edc5371afeb596e940d8bf64854febfa",
+      "size_bytes": 494
+    },
+    {
+      "path": "ros2_ws/src/action_stream_policy/action_stream_policy/dynamic_pick_place.py",
+      "role": "source:ros2_ws/src/action_stream_policy/action_stream_policy/dynamic_pick_place.py",
+      "sha256": "d7109c5dcf32035c481ef5c68ebdc9bc3eb33950e532e9d1b7d6e4098748e77f",
+      "size_bytes": 14477
+    },
+    {
+      "path": "ros2_ws/src/action_stream_policy/action_stream_policy/dynamic_policy_node.py",
+      "role": "source:ros2_ws/src/action_stream_policy/action_stream_policy/dynamic_policy_node.py",
+      "sha256": "e696d658e5acf0737ad7b55193a55f90902f07f8ab288a4ea781bb70c931bb64",
+      "size_bytes": 9631
+    },
+    {
+      "path": "ros2_ws/src/action_stream_policy/action_stream_policy/scripted_policy.py",
+      "role": "source:ros2_ws/src/action_stream_policy/action_stream_policy/scripted_policy.py",
+      "sha256": "bca01a5c4367022dfe43898d3eb8e2212c8b2a0a1049c2bcd40af799bfd56c89",
+      "size_bytes": 8831
+    },
+    {
+      "path": "ros2_ws/src/action_stream_policy/package.xml",
+      "role": "source:ros2_ws/src/action_stream_policy/package.xml",
+      "sha256": "b4a185dd9945bee2651bdee1dd6f00945f4715da13ce33320d7a62fa76905386",
+      "size_bytes": 702
+    },
+    {
+      "path": "ros2_ws/src/action_stream_policy/resource/action_stream_policy",
+      "role": "source:ros2_ws/src/action_stream_policy/resource/action_stream_policy",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "size_bytes": 1
+    },
+    {
+      "path": "ros2_ws/src/action_stream_policy/setup.cfg",
+      "role": "source:ros2_ws/src/action_stream_policy/setup.cfg",
+      "sha256": "c8da19459c7dc87d72d5fd27a23cb61f4111499fafe37852c41afde5024bd604",
+      "size_bytes": 141
+    },
+    {
+      "path": "ros2_ws/src/action_stream_policy/setup.py",
+      "role": "source:ros2_ws/src/action_stream_policy/setup.py",
+      "sha256": "5165665116a912843da55efa849e9e48adfac5a5597c659677c11c30b36730e9",
+      "size_bytes": 1018
+    },
+    {
+      "path": "scripts/m8_linux_runner_support.py",
+      "role": "source:scripts/m8_linux_runner_support.py",
+      "sha256": "304da243f5c9efdeb7896a52c90d96f9d308ae3e9355bdff4e78fc5b7c38ab39",
+      "size_bytes": 52219
+    },
+    {
+      "path": "scripts/m8_run_isaac.ps1",
+      "role": "source:scripts/m8_run_isaac.ps1",
+      "sha256": "1b1b7e0ab07b9648768c9fa98532642ec6c022ad08829ad5ee001ff596616789",
+      "size_bytes": 41993
+    },
+    {
+      "path": "scripts/m8_run_isaac.sh",
+      "role": "source:scripts/m8_run_isaac.sh",
+      "sha256": "7e4cac9bf0b62360ac5b685a94f0d917b667467971f452f48db908daeec6bca7",
+      "size_bytes": 36451
+    }
+  ],
+  "milestone": "M8-G0",
+  "protocol_sha256": "9f36e72b27b0b2b1ef7628a15364c97d88b1efc94846a2284b2b727c034bd6ea",
+  "required_roles": [
+    "protocol",
+    "baseline_seeds",
+    "development_seeds",
+    "holdout_seeds",
+    "calibration_ledger",
+    "baseline_matrix",
+    "baseline_replay",
+    "baseline_candidate_protocol",
+    "baseline_completion_receipt",
+    "baseline_preflight_receipt",
+    "baseline_installed_dynamic_adapter_evidence",
+    "baseline_installed_executor_evidence",
+    "baseline_runner_evidence",
+    "baseline_external_environment",
+    "baseline_pixi_manifest_evidence",
+    "baseline_pixi_lock_evidence",
+    "baseline_runner_support_evidence",
+    "baseline_process_log_archive",
+    "baseline_process_log_manifest",
+    "profile:profile_0_sanity",
+    "profile:profile_1_fixed",
+    "profile:profile_2_faults",
+    "development:candidate_0:matrix",
+    "development:candidate_0:replay",
+    "source:ros2_ws/src/action_stream_executor/CMakeLists.txt",
+    "source:ros2_ws/src/action_stream_executor/package.xml",
+    "source:ros2_ws/src/action_stream_executor/include/action_stream_executor/executor_state_machine.hpp",
+    "source:ros2_ws/src/action_stream_executor/include/action_stream_executor/executor_node.hpp",
+    "source:ros2_ws/src/action_stream_executor/src/differential_replay_probe.cpp",
+    "source:ros2_ws/src/action_stream_executor/src/executor_node.cpp",
+    "source:ros2_ws/src/action_stream_executor/src/executor_state_machine.cpp",
+    "source:ros2_ws/src/action_stream_executor/src/main.cpp",
+    "source:ros2_ws/src/action_stream_isaac/package.xml",
+    "source:ros2_ws/src/action_stream_isaac/resource/action_stream_isaac",
+    "source:ros2_ws/src/action_stream_isaac/setup.cfg",
+    "source:ros2_ws/src/action_stream_isaac/setup.py",
+    "source:ros2_ws/src/action_stream_isaac/action_stream_isaac/__init__.py",
+    "source:ros2_ws/src/action_stream_isaac/action_stream_isaac/capability_probe.py",
+    "source:ros2_ws/src/action_stream_isaac/action_stream_isaac/dynamic_event_recorder.py",
+    "source:ros2_ws/src/action_stream_isaac/action_stream_isaac/dynamic_task.py",
+    "source:ros2_ws/src/action_stream_isaac/action_stream_isaac/dynamic_isaac_adapter.py",
+    "source:ros2_ws/src/action_stream_isaac/action_stream_isaac/dynamic_request_driver.py",
+    "source:ros2_ws/src/action_stream_isaac/action_stream_isaac/ros_contract.py",
+    "source:ros2_ws/src/action_stream_isaac/action_stream_isaac/task_logic.py",
+    "source:ros2_ws/src/action_stream_isaac/launch/franka_dynamic_recovery.launch.py",
+    "source:ros2_ws/src/action_stream_policy/package.xml",
+    "source:ros2_ws/src/action_stream_policy/resource/action_stream_policy",
+    "source:ros2_ws/src/action_stream_policy/setup.cfg",
+    "source:ros2_ws/src/action_stream_policy/setup.py",
+    "source:ros2_ws/src/action_stream_policy/action_stream_policy/__init__.py",
+    "source:ros2_ws/src/action_stream_policy/action_stream_policy/dynamic_pick_place.py",
+    "source:ros2_ws/src/action_stream_policy/action_stream_policy/dynamic_policy_node.py",
+    "source:ros2_ws/src/action_stream_policy/action_stream_policy/scripted_policy.py",
+    "source:ros2_ws/src/action_stream_benchmark/package.xml",
+    "source:ros2_ws/src/action_stream_benchmark/resource/action_stream_benchmark",
+    "source:ros2_ws/src/action_stream_benchmark/setup.cfg",
+    "source:ros2_ws/src/action_stream_benchmark/setup.py",
+    "source:ros2_ws/src/action_stream_benchmark/action_stream_benchmark/__init__.py",
+    "source:ros2_ws/src/action_stream_benchmark/action_stream_benchmark/fault_injector_node.py",
+    "source:ros2_ws/src/action_stream_benchmark/action_stream_benchmark/faults.py",
+    "source:ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_analysis.py",
+    "source:ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_archive.py",
+    "source:ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_cli.py",
+    "source:ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_faults.py",
+    "source:ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_figures.py",
+    "source:ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_matrix.py",
+    "source:ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_protocol.py",
+    "source:ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_recorder.py",
+    "source:ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_replay.py",
+    "source:ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_report.py",
+    "source:ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_scenario.py",
+    "source:ros2_ws/src/action_stream_benchmark/action_stream_benchmark/plant.py",
+    "source:ros2_ws/src/action_stream_benchmark/action_stream_benchmark/schema.py",
+    "source:ros2_ws/src/action_stream_msgs/CMakeLists.txt",
+    "source:ros2_ws/src/action_stream_msgs/package.xml",
+    "source:ros2_ws/src/action_stream_msgs/msg/ActionChunk.msg",
+    "source:ros2_ws/src/action_stream_msgs/msg/EpisodeControl.msg",
+    "source:ros2_ws/src/action_stream_msgs/msg/ExecutorDiagnostics.msg",
+    "source:ros2_ws/src/action_stream_msgs/msg/InferenceRequest.msg",
+    "source:ros2_ws/src/action_stream_msgs/msg/Observation.msg",
+    "source:ros2_ws/src/action_stream_msgs/msg/RobotCommand.msg",
+    "source:ros2_ws/src/action_stream_msgs/msg/RuntimeEvent.msg",
+    "source:ros2_ws/src/action_stream_msgs/msg/TargetAction.msg",
+    "source:scripts/m8_run_isaac.ps1",
+    "source:scripts/m8_run_isaac.sh",
+    "source:scripts/m8_linux_runner_support.py",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081000-sync_hold.jsonl",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081001-sync_hold.jsonl",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081002-sync_hold.jsonl",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081003-sync_hold.jsonl",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081004-sync_hold.jsonl",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081005-sync_hold.jsonl",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081006-sync_hold.jsonl",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081007-sync_hold.jsonl",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081008-sync_hold.jsonl",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081009-sync_hold.jsonl",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081010-sync_hold.jsonl",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081011-sync_hold.jsonl",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081012-sync_hold.jsonl",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081013-sync_hold.jsonl",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081014-sync_hold.jsonl",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081015-sync_hold.jsonl",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081016-sync_hold.jsonl",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081017-sync_hold.jsonl",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081018-sync_hold.jsonl",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/events/m8-baseline_gate-profile_0_sanity-2026081019-sync_hold.jsonl",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081000.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081001.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081002.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081003.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081004.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081005.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081006.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081007.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081008.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081009.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081010.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081011.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081012.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081013.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081014.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081015.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081016.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081017.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081018.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/fault_traces/profile_0_sanity_seed_2026081019.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081000.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081001.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081002.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081003.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081004.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081005.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081006.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081007.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081008.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081009.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081010.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081011.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081012.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081013.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081014.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081015.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081016.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081017.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081018.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/scenarios/seed_2026081019.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081000-sync_hold.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081001-sync_hold.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081002-sync_hold.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081003-sync_hold.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081004-sync_hold.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081005-sync_hold.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081006-sync_hold.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081007-sync_hold.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081008-sync_hold.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081009-sync_hold.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081010-sync_hold.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081011-sync_hold.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081012-sync_hold.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081013-sync_hold.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081014-sync_hold.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081015-sync_hold.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081016-sync_hold.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081017-sync_hold.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081018-sync_hold.json",
+    "baseline_artifact:outputs/m8_g0/baseline_gate/source_v3/raw/summaries/m8-baseline_gate-profile_0_sanity-2026081019-sync_hold.json"
+  ],
+  "required_source_paths": [
+    "ros2_ws/src/action_stream_executor/CMakeLists.txt",
+    "ros2_ws/src/action_stream_executor/package.xml",
+    "ros2_ws/src/action_stream_executor/include/action_stream_executor/executor_state_machine.hpp",
+    "ros2_ws/src/action_stream_executor/include/action_stream_executor/executor_node.hpp",
+    "ros2_ws/src/action_stream_executor/src/differential_replay_probe.cpp",
+    "ros2_ws/src/action_stream_executor/src/executor_node.cpp",
+    "ros2_ws/src/action_stream_executor/src/executor_state_machine.cpp",
+    "ros2_ws/src/action_stream_executor/src/main.cpp",
+    "ros2_ws/src/action_stream_isaac/package.xml",
+    "ros2_ws/src/action_stream_isaac/resource/action_stream_isaac",
+    "ros2_ws/src/action_stream_isaac/setup.cfg",
+    "ros2_ws/src/action_stream_isaac/setup.py",
+    "ros2_ws/src/action_stream_isaac/action_stream_isaac/__init__.py",
+    "ros2_ws/src/action_stream_isaac/action_stream_isaac/capability_probe.py",
+    "ros2_ws/src/action_stream_isaac/action_stream_isaac/dynamic_event_recorder.py",
+    "ros2_ws/src/action_stream_isaac/action_stream_isaac/dynamic_task.py",
+    "ros2_ws/src/action_stream_isaac/action_stream_isaac/dynamic_isaac_adapter.py",
+    "ros2_ws/src/action_stream_isaac/action_stream_isaac/dynamic_request_driver.py",
+    "ros2_ws/src/action_stream_isaac/action_stream_isaac/ros_contract.py",
+    "ros2_ws/src/action_stream_isaac/action_stream_isaac/task_logic.py",
+    "ros2_ws/src/action_stream_isaac/launch/franka_dynamic_recovery.launch.py",
+    "ros2_ws/src/action_stream_policy/package.xml",
+    "ros2_ws/src/action_stream_policy/resource/action_stream_policy",
+    "ros2_ws/src/action_stream_policy/setup.cfg",
+    "ros2_ws/src/action_stream_policy/setup.py",
+    "ros2_ws/src/action_stream_policy/action_stream_policy/__init__.py",
+    "ros2_ws/src/action_stream_policy/action_stream_policy/dynamic_pick_place.py",
+    "ros2_ws/src/action_stream_policy/action_stream_policy/dynamic_policy_node.py",
+    "ros2_ws/src/action_stream_policy/action_stream_policy/scripted_policy.py",
+    "ros2_ws/src/action_stream_benchmark/package.xml",
+    "ros2_ws/src/action_stream_benchmark/resource/action_stream_benchmark",
+    "ros2_ws/src/action_stream_benchmark/setup.cfg",
+    "ros2_ws/src/action_stream_benchmark/setup.py",
+    "ros2_ws/src/action_stream_benchmark/action_stream_benchmark/__init__.py",
+    "ros2_ws/src/action_stream_benchmark/action_stream_benchmark/fault_injector_node.py",
+    "ros2_ws/src/action_stream_benchmark/action_stream_benchmark/faults.py",
+    "ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_analysis.py",
+    "ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_archive.py",
+    "ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_cli.py",
+    "ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_faults.py",
+    "ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_figures.py",
+    "ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_matrix.py",
+    "ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_protocol.py",
+    "ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_recorder.py",
+    "ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_replay.py",
+    "ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_report.py",
+    "ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_scenario.py",
+    "ros2_ws/src/action_stream_benchmark/action_stream_benchmark/plant.py",
+    "ros2_ws/src/action_stream_benchmark/action_stream_benchmark/schema.py",
+    "ros2_ws/src/action_stream_msgs/CMakeLists.txt",
+    "ros2_ws/src/action_stream_msgs/package.xml",
+    "ros2_ws/src/action_stream_msgs/msg/ActionChunk.msg",
+    "ros2_ws/src/action_stream_msgs/msg/EpisodeControl.msg",
+    "ros2_ws/src/action_stream_msgs/msg/ExecutorDiagnostics.msg",
+    "ros2_ws/src/action_stream_msgs/msg/InferenceRequest.msg",
+    "ros2_ws/src/action_stream_msgs/msg/Observation.msg",
+    "ros2_ws/src/action_stream_msgs/msg/RobotCommand.msg",
+    "ros2_ws/src/action_stream_msgs/msg/RuntimeEvent.msg",
+    "ros2_ws/src/action_stream_msgs/msg/TargetAction.msg",
+    "scripts/m8_run_isaac.ps1",
+    "scripts/m8_run_isaac.sh",
+    "scripts/m8_linux_runner_support.py"
+  ],
+  "schema_version": 1
+}

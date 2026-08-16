@@ -1,0 +1,1110 @@
+{
+  "batch_profile_id": "profile_2_faults",
+  "batch_strategy": "naive_async",
+  "episodes": [
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081200-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081200-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081200.json",
+      "fault_trace_sha256": "57c9249e61e53f5675e53359e8ffc6fbbe87b1ed7b468a18c28a36379c06dee5",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081200.json",
+      "scenario_sha256": "26a6715c362029b9960ef6992342a2fcf3160acf8631d662545d635d9c9eb5e1",
+      "seed": 2026081200,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081200-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081201-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081201-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081201.json",
+      "fault_trace_sha256": "b976d7187076cc9b4a3450279a9dbd26d9347aa38cebb86a47a0f92e1e82ef8c",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081201.json",
+      "scenario_sha256": "c29378e84b7bd39873666f211384a588157190b07c64cb478367315cf055a3e7",
+      "seed": 2026081201,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081201-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081202-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081202-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081202.json",
+      "fault_trace_sha256": "0bd774476c2f2c78c97be97bcf5a9dbc7057d1ab2ab303ece0c8ab2e460ce642",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081202.json",
+      "scenario_sha256": "3856e4d034fedccbbdc1bd4c39716eeaa345e5db376103e758dcd78c938c2891",
+      "seed": 2026081202,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081202-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081203-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081203-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081203.json",
+      "fault_trace_sha256": "612067ffc595a4c150263751200c2479f082a1a4c72f27c7fb09e81e12496c13",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081203.json",
+      "scenario_sha256": "9da5ae59b8834557ffe8e54434c149d786a21dfcd571109a508e8cb5ef7a37c1",
+      "seed": 2026081203,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081203-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081204-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081204-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081204.json",
+      "fault_trace_sha256": "60fb7e77ead4366eb7be02dacfa44da1b8adee4d1c2953b5ddefe9a21d44518c",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081204.json",
+      "scenario_sha256": "67d19c67f38c45b4092642722c4a45a8d507a0760df0d997455acbbf56441c9f",
+      "seed": 2026081204,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081204-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081205-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081205-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081205.json",
+      "fault_trace_sha256": "87f9f908eaffa8723c0aac7cc67624645020efc892e6efd8c94d19310b1a23f3",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081205.json",
+      "scenario_sha256": "0efa965d776f21dea7253782043e11672155da5450e64048863a273b3b3ce8e0",
+      "seed": 2026081205,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081205-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081206-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081206-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081206.json",
+      "fault_trace_sha256": "f66127d910b3c449ee2005d22ee4baf7d4728671b63a2eed8576905c67fb7f3b",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081206.json",
+      "scenario_sha256": "589f347b18a83b13008ddbf5b8f80aed0ff02d80ec0a7c21d7360fd71b67252a",
+      "seed": 2026081206,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081206-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081207-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081207-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081207.json",
+      "fault_trace_sha256": "aed84f3b0549d051779d9ce10ea4655d82ab40feb4cf1320130f9c5401938780",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081207.json",
+      "scenario_sha256": "c9fb9ea6109572d47e3d95b71a121f69db55c8fd113986adeeb3bbac137295e8",
+      "seed": 2026081207,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081207-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081208-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081208-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081208.json",
+      "fault_trace_sha256": "8491fbdb48db012aecfd6d05847dc498d744d9de49bfd799f08d553b40899486",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081208.json",
+      "scenario_sha256": "f7e237d185b0e89e082608d8a34343b79aef6993fbbd5150b4daf93988845c31",
+      "seed": 2026081208,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081208-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081209-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081209-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081209.json",
+      "fault_trace_sha256": "b7d69afc949af77304152e00530c1e4ddd1784f50bb7f5175b008171f5f8e4a7",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081209.json",
+      "scenario_sha256": "19329aa4ca9a575954c11e36c1f7ab5f929113b0d04b6e8d2fab301652dbbcc8",
+      "seed": 2026081209,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081209-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081210-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081210-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081210.json",
+      "fault_trace_sha256": "aa46887353865832c3b2e6448c1f5a509fc1c4399e107fd8d68754762f247bc8",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081210.json",
+      "scenario_sha256": "b7758ae7e6753ed514ae8455075b1c73a4ae6889315f1ceb61c0b8bf6288d0f3",
+      "seed": 2026081210,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081210-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081211-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081211-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081211.json",
+      "fault_trace_sha256": "7ae873298f6933b7c99b6e459c35de60dfd9c5dd74b1f52d2cc1ada2b755ddce",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081211.json",
+      "scenario_sha256": "db58ddb07c70389c54a44f9a32eef573f0be5a455010fdb7be5e9d9820342589",
+      "seed": 2026081211,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081211-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081212-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081212-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081212.json",
+      "fault_trace_sha256": "d5a7de76c09b79a8081255f9d77162faef0fd623bca0e0c8fd418247734f724c",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081212.json",
+      "scenario_sha256": "a73d9692bf0c39b95f2795864a7c13229feee9e2bf1b8449b9a4971e3a149069",
+      "seed": 2026081212,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081212-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081213-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081213-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081213.json",
+      "fault_trace_sha256": "4148a95a605f10fb1b65ee3348237f95cc8714dd4c3842f5b7c4b14a4d8ae37b",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081213.json",
+      "scenario_sha256": "85920a02e2b9e9e90c8aaf97e53be1897e791106d608c09c3278a60772e30ecf",
+      "seed": 2026081213,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081213-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081214-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081214-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081214.json",
+      "fault_trace_sha256": "f99f01b337ffa6059aa13c54c9077f170d4ed8f1860ceb2e392e00316cca668a",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081214.json",
+      "scenario_sha256": "dbe14580e4da59f4a48850fe571bd4d4419a4cd412d2d345922920c807568407",
+      "seed": 2026081214,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081214-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081215-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081215-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081215.json",
+      "fault_trace_sha256": "c0fd536e2c79ad077396d3a6f0d1e00b543376ae923751c3718a2c2914b804f2",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081215.json",
+      "scenario_sha256": "bf83a053ad18280237c14b4dd4ab3487c5000ca4bdcf437cbcfa87ea3f79910a",
+      "seed": 2026081215,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081215-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081216-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081216-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081216.json",
+      "fault_trace_sha256": "ff1497a3e8cf01ed23e6ddc6677852c007b3d6454fa50e90efbd0c2422fb10db",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081216.json",
+      "scenario_sha256": "a297e7de791c551c3cf8e231bc3ca6af2ae1d13423601c2cb2042930de58073d",
+      "seed": 2026081216,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081216-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081217-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081217-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081217.json",
+      "fault_trace_sha256": "3489e01423204e310d7d8f00f38b9991c86fa2ab8883adcf5ca38e98153b6f2e",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081217.json",
+      "scenario_sha256": "302ea46b8de569aa097dc7d1f4636e02f005e4d6447e8e70bd05d6a631eef250",
+      "seed": 2026081217,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081217-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081218-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081218-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081218.json",
+      "fault_trace_sha256": "217a6f3dbdf2df009918be7a21706c88aa449bb398d6cef9435b36c7e7ad8804",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081218.json",
+      "scenario_sha256": "377908fbb7b8682f5f0a0ecb9bf8aeb6d553b1d20d274a4d208c93f9a7a86ce0",
+      "seed": 2026081218,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081218-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081219-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081219-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081219.json",
+      "fault_trace_sha256": "e9a7768694373d84a8b11c8b45095ae4d7ee86547e32bf9cfc095b21c0602bd9",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081219.json",
+      "scenario_sha256": "1858a74c8016f3c4a87788be6f7e5125d537308c55dc1c174aa4e0d4273b6cd7",
+      "seed": 2026081219,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081219-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081220-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081220-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081220.json",
+      "fault_trace_sha256": "90ecbee1f8075afa4ce8e23e585ce57f27bee9417bcd3fd662ebf2a1cb8248a1",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081220.json",
+      "scenario_sha256": "a8fee98fd03b706247127254c7eb3d4254b6f962ccc27c4a1315e58c9b9c9537",
+      "seed": 2026081220,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081220-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081221-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081221-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081221.json",
+      "fault_trace_sha256": "c006be6e9a2694e263d414344435ca623f9ee7ab791c5c9e3a7764bd62872e88",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081221.json",
+      "scenario_sha256": "f38b2b84eff0aa71729974d26eef1076a34d34cff17e995ddd7f7251bffd9950",
+      "seed": 2026081221,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081221-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081222-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081222-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081222.json",
+      "fault_trace_sha256": "4b52db469a5d2203b4cc99f9d742cb159574c6beef2f793dd2ac76268c56e633",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081222.json",
+      "scenario_sha256": "09095aa1b7826e8832a172a25d6b91ed6c418a20b532a553d38dc3e3f3b85d25",
+      "seed": 2026081222,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081222-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081223-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081223-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081223.json",
+      "fault_trace_sha256": "18bcc3ccb2c87fcbe550ce88bc829a48e7b97344e2700064c54e886465e07ac0",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081223.json",
+      "scenario_sha256": "6e4614c3c7d759dbfb92a1bcdfb2d04a1b51606fe46a835f061e216de97d8a7a",
+      "seed": 2026081223,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081223-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081224-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081224-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081224.json",
+      "fault_trace_sha256": "1ae57d6615cebfd777f7122450fe20f5de4a3ca5d1da56a7bef4b2341db6172a",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081224.json",
+      "scenario_sha256": "18f6afa136d729b6b292565f99c8bacee88e99129b99aa6b0b1261fbc686c4f1",
+      "seed": 2026081224,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081224-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081225-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081225-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081225.json",
+      "fault_trace_sha256": "6cd8d3951e4cbac1078b5f5808800ac55eabb3decc1e2f1b094d3e10cee659a5",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081225.json",
+      "scenario_sha256": "d59726d0cac28af216afab9a2c4d469bd24bf4ed2c9a1307982ce6bb948ffdda",
+      "seed": 2026081225,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081225-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081226-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081226-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081226.json",
+      "fault_trace_sha256": "351cb7805786d2492e35efa358d3f0e3ae6bd9a9080f95a25ab36bce2854146f",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081226.json",
+      "scenario_sha256": "d12dc9bf59689d3c8b14efb4c92199c74be34621c92dcdfccd4c53a243692ea8",
+      "seed": 2026081226,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081226-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081227-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081227-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081227.json",
+      "fault_trace_sha256": "9adea29e1480d884bcc1b392fdbeaddcb805044fa3416394d182888a86f322e8",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081227.json",
+      "scenario_sha256": "4c2bb259796ce59c05a7fdf70bc49e97ec7548e29405257bc3b9e5a6e5892f5f",
+      "seed": 2026081227,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081227-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081228-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081228-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081228.json",
+      "fault_trace_sha256": "a0ced11d8cf0df515d2e336697bda05f6fba5e562709d46a465ca76e98b2e945",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081228.json",
+      "scenario_sha256": "05223d47b094171fa51299e250bc4281f60c7578f623fd04bc8c5076fb4944e0",
+      "seed": 2026081228,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081228-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081229-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081229-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081229.json",
+      "fault_trace_sha256": "5d204001f0cab5d59d43d60deb24d4a9700fce96d72dc484c964184f24e462b7",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081229.json",
+      "scenario_sha256": "7e922950c99ef315466495ca64eb926511483cd2c4df66b2fd805c8a9584664c",
+      "seed": 2026081229,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081229-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081230-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081230-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081230.json",
+      "fault_trace_sha256": "f6eb9ac0817fbe8f0f488566d91b36563a2ef5aa0fcaf2d1fd19e5b5f9b568d6",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081230.json",
+      "scenario_sha256": "4bc071660e4257dda52c825acb86f82a3b34ef4bd3fe18168f563b657d81ef50",
+      "seed": 2026081230,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081230-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081231-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081231-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081231.json",
+      "fault_trace_sha256": "9c278fcd7d39aed5b84381435fbe2db1374b5f864e4042bfb226bd1dbd6d7366",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081231.json",
+      "scenario_sha256": "824b4b1f15f18fdeefd8311e6ac4736dd5e4d8876752f7ff208ede9bca6bd66b",
+      "seed": 2026081231,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081231-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081232-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081232-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081232.json",
+      "fault_trace_sha256": "d5ba0c0c49381b2006bf845359b784eb0d0ad42fbaa994a61156e437e99fcdf6",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081232.json",
+      "scenario_sha256": "a19ad03b4230dbd66ca6f26567ec19b40c0d8763535fc7de7cf04c401ccefecd",
+      "seed": 2026081232,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081232-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081233-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081233-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081233.json",
+      "fault_trace_sha256": "0d8f850246429a46ea53cfb916364d89d899cd8fce26126a9d53e4e111cfe090",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081233.json",
+      "scenario_sha256": "a0877d827cdc5b4cd05d26689e795758ed140a3855279dfd9aeaf9abdace3f12",
+      "seed": 2026081233,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081233-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081234-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081234-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081234.json",
+      "fault_trace_sha256": "f3aef0b6cb5434d5ed97aaad5b061a2b7e281734cd55866d8be32ea093e24301",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081234.json",
+      "scenario_sha256": "3a24d31afa3ae1e15089caca9c1e2740bb1c942a188ce0f0ca79a18ab8445bb7",
+      "seed": 2026081234,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081234-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081235-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081235-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081235.json",
+      "fault_trace_sha256": "7ebe9993bcfbc75e520347cfe09adc011c53e5649d584a58b6f4a83f72759271",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081235.json",
+      "scenario_sha256": "d95c332a56361be06ec0388cdc812f983ea87fcc79be24c0f9477bd4795c2096",
+      "seed": 2026081235,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081235-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081236-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081236-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081236.json",
+      "fault_trace_sha256": "f6bae77fb68e26d4258568367e4947630f5e2400421e335433aa2c031a988c2b",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081236.json",
+      "scenario_sha256": "41e68e9948c795f1a5d670c6439ac4c8cf683e3cb38983afa8e7e7d01370bc36",
+      "seed": 2026081236,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081236-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081237-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081237-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081237.json",
+      "fault_trace_sha256": "753c2904b4ace8b9f32ad88707785122e246e27aea7fe745eeffd4bbada94385",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081237.json",
+      "scenario_sha256": "7ecb1dc7792bacb3de452aa39f4716bf1d8107a076dae4565fadb3ae7916f95c",
+      "seed": 2026081237,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081237-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081238-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081238-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081238.json",
+      "fault_trace_sha256": "30082418a445328562ebd8b0ec0509f1f86e78dc1205779ca36ccbea10c566f3",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081238.json",
+      "scenario_sha256": "d71a8a9a2d81dce3d93c2fd63f363160aa99445b7e9ab4ef3597ab1c723a0246",
+      "seed": 2026081238,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081238-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081239-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081239-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081239.json",
+      "fault_trace_sha256": "6d79616051de544c65355e103f9275e62e1805a9db14ec41c05f8b7ad832d536",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081239.json",
+      "scenario_sha256": "bca79e9475899ea2a12dcc765e38e7367b9f0949fddb5352e3a376a6f94e0194",
+      "seed": 2026081239,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081239-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081240-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081240-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081240.json",
+      "fault_trace_sha256": "01ca4d2a2e414e06c3c1568672d3143a7d04c4efa4d5e24e1e5387197a6da8e1",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081240.json",
+      "scenario_sha256": "fcb704c23b5997c31bf3738c09d41281c1dab476a5b60665591c312dfb786df0",
+      "seed": 2026081240,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081240-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081241-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081241-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081241.json",
+      "fault_trace_sha256": "1dde4458476ff2810486df7317653c4b33d30acf3961323fc70e465206817709",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081241.json",
+      "scenario_sha256": "5a79653fe12866f96b0686f7e961dbf95de0efa3852d6d7b70620deed7c9587d",
+      "seed": 2026081241,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081241-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081242-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081242-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081242.json",
+      "fault_trace_sha256": "7b4529490d03347b521b50656db802d0589727c86f79cf106213afbf46165e75",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081242.json",
+      "scenario_sha256": "9907bb92ff43cdfbb8e68f8f70b7a09dcbcef0aa4e0c3f85b8727bb4ddaa55e2",
+      "seed": 2026081242,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081242-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081243-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081243-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081243.json",
+      "fault_trace_sha256": "63d7bb6ba286ec520007db31e900bcf1898d45984086c0b09a2343925b7d558a",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081243.json",
+      "scenario_sha256": "e8969030f18605ecf1c438037a39b9e0ff651357c55c8381a85783c45425873c",
+      "seed": 2026081243,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081243-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081244-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081244-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081244.json",
+      "fault_trace_sha256": "435a5f39b42a2cf45a365838fcd1f43587266c03f60cac110e8dba1a9999c395",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081244.json",
+      "scenario_sha256": "84fad69d31e1c416caedb71dc775257198e6eed9e1f7c33c03277079b2c75604",
+      "seed": 2026081244,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081244-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081245-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081245-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081245.json",
+      "fault_trace_sha256": "4ae349412f53ee45e12c43d9b3fad0791e7d42a798eecae81cdbc94c164ff05f",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081245.json",
+      "scenario_sha256": "e77508ef1e1d4c75b91abc49237be3a1b49fd5d59c83c34f5504137382f84417",
+      "seed": 2026081245,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081245-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081246-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081246-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081246.json",
+      "fault_trace_sha256": "fd9df8c47d5d00fb632e451609d9d28fbb445fd6c5719b460fba9d7631721ad9",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081246.json",
+      "scenario_sha256": "7f9c9a5426a7fce5cff7a9b288890d367e928f2b6db8e23d61d2b5b09023572d",
+      "seed": 2026081246,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081246-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081247-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081247-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081247.json",
+      "fault_trace_sha256": "302783007e76da64178b3d324d41b214aa2a3f9457c9edb5c8ad76a31b5e48ee",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081247.json",
+      "scenario_sha256": "0f9adc5233b2abd3ab4a5b177a980a383ceacca02de3aa365698706274894ff8",
+      "seed": 2026081247,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081247-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081248-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081248-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081248.json",
+      "fault_trace_sha256": "86c5f482a67ca8946a2e256959550dbe6ca9225e77a29289e1e16f1c646909fb",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081248.json",
+      "scenario_sha256": "76edf325b3e5ba41569e11ec852da179d38d6a512fa4d76d3ff587ba9e5696b6",
+      "seed": 2026081248,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081248-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081249-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081249-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081249.json",
+      "fault_trace_sha256": "3a4e5c750fc7216ab880fc37c7fc8aeb0bb0852e404e6f19673ed11091c4c34b",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081249.json",
+      "scenario_sha256": "8332134d60a4e14206025708b527a59db0f74b243535d168b5986472267814eb",
+      "seed": 2026081249,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081249-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081250-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081250-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081250.json",
+      "fault_trace_sha256": "160c9e384cd51b8be6b99600a31ad73098013f5b08342efc81971d8b3ad64469",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081250.json",
+      "scenario_sha256": "e4a1fd91c73a75fa0231b7f83f86a3e517ea7918216874059fce2e4dc5d6676d",
+      "seed": 2026081250,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081250-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081251-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081251-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081251.json",
+      "fault_trace_sha256": "6f9069801273d398c8e0b03ca042e181dd4db66fd93483f10015151813fec83f",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081251.json",
+      "scenario_sha256": "28695e12e8bce57cd5e91ca8ac6d2aa7b8913f75757744d3c9354d805cbd05f8",
+      "seed": 2026081251,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081251-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081252-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081252-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081252.json",
+      "fault_trace_sha256": "f361b3439446fb745e853116715189971765c468f95511cf102de67b08435605",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081252.json",
+      "scenario_sha256": "6b76c3847a1f9f0cfc07f3cbd32671a8979c5cbb6fc200a6389acd116445be75",
+      "seed": 2026081252,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081252-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081253-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081253-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081253.json",
+      "fault_trace_sha256": "4dd711c6ad8a6d26ac063d9d3850a0e64a1c9f18ed7eea278217fe4218ba88f9",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081253.json",
+      "scenario_sha256": "828cf63b43f0194ce8d2b24206d5c7ba381aa909481f433dea36b7eb98a01f90",
+      "seed": 2026081253,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081253-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081254-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081254-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081254.json",
+      "fault_trace_sha256": "758ed96ffd4bcefb8149a1aaacdc62e0b91a9e0a6cc7563b71c3e1a6f1df39a8",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081254.json",
+      "scenario_sha256": "5c3e7e44be4cc803b611f0e071fe81ffd7b06b4302454faf230d71cb8c2e6240",
+      "seed": 2026081254,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081254-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081255-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081255-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081255.json",
+      "fault_trace_sha256": "e4320771e8f18a86fb6da73090a19e6ba7af09c3ebf3c3efbeeed62f6d573f90",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081255.json",
+      "scenario_sha256": "a9c7a6b177fce2e2775986c51bc095556b762c2b95844017d1ddc062d021bf2a",
+      "seed": 2026081255,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081255-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081256-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081256-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081256.json",
+      "fault_trace_sha256": "bc79815d9d49853dda033d8264b6fe9624145102ab6f551bc41172662d540dd8",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081256.json",
+      "scenario_sha256": "b14eab19c0774739af456d0e62c41e643e6fe44b6a2a83edd6b55df1ef7e6b78",
+      "seed": 2026081256,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081256-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081257-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081257-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081257.json",
+      "fault_trace_sha256": "9fe9ee4f8be168eb0dc4fa4e67c5ab30745f475c42af32a1caaa24405320db75",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081257.json",
+      "scenario_sha256": "7bd32473486c0eb171ad86d98d42e31bce73d96c2dde48ec2f8ade1bda844294",
+      "seed": 2026081257,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081257-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081258-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081258-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081258.json",
+      "fault_trace_sha256": "c453a736c26a36903213b2ea8d89bf8cadfba837bc92f67f8fec56e3b93aa3ea",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081258.json",
+      "scenario_sha256": "53cbcdfa38b08a0d6835c3f1e90389abbfe13304c8b09775b59eb1f2512389a2",
+      "seed": 2026081258,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081258-naive_async.json"
+    },
+    {
+      "episode_id": "m8-frozen_holdout-profile_2_faults-2026081259-naive_async",
+      "event_log_path": "raw/events/m8-frozen_holdout-profile_2_faults-2026081259-naive_async.jsonl",
+      "fault_trace_file": "raw/fault_traces/profile_2_faults_seed_2026081259.json",
+      "fault_trace_sha256": "5d6300f0f0c4037a7dbe5849c1cb4b31cc872cd48a5e769c7187750dcbdeacb4",
+      "profile_id": "profile_2_faults",
+      "scenario_file": "raw/scenarios/seed_2026081259.json",
+      "scenario_sha256": "5224e6e731ae9cc2d7c2860528a80254e6d38c949e2912c0e8d4597ee6a20e96",
+      "seed": 2026081259,
+      "strategy": "naive_async",
+      "summary_path": "raw/summaries/m8-frozen_holdout-profile_2_faults-2026081259-naive_async.json"
+    }
+  ],
+  "evidence_class": "ros_cpp_isaac_sim",
+  "expected_episode_count": 60,
+  "fault_traces": [
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081200.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081200,
+      "trace_sha256": "57c9249e61e53f5675e53359e8ffc6fbbe87b1ed7b468a18c28a36379c06dee5"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081201.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081201,
+      "trace_sha256": "b976d7187076cc9b4a3450279a9dbd26d9347aa38cebb86a47a0f92e1e82ef8c"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081202.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081202,
+      "trace_sha256": "0bd774476c2f2c78c97be97bcf5a9dbc7057d1ab2ab303ece0c8ab2e460ce642"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081203.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081203,
+      "trace_sha256": "612067ffc595a4c150263751200c2479f082a1a4c72f27c7fb09e81e12496c13"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081204.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081204,
+      "trace_sha256": "60fb7e77ead4366eb7be02dacfa44da1b8adee4d1c2953b5ddefe9a21d44518c"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081205.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081205,
+      "trace_sha256": "87f9f908eaffa8723c0aac7cc67624645020efc892e6efd8c94d19310b1a23f3"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081206.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081206,
+      "trace_sha256": "f66127d910b3c449ee2005d22ee4baf7d4728671b63a2eed8576905c67fb7f3b"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081207.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081207,
+      "trace_sha256": "aed84f3b0549d051779d9ce10ea4655d82ab40feb4cf1320130f9c5401938780"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081208.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081208,
+      "trace_sha256": "8491fbdb48db012aecfd6d05847dc498d744d9de49bfd799f08d553b40899486"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081209.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081209,
+      "trace_sha256": "b7d69afc949af77304152e00530c1e4ddd1784f50bb7f5175b008171f5f8e4a7"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081210.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081210,
+      "trace_sha256": "aa46887353865832c3b2e6448c1f5a509fc1c4399e107fd8d68754762f247bc8"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081211.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081211,
+      "trace_sha256": "7ae873298f6933b7c99b6e459c35de60dfd9c5dd74b1f52d2cc1ada2b755ddce"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081212.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081212,
+      "trace_sha256": "d5a7de76c09b79a8081255f9d77162faef0fd623bca0e0c8fd418247734f724c"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081213.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081213,
+      "trace_sha256": "4148a95a605f10fb1b65ee3348237f95cc8714dd4c3842f5b7c4b14a4d8ae37b"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081214.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081214,
+      "trace_sha256": "f99f01b337ffa6059aa13c54c9077f170d4ed8f1860ceb2e392e00316cca668a"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081215.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081215,
+      "trace_sha256": "c0fd536e2c79ad077396d3a6f0d1e00b543376ae923751c3718a2c2914b804f2"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081216.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081216,
+      "trace_sha256": "ff1497a3e8cf01ed23e6ddc6677852c007b3d6454fa50e90efbd0c2422fb10db"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081217.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081217,
+      "trace_sha256": "3489e01423204e310d7d8f00f38b9991c86fa2ab8883adcf5ca38e98153b6f2e"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081218.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081218,
+      "trace_sha256": "217a6f3dbdf2df009918be7a21706c88aa449bb398d6cef9435b36c7e7ad8804"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081219.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081219,
+      "trace_sha256": "e9a7768694373d84a8b11c8b45095ae4d7ee86547e32bf9cfc095b21c0602bd9"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081220.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081220,
+      "trace_sha256": "90ecbee1f8075afa4ce8e23e585ce57f27bee9417bcd3fd662ebf2a1cb8248a1"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081221.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081221,
+      "trace_sha256": "c006be6e9a2694e263d414344435ca623f9ee7ab791c5c9e3a7764bd62872e88"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081222.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081222,
+      "trace_sha256": "4b52db469a5d2203b4cc99f9d742cb159574c6beef2f793dd2ac76268c56e633"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081223.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081223,
+      "trace_sha256": "18bcc3ccb2c87fcbe550ce88bc829a48e7b97344e2700064c54e886465e07ac0"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081224.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081224,
+      "trace_sha256": "1ae57d6615cebfd777f7122450fe20f5de4a3ca5d1da56a7bef4b2341db6172a"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081225.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081225,
+      "trace_sha256": "6cd8d3951e4cbac1078b5f5808800ac55eabb3decc1e2f1b094d3e10cee659a5"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081226.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081226,
+      "trace_sha256": "351cb7805786d2492e35efa358d3f0e3ae6bd9a9080f95a25ab36bce2854146f"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081227.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081227,
+      "trace_sha256": "9adea29e1480d884bcc1b392fdbeaddcb805044fa3416394d182888a86f322e8"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081228.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081228,
+      "trace_sha256": "a0ced11d8cf0df515d2e336697bda05f6fba5e562709d46a465ca76e98b2e945"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081229.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081229,
+      "trace_sha256": "5d204001f0cab5d59d43d60deb24d4a9700fce96d72dc484c964184f24e462b7"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081230.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081230,
+      "trace_sha256": "f6eb9ac0817fbe8f0f488566d91b36563a2ef5aa0fcaf2d1fd19e5b5f9b568d6"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081231.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081231,
+      "trace_sha256": "9c278fcd7d39aed5b84381435fbe2db1374b5f864e4042bfb226bd1dbd6d7366"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081232.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081232,
+      "trace_sha256": "d5ba0c0c49381b2006bf845359b784eb0d0ad42fbaa994a61156e437e99fcdf6"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081233.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081233,
+      "trace_sha256": "0d8f850246429a46ea53cfb916364d89d899cd8fce26126a9d53e4e111cfe090"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081234.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081234,
+      "trace_sha256": "f3aef0b6cb5434d5ed97aaad5b061a2b7e281734cd55866d8be32ea093e24301"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081235.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081235,
+      "trace_sha256": "7ebe9993bcfbc75e520347cfe09adc011c53e5649d584a58b6f4a83f72759271"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081236.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081236,
+      "trace_sha256": "f6bae77fb68e26d4258568367e4947630f5e2400421e335433aa2c031a988c2b"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081237.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081237,
+      "trace_sha256": "753c2904b4ace8b9f32ad88707785122e246e27aea7fe745eeffd4bbada94385"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081238.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081238,
+      "trace_sha256": "30082418a445328562ebd8b0ec0509f1f86e78dc1205779ca36ccbea10c566f3"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081239.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081239,
+      "trace_sha256": "6d79616051de544c65355e103f9275e62e1805a9db14ec41c05f8b7ad832d536"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081240.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081240,
+      "trace_sha256": "01ca4d2a2e414e06c3c1568672d3143a7d04c4efa4d5e24e1e5387197a6da8e1"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081241.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081241,
+      "trace_sha256": "1dde4458476ff2810486df7317653c4b33d30acf3961323fc70e465206817709"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081242.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081242,
+      "trace_sha256": "7b4529490d03347b521b50656db802d0589727c86f79cf106213afbf46165e75"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081243.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081243,
+      "trace_sha256": "63d7bb6ba286ec520007db31e900bcf1898d45984086c0b09a2343925b7d558a"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081244.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081244,
+      "trace_sha256": "435a5f39b42a2cf45a365838fcd1f43587266c03f60cac110e8dba1a9999c395"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081245.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081245,
+      "trace_sha256": "4ae349412f53ee45e12c43d9b3fad0791e7d42a798eecae81cdbc94c164ff05f"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081246.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081246,
+      "trace_sha256": "fd9df8c47d5d00fb632e451609d9d28fbb445fd6c5719b460fba9d7631721ad9"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081247.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081247,
+      "trace_sha256": "302783007e76da64178b3d324d41b214aa2a3f9457c9edb5c8ad76a31b5e48ee"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081248.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081248,
+      "trace_sha256": "86c5f482a67ca8946a2e256959550dbe6ca9225e77a29289e1e16f1c646909fb"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081249.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081249,
+      "trace_sha256": "3a4e5c750fc7216ab880fc37c7fc8aeb0bb0852e404e6f19673ed11091c4c34b"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081250.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081250,
+      "trace_sha256": "160c9e384cd51b8be6b99600a31ad73098013f5b08342efc81971d8b3ad64469"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081251.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081251,
+      "trace_sha256": "6f9069801273d398c8e0b03ca042e181dd4db66fd93483f10015151813fec83f"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081252.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081252,
+      "trace_sha256": "f361b3439446fb745e853116715189971765c468f95511cf102de67b08435605"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081253.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081253,
+      "trace_sha256": "4dd711c6ad8a6d26ac063d9d3850a0e64a1c9f18ed7eea278217fe4218ba88f9"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081254.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081254,
+      "trace_sha256": "758ed96ffd4bcefb8149a1aaacdc62e0b91a9e0a6cc7563b71c3e1a6f1df39a8"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081255.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081255,
+      "trace_sha256": "e4320771e8f18a86fb6da73090a19e6ba7af09c3ebf3c3efbeeed62f6d573f90"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081256.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081256,
+      "trace_sha256": "bc79815d9d49853dda033d8264b6fe9624145102ab6f551bc41172662d540dd8"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081257.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081257,
+      "trace_sha256": "9fe9ee4f8be168eb0dc4fa4e67c5ab30745f475c42af32a1caaa24405320db75"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081258.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081258,
+      "trace_sha256": "c453a736c26a36903213b2ea8d89bf8cadfba837bc92f67f8fec56e3b93aa3ea"
+    },
+    {
+      "path": "raw/fault_traces/profile_2_faults_seed_2026081259.json",
+      "profile_id": "profile_2_faults",
+      "seed": 2026081259,
+      "trace_sha256": "5d6300f0f0c4037a7dbe5849c1cb4b31cc872cd48a5e769c7187750dcbdeacb4"
+    }
+  ],
+  "freeze_manifest": "../protocol_v3/freeze_manifest.json",
+  "freeze_sha256": "4d63b6b6f2af1458c063ed52eb73e1a2bcb82f412bb0a9b19d352659bbca923f",
+  "frozen_before_first_holdout_result": true,
+  "headline_eligible": true,
+  "holdout_freeze_status": "frozen",
+  "milestone": "M8-G0",
+  "native_results_status_at_creation": "not_run",
+  "persistent_isaac_process_required": true,
+  "profiles": {
+    "profile_2_faults": {
+      "path": "../../../ros2_ws/src/action_stream_benchmark/config/m8_profile_2_faults.json",
+      "sha256": "0ecb35143cdd9f0e4b263be4ce67cb0739b735d80e6bb334e1e710e345612dc2"
+    }
+  },
+  "protocol_sha256": "9f36e72b27b0b2b1ef7628a15364c97d88b1efc94846a2284b2b727c034bd6ea",
+  "schema_version": 1,
+  "seed_count": 60,
+  "seed_file": "../../../configs/m8_holdout_seeds.json",
+  "seed_file_sha256": "951a340a51ff15c037cd9c4af2f8446e4a2cdcbf2110256b991790ecabb72591",
+  "split": "frozen_holdout"
+}

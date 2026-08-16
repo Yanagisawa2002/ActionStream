@@ -1,0 +1,46 @@
+{
+  "disturbance_type": "destination_switch",
+  "disturbed_generation_id": 2,
+  "final_destination_id": 1,
+  "final_destination_xyz": [
+    0.48,
+    0.22,
+    0.02575
+  ],
+  "final_zone_label": "B",
+  "initial_generation_id": 1,
+  "milestone": "M8-G0",
+  "object_orientation_wxyz": [
+    1.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "object_position_xyz": [
+    0.47405219175052904,
+    0.027053978324531512,
+    0.02575
+  ],
+  "original_destination_id": 0,
+  "original_destination_xyz": [
+    0.48,
+    -0.22,
+    0.02575
+  ],
+  "original_zone_label": "A",
+  "scenario_sha256": "76edf325b3e5ba41569e11ec852da179d38d6a512fa4d76d3ff587ba9e5696b6",
+  "schema_version": 1,
+  "seed": 2026081248,
+  "switch_step": 110,
+  "task_id": "dynamic_target_pick_place_v1",
+  "zone_a_xyz": [
+    0.48,
+    -0.22,
+    0.02575
+  ],
+  "zone_b_xyz": [
+    0.48,
+    0.22,
+    0.02575
+  ]
+}

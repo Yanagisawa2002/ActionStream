@@ -6,7 +6,7 @@ tests whether compensating for observation age when an asynchronous action
 chunk arrives is safer and more efficient than replacing the queue with the
 entire stale chunk.
 
-## M8-G0: positive native development result; holdout pending
+## M8-G0: frozen native Isaac holdout — GO
 
 M8 runs a native Isaac Sim 6.0.1 Franka pick-and-place task with a seeded
 mid-episode destination switch. Old chunks point toward destination A while a
@@ -18,27 +18,48 @@ VLA and does not replay a recorded trajectory.
 
 The source-matched ROS Jazzy/Isaac workspace passed its native gate on an RTX
 5090: Profile-0 `sync_hold` completed 20/20 tasks and all 20 independent replay
-audits. The registered development candidate then completed 48 native episodes:
-12 same-reset naive/aligned pairs under each of two preregistered delay profiles.
+audits. Candidate `candidate_0` was then selected with **zero behavioral
+calibration changes**, the ledger was closed, and the 166-input freeze was
+created before the first holdout result was observed.
 
-| Development profile | `naive_async` | `aligned_async` | Aligned - naive (paired 95% CI) | Exact McNemar |
-|---|---:|---:|---:|---:|
-| Fixed 850 ms | 0/12 | 10/12 | +83.3 pp [+58.3, +100.0] | p=0.001953 |
-| 850 ms + jitter/faults | 0/12 | 8/12 | +66.7 pp [+41.7, +91.7] | p=0.007812 |
+The frozen holdout contains 420 native Isaac episodes over 60 unseen
+scenario/initial-state seeds and 180 unseen network traces. Baseline,
+development, and holdout have zero seed, scenario-hash, or fault-trace-hash
+overlap. This is scenario and network-trace holdout evidence within one task
+family, not cross-task generalization.
 
-Independent replay passed 48/48 episodes and every paired-reset, seed, profile,
-fault-trace, and provenance audit. Across both profiles, the descriptive total
-was 0/24 naive versus 18/24 aligned successes; expired actions executed fell
-from 1,688 to 0, mean action age fell 56.0%, and mean maximum applied-target
-discontinuity fell 32.8%. The two profile-level intervals use the preregistered
-20,000-resample paired bootstrap. No pooled interval is reported because the
-same 12 seeds are reused across profiles.
+| Frozen profile | Method | Task success | Mean episode latency / median episode p50-p95 (ms) | Expired actions executed |
+|---|---|---:|---:|---:|
+| Sanity | `sync_hold` | 60/60 (100.0%) | 15.7 / 15.9-16.4 | 0 |
+| Fixed 850 ms | `sync_hold` | 1/60 (1.7%) | 881.8 / 877.9-898.5 | 0 |
+| Fixed 850 ms | `naive_async` | 0/60 (0.0%) | 905.7 / 895.5-907.7 | 4,244 |
+| Fixed 850 ms | `aligned_async` | 49/60 (81.7%) | 893.8 / 894.5-902.8 | 0 |
+| 850 ms + jitter/faults | `sync_hold` | 15/60 (25.0%) | 1008.9 / 925.7-1379.9 | 0 |
+| 850 ms + jitter/faults | `naive_async` | 0/60 (0.0%) | 986.7 / 918.8-1454.5 | 4,231 |
+| 850 ms + jitter/faults | `aligned_async` | 52/60 (86.7%) | 975.9 / 912.8-1654.9 | 0 |
 
-This is a genuinely positive native-Isaac **development** result. It is still
-not headline GO: the v2 calibration ledger remains `development_open`, no
-candidate has been selected or frozen, and the disjoint M8 holdout has not run.
-The policy is deterministic and observation-conditioned rather than a learned
-VLA, and this is simulator rather than real-robot evidence.
+Aligned minus naive is **+81.7 percentage points** under fixed delay (paired
+95% CI [71.7, 90.0]) and **+86.7 points** under jitter/faults (paired 95% CI
+[76.7, 95.0]). Independent replay passed 420/420 episodes with seed, network
+profile, fault-trace, source-provenance, freeze, and paired-reset checks. The
+registered classification is therefore **GO**. `STRONG GO` remains false: the
+predeclared wall-time and obsolete-command secondary conditions did not pass,
+so no stronger claim is made.
+
+The dominant naive failure is pre-grasp control (`failed_approach`: 115/120
+delayed trials), while aligned failures are mainly safety/workspace limits
+(17) plus two unstable grasps. Aligned executed zero expired actions and had
+zero collisions and timeouts. The figure below is an operating-point view:
+P0/P1/P2 change both latency and fault regime, so unconnected markers are used
+instead of a continuous causal latency curve.
+
+![Frozen M8 latency-success operating points](outputs/m8_g0/holdout_v3/report/figures/latency_success_operating_points.png)
+
+This positive result is still bounded. The policy is a deterministic live
+observation-conditioned controller, not X-VLA/SmolVLA/Pi0.5; the benchmark has
+one Franka destination-switch task family; and this is simulation rather than
+real-robot evidence. Learned-policy Isaac and real-robot paired A/B remain the
+next evidence tiers.
 
 One representative same-reset pair now shows the full content-level contrast:
 naive fails before grasp, while aligned grasps, recovers the step-110 target
@@ -53,18 +74,20 @@ are retained locally and decode end-to-end. Git keeps the final frame,
 hash/codec validation, raw JSONL, summaries, replay, and native receipts while
 ignoring MP4 payloads.
 
-Evidence: [current machine-readable status](outputs/m8_g0/report/m8_g0_current.json),
-[technical report](outputs/m8_g0/report/m8_g0_report.md),
-[source-matched baseline replay](outputs/m8_g0/baseline_gate/source_v2/replay_validation.json),
-[full candidate findings](outputs/m8_g0/development/candidate_0_full/CANDIDATE_FINDINGS.md),
-[candidate analysis](outputs/m8_g0/development/candidate_0_full/candidate_analysis.json),
-[48-episode replay](outputs/m8_g0/development/candidate_0_full/replay_validation.json),
+Evidence: [registered technical report](outputs/m8_g0/holdout_v3/report/m8_g0_registered_report.md),
+[main table](outputs/m8_g0/holdout_v3/report/main_table.md),
+[failure classification](outputs/m8_g0/holdout_v3/report/failure_classification.md),
+[post-hoc findings](outputs/m8_g0/holdout_v3/report/M8_HOLDOUT_FINDINGS.md),
+[canonical analysis](outputs/m8_g0/holdout_v3/analysis.json),
+[420-episode replay](outputs/m8_g0/holdout_v3/replay_validation.json),
+[immutable freeze](outputs/m8_g0/protocol_v3/freeze_manifest.json),
+[archive manifest](outputs/m8_g0/holdout_v3/complete_raw.manifest.json),
+[report compatibility receipt](outputs/m8_g0/holdout_v3/report/m8_g0_registered_report.receipt.json),
 [successful paired findings](outputs/m8_g0/development/policy_pair_success_0/PAIRED_FINDINGS.md),
 [video validation](outputs/m8_g0/development/policy_pair_success_0/video_validation.json),
 [architecture](docs/m8_architecture.md), and
-[reproduction commands](docs/m8_environment.md). The older unavailable and
-single-seed directional records remain historical evidence, not the current
-summary.
+[protocol and environment guide](docs/m8_environment.md). The older unavailable and
+development-only records remain historical evidence, not the headline result.
 
 This does not change M4's original positive asynchronous result or M7's static
 36/36 saturation. M4, M7, and M8 use different endpoints and denominators; no

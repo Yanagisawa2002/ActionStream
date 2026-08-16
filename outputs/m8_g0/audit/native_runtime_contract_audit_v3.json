@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "milestone": "M8-G0",
+  "recorded_at_utc": "2026-08-16T07:57:22.2918915Z",
+  "evidence_class": "posthoc_native_contract_and_frozen_source_binding_only",
+  "native_episode_executed": false,
+  "audit_purpose": "Refresh the report-only source binding after the frozen holdout completed; this artifact neither changes nor substitutes for the preregistered freeze, native preflight, completion receipt, or episode evidence.",
+  "environment": {
+    "workspace": "/root/autodl-tmp/IsaacSim-ros_workspaces/jazzy_ws",
+    "isaac_sim_version": "6.0.1",
+    "ros_distribution": "jazzy",
+    "gpu": "NVIDIA GeForce RTX 5090",
+    "manipulator_api": "isaacsim.robot.experimental.manipulators.examples.franka.Franka"
+  },
+  "verified_contracts": [
+    {
+      "contract": "Franka articulation DOF limits",
+      "finding": "Isaac Sim 6 returns separate lower and upper arrays; the adapter decodes and validates that representation.",
+      "regression_test": "action_stream_isaac/test/test_dynamic_adapter_contract.py::test_isaac_6_joint_limits_are_separate_lower_upper_arrays"
+    },
+    {
+      "contract": "ground collision filtering",
+      "finding": "The collision prim is /World/GroundPlane/collisionPlane rather than the parent Xform.",
+      "regression_test": "action_stream_isaac/test/test_dynamic_adapter_contract.py::test_isaac_6_ground_contact_filter_targets_collision_child"
+    },
+    {
+      "contract": "cross-topic episode bootstrap",
+      "finding": "The first observation is deferred until the C++ executor acknowledges the lifecycle start, then a bootstrap request is observed before the main observation is released.",
+      "regression_test": "action_stream_isaac/test/test_dynamic_request_driver.py"
+    },
+    {
+      "contract": "terminal success propagation",
+      "finding": "A terminal observation stops execution immediately while permitting one matching TERMINATE request to record the actual success value; duplicates remain rejected.",
+      "regression_test": "action_stream_executor/test/test_executor_state_machine.cpp"
+    },
+    {
+      "contract": "episode failure cleanup",
+      "finding": "Runtime-close and summary-write failures cannot mask the primary episode error; all owned cleanup stages are attempted and cleanup metadata is retained.",
+      "regression_test": "action_stream_isaac/test/test_dynamic_adapter_contract.py"
+    },
+    {
+      "contract": "paired physical reset",
+      "finding": "Exact raw reset hashes remain integrity evidence, while direct preregistered numeric tolerances are authoritative across separately started Kit batches; quaternion comparison is sign invariant.",
+      "regression_test": "action_stream_benchmark/test/test_m8_replay.py::test_paired_reset_fairness_uses_numeric_tolerances_not_float_identity"
+    },
+    {
+      "contract": "cross-topic request and response ordering",
+      "finding": "The C++ state machine buffers and validates bounded cross-topic responses against episode and request provenance, including persistent-run request-ID reuse.",
+      "regression_test": "ResponseTest.BuffersCrossTopicResponseUntilRequestRegistration; GenerationTest.BuffersFutureGenerationResponseUntilItsRequestAdvancesGeneration; EpisodeLifecycleTest.PriorEpisodeRequestCannotEvictCurrentBufferedResponseWithSameId; ConcurrencyTest.ConcurrentRequestAndResponseCannotLoseCrossTopicResponse"
+    },
+    {
+      "contract": "persistent batch profile binding",
+      "finding": "Every generated persistent batch is restricted to the batch's declared network profile and fault trace before native launch.",
+      "regression_test": "action_stream_benchmark/test/test_m8_matrix.py::test_persistent_batches_bind_declared_profile_and_trace"
+    }
+  ],
+  "frozen_run_binding": {
+    "freeze_manifest": "outputs/m8_g0/protocol_v3/freeze_manifest.json",
+    "freeze_manifest_file_sha256": "ae84b08dd083d12befe59058897f3abe52949173a08ee4a6b477fba6e62e3a86",
+    "freeze_sha256": "4d63b6b6f2af1458c063ed52eb73e1a2bcb82f412bb0a9b19d352659bbca923f",
+    "holdout_preflight_receipt": "outputs/m8_g0/holdout_v3/native_run_logs/20260816T054257825323061Z/preflight_receipt.json",
+    "holdout_preflight_receipt_sha256": "f9fa0db4ab3008ba9078d778874a300b0a39e207c09a4fc5b7ac12e9db2f4844",
+    "holdout_completion_receipt": "outputs/m8_g0/holdout_v3/native_run_logs/20260816T054257825323061Z/completion_receipt.json",
+    "holdout_completion_receipt_sha256": "ff793fd3cd497a562ec4eca5e9162658effe609481ae6d61f33bd823212ec408",
+    "current_source_batch_validation_count": 7,
+    "current_source_batch_validation_passed": true,
+    "frozen_live_inputs_validated": true,
+    "installed_adapter_matches_frozen_source": true,
+    "installed_adapter_sha256": "a584eadb952cd0041b27521a5c72f0bf25be1721c7e0e2ee88ad3433a11757d9"
+  },
+  "source_sha256": {
+    "ros2_ws/src/action_stream_isaac/action_stream_isaac/dynamic_isaac_adapter.py": "a584eadb952cd0041b27521a5c72f0bf25be1721c7e0e2ee88ad3433a11757d9",
+    "ros2_ws/src/action_stream_executor/include/action_stream_executor/executor_state_machine.hpp": "833fd3f93eefb678a4c08d6db455fe09a3256975818611c8cf3a44883a03166a",
+    "ros2_ws/src/action_stream_executor/src/executor_state_machine.cpp": "8e4ae4484a85079d2d9ac8b768ac50eae6edbd402e8be71bca0edc04a7ca83d8",
+    "configs/m8_g0_frozen.json": "759a4d9e00e5c09a8f01848d2819e0c94d24cec8265926a1dde7c803e8e120f8",
+    "scripts/m8_run_isaac.sh": "7e4cac9bf0b62360ac5b685a94f0d917b667467971f452f48db908daeec6bca7",
+    "scripts/m8_linux_runner_support.py": "304da243f5c9efdeb7896a52c90d96f9d308ae3e9355bdff4e78fc5b7c38ab39",
+    "outputs/m8_g0/differential/differential_replay_report.json": "26cee2a75011dc24ec3b1457022d628ab1f27d9306b5ff0074ebc1df960f8bb6"
+  },
+  "interpretation": "This post-hoc audit repairs only the report generator's current-source hash binding. The immutable freeze and native runner receipts already bind the executed source. No configuration, threshold, seed, network trace, episode result, canonical replay, or registered analysis was changed. This audit is not task-success evidence."
+}

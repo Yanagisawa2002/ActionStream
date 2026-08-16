@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "milestone": "M8-G0",
+  "artifact_kind": "local_evidence_mirror_receipt",
+  "recorded_at_utc": "2026-08-16T08:18:46.9388566Z",
+  "status": "complete",
+  "source_checkout_commit": "92c71ddcde5620e898f77ae3654bfe91f41b277c",
+  "curated_archive": {
+    "path": "outputs/m8_g0/m8_v3_curated_92c71dd.tar.gz",
+    "sha256": "d7f80049569c64ef213d3c5d0011e35fbaf461ba0ace6e99bdf4851abf02a878",
+    "download_hash_matches_remote": true,
+    "member_count": 1046
+  },
+  "complete_raw_archive": {
+    "path": "outputs/m8_g0/holdout_v3/complete_raw.tar.gz",
+    "sha256": "1375d95ea9656906ba93a060088f24683b8fa2e97a9e1c95ef4a536d77ddef19",
+    "manifest_path": "outputs/m8_g0/holdout_v3/complete_raw.manifest.json",
+    "manifest_sha256": "e5413fe0686d6bd1a46057276d4afd3ad83604afb51ace4c831c98c4ee2bbed4",
+    "member_count": 1080,
+    "archive_validation_passed": true,
+    "download_hash_matches_remote": true
+  },
+  "archive_replay_equivalence": {
+    "direct_replay_path": "outputs/m8_g0/holdout_v3/replay_validation.json",
+    "direct_replay_sha256": "2c4bb98c77f145d998ffa9c259bb7bc9f2e368382ab3edf605b5c57776116695",
+    "archive_matrix_path": "outputs/m8_g0/holdout_v3/matrix.archive.json",
+    "archive_matrix_sha256": "5f4d9e236855cd0ec390082d04bfbd40e4368093dac95507ec4693440c88e1a8",
+    "archive_replay_path": "outputs/m8_g0/holdout_v3/replay_validation.archive.json",
+    "archive_replay_sha256": "374730043d4606294d5d0e37308b9a82c72a503ab4616a462a69fb0767d1d649",
+    "direct_episode_audit_count": 420,
+    "archive_episode_audit_count": 420,
+    "normalized_source_identities_unique": true,
+    "recomputed_metrics_and_invariants_equal": true,
+    "passed": true
+  },
+  "preservation_boundary": "The two tar.gz payloads are retained locally and ignored by Git. Their manifests, hashes, canonical replay, archive-backed replay, compact summaries, tables, figures, and this receipt are retained as reviewable repository evidence."
+}
