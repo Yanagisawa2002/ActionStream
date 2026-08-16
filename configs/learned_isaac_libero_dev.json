@@ -67,7 +67,7 @@
   "evidence_boundary": {
     "headline_or_holdout_eligible": false,
     "task_success_claimed": false,
-    "calibration_change": "robot-base-anchored LIBERO coordinates, separately audited LIBERO EEF matrix and quaternion fields, explicit one-reset additive Panda joint-state calibration, identity-mapped absolute policy orientation, canonical initial wrist orientation, rigid EEF-relative wrist-camera tracking with explicit Isaac mesh clearance, lower workspace z bound, bounded temporal render settling, and task-surface z-fighting clearance",
+    "calibration_change": "robot-base-anchored LIBERO coordinates; separately audited LIBERO EEF matrix and quaternion fields; explicit one-reset additive Panda joint-state calibration; audited 0.097 m plus 90-degree rigid transform between Isaac panda_hand and LIBERO gripper0_grip_site; canonical initial wrist orientation; dynamic official-render robot/object synchronization; lower workspace z bound; bounded temporal render settling; and task-surface z-fighting clearance",
     "next_gate": "An Isaac-trained or domain-adapted learned checkpoint, or an exact canonical visual/physics recreation, must demonstrate native task capability before any paired protocol freeze."
   }
 }

@@ -3,9 +3,10 @@
 The smoke proves four things before any paired protocol can be frozen: the
 exact learned checkpoint performs GPU inference, its finite action chunk passes
 through an explicit adapter, the resulting commands physically move the native
-Isaac Franka, and the same viewport frames form a playable video.  It is not a
-task-success benchmark.  The optional LIBERO task scene adds a separately
-rendered hand-mounted camera; the generic smoke retains its duplicate camera2.
+Isaac Franka, and the native viewport forms a playable video.  It is not a
+task-success benchmark.  The optional LIBERO task scene can use either native
+cameras or official LIBERO cameras driven by the current Isaac robot/object
+state; the generic smoke retains its duplicate camera2.
 """
 
 from __future__ import annotations
@@ -28,6 +29,8 @@ from typing import Any, Mapping, Sequence
 import numpy as np
 
 from actionstream.isaac_learned import (
+    LIBERO_HAND_TO_EEF_ROTATION_MAT,
+    LIBERO_HAND_TO_EEF_TRANSLATION_XYZ,
     LIBERO_TO_ISAAC_TRANSLATION_XYZ,
     adapter_contract_payload,
     adapter_contract_sha256,
@@ -537,6 +540,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         camera_target = (0.38, 0.0, 0.24)
         camera_fovy: float | None = None
         coordinate_translation_xyz = LIBERO_TO_ISAAC_TRANSLATION_XYZ
+        hand_to_eef_translation_xyz = (0.0, 0.0, 0.0)
+        hand_to_eef_rotation_mat = np.eye(3, dtype=np.float64)
         camera_2_source = "duplicate_external_view_development_smoke_only"
         learned_scene_provenance: dict[str, Any] | None = None
         if args.libero_object_task0_scene:
@@ -564,6 +569,10 @@ def main(argv: Sequence[str] | None = None) -> int:
             camera_position, camera_target = isaac_agentview_pose()
             camera_fovy = LIBERO_AGENTVIEW_FOVY_DEGREES
             coordinate_translation_xyz = LIBERO_TO_ISAAC_TASK_TRANSLATION_XYZ
+            hand_to_eef_translation_xyz = LIBERO_HAND_TO_EEF_TRANSLATION_XYZ
+            hand_to_eef_rotation_mat = np.asarray(
+                LIBERO_HAND_TO_EEF_ROTATION_MAT, dtype=np.float64
+            )
             camera_2_source = (
                 "official_libero_renderer_dynamic_state_bridge"
                 if args.official_render_bridge
@@ -677,6 +686,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                         joint_positions=joint_positions,
                         joint_velocities=joint_velocities,
                         coordinate_translation_xyz=coordinate_translation_xyz,
+                        hand_to_eef_translation_xyz=hand_to_eef_translation_xyz,
+                        hand_to_eef_rotation_mat=hand_to_eef_rotation_mat,
                     )
                     request = {
                         "request_id": len(requests),
@@ -714,6 +725,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                             policy_config.maximum_translation_per_step_m
                         ),
                         coordinate_translation_xyz=coordinate_translation_xyz,
+                        hand_to_eef_translation_xyz=hand_to_eef_translation_xyz,
+                        hand_to_eef_rotation_mat=hand_to_eef_rotation_mat,
                     )
                     active_chunk = mapped.commands
                     active_chunk_offset = 0
@@ -916,10 +929,14 @@ def main(argv: Sequence[str] | None = None) -> int:
             "adapter_contract": adapter_contract_payload(
                 coordinate_translation_xyz=coordinate_translation_xyz,
                 camera_2_source=camera_2_source,
+                hand_to_eef_translation_xyz=hand_to_eef_translation_xyz,
+                hand_to_eef_rotation_mat=hand_to_eef_rotation_mat,
             ),
             "adapter_contract_sha256": adapter_contract_sha256(
                 coordinate_translation_xyz=coordinate_translation_xyz,
                 camera_2_source=camera_2_source,
+                hand_to_eef_translation_xyz=hand_to_eef_translation_xyz,
+                hand_to_eef_rotation_mat=hand_to_eef_rotation_mat,
             ),
             "learned_task_scene": learned_scene_provenance,
             "provenance": {

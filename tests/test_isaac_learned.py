@@ -7,14 +7,21 @@ from actionstream.isaac_learned import (
     ISAAC_REFERENCE_EEF_XYZ,
     ISAAC_REFERENCE_JOINT_POS,
     ISAAC_TO_LIBERO_JOINT_POSITION_OFFSET,
+    LIBERO_HAND_TO_EEF_ROTATION_MAT,
+    LIBERO_HAND_TO_EEF_TRANSLATION_XYZ,
+    LIBERO_REFERENCE_EEF_AXIS_ANGLE_XYZ,
     LIBERO_REFERENCE_EEF_MAT,
     LIBERO_REFERENCE_EEF_QUAT_XYZW,
     LIBERO_REFERENCE_JOINT_POS,
     LIBERO_REFERENCE_EEF_XYZ,
     adapter_contract_payload,
     adapter_contract_sha256,
+    _quaternion_wxyz_from_rotation_matrix,
+    _rotation_matrix_from_axis_angle,
+    isaac_hand_pose_from_policy_eef,
     libero_state_from_isaac,
     map_xvla_chunk_to_isaac,
+    policy_eef_pose_from_isaac_hand,
     validate_worker_request,
 )
 from actionstream.learned_isaac_smoke import POLICY_OBSERVATION_SETTLE_UPDATES
@@ -51,6 +58,45 @@ def test_dynamic_eef_orientation_is_normalized_and_mapped_to_matrix() -> None:
     )
     assert state["eef"]["quat"] == pytest.approx([0.0, 0.0, 0.0, 1.0])
     assert np.asarray(state["eef"]["mat"]) == pytest.approx(np.eye(3))
+
+
+def test_libero_grip_site_and_isaac_hand_transform_round_trip() -> None:
+    translation = (0.6, 0.0, 0.0)
+    eef_position = np.asarray(LIBERO_REFERENCE_EEF_XYZ) + np.asarray(translation)
+    hand_position, hand_axis_angle = isaac_hand_pose_from_policy_eef(
+        eef_position_xyz=eef_position,
+        eef_axis_angle_xyz=LIBERO_REFERENCE_EEF_AXIS_ANGLE_XYZ,
+        hand_to_eef_translation_xyz=LIBERO_HAND_TO_EEF_TRANSLATION_XYZ,
+        hand_to_eef_rotation_mat=LIBERO_HAND_TO_EEF_ROTATION_MAT,
+    )
+    hand_rotation = _rotation_matrix_from_axis_angle(hand_axis_angle)
+    hand_quaternion = _quaternion_wxyz_from_rotation_matrix(hand_rotation)
+    reconstructed_position, reconstructed_rotation = policy_eef_pose_from_isaac_hand(
+        hand_position_xyz=hand_position,
+        hand_orientation_wxyz=hand_quaternion,
+        hand_to_eef_translation_xyz=LIBERO_HAND_TO_EEF_TRANSLATION_XYZ,
+        hand_to_eef_rotation_mat=LIBERO_HAND_TO_EEF_ROTATION_MAT,
+    )
+    assert reconstructed_position == pytest.approx(eef_position, abs=1e-9)
+    assert reconstructed_rotation == pytest.approx(
+        np.asarray(LIBERO_REFERENCE_EEF_MAT), abs=1e-8
+    )
+    assert np.linalg.norm(eef_position - hand_position) == pytest.approx(0.097)
+
+    state = libero_state_from_isaac(
+        end_effector_xyz=hand_position,
+        end_effector_wxyz=hand_quaternion,
+        gripper_aperture_m=0.08,
+        joint_positions=ISAAC_REFERENCE_JOINT_POS,
+        joint_velocities=[0.0] * 7,
+        coordinate_translation_xyz=translation,
+        hand_to_eef_translation_xyz=LIBERO_HAND_TO_EEF_TRANSLATION_XYZ,
+        hand_to_eef_rotation_mat=LIBERO_HAND_TO_EEF_ROTATION_MAT,
+    )
+    assert state["eef"]["pos"] == pytest.approx(LIBERO_REFERENCE_EEF_XYZ)
+    assert np.asarray(state["eef"]["mat"]) == pytest.approx(
+        np.asarray(LIBERO_REFERENCE_EEF_MAT), abs=1e-8
+    )
 
 
 def test_worker_request_accepts_exactly_one_image_source() -> None:
@@ -161,6 +207,37 @@ def test_action_mapping_preserves_absolute_policy_orientation() -> None:
     assert "identity_libero_world_axis_angle" in adapter_contract_payload()[
         "orientation_mapping"
     ]
+
+
+def test_action_mapping_inverts_policy_eef_to_native_hand_frame() -> None:
+    translation = (0.6, 0.0, 0.0)
+    expected_hand_position, expected_hand_axis_angle = (
+        isaac_hand_pose_from_policy_eef(
+            eef_position_xyz=np.asarray(LIBERO_REFERENCE_EEF_XYZ)
+            + np.asarray(translation),
+            eef_axis_angle_xyz=LIBERO_REFERENCE_EEF_AXIS_ANGLE_XYZ,
+            hand_to_eef_translation_xyz=LIBERO_HAND_TO_EEF_TRANSLATION_XYZ,
+            hand_to_eef_rotation_mat=LIBERO_HAND_TO_EEF_ROTATION_MAT,
+        )
+    )
+    mapped = map_xvla_chunk_to_isaac(
+        [[*LIBERO_REFERENCE_EEF_XYZ, *LIBERO_REFERENCE_EEF_AXIS_ANGLE_XYZ, -1.0]],
+        initial_target_xyz=expected_hand_position,
+        workspace_xyz=((0.25, 0.70), (-0.35, 0.35), (0.02, 0.60)),
+        maximum_translation_per_step_m=0.01,
+        coordinate_translation_xyz=translation,
+        hand_to_eef_translation_xyz=LIBERO_HAND_TO_EEF_TRANSLATION_XYZ,
+        hand_to_eef_rotation_mat=LIBERO_HAND_TO_EEF_ROTATION_MAT,
+    )
+    assert mapped.commands[0, :3] == pytest.approx(expected_hand_position)
+    assert _rotation_matrix_from_axis_angle(mapped.commands[0, 3:6]) == pytest.approx(
+        _rotation_matrix_from_axis_angle(expected_hand_axis_angle), abs=1e-9
+    )
+    contract = adapter_contract_payload(
+        hand_to_eef_translation_xyz=LIBERO_HAND_TO_EEF_TRANSLATION_XYZ,
+        hand_to_eef_rotation_mat=LIBERO_HAND_TO_EEF_ROTATION_MAT,
+    )
+    assert contract["orientation_mapping"].startswith("explicit_isaac_panda_hand")
 
 
 def test_action_mapping_rejects_nonfinite_input() -> None:

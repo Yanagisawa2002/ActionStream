@@ -20,9 +20,13 @@ import time
 from typing import Any, Sequence
 
 from actionstream.isaac_learned import (
+    LIBERO_HAND_TO_EEF_ROTATION_MAT,
+    LIBERO_HAND_TO_EEF_TRANSLATION_XYZ,
     LIBERO_REFERENCE_EEF_AXIS_ANGLE_XYZ,
     LIBERO_REFERENCE_EEF_WORLD_QUATERNION_WXYZ,
     LIBERO_REFERENCE_EEF_XYZ,
+    isaac_hand_pose_from_policy_eef,
+    policy_eef_pose_from_isaac_hand,
 )
 
 
@@ -409,7 +413,7 @@ def isaac_agentview_pose() -> tuple[tuple[float, float, float], tuple[float, flo
 def task0_scene_payload() -> dict[str, Any]:
     camera_position, camera_target = isaac_agentview_pose()
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "status": "development_only_not_holdout_frozen",
         "suite": "libero_object",
         "task_id": LIBERO_TASK_ID,
@@ -426,6 +430,17 @@ def task0_scene_payload() -> dict[str, Any]:
         "isaac_aligned_home_eef_axis_angle_xyz": list(
             LIBERO_REFERENCE_EEF_AXIS_ANGLE_XYZ
         ),
+        "robot_frame_bridge": {
+            "isaac_controlled_frame": "panda_hand",
+            "libero_policy_frame": "gripper0_grip_site",
+            "hand_to_eef_translation_xyz": list(
+                LIBERO_HAND_TO_EEF_TRANSLATION_XYZ
+            ),
+            "hand_to_eef_rotation_mat": [
+                list(row) for row in LIBERO_HAND_TO_EEF_ROTATION_MAT
+            ],
+            "source": "pinned LIBERO MuJoCo body/site transform at task-0 reset",
+        },
         "table_top_z_m": libero_to_isaac_position((0.0, 0.0, LIBERO_TABLE_Z_M))[2],
         "body_poses": {
             name: {
@@ -835,24 +850,46 @@ class LiberoObjectTask0Scene:
         # policy state, policy action, task geometry, and camera share one
         # base-anchored coordinate map.
         aligned_home = libero_to_isaac_position(LIBERO_REFERENCE_EEF_XYZ)
+        aligned_hand_position, aligned_hand_axis_angle = (
+            isaac_hand_pose_from_policy_eef(
+                eef_position_xyz=aligned_home,
+                eef_axis_angle_xyz=LIBERO_REFERENCE_EEF_AXIS_ANGLE_XYZ,
+                hand_to_eef_translation_xyz=LIBERO_HAND_TO_EEF_TRANSLATION_XYZ,
+                hand_to_eef_rotation_mat=LIBERO_HAND_TO_EEF_ROTATION_MAT,
+            )
+        )
         scene.set_command(
-            (*aligned_home, *LIBERO_REFERENCE_EEF_AXIS_ANGLE_XYZ, 1.0)
+            (*aligned_hand_position, *aligned_hand_axis_angle, 1.0)
         )
         for _ in range(120):
             scene.step()
         aligned_measurement = scene.measure()
-        home_error = math.dist(aligned_measurement.end_effector_xyz, aligned_home)
+        measured_eef_position, measured_eef_rotation = (
+            policy_eef_pose_from_isaac_hand(
+                hand_position_xyz=aligned_measurement.end_effector_xyz,
+                hand_orientation_wxyz=aligned_measurement.end_effector_wxyz,
+                hand_to_eef_translation_xyz=LIBERO_HAND_TO_EEF_TRANSLATION_XYZ,
+                hand_to_eef_rotation_mat=LIBERO_HAND_TO_EEF_ROTATION_MAT,
+            )
+        )
+        home_error = math.dist(measured_eef_position, aligned_home)
         if home_error > 0.03:
             raise RuntimeError(
                 f"Isaac failed LIBERO home alignment: position error {home_error:.6f} m"
             )
         self.aligned_home_measurement = {
-            "command_xyz": list(aligned_home),
-            "command_axis_angle_xyz": list(LIBERO_REFERENCE_EEF_AXIS_ANGLE_XYZ),
-            "measured_xyz": list(aligned_measurement.end_effector_xyz),
-            "measured_orientation_wxyz": list(
+            "policy_eef_command_xyz": list(aligned_home),
+            "policy_eef_command_axis_angle_xyz": list(
+                LIBERO_REFERENCE_EEF_AXIS_ANGLE_XYZ
+            ),
+            "isaac_hand_command_xyz": aligned_hand_position.tolist(),
+            "isaac_hand_command_axis_angle_xyz": aligned_hand_axis_angle.tolist(),
+            "measured_isaac_hand_xyz": list(aligned_measurement.end_effector_xyz),
+            "measured_isaac_hand_orientation_wxyz": list(
                 aligned_measurement.end_effector_wxyz
             ),
+            "measured_policy_eef_xyz": measured_eef_position.tolist(),
+            "measured_policy_eef_rotation_mat": measured_eef_rotation.tolist(),
             "position_error_m": home_error,
         }
         self.sync(aligned_measurement)

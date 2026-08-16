@@ -77,6 +77,10 @@ def test_scene_payload_covers_every_visual_asset() -> None:
         LIBERO_REFERENCE_EEF_AXIS_ANGLE_XYZ
     )
     assert len(task0_scene_sha256()) == 64
+    assert payload["robot_frame_bridge"]["isaac_controlled_frame"] == "panda_hand"
+    assert payload["robot_frame_bridge"]["libero_policy_frame"] == (
+        "gripper0_grip_site"
+    )
 
 
 def test_table_visual_preserves_official_living_room_asset_contract() -> None:
