@@ -124,6 +124,49 @@ no sync capability gate or async holdout was launched. See the
 [input comparison](../outputs/xvla_isaac_visual_canary_v1/visual_input_comparison.png),
 and [action comparison](../outputs/xvla_isaac_visual_canary_v1/first_chunk_action_comparison.png).
 
+## Frozen official-render / Isaac-state bridge canary (2026-08-17)
+
+The first bridge candidate replayed the Isaac joint vector directly into the
+official LIBERO Panda. Its qpos/qvel writes were exact, but the rendered EEF
+missed the requested Isaac EEF by 0.032654 m and the arm/wrist appearance was
+visibly inconsistent. It was rejected structurally before policy inference.
+
+The accepted candidate instead uses deterministic damped-least-squares IK to
+retarget the official Panda to the measured Isaac reset EEF, then writes the
+mapped gripper state exactly. It converged in 3 iterations with
+5.332e-08 m position error and 2.291e-08 rad orientation error. No MuJoCo
+physics step or copied static reference frame is used.
+
+The runner then reused the exact three V2 inference seeds and unchanged frozen
+thresholds. The official reference and bridge condition share task,
+instruction, checkpoint, action space, and seed. The reference uses the
+official reset state; the bridge uses the mapped Isaac policy state and an
+official-render observation retargeted to that state. This bridge comparison
+therefore changes both image and policy state relative to the reference; it is
+a frozen capability gate, not a new one-factor ablation.
+
+| Metric | Official-table V2 | Bridge mean +/- std | Frozen threshold | Result |
+|---|---:|---:|---:|---|
+| Full-chunk RMSE | 0.761554 | 0.020933 +/- 0.000003 | <= 0.25 | pass |
+| First-action XYZ L2 | 0.079303 m | 0.003393 +/- 0.000040 m | <= 0.05 m | pass |
+| First-action 7D L2 | 2.001838 | 0.017097 +/- 0.000150 | <= 0.75 | pass |
+| Candidate close fraction, worst seed | 0.00 | 1.00 | >= 0.90 | pass |
+
+Relative to V2, the three error metrics fell by 97.25%, 95.72%, and 99.15%,
+and the gripper sign was restored on all three seeds. This is a strong positive
+reset-time first-chunk result. Together with the prior factorial V2 result,
+where changing state alone had a much smaller effect, it is consistent with
+renderer and robot appearance dominating the earlier reset-time error. The
+bridge result alone is not a single-factor causal estimate. It is still not
+episode success, task success, or async-runtime evidence. The bridge Z command
+also separates from official later in the 30-step chunk, so passing the frozen
+tolerances does not imply identical closed-loop behavior.
+
+The first formal launch stopped before any policy inference because the cloned
+Hugging Face cache was absent. A retry changed only the runtime cache location
+and offline flags; source, candidate, config, seeds, and thresholds remained
+unchanged. It completed all six paired inferences.
+
 ## Evidence and provenance
 
 Local small evidence root (kept outside normal Git staging):
@@ -148,6 +191,15 @@ Frozen visual-canary evidence:
 - `outputs/xvla_isaac_visual_canary_v1/first_chunk_action_comparison.png`
 - `outputs/xvla_isaac_visual_canary_v1/xvla_isaac_visual_canary_v2_inference/summary.json`
 
+Frozen official-render bridge evidence:
+
+- `outputs/xvla_isaac_official_render_bridge_v1_retry1/BRIDGE_CANARY_FINDINGS.md`
+- `outputs/xvla_isaac_official_render_bridge_v1_retry1/summary.json`
+- `outputs/xvla_isaac_official_render_bridge_v1_retry1/formal_run_receipt.json`
+- `outputs/xvla_isaac_official_render_bridge_v1_retry1/bridge_visual_comparison.png`
+- `outputs/xvla_isaac_official_render_bridge_v1_retry1/bridge_canary_gate_comparison.png`
+- `outputs/xvla_isaac_official_render_bridge_v1_retry1/bridge_first_chunk_action_comparison.png`
+
 Remote complete evidence root:
 `/root/autodl-tmp/results/learned_isaac_libero_taskcap_rigidcamera_300_v1`
 
@@ -159,25 +211,27 @@ Remote complete evidence root:
 | Task-scene contract | `d73b4af3b7b39aed010cb6dc50435b4f90ccbd939e5047d7cc967390575b21e7` |
 | Adapter contract | `f66a453461416ca14af5005eb0253a354d56156aaf19b80388d5bcb95a6c830d` |
 | Runtime source manifest | `513fd63b98cac1fa88be404a4da18f431b8b5a186b9309070c9453033fd3a403` |
+| Official-render bridge frozen config | `eab9cfb3f0424b3f383d93d5d2085b14a41954dc0d96244661b5b833cdeed72d` |
+| Official-render bridge formal summary | `e883de7764f7a1a0ac1340ce94624802310d3b56bdbe1ccd9a61e259db60ce77` |
+| Official-render bridge raw result archive | `301bd78f346fa5b097269611a20b5ce7adf8c595cc763d428639d0ec7877ab5f` |
 
-## Why the paired runtime matrix was not opened
+## Why the paired runtime matrix is still not opened
 
-The intended comparison requires the same task-capable learned policy under
-`sync`, `latest-only`, official LeRobot async, official RTC, and ActionStream
-aligned execution. With zero target contact under the native sync capability
-gate, the likely matrix is an uninformative all-zero task-success table. Opening
-the formal holdout would also spend the disjoint tasks, seeds, initial states,
-and network traces without testing the runtime hypothesis.
+The accepted bridge now passes the reset-time prerequisite that V2 failed, but
+it is not yet episode-ready. After motion, each policy request must synchronize
+the dynamic robot and object poses into the official renderer. Reusing the
+reset frames would be a structural placeholder and would not test a learned
+closed-loop policy.
 
-The next valid gate is one of:
+The next valid gate is therefore:
 
-1. an Isaac-trained or Isaac-domain-adapted X-VLA/SmolVLA/Pi policy;
-2. an exact canonical LIBERO visual, camera, collision, and control-domain
-   recreation with demonstrated native task success; or
-3. a short, predeclared adaptation stage followed by a fresh disjoint capability
-   gate; or
-4. an official-render/Isaac-state observation bridge that first passes the same
-   image/state first-chunk canary without changing its frozen thresholds.
+1. synchronize robot and task-object visual state into the official renderer
+   before every policy request;
+2. freeze a small disjoint X-VLA sync capability protocol before inspecting its
+   results; and
+3. require nonzero task success before spending the multi-task async holdout.
 
-Only after learned sync/native task capability is nonzero should the candidate
-be frozen and the multi-task paired runtime protocol be opened.
+An Isaac-trained or Isaac-domain-adapted checkpoint remains a valid alternative.
+Only after learned sync task capability is nonzero should the candidate be
+frozen for `sync`, `latest-only`, official LeRobot async, official RTC, and
+ActionStream aligned execution.

@@ -1,0 +1,15 @@
+\begin{table}[t]
+\centering
+\caption{Frozen reset-scoped X-VLA bridge canary over three unchanged inference seeds. V2-off uses native V2 images with official state; Bridge-Isaac uses state-conditioned official-render images with mapped Isaac state. Lower is better for the three error metrics. This cross-candidate gate is not a one-factor ablation.}
+\label{tab:xvla_bridge_canary}
+\begin{tabular}{lrrrr}
+\toprule
+Metric & V2-off & Bridge-Isaac & Threshold & Result \\
+\midrule
+Chunk RMSE & 0.7616 & 0.0209 & $\leq 0.25$ & PASS \\
+First XYZ L2 & 0.0793 & 0.0034 & $\leq 0.05$ & PASS \\
+First 7D L2 & 2.0018 & 0.0171 & $\leq 0.75$ & PASS \\
+Close fraction & 0.00 & 1.00 & $\geq 0.90$ & PASS \\
+\bottomrule
+\end{tabular}
+\end{table}

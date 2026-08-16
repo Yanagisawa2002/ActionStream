@@ -1,0 +1,175 @@
+{
+  "acceptance": {
+    "all_acceptance_checks_pass": true,
+    "checks": {
+      "candidate_gripper_negative_fraction_each_seed": {
+        "operator": ">=",
+        "pass": true,
+        "threshold": 0.9,
+        "value": 1.0,
+        "values": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "first_action_7d_l2": {
+        "operator": "<=",
+        "pass": true,
+        "threshold": 0.75,
+        "value": 0.01709665932356867
+      },
+      "first_action_xyz_l2_m": {
+        "operator": "<=",
+        "pass": true,
+        "threshold": 0.05,
+        "value": 0.003393363101310608
+      },
+      "full_chunk_rmse": {
+        "operator": "<=",
+        "pass": true,
+        "threshold": 0.25,
+        "value": 0.020932505313771225
+      }
+    }
+  },
+  "bridge_ik": {
+    "converged": true,
+    "damping": 0.001,
+    "initial_arm_qpos": [
+      -0.010455465055773711,
+      -0.15085802062450737,
+      -0.0034093369714298244,
+      -2.4708202229048126,
+      -0.001283899954024249,
+      2.261866446144037,
+      0.7738904432831809
+    ],
+    "iterations": 3,
+    "maximum_joint_step_rad": 0.08,
+    "method": "damped_least_squares_eef_pose_retargeting",
+    "orientation_error_l2_rad": 2.291214942104598e-08,
+    "orientation_tolerance_rad": 0.001,
+    "position_error_l2_m": 5.332319592804075e-08,
+    "position_tolerance_m": 0.0001,
+    "render_arm_qvel": "zeroed because no physics step is taken",
+    "rendered_eef_position": [
+      -0.15345804639200228,
+      0.0070854341492078195,
+      0.2471916778381634
+    ],
+    "solved_arm_qpos": [
+      0.0028213119787597572,
+      -0.151242550407264,
+      0.012645383831605638,
+      -2.4749251801705223,
+      0.004063081301885158,
+      2.2655590833971084,
+      0.7994399773033769
+    ],
+    "target_eef_position": [
+      -0.153458034992218,
+      0.0070854173973202705,
+      0.24719172716140747
+    ]
+  },
+  "claim_boundary": [
+    "Only one matching reset and first action chunk are evaluated.",
+    "Official reset object states are not synchronized after Isaac motion.",
+    "Passing is not learned-policy task success or async-runtime evidence."
+  ],
+  "experiment_id": "xvla_isaac_official_render_bridge_v1",
+  "gripper_close_fraction": {
+    "bridge_worst_seed": 1.0,
+    "official_worst_seed": 1.0,
+    "v2_worst_seed": 0.0
+  },
+  "metric_comparison": {
+    "first_action_7d_l2": {
+      "bridge": 0.01709665932356867,
+      "bridge_ci95": [
+        0.016725108965085948,
+        0.01746820968205139
+      ],
+      "bridge_std": 0.00014956914696388933,
+      "bridge_threshold_ratio": 0.022795545764758226,
+      "relative_improvement_vs_v2_percent": 99.14595194586595,
+      "threshold": 0.75,
+      "v2": 2.0018380980802593,
+      "v2_threshold_ratio": 2.6691174641070123
+    },
+    "first_action_xyz_l2_m": {
+      "bridge": 0.003393363101310608,
+      "bridge_ci95": [
+        0.0032947691771599897,
+        0.003491957025461226
+      ],
+      "bridge_std": 3.968939551357249e-05,
+      "bridge_threshold_ratio": 0.06786726202621216,
+      "relative_improvement_vs_v2_percent": 95.72103984627608,
+      "threshold": 0.05,
+      "v2": 0.0793034517593585,
+      "v2_threshold_ratio": 1.58606903518717
+    },
+    "full_chunk_rmse": {
+      "bridge": 0.020932505313771225,
+      "bridge_ci95": [
+        0.0209250135441987,
+        0.02093999708334375
+      ],
+      "bridge_std": 3.015843098062892e-06,
+      "bridge_threshold_ratio": 0.0837300212550849,
+      "relative_improvement_vs_v2_percent": 97.25134348301788,
+      "threshold": 0.25,
+      "v2": 0.7615540604816647,
+      "v2_threshold_ratio": 3.046216241926659
+    }
+  },
+  "provenance": {
+    "config": "configs\\xvla_isaac_official_render_bridge_v1.json",
+    "config_sha256": "eab9cfb3f0424b3f383d93d5d2085b14a41954dc0d96244661b5b833cdeed72d",
+    "current_summary": "outputs\\xvla_isaac_official_render_bridge_v1_retry1\\summary.json",
+    "current_summary_sha256": "e883de7764f7a1a0ac1340ce94624802310d3b56bdbe1ccd9a61e259db60ce77",
+    "v2_summary": "outputs\\xvla_isaac_visual_canary_v1\\xvla_isaac_visual_canary_v2_inference\\summary.json",
+    "v2_summary_sha256": "682863d524d4468006e8091b26d447dc7304327b5df011583d2b5cc19a4318c8"
+  },
+  "raw_seed_table": [
+    {
+      "candidate_gripper_negative_fraction": 1.0,
+      "first_action_7d_l2": 0.01704657153640033,
+      "first_action_xyz_l2_m": 0.0033813703225384615,
+      "full_chunk_rmse": 0.02093405033533031,
+      "inference_seed": 2026081701,
+      "reference_gripper_negative_fraction": 1.0
+    },
+    {
+      "candidate_gripper_negative_fraction": 1.0,
+      "first_action_7d_l2": 0.0172648441962816,
+      "first_action_xyz_l2_m": 0.0034376658616971367,
+      "full_chunk_rmse": 0.020929030028328747,
+      "inference_seed": 2026081702,
+      "reference_gripper_negative_fraction": 1.0
+    },
+    {
+      "candidate_gripper_negative_fraction": 1.0,
+      "first_action_7d_l2": 0.016978562238024082,
+      "first_action_xyz_l2_m": 0.0033610531196962253,
+      "full_chunk_rmse": 0.020934435577654616,
+      "inference_seed": 2026081703,
+      "reference_gripper_negative_fraction": 1.0
+    }
+  ],
+  "schema_version": 1,
+  "status": "passed_frozen_canary",
+  "structural_gate": {
+    "checks": {
+      "eef_orientation_error": true,
+      "eef_position_error": true,
+      "gripper_writeback": true,
+      "ik_converged": true,
+      "no_physics_step": true,
+      "pose_mode": true
+    },
+    "pass": true
+  }
+}

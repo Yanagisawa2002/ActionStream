@@ -1,0 +1,25 @@
+{
+  "experiment_id": "xvla_isaac_official_render_bridge_v1",
+  "formal_attempts": [
+    {
+      "attempt": 0,
+      "candidate_or_threshold_changed_after_attempt": false,
+      "exit_code": 1,
+      "failure": "Hugging Face Xet reconstruction error because cloned HF_HOME was not inherited",
+      "failure_stage": "checkpoint_load_before any paired inference",
+      "log_sha256": "8c93c9f8d7f7a081c63bc50566befd0d5cbe336f02eb9ae7e5745a2a0d881bf9",
+      "policy_inference_executed": false
+    },
+    {
+      "attempt": 1,
+      "config_sha256": "eab9cfb3f0424b3f383d93d5d2085b14a41954dc0d96244661b5b833cdeed72d",
+      "environment_only_change": "reuse cloned /root/autodl-tmp/hf_home with HF_HUB_OFFLINE=1 and TRANSFORMERS_OFFLINE=1",
+      "exit_code": 0,
+      "log_sha256": "97aa767266054cad8410cf63461db3d7c5260012e4e086bec112e8f8b0ed3870",
+      "status": "passed_frozen_canary",
+      "summary_sha256": "e883de7764f7a1a0ac1340ce94624802310d3b56bdbe1ccd9a61e259db60ce77"
+    }
+  ],
+  "frozen_source_commit": "e0f171ce9b1dafa7ebc252b512649d2b2ee07cb9",
+  "schema_version": 1
+}
