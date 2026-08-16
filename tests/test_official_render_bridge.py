@@ -86,6 +86,10 @@ class _Inner:
             "robot0_eye_in_hand_image": np.ones((8, 8, 3), dtype=np.uint8),
         }
 
+    @staticmethod
+    def _check_success() -> bool:
+        return True
+
 
 class _Wrapped:
     def __init__(self) -> None:
@@ -120,6 +124,7 @@ def test_bridge_writes_exact_robot_state_and_returns_two_images() -> None:
     assert env._env.sim.data.qpos[7:9] == pytest.approx(_state()["gripper"]["qpos"])
     assert set(result.observation["pixels"]) == {"image", "image2"}
     assert result.provenance["physics_steps_after_write"] == 0
+    assert result.provenance["official_task_success"] is True
     assert result.provenance["writeback_exact_at_1e-12"]
     assert result.provenance["requested_vs_rendered_eef_position_l2_m"] == pytest.approx(0.0)
 

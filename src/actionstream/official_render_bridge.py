@@ -382,6 +382,10 @@ def apply_isaac_state_to_official_renderer(
     sim.forward()
     inner._update_observables(force=True)
     raw_observation = inner._get_observations()
+    task_success_checker = getattr(inner, "_check_success", None)
+    official_task_success = (
+        bool(task_success_checker()) if callable(task_success_checker) else None
+    )
     formatted = sub_env._format_raw_obs(raw_observation)
     pixels = formatted.get("pixels")
     if not isinstance(pixels, Mapping) or set(pixels) != {"image", "image2"}:
@@ -470,6 +474,12 @@ def apply_isaac_state_to_official_renderer(
             ),
             "pose_mode": pose_mode,
             "physics_steps_after_write": 0,
+            "official_task_success": official_task_success,
+            "official_task_success_source": (
+                "pinned LIBERO environment _check_success after state write and sim.forward"
+                if callable(task_success_checker)
+                else "unavailable: pinned environment exposes no _check_success"
+            ),
             "dynamic_object_state_count": len(objects),
             "arm_qpos_indexes": arm_qpos.tolist(),
             "arm_qvel_indexes": arm_qvel.tolist(),

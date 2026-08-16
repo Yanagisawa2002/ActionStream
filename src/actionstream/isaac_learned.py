@@ -489,8 +489,11 @@ def validate_worker_request(value: Mapping[str, Any]) -> None:
     if not str(value["instruction"]).strip():
         raise ValueError("worker instruction must be non-empty")
     render_bridge = value.get("official_render_bridge")
+    render_only = bool(value.get("render_only", False))
     supplied_images = {"image", "image2"} & set(value)
     if render_bridge is None:
+        if render_only:
+            raise ValueError("worker render_only requires official_render_bridge")
         missing_images = {"image", "image2"} - set(value)
         if missing_images:
             raise ValueError(

@@ -204,6 +204,23 @@ def main() -> int:
                 image2, image2_sha256 = _load_rgb(image2_path)
                 policy_robot_state = request["robot_state"]
                 observation_source = "supplied_rgb_files"
+            if bool(request.get("render_only", False)):
+                if bridge_provenance is None:
+                    raise ValueError("render_only requires the official render bridge")
+                _emit(
+                    {
+                        "event": "render",
+                        "request_id": int(request["request_id"]),
+                        "observation_source": observation_source,
+                        "image_path": str(image_path),
+                        "image2_path": str(image2_path),
+                        "image_sha256": image_sha256,
+                        "image2_sha256": image2_sha256,
+                        "official_render_bridge": bridge_provenance,
+                        "peak_cuda_memory_mib": backend.peak_cuda_memory_mib,
+                    }
+                )
+                continue
             observation = {
                 "pixels": {"image": image, "image2": image2},
                 "robot_state": _batch_robot_state(policy_robot_state),

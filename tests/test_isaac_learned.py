@@ -121,6 +121,33 @@ def test_worker_request_accepts_exactly_one_image_source() -> None:
             },
         }
     )
+    validate_worker_request(
+        {
+            "request_id": 1,
+            "instruction": "evaluate the object",
+            "robot_state": state,
+            "render_only": True,
+            "official_render_bridge": {
+                "object_states": {
+                    "alphabet_soup_1": {
+                        "position_xyz": [0.0, 0.0, 0.0],
+                        "orientation_wxyz": [1.0, 0.0, 0.0, 0.0],
+                    }
+                }
+            },
+        }
+    )
+    with pytest.raises(ValueError, match="render_only"):
+        validate_worker_request(
+            {
+                "request_id": 2,
+                "instruction": "evaluate the object",
+                "robot_state": state,
+                "render_only": True,
+                "image": "a.png",
+                "image2": "b.png",
+            }
+        )
     with pytest.raises(ValueError, match="cannot combine"):
         validate_worker_request(
             {

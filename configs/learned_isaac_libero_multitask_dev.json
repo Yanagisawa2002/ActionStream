@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "milestone": "learned-policy-native-isaac-multitask-development",
+  "title": "Development-only X-VLA LIBERO multi-task bridge calibration",
+  "protocol_status": "development_only_not_holdout_frozen",
+  "derived_from": "configs/learned_isaac_libero_dev.json",
+  "runtime": {
+    "maximum_episode_steps": 320
+  },
+  "learned_task_override": {
+    "task_keys": ["object0", "spatial2", "goal5"],
+    "task_families": [
+      "pick_object_into_container",
+      "spatial_object_on_object",
+      "planar_contact_push"
+    ],
+    "initial_state_index": 0,
+    "action_source": "lerobot/xvla-libero checkpoint absolute 7D policy output",
+    "scene_status": "development_only_not_holdout_frozen",
+    "success": "pinned official LIBERO task predicate after final native Isaac state writeback",
+    "note": "The inherited dynamic-task fields supply native safety limits; each learned task explicitly replaces object collision geometry and policy action source."
+  },
+  "task": {
+    "task_id": "dynamic_target_pick_place_v1",
+    "primary_disturbance": "destination_switch",
+    "object_x_range_m": [0.42, 0.48],
+    "object_y_range_m": [-0.04, 0.04],
+    "cube_side_m": 0.0515,
+    "zone_a_xy_m": [0.48, -0.22],
+    "zone_b_xy_m": [0.48, 0.22],
+    "switch_steps": [90, 100, 110],
+    "placement_tolerance_m": 0.04,
+    "placement_height_tolerance_m": 0.035,
+    "stable_placement_steps": 20,
+    "stable_linear_speed_mps": 0.03,
+    "stable_angular_speed_rps": 0.5,
+    "lift_clearance_m": 0.10,
+    "collision_threshold_n": 40.0,
+    "success": "learned-task runner uses each official LIBERO predicate; these inherited fields are not the learned-task success contract",
+    "failure_reasons": [
+      "failed_approach",
+      "grasp_miss",
+      "unstable_grasp",
+      "dropped_object",
+      "moved_toward_obsolete_destination",
+      "released_at_obsolete_destination",
+      "destination_switch_recovery_timeout",
+      "switch_precondition_missed",
+      "collision",
+      "joint_or_workspace_limit",
+      "task_timeout",
+      "invalid_command",
+      "simulator_or_transport_failure"
+    ]
+  },
+  "controller": {
+    "type": "deterministic_observation_conditioned_cartesian_waypoint",
+    "approach_height_m": 0.20,
+    "grasp_hand_offset_m": 0.10,
+    "carry_hand_height_m": 0.32,
+    "recovery_hover_offset_m": 0.13,
+    "maximum_translation_per_step_m": 0.01,
+    "maximum_translation_scope": "adjacent rows in the planned chunk; expired-prefix selection is measured separately at execution",
+    "workspace_x_m": [0.25, 0.85],
+    "workspace_y_m": [-0.35, 0.35],
+    "workspace_z_m": [0.02, 0.60],
+    "downward_axis_angle_xyz": [3.141592653589793, 0.0, 0.0]
+  },
+  "evidence_boundary": {
+    "headline_or_holdout_eligible": false,
+    "task_success_claimed": false,
+    "calibration_change": "Adds two audited tabletop task coordinate maps, task-specific rigid contact scales, final official predicate evaluation, and expands only the native x safety bound from 0.70 m to 0.85 m.",
+    "next_gate": "Demonstrate sync capability on all three task families, then freeze disjoint paired resets and network traces before runtime comparison."
+  }
+}

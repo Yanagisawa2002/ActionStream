@@ -699,6 +699,10 @@ class LiberoObjectTask0Scene:
 
         self._app = simulation_app
         self._scene = scene
+        self.instruction = LIBERO_TASK_INSTRUCTION
+        self.coordinate_translation_xyz = LIBERO_TO_ISAAC_TASK_TRANSLATION_XYZ
+        self.camera_position_xyz, self.camera_target_xyz = isaac_agentview_pose()
+        self.camera_vertical_fov_degrees = LIBERO_AGENTVIEW_FOVY_DEGREES
         self._stage = omni.usd.get_context().get_stage()
         if self._stage is None:
             raise RuntimeError("Isaac has no active stage for LIBERO task decoration")
@@ -946,6 +950,14 @@ class LiberoObjectTask0Scene:
                 "position_xyz": list(isaac_to_libero_position(visual_isaac_position)),
                 "orientation_wxyz": [
                     float(component) for component in measurement.object_wxyz
+                ],
+                "linear_velocity_xyz": [
+                    float(component)
+                    for component in measurement.object_linear_velocity_xyz
+                ],
+                "angular_velocity_xyz": [
+                    float(component)
+                    for component in measurement.object_angular_velocity_xyz
                 ],
             }
         }

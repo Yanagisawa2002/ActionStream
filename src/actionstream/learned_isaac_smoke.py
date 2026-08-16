@@ -355,7 +355,9 @@ class _PolicyWorker:
             raise RuntimeError(f"policy worker fatal response: {response.get('error')}")
         return response
 
-    def infer(self, request: Mapping[str, Any]) -> dict[str, Any]:
+    def _request(
+        self, request: Mapping[str, Any], *, expected_event: str
+    ) -> dict[str, Any]:
         if self._process.stdin is None:
             raise RuntimeError("policy worker stdin is closed")
         self._process.stdin.write(
@@ -364,11 +366,19 @@ class _PolicyWorker:
         )
         self._process.stdin.flush()
         response = self._read()
-        if response.get("event") != "inference":
+        if response.get("event") != expected_event:
             raise RuntimeError(f"unexpected policy worker response: {response}")
         if int(response.get("request_id", -1)) != int(request["request_id"]):
             raise RuntimeError("policy worker request/response ID mismatch")
         return response
+
+    def infer(self, request: Mapping[str, Any]) -> dict[str, Any]:
+        return self._request(request, expected_event="inference")
+
+    def evaluate(self, request: Mapping[str, Any]) -> dict[str, Any]:
+        payload = dict(request)
+        payload["render_only"] = True
+        return self._request(payload, expected_event="render")
 
     def close(self) -> None:
         process = self._process
@@ -418,6 +428,12 @@ def _parser() -> argparse.ArgumentParser:
         default=False,
         help="apply the development-only canonical LIBERO Object task-0 scene",
     )
+    parser.add_argument(
+        "--libero-task-scene",
+        choices=("object0", "spatial2", "goal5"),
+        default=None,
+        help="select one audited learned-policy native Isaac task scene",
+    )
     parser.add_argument("--libero-assets-root", type=Path, default=None)
     parser.add_argument("--asset-cache-directory", type=Path, default=None)
     parser.add_argument(
@@ -427,6 +443,16 @@ def _parser() -> argparse.ArgumentParser:
         help="infer from official LIBERO cameras after dynamic Isaac robot/object writes",
     )
     return parser
+
+
+def _selected_task_scene_key(args: Any) -> str | None:
+    if args.libero_object_task0_scene and args.libero_task_scene is not None:
+        raise ValueError(
+            "use either --libero-object-task0-scene or --libero-task-scene, not both"
+        )
+    if args.libero_object_task0_scene:
+        return "object0"
+    return args.libero_task_scene
 
 
 def _validate_args(args: Any) -> tuple[Path, Path, Path, Path]:
@@ -453,22 +479,32 @@ def _validate_args(args: Any) -> tuple[Path, Path, Path, Path]:
         raise ValueError("instruction must be non-empty")
     if not 64 <= args.video_width <= 2048 or not 64 <= args.video_height <= 2048:
         raise ValueError("video dimensions must lie in [64,2048]")
-    if args.libero_object_task0_scene and args.libero_assets_root is None:
-        raise ValueError("--libero-object-task0-scene requires --libero-assets-root")
-    if not args.libero_object_task0_scene and (
+    task_scene_key = _selected_task_scene_key(args)
+    if task_scene_key == "object0" and args.libero_assets_root is None:
+        raise ValueError("LIBERO object0 task scene requires --libero-assets-root")
+    if task_scene_key != "object0" and (
         args.libero_assets_root is not None or args.asset_cache_directory is not None
     ):
-        raise ValueError("LIBERO asset arguments require --libero-object-task0-scene")
-    if args.official_render_bridge and not args.libero_object_task0_scene:
+        raise ValueError("LIBERO asset arguments are only valid for the object0 task scene")
+    if args.official_render_bridge and task_scene_key is None:
         raise ValueError(
-            "--official-render-bridge currently requires --libero-object-task0-scene"
+            "--official-render-bridge requires an audited --libero-task-scene"
         )
-    if args.libero_object_task0_scene and (
-        args.suite != "libero_object" or args.task_id != 0
-    ):
-        raise ValueError(
-            "--libero-object-task0-scene requires --suite libero_object --task-id 0"
-        )
+    if task_scene_key in {"spatial2", "goal5"} and not args.official_render_bridge:
+        raise ValueError("proxy task scenes require --official-render-bridge")
+    if task_scene_key is not None:
+        if task_scene_key == "object0":
+            expected = ("libero_object", 0, 0)
+        else:
+            from actionstream.isaac_libero_proxy_tasks import proxy_task_spec
+
+            spec = proxy_task_spec(task_scene_key)
+            expected = (spec.suite, spec.task_id, spec.initial_state_index)
+        actual = (args.suite, args.task_id, args.initial_state_index)
+        if actual != expected:
+            raise ValueError(
+                f"{task_scene_key} requires suite/task/initial-state {expected}, got {actual}"
+            )
     if args.initial_state_index < 0:
         raise ValueError("initial state index must be non-negative")
     return protocol, scene_protocol, policy_python, output
@@ -481,6 +517,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     except ValueError as exc:
         print(f"invalid learned Isaac smoke configuration: {exc}", file=sys.stderr)
         return 2
+    task_scene_key = _selected_task_scene_key(args)
     output.mkdir(parents=True)
     events_path = output / "events.jsonl"
     policy_actions_path = output / "policy_actions.jsonl"
@@ -544,15 +581,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         hand_to_eef_rotation_mat = np.eye(3, dtype=np.float64)
         camera_2_source = "duplicate_external_view_development_smoke_only"
         learned_scene_provenance: dict[str, Any] | None = None
-        if args.libero_object_task0_scene:
+        if task_scene_key == "object0":
             from actionstream.isaac_libero_task import (
-                LIBERO_AGENTVIEW_FOVY_DEGREES,
-                LIBERO_TASK_INSTRUCTION,
-                LIBERO_TO_ISAAC_TASK_TRANSLATION_XYZ,
                 LIBERO_WRIST_CAMERA_SETTLE_UPDATES,
                 LiberoWristCamera,
                 LiberoObjectTask0Scene,
-                isaac_agentview_pose,
             )
 
             learned_task_scene = LiberoObjectTask0Scene(
@@ -566,9 +599,10 @@ def main(argv: Sequence[str] | None = None) -> int:
                 ),
             )
             reset_measurement = scene.measure()
-            camera_position, camera_target = isaac_agentview_pose()
-            camera_fovy = LIBERO_AGENTVIEW_FOVY_DEGREES
-            coordinate_translation_xyz = LIBERO_TO_ISAAC_TASK_TRANSLATION_XYZ
+            camera_position = learned_task_scene.camera_position_xyz
+            camera_target = learned_task_scene.camera_target_xyz
+            camera_fovy = learned_task_scene.camera_vertical_fov_degrees
+            coordinate_translation_xyz = learned_task_scene.coordinate_translation_xyz
             hand_to_eef_translation_xyz = LIBERO_HAND_TO_EEF_TRANSLATION_XYZ
             hand_to_eef_rotation_mat = np.asarray(
                 LIBERO_HAND_TO_EEF_ROTATION_MAT, dtype=np.float64
@@ -582,7 +616,33 @@ def main(argv: Sequence[str] | None = None) -> int:
             if effective_instruction == (
                 "pick up the blue cube and place it on the green marker"
             ):
-                effective_instruction = LIBERO_TASK_INSTRUCTION
+                effective_instruction = learned_task_scene.instruction
+        elif task_scene_key is not None:
+            from actionstream.isaac_libero_proxy_tasks import (
+                LiberoProxyTaskScene,
+                proxy_task_spec,
+            )
+
+            learned_task_scene = LiberoProxyTaskScene(
+                simulation_app,
+                scene,
+                spec=proxy_task_spec(task_scene_key),
+            )
+            reset_measurement = scene.measure()
+            camera_position = learned_task_scene.camera_position_xyz
+            camera_target = learned_task_scene.camera_target_xyz
+            camera_fovy = learned_task_scene.camera_vertical_fov_degrees
+            coordinate_translation_xyz = learned_task_scene.coordinate_translation_xyz
+            hand_to_eef_translation_xyz = LIBERO_HAND_TO_EEF_TRANSLATION_XYZ
+            hand_to_eef_rotation_mat = np.asarray(
+                LIBERO_HAND_TO_EEF_ROTATION_MAT, dtype=np.float64
+            )
+            camera_2_source = "official_libero_renderer_dynamic_state_bridge"
+            learned_scene_provenance = learned_task_scene.provenance
+            if effective_instruction == (
+                "pick up the blue cube and place it on the green marker"
+            ):
+                effective_instruction = learned_task_scene.instruction
         recorder = _ViewportRecorder(
             simulation_app,
             output_directory=output,
@@ -807,17 +867,57 @@ def main(argv: Sequence[str] | None = None) -> int:
                 events.write(json.dumps(event, sort_keys=True, separators=(",", ":")) + "\n")
                 events.flush()
 
+        final_measurement = scene.measure()
+        final_bridge_evaluation: dict[str, Any] | None = None
+        if args.official_render_bridge:
+            if learned_task_scene is None:
+                raise RuntimeError("official final evaluation has no learned task scene")
+            final_joint_positions, final_joint_velocities = scene.arm_joint_state()
+            final_robot_state = libero_state_from_isaac(
+                end_effector_xyz=final_measurement.end_effector_xyz,
+                end_effector_wxyz=final_measurement.end_effector_wxyz,
+                gripper_aperture_m=final_measurement.gripper_aperture_m,
+                joint_positions=final_joint_positions,
+                joint_velocities=final_joint_velocities,
+                coordinate_translation_xyz=coordinate_translation_xyz,
+                hand_to_eef_translation_xyz=hand_to_eef_translation_xyz,
+                hand_to_eef_rotation_mat=hand_to_eef_rotation_mat,
+            )
+            final_bridge_evaluation = worker.evaluate(
+                {
+                    "request_id": len(requests),
+                    "instruction": effective_instruction,
+                    "robot_state": final_robot_state,
+                    "official_render_bridge": {
+                        "pose_mode": "eef_ik",
+                        "object_states": learned_task_scene.official_object_states(
+                            final_measurement
+                        ),
+                    },
+                }
+            )
         recorder.capture(simulation_app)
         video = recorder.finish(simulation_app)
         worker_ready = dict(worker.ready)
         peak_memory = max(float(item["peak_cuda_memory_mib"]) for item in requests)
         actions_array = np.asarray(mapped_commands, dtype=np.float64)
         unique_actions = int(len(np.unique(np.round(actions_array, decimals=6), axis=0)))
-        final_measurement = scene.measure()
-        development_task_success = (
+        native_task_success = (
             learned_task_scene.task_success(final_measurement)
             if learned_task_scene is not None
             else None
+        )
+        official_task_success = None
+        if final_bridge_evaluation is not None:
+            final_bridge = final_bridge_evaluation.get("official_render_bridge")
+            if isinstance(final_bridge, Mapping):
+                value = final_bridge.get("official_task_success")
+                if isinstance(value, bool):
+                    official_task_success = value
+        development_task_success = (
+            official_task_success
+            if official_task_success is not None
+            else native_task_success
         )
         checks = {
             "learned_checkpoint_loaded": worker_ready.get("event") == "ready",
@@ -861,6 +961,9 @@ def main(argv: Sequence[str] | None = None) -> int:
                         <= 1e-4
                         for item in bridge_records
                     ),
+                    "official_final_task_predicate_available": (
+                        official_task_success is not None
+                    ),
                 }
             )
         source_root = Path(__file__).resolve().parents[2]
@@ -869,6 +972,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 Path(__file__),
                 source_root / "src/actionstream/isaac_learned.py",
                 source_root / "src/actionstream/isaac_libero_task.py",
+                source_root / "src/actionstream/isaac_libero_proxy_tasks.py",
                 source_root / "src/actionstream/learned_policy_worker.py",
                 source_root / "src/actionstream/official_render_bridge.py",
                 source_root
@@ -902,6 +1006,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             "headline_or_holdout_eligible": False,
             "task_success_claimed": False,
             "development_task_success_observed": development_task_success,
+            "native_proxy_task_success_observed": native_task_success,
+            "official_libero_task_success_observed": official_task_success,
             "smoke_pass": all(checks.values()),
             "checks": checks,
             "instruction": effective_instruction,
@@ -909,11 +1015,13 @@ def main(argv: Sequence[str] | None = None) -> int:
             "suite": args.suite,
             "task_id": args.task_id,
             "initial_state_index": args.initial_state_index,
+            "task_scene_key": task_scene_key,
             "official_render_bridge": bool(args.official_render_bridge),
             "control_steps": args.control_steps,
             "request_interval_steps": args.request_interval_steps,
             "worker_ready": worker_ready,
             "request_records": requests,
+            "final_official_render_evaluation": final_bridge_evaluation,
             "metrics": {
                 "request_count": len(requests),
                 "unique_mapped_actions": unique_actions,

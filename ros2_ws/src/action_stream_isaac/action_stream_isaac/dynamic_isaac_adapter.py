@@ -1272,6 +1272,31 @@ class DynamicIsaacScene:
         for _ in range(settle_steps):
             self._raw_step()
 
+    def set_object_collision_scale(
+        self,
+        scale_xyz: Sequence[float],
+        *,
+        settle_steps: int = 0,
+    ) -> None:
+        """Resize the single native rigid proxy for an audited learned task.
+
+        The base M8 task intentionally uses a cube.  Learned LIBERO tasks can
+        instead require a bowl-sized or plate-shaped contact footprint.  Keep
+        that bounded geometry change explicit on the native rigid body rather
+        than hiding it in a rendered mesh or changing policy observations.
+        """
+
+        scale = tuple(float(value) for value in scale_xyz)
+        if len(scale) != 3 or not all(math.isfinite(value) and value > 0 for value in scale):
+            raise ValueError("object collision scale must contain three positive finite values")
+        if any(value > 0.25 for value in scale):
+            raise ValueError("object collision scale is outside the bounded 0.25 m envelope")
+        if not isinstance(settle_steps, int) or not 0 <= settle_steps <= 120:
+            raise ValueError("object scale settle steps must be an integer in [0,120]")
+        self._object.set_local_scales(scale)
+        for _ in range(settle_steps):
+            self._raw_step()
+
     def set_command(self, command: Sequence[float]) -> None:
         values = tuple(float(value) for value in command)
         if len(values) != 7 or not all(math.isfinite(value) for value in values):
