@@ -30,6 +30,7 @@ from actionstream.adaptive_runtime import (
     AdaptiveSelectorConfig,
     load_selector_config,
     robot_eef_reference_action,
+    rotation_geodesic_radians,
 )
 from actionstream.lerobot_backend import (
     StepOutput,
@@ -843,6 +844,21 @@ class _AdaptiveQueue(_RuntimeQueue):
         self.reserve_activations = 0
         self.reserve_releases = 0
         self.reserve_hold_steps = 0
+        self._control_eef_history: list[tuple[int, np.ndarray]] = []
+        self._reserve_activation_start_step: int | None = None
+        self._reserve_progress_epoch_step: int | None = None
+        self._reserve_release_deadline_step: int | None = None
+        self._reserve_spent_this_activation = 0
+        self._reserve_budget_exhausted_noted = False
+        self._last_reserve_release_reason: str | None = None
+        self._last_progress_translation_m: float | None = None
+        self._last_progress_rotation_radians: float | None = None
+        self.reserve_spend_steps = 0
+        self.reserve_deadline_spend_steps = 0
+        self.reserve_progress_spend_steps = 0
+        self.reserve_budget_exhaustions = 0
+        self.reserve_protected_floor_hold_steps = 0
+        self.progress_observations = 0
         self.scheduler_results_observed = 0
         self.maximum_observed_service_steps = 0
         self.reset_episode(uuid.uuid4().hex)
@@ -885,6 +901,21 @@ class _AdaptiveQueue(_RuntimeQueue):
         self.reserve_activations = 0
         self.reserve_releases = 0
         self.reserve_hold_steps = 0
+        self._control_eef_history.clear()
+        self._reserve_activation_start_step = None
+        self._reserve_progress_epoch_step = None
+        self._reserve_release_deadline_step = None
+        self._reserve_spent_this_activation = 0
+        self._reserve_budget_exhausted_noted = False
+        self._last_reserve_release_reason = None
+        self._last_progress_translation_m = None
+        self._last_progress_rotation_radians = None
+        self.reserve_spend_steps = 0
+        self.reserve_deadline_spend_steps = 0
+        self.reserve_progress_spend_steps = 0
+        self.reserve_budget_exhaustions = 0
+        self.reserve_protected_floor_hold_steps = 0
+        self.progress_observations = 0
         self.scheduler_results_observed = 0
         self.maximum_observed_service_steps = 0
 
@@ -898,8 +929,15 @@ class _AdaptiveQueue(_RuntimeQueue):
     @property
     def _queue_slack_scheduler_enabled(self) -> bool:
         return bool(
-            self.selector.config.schema_version == 4
+            self.selector.config.schema_version >= 4
             and self.selector.config.queue_slack_scheduler_enabled
+        )
+
+    @property
+    def _reserve_spending_enabled(self) -> bool:
+        return bool(
+            self.selector.config.schema_version >= 5
+            and self.selector.config.reserve_spending_enabled
         )
 
     def _predicted_service_steps(self) -> int:
@@ -1012,6 +1050,100 @@ class _AdaptiveQueue(_RuntimeQueue):
         ):
             self._reserve_active = False
             self.reserve_releases += 1
+            self._reset_reserve_activation_state()
+
+    def _reset_reserve_activation_state(self) -> None:
+        self._reserve_activation_start_step = None
+        self._reserve_progress_epoch_step = None
+        self._reserve_release_deadline_step = None
+        self._reserve_spent_this_activation = 0
+        self._reserve_budget_exhausted_noted = False
+
+    def note_control_observation(self, reference_action: np.ndarray) -> None:
+        if not self._reserve_spending_enabled:
+            return
+        pose = np.asarray(reference_action, dtype=np.float64).reshape(-1)
+        if pose.size < 6 or not np.isfinite(pose[:6]).all():
+            raise ValueError("Adaptive v5 requires a finite measured EEF pose")
+        item = (int(self._executed_steps), pose[:6].copy())
+        if self._control_eef_history and self._control_eef_history[-1][0] == item[0]:
+            self._control_eef_history[-1] = item
+        else:
+            self._control_eef_history.append(item)
+        keep = (
+            self.selector.config.progress_window_steps
+            + self.selector.config.maximum_release_wait_steps
+            + 3
+        )
+        if len(self._control_eef_history) > keep:
+            del self._control_eef_history[:-keep]
+        self.progress_observations += 1
+
+    def _reserve_deadline_wait_steps(self) -> int:
+        config = self.selector.config
+        oldest_age = (
+            0
+            if not self._outstanding_request_steps
+            else max(0, self._executed_steps - min(self._outstanding_request_steps))
+        )
+        remaining = max(0, self._predicted_service_steps() - oldest_age)
+        return max(
+            config.minimum_release_wait_steps,
+            min(config.maximum_release_wait_steps, remaining),
+        )
+
+    def _begin_reserve_activation(self) -> None:
+        self._reserve_active = True
+        self.reserve_activations += 1
+        self._reserve_activation_start_step = self._executed_steps
+        self._reserve_progress_epoch_step = self._executed_steps
+        self._reserve_release_deadline_step = (
+            self._executed_steps + self._reserve_deadline_wait_steps()
+        )
+        self._reserve_spent_this_activation = 0
+        self._reserve_budget_exhausted_noted = False
+        self._last_reserve_release_reason = None
+
+    def _reserve_progress_stalled(self) -> bool:
+        config = self.selector.config
+        epoch = self._reserve_progress_epoch_step
+        if epoch is None or len(self._control_eef_history) < 2:
+            return False
+        latest_step, latest = self._control_eef_history[-1]
+        first_allowed = max(epoch, latest_step - config.progress_window_steps)
+        candidates = [
+            (step, pose)
+            for step, pose in self._control_eef_history
+            if step >= first_allowed
+        ]
+        if not candidates or latest_step - candidates[0][0] < config.progress_window_steps:
+            return False
+        first = candidates[0][1]
+        translation = float(np.linalg.norm(latest[:3] - first[:3]))
+        rotation = rotation_geodesic_radians(latest[3:6], first[3:6])
+        self._last_progress_translation_m = translation
+        self._last_progress_rotation_radians = rotation
+        return bool(
+            translation < config.progress_minimum_translation_m
+            and rotation < config.progress_minimum_rotation_radians
+        )
+
+    def _reserve_spend_reason(self) -> str | None:
+        if self._reserve_progress_stalled():
+            return "progress_stall"
+        if (
+            self._reserve_release_deadline_step is not None
+            and self._executed_steps >= self._reserve_release_deadline_step
+        ):
+            return "service_deadline"
+        return None
+
+    def _pop_active_queue(self) -> tuple[np.ndarray, bool]:
+        if self._active_execution_mode == "full_chunk":
+            return self.official_queue.pop()
+        if self._active_execution_mode == "age_aligned":
+            return self.aligned_queue.next_action()
+        raise QueueNotReady("Adaptive reserve has no executable active queue")
 
     def action_trace_state(self) -> dict[str, Any]:
         return {
@@ -1022,6 +1154,21 @@ class _AdaptiveQueue(_RuntimeQueue):
                 else None
             ),
             "adaptive_outstanding_requests": len(self._outstanding_request_steps),
+            "adaptive_reserve_spent_this_activation": (
+                self._reserve_spent_this_activation
+                if self._reserve_spending_enabled
+                else None
+            ),
+            "adaptive_reserve_release_deadline_step": (
+                self._reserve_release_deadline_step
+                if self._reserve_spending_enabled
+                else None
+            ),
+            "adaptive_last_reserve_release_reason": self._last_reserve_release_reason,
+            "adaptive_last_progress_translation_m": self._last_progress_translation_m,
+            "adaptive_last_progress_rotation_radians": (
+                self._last_progress_rotation_radians
+            ),
         }
 
     def _record_decision(self, mode: str, regime: str, *, override: bool) -> None:
@@ -1340,11 +1487,59 @@ class _AdaptiveQueue(_RuntimeQueue):
         )
         if reserve_now:
             if not self._reserve_active:
-                self._reserve_active = True
-                self.reserve_activations += 1
-            action = self._last_action.copy()
-            held = True
-            self.reserve_hold_steps += 1
+                if self._reserve_spending_enabled:
+                    self._begin_reserve_activation()
+                else:
+                    self._reserve_active = True
+                    self.reserve_activations += 1
+            spend_reason = (
+                self._reserve_spend_reason()
+                if self._reserve_spending_enabled
+                else None
+            )
+            config = self.selector.config
+            spend_budget_available = bool(
+                self._reserve_spending_enabled
+                and self._reserve_spent_this_activation
+                < config.reserve_spend_budget_steps
+            )
+            protected_floor_available = bool(
+                self._reserve_spending_enabled
+                and self.queue_depth() > config.minimum_protected_reserve_steps
+            )
+            if spend_reason and spend_budget_available and protected_floor_available:
+                action, held = self._pop_active_queue()
+                self._reserve_spent_this_activation += 1
+                self.reserve_spend_steps += 1
+                self._last_reserve_release_reason = spend_reason
+                if spend_reason == "progress_stall":
+                    self.reserve_progress_spend_steps += 1
+                else:
+                    self.reserve_deadline_spend_steps += 1
+                self._reserve_progress_epoch_step = self._executed_steps
+                self._reserve_release_deadline_step = (
+                    self._executed_steps + self._reserve_deadline_wait_steps()
+                )
+            else:
+                action = self._last_action.copy()
+                held = True
+                self.reserve_hold_steps += 1
+                if self._reserve_spending_enabled and spend_reason:
+                    if not spend_budget_available and not self._reserve_budget_exhausted_noted:
+                        self.reserve_budget_exhaustions += 1
+                        self._reserve_budget_exhausted_noted = True
+                    if not protected_floor_available:
+                        self.reserve_protected_floor_hold_steps += 1
+        elif self._reserve_spending_enabled and self._reserve_active:
+            self._reserve_active = False
+            self._reset_reserve_activation_state()
+            if self._active_execution_mode in ("full_chunk", "age_aligned"):
+                action, held = self._pop_active_queue()
+            else:
+                if self._last_action is None:
+                    raise QueueNotReady("Adaptive safe hold has no dispatched action")
+                action = self._last_action.copy()
+                held = True
         elif self._active_execution_mode == "full_chunk":
             action, held = self.official_queue.pop()
         elif self._active_execution_mode == "age_aligned":
@@ -1420,6 +1615,32 @@ class _AdaptiveQueue(_RuntimeQueue):
             "adaptive_reserve_activations": self.reserve_activations,
             "adaptive_reserve_releases": self.reserve_releases,
             "adaptive_reserve_hold_steps": self.reserve_hold_steps,
+            "adaptive_reserve_spending_enabled": self._reserve_spending_enabled,
+            "adaptive_reserve_spend_budget_steps": (
+                self.selector.config.reserve_spend_budget_steps
+            ),
+            "adaptive_minimum_protected_reserve_steps": (
+                self.selector.config.minimum_protected_reserve_steps
+            ),
+            "adaptive_reserve_spend_steps": self.reserve_spend_steps,
+            "adaptive_reserve_deadline_spend_steps": (
+                self.reserve_deadline_spend_steps
+            ),
+            "adaptive_reserve_progress_spend_steps": (
+                self.reserve_progress_spend_steps
+            ),
+            "adaptive_reserve_budget_exhaustions": self.reserve_budget_exhaustions,
+            "adaptive_reserve_protected_floor_hold_steps": (
+                self.reserve_protected_floor_hold_steps
+            ),
+            "adaptive_progress_observations": self.progress_observations,
+            "adaptive_last_reserve_release_reason": self._last_reserve_release_reason,
+            "adaptive_last_progress_translation_m": (
+                self._last_progress_translation_m
+            ),
+            "adaptive_last_progress_rotation_radians": (
+                self._last_progress_rotation_radians
+            ),
             "adaptive_scheduler_results_observed": self.scheduler_results_observed,
             "adaptive_outstanding_requests_at_end": len(
                 self._outstanding_request_steps
@@ -1669,6 +1890,7 @@ def run_async_episode(
         queue.episode_id = episode_id
     elif isinstance(queue, _AdaptiveQueue):
         queue.reset_episode(episode_id)
+        queue.note_control_observation(robot_eef_reference_action(observation))
 
     def infer(request: InferenceRequest) -> InferencePayload:
         thawed = thaw_observation_snapshot(request.observation)
@@ -1823,6 +2045,10 @@ def run_async_episode(
             action_rows.append(action_row)
             control_step += 1
             observation = step_output.observation
+            if isinstance(queue, _AdaptiveQueue):
+                queue.note_control_observation(
+                    robot_eef_reference_action(observation)
+                )
             success = success or step_output.success
             if video_path:
                 frames.append(_capture_frame(observation))

@@ -79,6 +79,14 @@ class AdaptiveSelectorConfig:
     minimum_request_interval_steps: int
     maximum_request_interval_steps: int
     maximum_service_prediction_steps: int
+    reserve_spending_enabled: bool
+    reserve_spend_budget_steps: int
+    minimum_protected_reserve_steps: int
+    minimum_release_wait_steps: int
+    maximum_release_wait_steps: int
+    progress_window_steps: int
+    progress_minimum_translation_m: float
+    progress_minimum_rotation_radians: float
     source_path: str
     source_sha256: str
 
@@ -91,9 +99,9 @@ class AdaptiveSelectorConfig:
         source_sha256: str,
     ) -> "AdaptiveSelectorConfig":
         schema_version = int(value.get("schema_version", -1))
-        if schema_version not in (1, 2, 3, 4):
+        if schema_version not in (1, 2, 3, 4, 5):
             raise ValueError(
-                "Expected ActionStream-Adaptive selector schema_version=1, 2, 3, or 4"
+                "Expected ActionStream-Adaptive selector schema_version=1, 2, 3, 4, or 5"
             )
         decision = value["decision"]
         risk = value["risk_gate"]
@@ -132,7 +140,7 @@ class AdaptiveSelectorConfig:
             gripper_closed_minimum = 0.5
             gripper_open_maximum = -0.5
             release_confirmation_steps = 1
-        if schema_version == 4:
+        if schema_version >= 4:
             scheduler = value["queue_slack_scheduler"]
             queue_slack_scheduler_enabled = bool(scheduler["enabled"])
             queue_reserve_steps = int(scheduler["queue_reserve_steps"])
@@ -153,6 +161,37 @@ class AdaptiveSelectorConfig:
             minimum_request_interval_steps = 1
             maximum_request_interval_steps = 1
             maximum_service_prediction_steps = 1
+        if schema_version >= 5:
+            spending = value["reserve_spending"]
+            reserve_spending_enabled = bool(spending["enabled"])
+            reserve_spend_budget_steps = int(
+                spending["reserve_spend_budget_steps"]
+            )
+            minimum_protected_reserve_steps = int(
+                spending["minimum_protected_reserve_steps"]
+            )
+            minimum_release_wait_steps = int(
+                spending["minimum_release_wait_steps"]
+            )
+            maximum_release_wait_steps = int(
+                spending["maximum_release_wait_steps"]
+            )
+            progress_window_steps = int(spending["progress_window_steps"])
+            progress_minimum_translation_m = float(
+                spending["progress_minimum_translation_m"]
+            )
+            progress_minimum_rotation_radians = float(
+                spending["progress_minimum_rotation_radians"]
+            )
+        else:
+            reserve_spending_enabled = False
+            reserve_spend_budget_steps = 0
+            minimum_protected_reserve_steps = 0
+            minimum_release_wait_steps = 1
+            maximum_release_wait_steps = 1
+            progress_window_steps = 1
+            progress_minimum_translation_m = 0.0
+            progress_minimum_rotation_radians = 0.0
         config = cls(
             schema_version=schema_version,
             selector_id=str(value["selector_id"]),
@@ -184,6 +223,14 @@ class AdaptiveSelectorConfig:
             minimum_request_interval_steps=minimum_request_interval_steps,
             maximum_request_interval_steps=maximum_request_interval_steps,
             maximum_service_prediction_steps=maximum_service_prediction_steps,
+            reserve_spending_enabled=reserve_spending_enabled,
+            reserve_spend_budget_steps=reserve_spend_budget_steps,
+            minimum_protected_reserve_steps=minimum_protected_reserve_steps,
+            minimum_release_wait_steps=minimum_release_wait_steps,
+            maximum_release_wait_steps=maximum_release_wait_steps,
+            progress_window_steps=progress_window_steps,
+            progress_minimum_translation_m=progress_minimum_translation_m,
+            progress_minimum_rotation_radians=progress_minimum_rotation_radians,
             source_path=str(source_path.resolve()),
             source_sha256=source_sha256,
         )
@@ -200,9 +247,9 @@ class AdaptiveSelectorConfig:
             raise ValueError(f"Unsupported Adaptive reference mode: {self.reference_mode}")
         if self.schema_version == 1 and self.workspace is None:
             raise ValueError("Adaptive v1 requires absolute workspace bounds")
-        if self.schema_version in (2, 3, 4) and self.workspace is not None:
+        if self.schema_version >= 2 and self.workspace is not None:
             raise ValueError(
-                "Adaptive v2/v3/v4 uses a dynamic EEF reference, not global bounds"
+                "Adaptive v2+ uses a dynamic EEF reference, not global bounds"
             )
         if not (
             0 <= self.fresh_full_max_age_steps
@@ -249,9 +296,9 @@ class AdaptiveSelectorConfig:
             )
         if self.schema_version < 4 and self.queue_slack_scheduler_enabled:
             raise ValueError("Adaptive queue-slack scheduling requires schema_version=4")
-        if self.schema_version == 4:
+        if self.schema_version >= 4:
             if not self.queue_slack_scheduler_enabled:
-                raise ValueError("Adaptive v4 requires queue-slack scheduling")
+                raise ValueError("Adaptive v4+ requires queue-slack scheduling")
             if self.queue_reserve_steps <= 0:
                 raise ValueError("Adaptive queue reserve must be positive")
             if not 0.0 < self.service_time_ewma_alpha <= 1.0:
@@ -264,6 +311,47 @@ class AdaptiveSelectorConfig:
                 )
             if self.maximum_service_prediction_steps <= 0:
                 raise ValueError("Adaptive maximum service prediction must be positive")
+        if self.schema_version < 5 and self.reserve_spending_enabled:
+            raise ValueError("Adaptive reserve spending requires schema_version=5")
+        if self.schema_version == 5:
+            if not self.reserve_spending_enabled:
+                raise ValueError("Adaptive v5 requires bounded reserve spending")
+            if self.reserve_spend_budget_steps <= 0:
+                raise ValueError("Adaptive reserve spend budget must be positive")
+            if not 0 <= self.minimum_protected_reserve_steps < self.queue_reserve_steps:
+                raise ValueError(
+                    "Adaptive protected reserve must be non-negative and below the reserve"
+                )
+            if self.reserve_spend_budget_steps > (
+                self.queue_reserve_steps - self.minimum_protected_reserve_steps
+            ):
+                raise ValueError(
+                    "Adaptive reserve spend budget exceeds expendable reserve steps"
+                )
+            if self.minimum_release_wait_steps <= 0:
+                raise ValueError("Adaptive minimum release wait must be positive")
+            if self.maximum_release_wait_steps < self.minimum_release_wait_steps:
+                raise ValueError(
+                    "Adaptive maximum release wait must not be below the minimum"
+                )
+            if self.maximum_release_wait_steps > self.maximum_service_prediction_steps:
+                raise ValueError(
+                    "Adaptive maximum release wait exceeds service prediction horizon"
+                )
+            if self.progress_window_steps <= 0:
+                raise ValueError("Adaptive progress window must be positive")
+            if (
+                not math.isfinite(self.progress_minimum_translation_m)
+                or self.progress_minimum_translation_m < 0.0
+                or not math.isfinite(self.progress_minimum_rotation_radians)
+                or self.progress_minimum_rotation_radians < 0.0
+            ):
+                raise ValueError("Adaptive progress thresholds must be finite and non-negative")
+            if (
+                self.progress_minimum_translation_m == 0.0
+                and self.progress_minimum_rotation_radians == 0.0
+            ):
+                raise ValueError("Adaptive v5 requires a nonzero progress threshold")
 
 
 def load_selector_config(

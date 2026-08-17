@@ -15,7 +15,12 @@ from actionstream.adaptive_runtime import (
     rotation_geodesic_radians,
     rotation_matrix_to_axis_angle,
 )
-from actionstream.current_baselines import ModelSpec, _AdaptiveActionQueue, _AdaptiveQueue
+from actionstream.current_baselines import (
+    ModelSpec,
+    _AdaptiveActionQueue,
+    _AdaptiveQueue,
+    load_protocol,
+)
 from actionstream.runtime import InferenceResult
 
 
@@ -30,6 +35,18 @@ SELECTOR_V3_PATH = (
 SELECTOR_V3_SHA256 = "c824762ed9b05d37369181812795313c870b3bf8f5714d4c4ccd98e221021c98"
 SELECTOR_V4_PATH = ROOT / "configs" / "actionstream_adaptive_queue_slack_v4_selector.json"
 SELECTOR_V4_SHA256 = "7e437cbaeb3d274e098d8a068fafa482697148933eb5431c28c48cd51632a021"
+SELECTOR_V5_PATH = (
+    ROOT / "configs" / "actionstream_adaptive_budgeted_release_v5_selector.json"
+)
+SELECTOR_V5_SHA256 = "51b3dbd120a0a39183a21f68e10d801151d255946c9aa7b8821f022ccf425a1b"
+V5_CANARY_PROTOCOLS = (
+    ROOT / "configs" / "actionstream_adaptive_budgeted_release_v5_canary_object.json",
+    ROOT / "configs" / "actionstream_adaptive_budgeted_release_v5_canary_spatial.json",
+    ROOT / "configs" / "actionstream_adaptive_budgeted_release_v5_canary_goal.json",
+)
+V5_DEV_PROTOCOL = (
+    ROOT / "configs" / "actionstream_adaptive_budgeted_release_v5_dev_probe.json"
+)
 
 
 def _chunk() -> np.ndarray:
@@ -57,6 +74,11 @@ def _selector_v3() -> AdaptiveSelector:
 
 def _selector_v4() -> AdaptiveSelector:
     config = load_selector_config(SELECTOR_V4_PATH, expected_sha256=SELECTOR_V4_SHA256)
+    return AdaptiveSelector(config, chunk_size=30, control_mode="absolute")
+
+
+def _selector_v5() -> AdaptiveSelector:
+    config = load_selector_config(SELECTOR_V5_PATH, expected_sha256=SELECTOR_V5_SHA256)
     return AdaptiveSelector(config, chunk_size=30, control_mode="absolute")
 
 
@@ -392,6 +414,20 @@ def _v4_queue() -> _AdaptiveQueue:
     return queue
 
 
+def _v5_queue() -> _AdaptiveQueue:
+    selector = load_selector_config(
+        SELECTOR_V5_PATH, expected_sha256=SELECTOR_V5_SHA256
+    )
+    queue = _AdaptiveQueue(
+        bindings=_fake_bindings(),
+        period=0.05,
+        spec=_model_spec(),
+        selector_config=selector,
+    )
+    queue.reset_episode("episode")
+    return queue
+
+
 def test_adaptive_queue_switches_between_official_latest_only_and_aligned() -> None:
     selector = load_selector_config(SELECTOR_PATH, expected_sha256=SELECTOR_SHA256)
     queue = _AdaptiveQueue(
@@ -540,3 +576,124 @@ def test_v4_outage_reject_preserves_active_recovery_reserve() -> None:
     assert outage["queue_before"] == 5
     assert outage["queue_after"] == 5
     assert queue.summary()["adaptive_pending_actions_discarded_by_guard"] == 0
+
+
+def _prime_v5_reserve(queue: _AdaptiveQueue) -> np.ndarray:
+    queue.note_request(0)
+    queue.merge(_v3_result(_chunk(), 0), control_step=0)
+    for _ in range(25):
+        _, held = queue.pop()
+        assert not held
+    pose = np.asarray([-0.10, 0.0, 0.10, 0.0, 0.0, 0.0, 0.0])
+    queue.note_control_observation(pose)
+    queue.note_request(25)
+    return pose
+
+
+def test_v5_selector_freezes_bounded_spending_contract() -> None:
+    config = load_selector_config(
+        SELECTOR_V5_PATH, expected_sha256=SELECTOR_V5_SHA256
+    )
+
+    assert config.schema_version == 5
+    assert config.queue_reserve_steps == 5
+    assert config.reserve_spend_budget_steps == 4
+    assert config.minimum_protected_reserve_steps == 1
+    assert config.maximum_release_wait_steps == 4
+    assert config.progress_window_steps == 3
+    assert _selector_v5().config.selector_id.endswith("budgeted_release_v5")
+
+
+def test_v5_canary_state_and_traces_are_disjoint_from_dev_probe() -> None:
+    canaries = [load_protocol(path) for path in V5_CANARY_PROTOCOLS]
+    development = load_protocol(V5_DEV_PROTOCOL)
+
+    assert {
+        tuple(protocol.raw["environment"]["initial_state_indices"])
+        for protocol in canaries
+    } == {(33,)}
+    assert tuple(development.raw["environment"]["initial_state_indices"]) == (34, 35)
+    canary_hashes = {
+        trace.trace_sha256
+        for protocol in canaries
+        for trace in protocol.delays.values()
+    }
+    development_hashes = {
+        trace.trace_sha256 for trace in development.delays.values()
+    }
+    assert len(canary_hashes) == 7
+    assert len(development_hashes) == 2
+    assert canary_hashes.isdisjoint(development_hashes)
+
+
+def test_v5_deadline_releases_one_reserve_command_while_robot_progresses() -> None:
+    queue = _v5_queue()
+    pose = _prime_v5_reserve(queue)
+
+    for index in range(4):
+        _, held = queue.pop()
+        assert held
+        moving = pose.copy()
+        moving[0] += 0.003 * (index + 1)
+        queue.note_control_observation(moving)
+
+    _, released_as_hold = queue.pop()
+
+    assert not released_as_hold
+    assert queue.queue_depth() == 4
+    summary = queue.summary()
+    assert summary["adaptive_reserve_spend_steps"] == 1
+    assert summary["adaptive_reserve_deadline_spend_steps"] == 1
+    assert summary["adaptive_reserve_progress_spend_steps"] == 0
+    assert summary["adaptive_last_reserve_release_reason"] == "service_deadline"
+
+
+def test_v5_progress_stall_releases_before_service_deadline() -> None:
+    queue = _v5_queue()
+    pose = _prime_v5_reserve(queue)
+
+    for _ in range(3):
+        _, held = queue.pop()
+        assert held
+        queue.note_control_observation(pose)
+
+    _, released_as_hold = queue.pop()
+
+    assert not released_as_hold
+    assert queue.queue_depth() == 4
+    summary = queue.summary()
+    assert summary["adaptive_reserve_progress_spend_steps"] == 1
+    assert summary["adaptive_reserve_deadline_spend_steps"] == 0
+    assert summary["adaptive_last_progress_translation_m"] == pytest.approx(0.0)
+    assert summary["adaptive_last_progress_rotation_radians"] == pytest.approx(0.0)
+
+
+def test_v5_spend_budget_never_consumes_protected_final_command() -> None:
+    queue = _v5_queue()
+    pose = _prime_v5_reserve(queue)
+
+    for _ in range(40):
+        queue.pop()
+        queue.note_control_observation(pose)
+        if queue.summary()["adaptive_reserve_spend_steps"] == 4:
+            break
+
+    assert queue.queue_depth() == 1
+    spent_before = queue.summary()["adaptive_reserve_spend_steps"]
+    for _ in range(6):
+        _, held = queue.pop()
+        assert held
+        queue.note_control_observation(pose)
+
+    summary = queue.summary()
+    assert summary["adaptive_reserve_spend_steps"] == spent_before == 4
+    assert summary["adaptive_reserve_budget_exhaustions"] == 1
+    assert summary["adaptive_reserve_protected_floor_hold_steps"] > 0
+    assert queue.queue_depth() == 1
+
+
+def test_v5_requires_finite_measured_eef_progress_observation() -> None:
+    queue = _v5_queue()
+
+    with pytest.raises(ValueError, match="finite measured EEF pose"):
+        queue.note_control_observation(np.asarray([np.nan] * 7))
