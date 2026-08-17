@@ -8,6 +8,34 @@ entire stale chunk.
 
 ![ActionStream X-VLA paired runtime result](docs/assets/actionstream_hero.png)
 
+## Adaptive Queue-Slack v4 — outage recovery, canary NO-GO
+
+Queue-Slack v4 adds online service-time estimation, slack-aware prefetch, and a
+five-command reserve that survives rejected stale results. Its frozen X-VLA
+canary used a fresh registered state and new paired network traces across three
+different LIBERO task families, three delay profiles, and four runtimes (36
+episodes total).
+
+The strict verdict is **NO-GO**. Adaptive and official LeRobot `latest_only`
+both succeeded on 8/9 asynchronous rows, but failed different conditions;
+static aligned succeeded on 9/9. Under the registered 425/1850 ms outage
+profile, Adaptive was 3/3 versus `latest_only` 2/3 and recovered the Object
+failure, while preserving a nonempty action reserve through both long arrivals
+on all three tasks. Under 600–1100 ms jitter, however, Adaptive timed out on
+the Object task at 300 steps while `latest_only` and aligned succeeded in 154
+and 125 steps. Its 25 reserve activations and 83 hold steps support an
+over-conservative reserve-fragmentation hypothesis, not a causal claim from
+one reset.
+
+![Queue-Slack v4 canary](reports/actionstream_adaptive_queue_slack_v4/canary_steps.png)
+
+The [Queue-Slack v4 report](reports/actionstream_adaptive_queue_slack_v4/report.md)
+contains the frozen main table, scheduler audit, failure taxonomy, same-state
+paired frames, and a five-stage high-jitter timeline. All 36 trace hashes and
+36 videos were verified after transfer. The formal holdout remains closed and
+this selector will not be retuned; a future candidate must use a new selector
+and state/trace split with bounded reserve spending or deadline-aware release.
+
 ## Adaptive Phase-Stable v3 — strong canary, formal holdout still closed
 
 The frozen Phase-Stable v3 X-VLA canary covers three genuinely different

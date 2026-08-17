@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "received_utc": "2026-08-17T15:16:56Z",
+  "archive": {
+    "filename": "actionstream_adaptive_queue_slack_v4_evidence_d78c81e.tgz",
+    "bytes": 15349993,
+    "sha256": "97ab3f1c88e36c3162113b7342b628c8ed8e20c2410996a7e6ba72d6accfd47d",
+    "git_boundary": "retained under untracked artifacts; not committed"
+  },
+  "source_commits": {
+    "canonical_canary": "49b15bc310b676000f7db1e1c35fa0d0da56c7b8",
+    "remote_equivalent": "d78c81ec89ba460945454220ba276a3a3d63622e"
+  },
+  "selector": {
+    "id": "actionstream_adaptive_queue_slack_v4",
+    "sha256": "7e437cbaeb3d274e098d8a068fafa482697148933eb5431c28c48cd51632a021"
+  },
+  "validation": {
+    "canary_rows": 36,
+    "trace_hashes_verified": 36,
+    "videos_decoded": 36,
+    "decoded_frames": 4883,
+    "video_resolution": "640x640",
+    "local_content_review": [
+      "Object task 5 high jitter: latest-only and static aligned place the can in the basket; Adaptive v4 leaves it on the table at the 300-step timeout",
+      "Object task 5 paired outages: latest-only does not place the can; static aligned and Adaptive v4 both place it in the basket",
+      "high-jitter videos inspected at 0, 25, 50, 75, and 100 percent; paired final scenes inspected for both high-jitter and outage conditions"
+    ]
+  },
+  "verdict": {
+    "canary": "NO-GO",
+    "formal_holdout_opened": false,
+    "bounded_positive": "Adaptive v4 recovered the Object outage failure of latest-only while preserving a nonempty reserve through all registered outage arrivals"
+  }
+}
