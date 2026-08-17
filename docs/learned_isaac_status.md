@@ -1,5 +1,25 @@
 # Learned X-VLA native Isaac development status
 
+## Superseding update — 2026-08-17
+
+Current gate: **PARTIAL PASS — 2/3 native development task families**
+
+The blocked all-zero visual contract documented below was repaired with an
+official-render/state bridge that dynamically writes measured native Panda,
+gripper, and named-object state into the pinned LIBERO environment before each
+X-VLA request. Native sync canaries now reach development success on
+object-into-container and spatial object-on-object placement; the spatial run
+also passes the official LIBERO predicate at control step 120. A third planar
+plate-push task still fails after canonical collision-compound reconstruction
+and is preserved as a native contact/robot-limit blocker.
+
+This is not a frozen multi-seed native holdout and the official LeRobot
+Async/RTC matrix is not relabeled as native Isaac evidence. The current result,
+failure classification, public-readiness audit, and artifact hashes are in the
+[2026-08-17 learned-policy closure report](learned_policy_closure_20260817.md).
+
+## Superseded 2026-08-16 diagnostic record
+
 Status date: 2026-08-16
 
 Branch: `codex/actionstream/async-rtc-isaac`

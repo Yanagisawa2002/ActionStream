@@ -26,3 +26,10 @@ outputs/**/*.log
 
 # One-off M4 development smoke; final evidence is under the named matrices.
 outputs/m4/smoke/
+
+# Local transfer bundles and generated release evidence. Compact manifests,
+# hashes, reports, and selected figures remain eligible for normal Git.
+/*.bundle
+/*.tgz
+/artifacts/**/*.mp4
+/artifacts/**/*.tgz

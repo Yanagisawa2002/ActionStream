@@ -6,6 +6,31 @@ tests whether compensating for observation age when an asynchronous action
 chunk arrives is safer and more efficient than replacing the queue with the
 entire stale chunk.
 
+![ActionStream X-VLA paired runtime result](docs/assets/actionstream_hero.png)
+
+## Current learned-policy result — partial closure
+
+The strongest learned-policy result is a 180-episode, three-task X-VLA paired
+evaluation using pinned official LeRobot/LIBERO paths. Under seeded
+500 +/- 250 ms transport jitter, LeRobot `latest_only` and ActionStream aligned
+both succeeded 30/30; aligned completed 13.7 control steps sooner on average
+(paired bootstrap 95% CI -15.6 to -11.9). This is not a universal win: aligned
+is 3.6 steps slower at zero delay and drops two task-1 trials at fixed 950 ms.
+
+The learned native-Isaac bridge now dynamically synchronizes measured Panda
+and object state into official LIBERO rendering before each X-VLA request.
+Native sync development canaries pass two genuinely different task families:
+object-into-container and object-on-object placement. The latter also passes
+the pinned LIBERO success predicate at control step 120. A third planar-push
+task remains a preserved native contact/robot-limit failure. Official LeRobot
+Async, `latest_only`, RTC where supported, and ActionStream results exist in
+the LIBERO matrix; a native Isaac async/RTC paired matrix does not.
+
+See the [2026-08-17 learned-policy closure report](docs/learned_policy_closure_20260817.md)
+for denominators, failure classification, provenance, release audit, and exact
+evidence boundaries. Isaac Lab-Arena and real-robot paired A/B remain future
+work.
+
 ## M8-G0: frozen native Isaac holdout — GO
 
 M8 runs a native Isaac Sim 6.0.1 Franka pick-and-place task with a seeded
@@ -93,36 +118,28 @@ This does not change M4's original positive asynchronous result or M7's static
 36/36 saturation. M4, M7, and M8 use different endpoints and denominators; no
 numbers are merged across them.
 
-## Learned X-VLA native Isaac development gate — BLOCKED
+## Learned X-VLA native Isaac development gate — PARTIAL PASS
 
-The first genuine `lerobot/xvla-libero` policy-driven native Isaac development
-gate ran on 2026-08-16. The checkpoint loaded on GPU, produced changing 7D
-actions, drove the native Franka for 300 steps, and recorded a valid 301-frame
-video with no collision or workspace-limit event. The task-capability gate did
-not pass: the arm approached the wrong object region, never contacted the
-alphabet-soup target, and the target moved 0.0 m. Closest measured EEF-to-target
-distance was 0.2001 m.
+The earlier all-zero visual contract is superseded. The current bridge writes
+measured native robot and object state into the pinned official LIBERO
+environment and renders fresh official agent/wrist observations before every
+X-VLA request. Two distinct native sync development canaries now succeed:
+object into container and bowl onto plate. The spatial canary reaches both the
+native proxy and official LIBERO predicate at step 120. All GPU, dynamic-state,
+IK, writeback, command, motion, and video checks pass on both runs.
 
-This is a **partial integration result, not a learned-policy task success**.
-The formal sync/latest-only/LeRobot async/RTC/ActionStream paired holdout was
-not opened because an all-zero native policy would not provide a meaningful
-runtime comparison. The exact adapter work, hashes, failure classification,
-local video evidence, and recovery gate are recorded in
-[the learned Isaac status](docs/learned_isaac_status.md). M8's positive scripted
-runtime result above is unchanged and remains separately scoped.
+A third family, planar plate pushing, remains a real failure after reconstructing
+the canonical ten-box plate collision compound and mass. The official X-VLA
+episode succeeds in 148 steps, while the native run reaches 300 steps, hits a
+robot-limit condition, and fails both predicates. No additional seed or
+geometry tuning is used to hide that result.
 
-A frozen 2x2 first-chunk counterfactual now explains the immediate failure.
-Holding official state fixed, native Isaac images move the X-VLA chunk by
-0.760888 RMSE, versus 0.005239 when only native state is substituted: a 145.25x
-contrast. The images alone also change first commanded Z from about 0.242 m to
-0.126 m and flip all 30 raw gripper signs from -1 to +1. The result identifies
-visual/camera domain mismatch as the dominant initial error, while remaining an
-offline attribution diagnostic rather than task-success evidence.
-
-![X-VLA official/native input counterfactual](outputs/xvla_isaac_input_counterfactual_v1/input_counterfactual.png)
-
-Evidence: [counterfactual report](outputs/xvla_isaac_input_counterfactual_v1/report.md)
-and [raw 12-inference summary](outputs/xvla_isaac_input_counterfactual_v1/summary.json).
+This is **2/3 development task capability**, not a frozen multi-seed native
+holdout. The official LeRobot Async/RTC matrix remains a separate LIBERO
+evidence class. Full details are in the
+[learned-policy closure report](docs/learned_policy_closure_20260817.md); the
+[learned Isaac status](docs/learned_isaac_status.md) retains the superseded
+diagnostic history.
 
 ## M7-G0: ROS 2 / Isaac Sim runtime integration — NO-GO
 
