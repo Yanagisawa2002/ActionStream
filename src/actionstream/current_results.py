@@ -67,6 +67,7 @@ RUNTIME_ORDER = (
     "lerobot_weighted_average",
     "lerobot_latest_only",
     "actionstream_aligned",
+    "actionstream_adaptive",
     "lerobot_rtc",
 )
 PROFILE_ORDER = (
@@ -75,6 +76,10 @@ PROFILE_ORDER = (
     "fixed_0500",
     "fixed_0950",
     "jitter_0500_pm0250",
+    "jitter_0500_pm0250_seed01",
+    "jitter_0500_pm0250_seed02",
+    "jitter_0500_pm0250_seed03",
+    "burst_outage_seed01",
 )
 
 
@@ -307,6 +312,8 @@ def build_analysis(rows: list[dict[str, Any]]) -> dict[str, Any]:
     comparison_pairs = (
         ("actionstream_aligned", "lerobot_weighted_average"),
         ("actionstream_aligned", "lerobot_latest_only"),
+        ("actionstream_adaptive", "lerobot_latest_only"),
+        ("actionstream_adaptive", "actionstream_aligned"),
         ("lerobot_rtc", "actionstream_aligned"),
         ("lerobot_rtc", "lerobot_weighted_average"),
         ("lerobot_rtc", "lerobot_latest_only"),

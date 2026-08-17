@@ -16,6 +16,7 @@ import random
 import subprocess
 import time
 import uuid
+from collections import Counter
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
@@ -24,6 +25,11 @@ from typing import Any
 import numpy as np
 import torch
 
+from actionstream.adaptive_runtime import (
+    AdaptiveSelector,
+    AdaptiveSelectorConfig,
+    load_selector_config,
+)
 from actionstream.lerobot_backend import (
     StepOutput,
     extract_success,
@@ -51,6 +57,7 @@ RUNTIMES = (
     "lerobot_weighted_average",
     "lerobot_latest_only",
     "actionstream_aligned",
+    "actionstream_adaptive",
     "lerobot_rtc",
 )
 OFFICIAL_ASYNC_AGGREGATES = {
@@ -173,6 +180,29 @@ class DelayTrace:
                 rng.randint(center - half_width, center + half_width) for _ in range(length)
             )
             repeat = False
+        elif kind == "seeded_burst":
+            center = int(value["base_center_milliseconds"])
+            half_width = int(value["base_half_width_milliseconds"])
+            probability = float(value["burst_probability"])
+            burst_minimum = int(value["burst_min_milliseconds"])
+            burst_maximum = int(value["burst_max_milliseconds"])
+            length = int(value["trace_length"])
+            if (
+                half_width < 0
+                or length <= 0
+                or not 0.0 <= probability <= 1.0
+                or burst_minimum < 0
+                or burst_minimum > burst_maximum
+            ):
+                raise ValueError(f"Invalid burst definition for {key}")
+            rng = random.Random(int(value["seed"]))
+            milliseconds = tuple(
+                rng.randint(burst_minimum, burst_maximum)
+                if rng.random() < probability
+                else rng.randint(center - half_width, center + half_width)
+                for _ in range(length)
+            )
+            repeat = False
         else:
             raise ValueError(f"Unsupported delay profile kind: {kind}")
         if any(item < 0 for item in milliseconds):
@@ -203,10 +233,12 @@ class Protocol:
     raw: Mapping[str, Any]
     models: Mapping[str, ModelSpec]
     delays: Mapping[str, DelayTrace]
+    adaptive_selector: AdaptiveSelectorConfig | None
 
 
 def load_protocol(path: Path | str) -> Protocol:
-    raw = json.loads(Path(path).read_text(encoding="utf-8"))
+    protocol_path = Path(path).resolve()
+    raw = json.loads(protocol_path.read_text(encoding="utf-8"))
     if raw.get("schema_version") != 1:
         raise ValueError("Expected current LeRobot baseline schema_version=1")
     source = raw.get("source", {})
@@ -223,7 +255,37 @@ def load_protocol(path: Path | str) -> Protocol:
     unknown_runtimes = set(raw.get("runtimes", [])) - set(RUNTIMES)
     if unknown_runtimes:
         raise ValueError(f"Unknown runtimes in protocol: {sorted(unknown_runtimes)}")
-    return Protocol(raw=raw, models=models, delays=delays)
+    adaptive_selector: AdaptiveSelectorConfig | None = None
+    adaptive_raw = raw.get("adaptive_runtime")
+    if adaptive_raw is not None:
+        reference = Path(str(adaptive_raw["selector_protocol_path"]))
+        candidates = (
+            [reference]
+            if reference.is_absolute()
+            else [
+                Path.cwd() / reference,
+                protocol_path.parent / reference,
+                protocol_path.parent.parent / reference,
+            ]
+        )
+        selector_path = next((item for item in candidates if item.is_file()), None)
+        if selector_path is None:
+            raise FileNotFoundError(
+                f"Adaptive selector protocol not found: {reference}; "
+                f"checked={[str(item) for item in candidates]}"
+            )
+        adaptive_selector = load_selector_config(
+            selector_path,
+            expected_sha256=str(adaptive_raw["selector_protocol_sha256"]),
+        )
+    if "actionstream_adaptive" in raw.get("runtimes", []) and adaptive_selector is None:
+        raise ValueError("Adaptive runtime requires a frozen adaptive_runtime protocol")
+    return Protocol(
+        raw=raw,
+        models=models,
+        delays=delays,
+        adaptive_selector=adaptive_selector,
+    )
 
 
 @dataclass(frozen=True)
@@ -648,6 +710,140 @@ class _AlignedQueue(_RuntimeQueue):
         return self.queue.hold_steps
 
 
+class _AdaptiveQueue(_RuntimeQueue):
+    def __init__(
+        self,
+        *,
+        spec: ModelSpec,
+        selector_config: AdaptiveSelectorConfig,
+    ) -> None:
+        self.queue = ActionStreamQueue()
+        self.request_interval_steps = spec.request_interval_steps
+        self.selector = AdaptiveSelector(
+            selector_config,
+            chunk_size=spec.chunk_size,
+            control_mode=spec.control_mode,
+        )
+        self._last_request_step: int | None = None
+        self._last_action: np.ndarray | None = None
+        self._last_execution_mode: str | None = None
+        self.decision_counts: Counter[str] = Counter()
+        self.regime_counts: Counter[str] = Counter()
+        self.mode_switches = 0
+        self.safe_alternate_overrides = 0
+        self.safe_hold_merges = 0
+        self.pending_actions_discarded_by_guard = 0
+        self.reset_episode(uuid.uuid4().hex)
+
+    def reset_episode(self, episode_id: str) -> None:
+        self.queue.reset_episode(episode_id)
+        self.selector.reset()
+        self._last_request_step = None
+        self._last_action = None
+        self._last_execution_mode = None
+        self.decision_counts.clear()
+        self.regime_counts.clear()
+        self.mode_switches = 0
+        self.safe_alternate_overrides = 0
+        self.safe_hold_merges = 0
+        self.pending_actions_discarded_by_guard = 0
+
+    def queue_depth(self) -> int:
+        return self.queue.queue_length
+
+    def should_request(self, control_step: int) -> bool:
+        return (
+            control_step % self.request_interval_steps == 0
+            and control_step != self._last_request_step
+        )
+
+    def note_request(self, control_step: int) -> None:
+        self._last_request_step = control_step
+
+    def _record_decision(self, mode: str, regime: str, *, override: bool) -> None:
+        self.decision_counts[mode] += 1
+        self.regime_counts[regime] += 1
+        if self._last_execution_mode is not None and mode != self._last_execution_mode:
+            self.mode_switches += 1
+        self._last_execution_mode = mode
+        if override:
+            self.safe_alternate_overrides += 1
+
+    def merge(self, result: InferenceResult, control_step: int) -> dict[str, Any]:
+        before = self.queue.queue_length
+        decision = self.selector.decide(
+            result.actions,
+            observation_control_step=result.observation_control_step,
+            current_control_step=control_step,
+            queue_depth_steps=before,
+            last_action=self._last_action,
+        )
+        self._record_decision(
+            decision.execution_mode,
+            decision.regime,
+            override=decision.safe_alternate_override,
+        )
+        if decision.execution_mode == "safe_hold":
+            if not self.queue.has_safe_action:
+                raise RuntimeError(
+                    "Adaptive risk gate rejected the first chunk; no safe hold action exists"
+                )
+            discarded = self.queue.discard_pending_for_hold()
+            self.pending_actions_discarded_by_guard += discarded
+            self.safe_hold_merges += 1
+            return {
+                "queue_before": before,
+                "queue_after": self.queue.queue_length,
+                "incoming": len(result.actions),
+                "accepted": False,
+                "reason": "adaptive_safe_hold",
+                "age_steps": decision.result_age_steps,
+                "dropped_prefix_steps": len(result.actions),
+                "guard_discarded_pending_steps": discarded,
+                "adaptive_decision": decision.as_dict(),
+            }
+        if decision.merge_mode is None:
+            raise RuntimeError("Adaptive executable decision is missing a merge mode")
+        outcome = self.queue.replace(
+            result,
+            current_control_step=control_step,
+            mode=decision.merge_mode,
+        )
+        return {
+            "queue_before": before,
+            "queue_after": outcome.queue_length,
+            "incoming": outcome.incoming_chunk_steps,
+            "accepted": outcome.accepted,
+            "reason": outcome.reason,
+            "age_steps": outcome.age_steps,
+            "dropped_prefix_steps": outcome.dropped_prefix_steps,
+            "adaptive_decision": decision.as_dict(),
+        }
+
+    def pop(self) -> tuple[np.ndarray, bool]:
+        action, held = self.queue.next_action()
+        self._last_action = action.copy()
+        return action, held
+
+    @property
+    def hold_steps(self) -> int:
+        return self.queue.hold_steps
+
+    def summary(self) -> dict[str, Any]:
+        return {
+            "adaptive_selector_id": self.selector.config.selector_id,
+            "adaptive_selector_sha256": self.selector.config.source_sha256,
+            "adaptive_decision_counts": dict(sorted(self.decision_counts.items())),
+            "adaptive_regime_counts": dict(sorted(self.regime_counts.items())),
+            "adaptive_mode_switches": self.mode_switches,
+            "adaptive_safe_alternate_overrides": self.safe_alternate_overrides,
+            "adaptive_safe_hold_merges": self.safe_hold_merges,
+            "adaptive_pending_actions_discarded_by_guard": (
+                self.pending_actions_discarded_by_guard
+            ),
+        }
+
+
 class _OfficialRTCQueue(_RuntimeQueue):
     def __init__(
         self,
@@ -729,6 +925,7 @@ def _make_runtime_queue(
     bindings: Any,
     spec: ModelSpec,
     period: float,
+    adaptive_selector: AdaptiveSelectorConfig | None = None,
 ) -> _RuntimeQueue:
     if runtime in OFFICIAL_ASYNC_AGGREGATES:
         return _OfficialAsyncQueue(
@@ -739,6 +936,10 @@ def _make_runtime_queue(
         )
     if runtime == "actionstream_aligned":
         return _AlignedQueue(spec.request_interval_steps)
+    if runtime == "actionstream_adaptive":
+        if adaptive_selector is None:
+            raise ValueError("Adaptive runtime requires a frozen selector config")
+        return _AdaptiveQueue(spec=spec, selector_config=adaptive_selector)
     if runtime == "lerobot_rtc":
         return _OfficialRTCQueue(
             execution_horizon=spec.rtc_execution_horizon,
@@ -846,6 +1047,7 @@ def run_async_episode(
     *,
     bindings: Any,
     runtime: str,
+    adaptive_selector: AdaptiveSelectorConfig | None,
     profile: DelayTrace,
     task_id: int,
     episode_index: int,
@@ -862,11 +1064,19 @@ def run_async_episode(
     )
     fps = backend.controller_frequency_hz(task_id)
     period = 1.0 / fps
-    queue = _make_runtime_queue(runtime, bindings=bindings, spec=backend.spec, period=period)
+    queue = _make_runtime_queue(
+        runtime,
+        bindings=bindings,
+        spec=backend.spec,
+        period=period,
+        adaptive_selector=adaptive_selector,
+    )
     episode_id = f"{run_id}-{runtime}-{backend.spec.key}-{task_id}-{episode_index}"
     if isinstance(queue, _AlignedQueue):
         queue.queue.reset_episode(episode_id)
         queue.episode_id = episode_id
+    elif isinstance(queue, _AdaptiveQueue):
+        queue.reset_episode(episode_id)
 
     def infer(request: InferenceRequest) -> InferencePayload:
         thawed = thaw_observation_snapshot(request.observation)
@@ -932,7 +1142,7 @@ def run_async_episode(
             )
         )
         last_submit_step = control_step
-        if isinstance(queue, _AlignedQueue):
+        if isinstance(queue, (_AlignedQueue, _AdaptiveQueue)):
             queue.note_request(control_step)
 
     def merge_ready() -> int:
@@ -1082,6 +1292,8 @@ def run_async_episode(
             "video_sha256": _sha256_file(video_path) if video_path else None,
         }
     )
+    if isinstance(queue, _AdaptiveQueue):
+        record.update(queue.summary())
     return record
 
 
@@ -1329,6 +1541,7 @@ def run(args: argparse.Namespace) -> list[dict[str, Any]]:
                                         backend,
                                         bindings=bindings,
                                         runtime=runtime,
+                                        adaptive_selector=protocol.adaptive_selector,
                                         profile=profile,
                                         task_id=task_id,
                                         episode_index=episode_index,
@@ -1358,6 +1571,14 @@ def run(args: argparse.Namespace) -> list[dict[str, Any]]:
         "protocol_sha256": _sha256_file(Path(args.protocol)),
         "upstream": source_receipt,
         "compatibility": compatibility,
+        "adaptive_selector": (
+            None
+            if protocol.adaptive_selector is None
+            else {
+                "selector_id": protocol.adaptive_selector.selector_id,
+                "selector_protocol_sha256": protocol.adaptive_selector.source_sha256,
+            }
+        ),
         "selection": {
             "models": model_keys,
             "runtimes": runtimes,

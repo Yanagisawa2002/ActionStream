@@ -138,6 +138,27 @@ def test_current_results_preserve_task_stratified_effects(tmp_path: Path) -> Non
     )
 
 
+def test_current_results_compare_adaptive_to_both_static_runtimes(tmp_path: Path) -> None:
+    path = _write_fixture(tmp_path)
+    rows = read_episode_rows([path])
+    adaptive = []
+    for row in rows:
+        if row["runtime"] == "actionstream_aligned":
+            copied = dict(row)
+            copied["runtime"] = "actionstream_adaptive"
+            copied["environment_steps"] = int(copied["environment_steps"]) - 1
+            adaptive.append(copied)
+
+    report = build_analysis([*rows, *adaptive])
+    pairs = {
+        (item["estimate_runtime"], item["reference_runtime"])
+        for item in report["paired_comparisons"]
+        if item["comparison_type"] == "runtime"
+    }
+    assert ("actionstream_adaptive", "lerobot_latest_only") in pairs
+    assert ("actionstream_adaptive", "actionstream_aligned") in pairs
+
+
 def test_current_results_reject_unpaired_runtime_cell(tmp_path: Path) -> None:
     path = _write_fixture(tmp_path)
     rows = read_episode_rows([path])

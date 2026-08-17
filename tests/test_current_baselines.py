@@ -130,6 +130,51 @@ def test_fixed_delay_repeats_without_exhaustion() -> None:
     assert trace.seconds_at(10000) == pytest.approx(0.95)
 
 
+def test_seeded_burst_trace_is_deterministic_and_contains_outages() -> None:
+    definition = {
+        "key": "burst",
+        "kind": "seeded_burst",
+        "base_center_milliseconds": 350,
+        "base_half_width_milliseconds": 150,
+        "burst_probability": 0.25,
+        "burst_min_milliseconds": 1500,
+        "burst_max_milliseconds": 2400,
+        "seed": 2026081899,
+        "trace_length": 128,
+    }
+    first = DelayTrace.from_mapping(definition)
+    second = DelayTrace.from_mapping(dict(definition))
+    assert first.milliseconds == second.milliseconds
+    assert first.trace_sha256 == second.trace_sha256
+    assert any(200 <= item <= 500 for item in first.milliseconds)
+    assert any(1500 <= item <= 2400 for item in first.milliseconds)
+
+
+def test_adaptive_protocol_freezes_selector_tasks_states_and_network_traces() -> None:
+    canary = load_protocol(
+        ROOT / "configs" / "actionstream_adaptive_v1_canary_object.json"
+    )
+    holdout = load_protocol(
+        ROOT / "configs" / "actionstream_adaptive_v1_holdout_object.json"
+    )
+
+    assert canary.adaptive_selector is not None
+    assert canary.adaptive_selector.selector_id == "actionstream_adaptive_v1"
+    assert canary.raw["environment"]["task_ids"] == [3]
+    assert canary.raw["environment"]["initial_state_indices"] == [13]
+    assert holdout.raw["environment"]["task_ids"] == [4]
+    assert holdout.raw["environment"]["initial_state_indices"] == [20, 21, 22, 23, 24]
+    assert set(holdout.raw["runtimes"]) == {
+        "lerobot_latest_only",
+        "actionstream_aligned",
+        "actionstream_adaptive",
+    }
+    assert len(holdout.delays) == 6
+    assert set(canary.raw["environment"]["initial_state_indices"]).isdisjoint(
+        holdout.raw["environment"]["initial_state_indices"]
+    )
+
+
 def test_worker_records_per_request_delay_trace_metadata() -> None:
     def infer(_request: InferenceRequest) -> InferencePayload:
         return InferencePayload(
