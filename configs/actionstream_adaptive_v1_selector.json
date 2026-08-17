@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "selector_id": "actionstream_adaptive_v1",
+  "frozen_utc": "2026-08-17T11:00:00Z",
+  "parent_source_commit": "3d8d36b",
+  "calibration_boundary": {
+    "status": "development_only",
+    "source_experiment": "xvla_task_seed_expansion_20260816",
+    "source_suite": "libero_object",
+    "source_task_ids": [0, 1, 2],
+    "source_initial_state_indices": [1, 3, 5, 6, 7, 8, 9, 10, 11, 12],
+    "source_network_trace_count": 1,
+    "artifacts": [
+      {
+        "path": "outputs/xvla_task_seed_expansion_20260816/report/paired_analysis.json",
+        "sha256": "95f7ab0fd738b4092c1765fce7bab54722bf552b30f36556ac00b2b6dbbea707"
+      },
+      {
+        "path": "outputs/xvla_task_seed_expansion_20260816/task0/episodes.jsonl",
+        "sha256": "7e7460b1083d3b08741dc346fae73bb81c73d3486c105f7b71f103529ef904ad"
+      },
+      {
+        "path": "outputs/xvla_task_seed_expansion_20260816/task1/episodes.jsonl",
+        "sha256": "fa6c43248120464b8b4b2a20b32f6bd73d7c2fa4133a372d61d9b23359555046"
+      },
+      {
+        "path": "outputs/xvla_task_seed_expansion_20260816/task2/episodes.jsonl",
+        "sha256": "3eb3e6742c95ae458687ff075998fa46c50be97c64783c76bb99bf8c589e6348"
+      }
+    ],
+    "observed_result_age_steps": {
+      "fixed_0000": {"minimum": 0, "median": 3, "maximum": 5},
+      "jitter_0500_pm0250": {"minimum": 0, "steady_minimum": 8, "median": 14, "steady_maximum": 20},
+      "fixed_0950": {"minimum": 0, "steady_minimum": 21, "median": 22, "steady_maximum": 25}
+    }
+  },
+  "decision": {
+    "fresh_full_max_age_steps": 5,
+    "aligned_max_age_steps": 20,
+    "hard_max_age_steps": 28,
+    "minimum_aligned_horizon_steps": 10,
+    "age_ewma_alpha": 0.25,
+    "preferred_modes": {
+      "fresh": "full_chunk",
+      "moderate": "age_aligned",
+      "severe_but_bounded": "full_chunk",
+      "outage_or_unsafe": "safe_hold"
+    }
+  },
+  "risk_gate": {
+    "absolute_action_workspace": {
+      "x": [-0.25, 0.15],
+      "y": [-0.35, 0.35],
+      "z": [-0.10, 0.45]
+    },
+    "maximum_position_disagreement_m": 0.25,
+    "maximum_rotation_geodesic_radians": 0.35,
+    "reject_non_finite": true,
+    "record_gripper_switch": true,
+    "hard_gate_precedes_mode_preference": true
+  },
+  "capabilities": {
+    "full_chunk": true,
+    "age_aligned": true,
+    "safe_hold": true,
+    "official_rtc_dynamic_switch": false,
+    "rtc_boundary": "RTC remains an external official baseline in v1; it is not relabeled as an Adaptive branch because RTC changes policy inference as well as queue merge."
+  },
+  "claims": {
+    "primary": "Select execution semantics from live result age and action risk so one runtime can avoid the observed zero-delay regression and severe-delay success loss while retaining moderate-jitter efficiency.",
+    "non_claims": [
+      "No claim of learned selector optimality.",
+      "No claim that the internal full-chunk branch is official LeRobot latest-only.",
+      "No general safety certification.",
+      "No real-robot result until the separately frozen paired protocol is executed."
+    ]
+  }
+}

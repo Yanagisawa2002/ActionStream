@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "experiment_id": "actionstream_adaptive_v1_holdout_goal_20260817",
+  "frozen_utc": "2026-08-17T11:05:00Z",
+  "source": {"repository_url": "https://github.com/huggingface/lerobot.git", "commit": "6adf51511b7625090eade8d82d9f61a1846ebe56", "source_version": "0.6.2"},
+  "adaptive_runtime": {"selector_protocol_path": "configs/actionstream_adaptive_v1_selector.json", "selector_protocol_sha256": "e5cd59bbe760a5d7c9b6e4b1addbb039af31f4962d622af8973944e2125006d5"},
+  "environment": {"type": "libero", "suite": "libero_goal", "task_ids": [0], "episode_length": 300, "control_frequency_hz": 20.0, "initial_state_indices": [20, 21, 22, 23, 24], "base_seed": 2026082000},
+  "models": [{"key": "xvla", "model_id": "lerobot/xvla-libero", "revision": "12e8783e996944f5c97e490d37d4c145484ed70a", "control_mode": "absolute", "chunk_size": 30, "request_interval_steps": 10, "rtc_expected": false, "required": true, "rename_map": {}}],
+  "runtimes": ["lerobot_latest_only", "actionstream_aligned", "actionstream_adaptive"],
+  "delay_profiles": [
+    {"key": "fixed_0000", "kind": "fixed", "milliseconds": 0},
+    {"key": "jitter_0500_pm0250_seed01", "kind": "seeded_uniform", "center_milliseconds": 500, "half_width_milliseconds": 250, "seed": 2026081801, "trace_length": 2048},
+    {"key": "jitter_0500_pm0250_seed02", "kind": "seeded_uniform", "center_milliseconds": 500, "half_width_milliseconds": 250, "seed": 2026081802, "trace_length": 2048},
+    {"key": "jitter_0500_pm0250_seed03", "kind": "seeded_uniform", "center_milliseconds": 500, "half_width_milliseconds": 250, "seed": 2026081803, "trace_length": 2048},
+    {"key": "fixed_0950", "kind": "fixed", "milliseconds": 950},
+    {"key": "burst_outage_seed01", "kind": "seeded_burst", "base_center_milliseconds": 350, "base_half_width_milliseconds": 150, "burst_probability": 0.12, "burst_min_milliseconds": 1500, "burst_max_milliseconds": 2400, "seed": 2026081899, "trace_length": 2048}
+  ],
+  "compact_matrix": {"episodes_per_task": 5, "paired": true, "reuse_delay_trace_across_runtimes": true},
+  "evidence_boundary": {"status": "formal_holdout", "threshold_tuning_after_open": false}
+}
