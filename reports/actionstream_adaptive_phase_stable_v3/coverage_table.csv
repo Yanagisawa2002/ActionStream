@@ -1,0 +1,10 @@
+suite,profile,success,steps,phase_lock_rejections,preserved_queue_rejections,guard_discards
+object,fixed_0000,False,300,3,4,0
+object,early_outage_requests_02_05,True,132,0,0,0
+object,closed_phase_fresh_request_10,False,300,1,2,0
+spatial,fixed_0000,True,125,3,4,0
+spatial,early_outage_requests_02_05,True,206,0,0,0
+spatial,closed_phase_fresh_request_08,True,127,0,0,0
+goal,fixed_0000,True,92,1,1,0
+goal,early_outage_requests_02_05,True,99,0,0,0
+goal,closed_phase_fresh_request_08,True,90,1,1,0

@@ -8,26 +8,48 @@ entire stale chunk.
 
 ![ActionStream X-VLA paired runtime result](docs/assets/actionstream_hero.png)
 
-## Adaptive learned-policy result — bounded positive / overall NO-GO
+## Adaptive Phase-Stable v3 — strong canary, formal holdout still closed
 
-ActionStream-Adaptive v2 now has a frozen 270-episode X-VLA paired holdout over
-three genuinely different LIBERO suites, five unseen resets per suite, and six
-network traces. At fixed 950 ms, Adaptive matched official LeRobot
-`latest_only` success (14/15 each) while reducing mean completion steps by 35.1
-(20.6%; paired bootstrap 95% CI -40.3 to -28.5). This is a bounded positive,
-not a universal win: static aligned was better at fixed 950 ms (15/15 and 123.5
-mean steps), Adaptive was 44/45 under pooled jitter versus latest-only 45/45,
-and it fell to 13/15 under burst/outage versus latest-only 15/15. The frozen
-selector therefore remains **NO-GO** overall rather than being tuned after the
-holdout.
+The frozen Phase-Stable v3 X-VLA canary covers three genuinely different
+LIBERO task families under 0 ms, fixed 950 ms, and scripted phase-outage
+profiles. At fixed 950 ms, Adaptive succeeded on 3/3 tasks and used 351 total
+steps versus 500 for official LeRobot `latest_only`, a 29.8% reduction; at 0 ms
+both methods succeeded 3/3 with exactly 354 total steps. Static aligned failed
+the Object task at 950 ms while Adaptive succeeded.
+
+This result is **PARTIAL_POSITIVE**, not a formal win. There is only one paired
+reset per task/profile, the phase-outage Object row was 124 steps slower than
+`latest_only`, and a separately frozen state-31 mechanism probe was **NO-GO**
+(7/9 success). Instrumentation showed why: every hard outage arrived after the
+active action queue had drained, so queue preservation had no useful slack to
+preserve. The v3 formal holdout therefore remains unopened; the next method
+step is slack-aware prefetch/reserve scheduling, not post-result threshold
+tuning.
+
+![Phase-Stable v3 canary](reports/actionstream_adaptive_phase_stable_v3/canary_steps.png)
+
+The [Phase-Stable v3 report](reports/actionstream_adaptive_phase_stable_v3/report.md)
+contains the frozen main table, mechanism coverage, source provenance,
+content-level paired frames, and raw-archive receipt. All 45 traces were
+hash-verified and all 45 videos decoded; raw MP4s and traces remain outside
+ordinary Git.
+
+### Historical Adaptive v2 formal holdout — bounded positive / overall NO-GO
+
+Adaptive v2 remains an immutable 270-episode X-VLA paired holdout over three
+LIBERO suites, five unseen resets per suite, and six network traces. At fixed
+950 ms it matched official `latest_only` success (14/15 each) while reducing
+mean completion steps by 35.1 (20.6%; paired bootstrap 95% CI -40.3 to -28.5).
+It did not generalize across regimes: static aligned was better at fixed 950
+ms, Adaptive was 44/45 under pooled jitter versus latest-only 45/45, and it
+fell to 13/15 under burst/outage versus latest-only 15/15. Its registered
+verdict remains **NO-GO**.
 
 The [Adaptive v2 report](reports/actionstream_adaptive_v2_holdout/report.md)
-contains the main table, paired CIs, unconnected latency-success operating
-points, 2,062-decision risk audit, failure taxonomy, content-level A/B frames,
-and archive hashes. The 9/9 three-family canary and all 270 formal traces are
-hash-verified. A minimal real-robot A/B was not run because neither inspected
-machine exposed a robot driver or usable camera; simulation is not relabeled as
-hardware evidence.
+contains the main table, paired CIs, 2,062-decision risk audit, failure
+taxonomy, content-level A/B frames, and archive hashes. A minimal real-robot
+A/B was not run because neither inspected machine exposed a robot driver or
+usable camera; simulation is not relabeled as hardware evidence.
 
 The learned native-Isaac bridge now dynamically synchronizes measured Panda
 and object state into official LIBERO rendering before each X-VLA request.
