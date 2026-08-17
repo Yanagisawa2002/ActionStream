@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "experiment_id": "actionstream_adaptive_v2_failure_replay_spatial_aligned_jitter03_state21_20260817",
+  "frozen_utc": "2026-08-17T12:52:00Z",
+  "formal_source_commit": "b259ef2f73dd2cea21dc71a2d44b391efac2e8fd",
+  "formal_experiment_id": "actionstream_adaptive_v2_holdout_spatial_20260817",
+  "formal_episode_locator": {"runtime": "actionstream_aligned", "delay_profile": "jitter_0500_pm0250_seed03", "task_id": 6, "episode_index": 1, "initial_state_index": 21, "seed": 2026081901},
+  "source": {"repository_url": "https://github.com/huggingface/lerobot.git", "commit": "6adf51511b7625090eade8d82d9f61a1846ebe56", "source_version": "0.6.2"},
+  "adaptive_runtime": {"selector_protocol_path": "configs/actionstream_adaptive_v2_selector.json", "selector_protocol_sha256": "8679606e12b85accc26bd1ad1a1d710bade6682c738cebc031a4196d4a367572"},
+  "environment": {"type": "libero", "suite": "libero_spatial", "task_ids": [6], "episode_length": 300, "control_frequency_hz": 20.0, "initial_state_indices": [21], "base_seed": 2026081901},
+  "models": [{"key": "xvla", "model_id": "lerobot/xvla-libero", "revision": "12e8783e996944f5c97e490d37d4c145484ed70a", "control_mode": "absolute", "chunk_size": 30, "request_interval_steps": 10, "rtc_expected": false, "required": true, "rename_map": {}}],
+  "runtimes": ["actionstream_aligned"],
+  "delay_profiles": [{"key": "jitter_0500_pm0250_seed03", "kind": "seeded_uniform", "center_milliseconds": 500, "half_width_milliseconds": 250, "seed": 2026081803, "trace_length": 2048}],
+  "compact_matrix": {"episodes_per_task": 1, "paired": false, "reuse_delay_trace_across_runtimes": true},
+  "evidence_boundary": {"status": "post_holdout_failure_replay", "included_in_formal_metrics": false, "threshold_tuning_permitted": false}
+}
