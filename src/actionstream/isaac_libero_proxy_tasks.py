@@ -310,7 +310,7 @@ class LiberoProxyTaskScene:
         import omni.usd
         from isaacsim.core.experimental.objects import Cube
         from isaacsim.core.experimental.prims import GeomPrim
-        from pxr import Gf, UsdGeom
+        from pxr import UsdGeom
 
         spec.validate()
         self._app = simulation_app

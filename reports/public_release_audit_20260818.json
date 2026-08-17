@@ -1,0 +1,26 @@
+{
+  "credential_findings": [],
+  "legal": {
+    "license_present": false,
+    "missing_license_allowed_for_ci": true,
+    "public_release_ready": false
+  },
+  "status": "PASS",
+  "technical_checks": {
+    "ci_workflow_present": true,
+    "credential_scan_clean": true,
+    "no_oversized_tracked_files": true,
+    "output_allowlist_clean": true,
+    "tracked_outputs_within_limit": true,
+    "tracked_tree_within_limit": true,
+    "uv_lock_present": true
+  },
+  "tracked": {
+    "bytes": 48172215,
+    "disallowed_outputs": [],
+    "files": 937,
+    "outputs_bytes": 24655219,
+    "outputs_files": 556,
+    "oversized": []
+  }
+}

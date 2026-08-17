@@ -8,6 +8,55 @@ entire stale chunk.
 
 ![ActionStream X-VLA paired runtime result](docs/assets/actionstream_hero.png)
 
+## Release and LeRobot integration status
+
+The `1.1.0rc1` release candidate adds a formal `lerobot-rollout` inference
+backend rather than another standalone selector loop. `ActionStreamInferenceEngine`
+implements `start`, `stop`, `reset`, `get_action` and `notify_observation` with one
+async worker, a thread-safe aligned queue, reset/stale rejection, finite queue-empty
+hold, timeout/disconnect recovery, latest-only fallback, and latency/queue/discard/
+fallback telemetry. Tests use deterministic transports and simulator contracts; this
+is **not** a real-robot safety claim.
+
+LeRobot auto-discovers the companion package as
+`--inference.type=actionstream`. The small upstream patch adds a generic third-party
+inference builder registry; it is prepared for review but has not been submitted or
+merged upstream:
+
+```bash
+git clone https://github.com/huggingface/lerobot.git .external/lerobot
+git -C .external/lerobot checkout 6adf51511b7625090eade8d82d9f61a1846ebe56
+git -C .external/lerobot apply ../../upstream/lerobot/0001-feat-rollout-allow-third-party-inference-engines.patch
+uv sync --locked
+uv pip install --python .venv/bin/python --no-deps --editable integrations/lerobot
+```
+
+The public snapshot technical gate now enforces the exact dependency lock, CI,
+credential patterns, output allowlist, and repository-size limits. Raw evidence is
+retained on the preserved private evidence branch, not copied into ordinary Git.
+Public release is still **BLOCKED** on an owner-selected first-party `LICENSE`, the
+final squash onto `master`, and the GitHub visibility change. See the
+[public release boundary](docs/public_release.md); CI's
+`--allow-missing-license` mode does not waive the legal gate.
+
+## Isaac Lab-Arena integration status
+
+The next scalable benchmark is frozen against official Isaac Lab-Arena
+`release/0.2.1` at commit `8b4a3a47fc53de23e8205089d71109a2e2348acd`.
+The contract expands three distinct DROID task families, eight vectorized GPU
+environments per cell, disjoint reset/network splits, exact X-VLA and SmolVLA
+revisions, and sync/latest-only/RTC/aligned/guarded runtime cells. The DROID
+bridge requires two external camera views plus a wrist view and converts queued
+absolute targets into bounded, current-state-relative IK commands at dispatch.
+
+This is **integration-ready, not a completed Arena result**. The current GPU host
+has an idle RTX 5090 and cached checkpoints, but no Docker, Isaac Sim, Isaac Lab,
+or Arena checkout; Arena's official 0.2.1 workflow requires its Docker source
+environment. Therefore there is no Arena task-success, GPU-parallel throughput,
+or video claim. The adapter currently executes aligned and guarded cells and
+refuses to impersonate upstream LeRobot sync/latest-only/RTC until their
+vector-safe Arena wrappers exist. See the [exact status and resume boundary](docs/isaaclab_arena.md).
+
 ## Adaptive Budgeted-Release v5 — mechanism valid, canary NO-GO
 
 Budgeted-Release v5 is a new frozen selector, not a retune of v4. It adds a
@@ -123,8 +172,8 @@ the LIBERO matrix; a native Isaac async/RTC paired matrix does not.
 
 See also the [2026-08-17 learned-policy closure report](docs/learned_policy_closure_20260817.md)
 for denominators, failure classification, provenance, release audit, and exact
-evidence boundaries. Isaac Lab-Arena and real-robot paired A/B remain future
-work.
+evidence boundaries. The Arena protocol/adapter now exists, but its learned
+simulator run and real-robot paired A/B remain unavailable.
 
 ## M8-G0: frozen native Isaac holdout — GO
 

@@ -1,0 +1,85 @@
+name: CI
+
+on:
+  push:
+    branches: [master, "codex/**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality-and-core:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: "0.11.32"
+          enable-cache: true
+      - name: Sync exact dependency graph
+        run: uv sync --locked
+      - name: Lint and format contract
+        run: |
+          uv run ruff check src tests scripts/release scripts/arena integrations/lerobot integrations/isaaclab_arena
+          uv run ruff format --check \
+            src/actionstream/lerobot_inference.py \
+            src/actionstream/arena_protocol.py \
+            src/actionstream/arena_bridge.py \
+            tests/test_lerobot_inference.py \
+            tests/test_lerobot_plugin.py \
+            tests/test_arena_protocol.py \
+            tests/test_arena_bridge.py \
+            tests/test_isaaclab_arena_plugin.py \
+            scripts/release/audit_public_release.py \
+            scripts/arena \
+            integrations/lerobot \
+            integrations/isaaclab_arena
+      - name: Core runtime tests
+        run: |
+          uv run pytest \
+            tests/test_runtime.py \
+            tests/test_current_results.py \
+            tests/test_dependency_provenance.py \
+            tests/test_lerobot_inference.py \
+            tests/test_arena_protocol.py \
+            tests/test_arena_bridge.py \
+            tests/test_isaaclab_arena_plugin.py
+      - name: Technical public-release audit
+        run: uv run python scripts/release/audit_public_release.py --allow-missing-license
+
+  upstream-lerobot-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: "0.11.32"
+          enable-cache: true
+      - name: Sync exact dependency graph
+        run: uv sync --locked
+      - name: Materialize pinned upstream checkout
+        run: |
+          git clone --filter=blob:none --no-checkout https://github.com/huggingface/lerobot.git .external/lerobot
+          git -C .external/lerobot checkout 6adf51511b7625090eade8d82d9f61a1846ebe56
+          git -C .external/lerobot apply --check "$GITHUB_WORKSPACE/upstream/lerobot/0001-feat-rollout-allow-third-party-inference-engines.patch"
+          git -C .external/lerobot apply "$GITHUB_WORKSPACE/upstream/lerobot/0001-feat-rollout-allow-third-party-inference-engines.patch"
+      - name: Install ActionStream LeRobot plugin
+        run: uv pip install --python .venv/bin/python --no-deps --editable integrations/lerobot
+      - name: Validate plugin discovery and backend contract
+        env:
+          PYTHONPATH: ${{ github.workspace }}/.external/lerobot/src:${{ github.workspace }}/src:${{ github.workspace }}/integrations/lerobot/src
+        run: |
+          uv run --no-sync python -c "from lerobot.utils.import_utils import register_third_party_plugins; register_third_party_plugins(); from lerobot.rollout.inference import InferenceEngineConfig; assert 'actionstream' in InferenceEngineConfig.get_known_choices()"
+          uv run --no-sync pytest tests/test_lerobot_inference.py tests/test_lerobot_plugin.py
+          uv run --no-sync pytest .external/lerobot/tests/test_rollout.py .external/lerobot/tests/test_interactive_rollout.py

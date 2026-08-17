@@ -10,26 +10,11 @@ __pycache__/
 /ros2_ws/install/
 /ros2_ws/log/
 
-# Large or replaceable runtime outputs.
-outputs/**/videos/
-outputs/**/recordings/
-outputs/**/*.mp4
-outputs/**/*.avi
-outputs/**/*.tar.gz
-outputs/**/*.npz
-outputs/**/*.log
+# Runtime outputs are ignored by default. The release branch force-tracks only
+# the curated paths accepted by release/public_release_manifest.json.
+/outputs/**
 
-# Keep the compact final action evidence needed by the M2/M3 validators.
-!outputs/custom_sync_parity/traces/*.npz
-!outputs/m3/**/traces/*.npz
-!outputs/m4/**/traces/*.npz
-
-# One-off M4 development smoke; final evidence is under the named matrices.
-outputs/m4/smoke/
-
-# Local transfer bundles and generated release evidence. Compact manifests,
-# hashes, reports, and selected figures remain eligible for normal Git.
+# Local transfer bundles and generated release evidence.
 /*.bundle
 /*.tgz
-/artifacts/**/*.mp4
-/artifacts/**/*.tgz
+/artifacts/**

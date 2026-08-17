@@ -27,6 +27,28 @@ EXPECTED_CHUNK_SIZE = 30
 EXPECTED_ACTION_STEPS = 30
 EXPECTED_MODEL_ACTION_DIM = 20
 EXPECTED_ENV_ACTION_DIM = 7
+EXPECTED_LEROBOT_VERSION = "0.6.2"
+EXPECTED_LEROBOT_COMMIT = "6adf51511b7625090eade8d82d9f61a1846ebe56"
+
+
+def _verify_lerobot_install() -> dict[str, str]:
+    distribution = importlib.metadata.distribution("lerobot")
+    direct_url_text = distribution.read_text("direct_url.json")
+    if direct_url_text is None:
+        raise RuntimeError("Pinned LeRobot install is missing direct_url.json provenance")
+    direct_url = json.loads(direct_url_text)
+    commit = direct_url.get("vcs_info", {}).get("commit_id")
+    if distribution.version != EXPECTED_LEROBOT_VERSION:
+        raise RuntimeError(
+            f"Expected LeRobot {EXPECTED_LEROBOT_VERSION}, got {distribution.version}"
+        )
+    if commit != EXPECTED_LEROBOT_COMMIT:
+        raise RuntimeError(f"Expected LeRobot commit {EXPECTED_LEROBOT_COMMIT}, got {commit!r}")
+    return {
+        "version": distribution.version,
+        "commit": commit,
+        "url": str(direct_url.get("url", "")),
+    }
 
 
 def _shape_tree(value: Any) -> Any:
@@ -117,8 +139,12 @@ def run_preflight(
         raise RuntimeError(f"LIBERO requires Linux, got {platform.platform()}")
     if sys.version_info[:2] != (3, 12):
         raise RuntimeError(f"ActionStream requires Python 3.12, got {platform.python_version()}")
-    if lerobot.__version__ != "0.6.0":
-        raise RuntimeError(f"Expected LeRobot 0.6.0, got {lerobot.__version__}")
+    lerobot_install = _verify_lerobot_install()
+    if lerobot.__version__ != lerobot_install["version"]:
+        raise RuntimeError(
+            "LeRobot module/distribution version mismatch: "
+            f"module={lerobot.__version__}, distribution={lerobot_install['version']}"
+        )
     if not torch.cuda.is_available():
         raise RuntimeError("CUDA is not available to PyTorch")
     if os.environ.get("MUJOCO_GL") != "egl" or os.environ.get("PYOPENGL_PLATFORM") != "egl":
@@ -255,6 +281,7 @@ def run_preflight(
                 "os": platform.platform(),
                 "python": platform.python_version(),
                 "lerobot": lerobot.__version__,
+                "lerobot_install": lerobot_install,
                 "torch": torch.__version__,
                 "torch_cuda_runtime": torch.version.cuda,
                 "gpu_name": torch.cuda.get_device_name(0),

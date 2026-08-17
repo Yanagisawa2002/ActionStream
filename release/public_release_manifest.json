@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "prepared_version": "1.1.0rc1",
+  "prepared_date": "2026-08-18",
+  "source": {
+    "development_commit": "763cdeeed0168e38b7d95f0fd77bc4d5dbe9499d",
+    "preserved_remote_ref": "origin/codex/actionstream/async-rtc-isaac",
+    "raw_outputs_git_tree_oid": "aa2a0bc4c5f8464e5e00fa09339e3d4e8d33777f",
+    "note": "The public snapshot removes raw outputs from its final tree. The content-addressed source tree remains on the preserved private evidence branch."
+  },
+  "repository_limits": {
+    "max_tracked_file_bytes": 10485760,
+    "max_tracked_outputs_bytes": 41943040,
+    "max_tracked_tree_bytes": 125829120
+  },
+  "public_output_allowlist_regex": [
+    "^outputs/(m3/|m4/|summary/)",
+    "^outputs/m4_paired_capture/",
+    "^outputs/m5_g0/(report/|protocol/|audit/(README\\.md|runtime_smoke_seed_manifest\\.json|task_entity_audit\\.(json|md)))",
+    "^outputs/m6_g0/(report/|metrics/aggregate_metrics\\.json|artifact_manifest\\.json|audit/initial_repository_audit\\.json|scenario/frozen_manifest\\.json|decision\\.json|validation\\.json)",
+    "^outputs/m7_g0/(audit/|figures/|report/|(?:holdout|development|development_candidate1)/(?:HOLDOUT_PROTOCOL_LOCK\\.json|analysis\\.json|manifest\\.json|replay_validation\\.json))",
+    "^outputs/m8_g0/(audit/|protocol_v3/|report/|holdout_v3/(?!raw/|native_run_logs/))",
+    "^outputs/current_lerobot_async_rtc/(report/|current_(?:xvla|smol)_matrix_task0/run_receipt\\.json)",
+    "^outputs/xvla_task_seed_expansion_20260816/(report/|task[0-9]+/run_receipt\\.json)",
+    "^outputs/(xvla_isaac_visual_canary_v1|xvla_isaac_official_render_bridge_v1_retry1|xvla_isaac_input_counterfactual_v1)/"
+  ],
+  "legal": {
+    "status": "BLOCKED_OWNER_DECISION",
+    "missing_file": "LICENSE",
+    "recommended_candidate": "Apache-2.0",
+    "reason": "LeRobot is Apache-2.0 and this repository contains an upstream-oriented integration, but only the repository owner can authorize the first-party license."
+  },
+  "external_actions": {
+    "repository_visibility": "PRIVATE",
+    "merge_status": "PREPARED_NOT_MERGED",
+    "upstream_pr_status": "PATCH_PREPARED_NOT_SUBMITTED"
+  }
+}
