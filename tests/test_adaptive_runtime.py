@@ -449,12 +449,14 @@ def test_v3_release_confirmation_unlocks_after_three_open_commands() -> None:
 
 def test_v3_minimum_residency_suppresses_pregrasp_oscillation() -> None:
     queue = _v3_queue()
-    queue.merge(_v3_result(_chunk(), 0), control_step=0)
+    open_actions = _chunk()
+    open_actions[:, 6] = -1.0
+    queue.merge(_v3_result(open_actions, 0), control_step=0)
     queue.pop()
 
-    early = queue.merge(_v3_result(_chunk(), 0), control_step=6)
+    early = queue.merge(_v3_result(open_actions, 0), control_step=6)
     assert early["reason"] == "adaptive_residency_preserved_validated_queue"
     assert early["execution_backend"] == "official_lerobot_latest_only"
 
-    settled = queue.merge(_v3_result(_chunk(), 0), control_step=14)
+    settled = queue.merge(_v3_result(open_actions, 0), control_step=14)
     assert settled["execution_backend"] == "actionstream_age_aligned"
