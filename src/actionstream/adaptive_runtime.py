@@ -1,4 +1,4 @@
-"""Risk-aware execution-mode selection for ActionStream-Adaptive v1."""
+"""Risk-aware execution-mode selection for ActionStream-Adaptive."""
 
 from __future__ import annotations
 
@@ -52,13 +52,18 @@ class WorkspaceBounds:
 
 @dataclass(frozen=True)
 class AdaptiveSelectorConfig:
+    schema_version: int
     selector_id: str
     fresh_full_max_age_steps: int
     aligned_max_age_steps: int
     hard_max_age_steps: int
     minimum_aligned_horizon_steps: int
     age_ewma_alpha: float
-    workspace: WorkspaceBounds
+    workspace: WorkspaceBounds | None
+    reference_mode: Literal[
+        "absolute_workspace_plus_last_action",
+        "request_observation_eef_then_last_action",
+    ]
     maximum_position_disagreement_m: float
     maximum_rotation_geodesic_radians: float
     source_path: str
@@ -72,11 +77,21 @@ class AdaptiveSelectorConfig:
         source_path: Path,
         source_sha256: str,
     ) -> "AdaptiveSelectorConfig":
-        if int(value.get("schema_version", -1)) != 1:
-            raise ValueError("Expected ActionStream-Adaptive selector schema_version=1")
+        schema_version = int(value.get("schema_version", -1))
+        if schema_version not in (1, 2):
+            raise ValueError("Expected ActionStream-Adaptive selector schema_version=1 or 2")
         decision = value["decision"]
         risk = value["risk_gate"]
+        if schema_version == 1:
+            workspace = WorkspaceBounds.from_mapping(
+                risk["absolute_action_workspace"]
+            )
+            reference_mode = "absolute_workspace_plus_last_action"
+        else:
+            workspace = None
+            reference_mode = str(risk["reference_mode"])
         config = cls(
+            schema_version=schema_version,
             selector_id=str(value["selector_id"]),
             fresh_full_max_age_steps=int(decision["fresh_full_max_age_steps"]),
             aligned_max_age_steps=int(decision["aligned_max_age_steps"]),
@@ -85,9 +100,8 @@ class AdaptiveSelectorConfig:
                 decision["minimum_aligned_horizon_steps"]
             ),
             age_ewma_alpha=float(decision["age_ewma_alpha"]),
-            workspace=WorkspaceBounds.from_mapping(
-                risk["absolute_action_workspace"]
-            ),
+            workspace=workspace,
+            reference_mode=reference_mode,
             maximum_position_disagreement_m=float(
                 risk["maximum_position_disagreement_m"]
             ),
@@ -103,6 +117,15 @@ class AdaptiveSelectorConfig:
     def validate(self) -> None:
         if not self.selector_id:
             raise ValueError("Adaptive selector_id must be nonempty")
+        if self.reference_mode not in (
+            "absolute_workspace_plus_last_action",
+            "request_observation_eef_then_last_action",
+        ):
+            raise ValueError(f"Unsupported Adaptive reference mode: {self.reference_mode}")
+        if self.schema_version == 1 and self.workspace is None:
+            raise ValueError("Adaptive v1 requires absolute workspace bounds")
+        if self.schema_version == 2 and self.workspace is not None:
+            raise ValueError("Adaptive v2 uses a dynamic EEF reference, not global bounds")
         if not (
             0 <= self.fresh_full_max_age_steps
             < self.aligned_max_age_steps
@@ -161,6 +184,64 @@ def rotation_geodesic_radians(first: np.ndarray, second: np.ndarray) -> float:
     return float(2.0 * math.acos(np.clip(cosine_half_angle, 0.0, 1.0)))
 
 
+def rotation_matrix_to_axis_angle(matrix: np.ndarray) -> np.ndarray:
+    """Convert a proper 3x3 rotation matrix to a stable axis-angle vector."""
+
+    value = np.asarray(matrix, dtype=np.float64)
+    if value.shape != (3, 3) or not np.isfinite(value).all():
+        raise ValueError(f"Expected one finite 3x3 rotation matrix, got {value.shape}")
+    cosine = float(np.clip((np.trace(value) - 1.0) / 2.0, -1.0, 1.0))
+    angle = math.acos(cosine)
+    if angle <= 1e-10:
+        return np.zeros(3, dtype=np.float64)
+
+    # The ordinary skew-symmetric formula is unstable near pi. Extract the
+    # rotation axis from the eigenvector whose eigenvalue is one instead.
+    if math.pi - angle <= 1e-5:
+        eigenvalues, eigenvectors = np.linalg.eig(value)
+        index = int(np.argmin(np.abs(eigenvalues - 1.0)))
+        axis = np.real(eigenvectors[:, index]).astype(np.float64)
+        norm = float(np.linalg.norm(axis))
+        if norm <= 1e-10:
+            raise ValueError("Could not recover the axis of a pi rotation")
+        axis /= norm
+    else:
+        axis = np.asarray(
+            [
+                value[2, 1] - value[1, 2],
+                value[0, 2] - value[2, 0],
+                value[1, 0] - value[0, 1],
+            ],
+            dtype=np.float64,
+        ) / (2.0 * math.sin(angle))
+    return axis * angle
+
+
+def robot_eef_reference_action(observation: Mapping[str, Any]) -> np.ndarray:
+    """Extract a frame-local absolute pose reference from a LIBERO observation."""
+
+    robot_state = observation.get("robot_state")
+    if isinstance(robot_state, (list, tuple)):
+        if not robot_state:
+            raise ValueError("LIBERO robot_state is empty")
+        robot_state = robot_state[0]
+    if not isinstance(robot_state, Mapping):
+        raise ValueError("LIBERO observation is missing a robot_state mapping")
+    eef = robot_state.get("eef")
+    if not isinstance(eef, Mapping):
+        raise ValueError("LIBERO robot_state is missing an eef mapping")
+    position = np.asarray(eef.get("pos"), dtype=np.float64).reshape(-1, 3)
+    rotation = np.asarray(eef.get("mat"), dtype=np.float64).reshape(-1, 3, 3)
+    if len(position) != 1 or len(rotation) != 1:
+        raise ValueError("Expected one robot EEF pose in the LIBERO observation")
+    reference = np.concatenate(
+        (position[0], rotation_matrix_to_axis_angle(rotation[0]), np.asarray([0.0]))
+    )
+    if not np.isfinite(reference).all():
+        raise ValueError("LIBERO robot EEF reference contains non-finite values")
+    return reference.astype(np.float32)
+
+
 @dataclass(frozen=True)
 class CandidateRisk:
     safe: bool
@@ -187,6 +268,8 @@ class AdaptiveDecision:
     selected_action_index: int | None
     preferred_action_index: int | None
     safe_alternate_override: bool
+    risk_reference_source: str
+    risk_reference_action: tuple[float, ...] | None
     selected_risk: CandidateRisk | None
     full_chunk_risk: CandidateRisk
     aligned_risk: CandidateRisk
@@ -240,9 +323,11 @@ class AdaptiveSelector:
                 workspace_inside=None,
             )
 
-        workspace_inside = self.config.workspace.contains(command[:3])
-        if not workspace_inside:
-            reasons.append("outside_workspace")
+        workspace_inside: bool | None = None
+        if self.config.workspace is not None:
+            workspace_inside = self.config.workspace.contains(command[:3])
+            if not workspace_inside:
+                reasons.append("outside_workspace")
 
         position_disagreement: float | None = None
         rotation_disagreement: float | None = None
@@ -271,6 +356,8 @@ class AdaptiveSelector:
                     > self.config.maximum_rotation_geodesic_radians
                 ):
                     reasons.append("rotation_disagreement")
+        elif self.config.reference_mode == "request_observation_eef_then_last_action":
+            reasons.append("missing_reference_action")
 
         return CandidateRisk(
             safe=not reasons,
@@ -286,10 +373,16 @@ class AdaptiveSelector:
         candidate: np.ndarray,
         *,
         last_action: np.ndarray | None,
+        safety_reference_action: np.ndarray | None = None,
     ) -> CandidateRisk:
         """Evaluate the command that a selected backend will actually execute."""
 
-        return self._risk(candidate, last_action)
+        reference = last_action
+        if reference is None and self.config.reference_mode == (
+            "request_observation_eef_then_last_action"
+        ):
+            reference = safety_reference_action
+        return self._risk(candidate, reference)
 
     def decide(
         self,
@@ -299,6 +392,7 @@ class AdaptiveSelector:
         current_control_step: int,
         queue_depth_steps: int,
         last_action: np.ndarray | None,
+        safety_reference_action: np.ndarray | None = None,
     ) -> AdaptiveDecision:
         chunk = np.asarray(actions, dtype=np.float32)
         if chunk.ndim != 2 or chunk.shape[1] != 7 or len(chunk) != self.chunk_size:
@@ -318,9 +412,23 @@ class AdaptiveSelector:
                 alpha * age_steps + (1.0 - alpha) * self._age_ewma_steps
             )
 
+        reference_action = last_action
+        reference_source = "last_executed_action"
+        if reference_action is None:
+            if self.config.reference_mode == "request_observation_eef_then_last_action":
+                reference_action = safety_reference_action
+                reference_source = "request_observation_robot_eef"
+            else:
+                reference_source = "absolute_workspace_only"
+        serialized_reference = (
+            tuple(float(item) for item in np.asarray(reference_action).reshape(-1))
+            if reference_action is not None
+            else None
+        )
+
         aligned_index = min(age_steps, len(chunk) - 1)
-        full_risk = self._risk(chunk[0], last_action)
-        aligned_risk = self._risk(chunk[aligned_index], last_action)
+        full_risk = self._risk(chunk[0], reference_action)
+        aligned_risk = self._risk(chunk[aligned_index], reference_action)
 
         if age_steps <= self.config.fresh_full_max_age_steps:
             regime: AdaptiveRegime = "fresh"
@@ -352,6 +460,8 @@ class AdaptiveSelector:
                 selected_action_index=None,
                 preferred_action_index=None,
                 safe_alternate_override=False,
+                risk_reference_source=reference_source,
+                risk_reference_action=serialized_reference,
                 selected_risk=None,
                 full_chunk_risk=full_risk,
                 aligned_risk=aligned_risk,
@@ -373,6 +483,8 @@ class AdaptiveSelector:
                 selected_action_index=preferred_index,
                 preferred_action_index=preferred_index,
                 safe_alternate_override=False,
+                risk_reference_source=reference_source,
+                risk_reference_action=serialized_reference,
                 selected_risk=preferred_risk,
                 full_chunk_risk=full_risk,
                 aligned_risk=aligned_risk,
@@ -398,6 +510,8 @@ class AdaptiveSelector:
                 selected_action_index=alternate_index,
                 preferred_action_index=preferred_index,
                 safe_alternate_override=True,
+                risk_reference_source=reference_source,
+                risk_reference_action=serialized_reference,
                 selected_risk=alternate_risk,
                 full_chunk_risk=full_risk,
                 aligned_risk=aligned_risk,
@@ -415,6 +529,8 @@ class AdaptiveSelector:
             selected_action_index=None,
             preferred_action_index=preferred_index,
             safe_alternate_override=False,
+            risk_reference_source=reference_source,
+            risk_reference_action=serialized_reference,
             selected_risk=None,
             full_chunk_risk=full_risk,
             aligned_risk=aligned_risk,

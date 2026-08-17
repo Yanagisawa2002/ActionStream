@@ -29,6 +29,7 @@ from actionstream.adaptive_runtime import (
     AdaptiveSelector,
     AdaptiveSelectorConfig,
     load_selector_config,
+    robot_eef_reference_action,
 )
 from actionstream.lerobot_backend import (
     StepOutput,
@@ -822,12 +823,16 @@ class _AdaptiveQueue(_RuntimeQueue):
 
     def merge(self, result: InferenceResult, control_step: int) -> dict[str, Any]:
         before = self.queue_depth()
+        safety_reference = result.metadata.get("safety_reference_action")
+        if safety_reference is not None:
+            safety_reference = np.asarray(safety_reference, dtype=np.float32)
         decision = self.selector.decide(
             result.actions,
             observation_control_step=result.observation_control_step,
             current_control_step=control_step,
             queue_depth_steps=before,
             last_action=self._last_action,
+            safety_reference_action=safety_reference,
         )
         self._record_decision(
             decision.execution_mode,
@@ -887,6 +892,7 @@ class _AdaptiveQueue(_RuntimeQueue):
             actual_risk = self.selector.evaluate_candidate(
                 actual_candidate,
                 last_action=self._last_action,
+                safety_reference_action=safety_reference,
             )
             if not actual_risk.safe:
                 self.official_queue.discard_pending()
@@ -959,7 +965,9 @@ class _AdaptiveQueue(_RuntimeQueue):
     def summary(self) -> dict[str, Any]:
         return {
             "adaptive_selector_id": self.selector.config.selector_id,
+            "adaptive_selector_schema_version": self.selector.config.schema_version,
             "adaptive_selector_sha256": self.selector.config.source_sha256,
+            "adaptive_risk_reference_mode": self.selector.config.reference_mode,
             "adaptive_decision_counts": dict(sorted(self.decision_counts.items())),
             "adaptive_regime_counts": dict(sorted(self.regime_counts.items())),
             "adaptive_mode_switches": self.mode_switches,
@@ -1216,6 +1224,11 @@ def run_async_episode(
 
     def infer(request: InferenceRequest) -> InferencePayload:
         thawed = thaw_observation_snapshot(request.observation)
+        safety_reference_action: list[float] | None = None
+        if isinstance(queue, _AdaptiveQueue) and queue.selector.config.reference_mode == (
+            "request_observation_eef_then_last_action"
+        ):
+            safety_reference_action = robot_eef_reference_action(thawed).tolist()
         prefix: np.ndarray | None = None
         action_index: int | None = None
         if runtime == "lerobot_rtc":
@@ -1239,6 +1252,7 @@ def run_async_episode(
                 "predicted_inference_delay_steps": output.predicted_inference_delay_steps,
                 "action_index_before_inference": action_index,
                 "task_instruction": request.task_instruction,
+                "safety_reference_action": safety_reference_action,
             },
         )
 

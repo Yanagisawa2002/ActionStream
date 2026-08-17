@@ -11,7 +11,9 @@ import torch
 from actionstream.adaptive_runtime import (
     AdaptiveSelector,
     load_selector_config,
+    robot_eef_reference_action,
     rotation_geodesic_radians,
+    rotation_matrix_to_axis_angle,
 )
 from actionstream.current_baselines import ModelSpec, _AdaptiveActionQueue, _AdaptiveQueue
 from actionstream.runtime import InferenceResult
@@ -20,6 +22,8 @@ from actionstream.runtime import InferenceResult
 ROOT = Path(__file__).resolve().parents[1]
 SELECTOR_PATH = ROOT / "configs" / "actionstream_adaptive_v1_selector.json"
 SELECTOR_SHA256 = "e5cd59bbe760a5d7c9b6e4b1addbb039af31f4962d622af8973944e2125006d5"
+SELECTOR_V2_PATH = ROOT / "configs" / "actionstream_adaptive_v2_selector.json"
+SELECTOR_V2_SHA256 = "8679606e12b85accc26bd1ad1a1d710bade6682c738cebc031a4196d4a367572"
 
 
 def _chunk() -> np.ndarray:
@@ -32,6 +36,11 @@ def _chunk() -> np.ndarray:
 
 def _selector() -> AdaptiveSelector:
     config = load_selector_config(SELECTOR_PATH, expected_sha256=SELECTOR_SHA256)
+    return AdaptiveSelector(config, chunk_size=30, control_mode="absolute")
+
+
+def _selector_v2() -> AdaptiveSelector:
+    config = load_selector_config(SELECTOR_V2_PATH, expected_sha256=SELECTOR_V2_SHA256)
     return AdaptiveSelector(config, chunk_size=30, control_mode="absolute")
 
 
@@ -115,6 +124,70 @@ def test_rotation_disagreement_uses_so3_geodesic() -> None:
     assert rotation_geodesic_radians(
         np.zeros(3), np.asarray([0.0, 0.0, np.pi / 2.0])
     ) == pytest.approx(np.pi / 2.0)
+
+
+def test_rotation_matrix_round_trips_near_pi_axis_angle() -> None:
+    axis_angle = np.asarray([-2.1949704, -2.2026410, 0.0454896])
+    angle = float(np.linalg.norm(axis_angle))
+    axis = axis_angle / angle
+    skew = np.asarray(
+        [[0.0, -axis[2], axis[1]], [axis[2], 0.0, -axis[0]], [-axis[1], axis[0], 0.0]]
+    )
+    matrix = np.eye(3) + np.sin(angle) * skew + (1.0 - np.cos(angle)) * (skew @ skew)
+    recovered = rotation_matrix_to_axis_angle(matrix)
+    assert rotation_geodesic_radians(axis_angle, recovered) < 1e-8
+
+
+def test_v2_uses_frame_local_robot_eef_reference_for_first_chunk() -> None:
+    actions = np.tile(
+        np.asarray([-0.1919872, 0.0023193, 1.1832070, -2.1949704, -2.2026410, 0.0454896, -1.0]),
+        (30, 1),
+    ).astype(np.float32)
+    observation = {
+        "robot_state": [
+            {
+                "eef": {
+                    "pos": np.asarray([[-0.2060072, -0.0073079, 1.1762330]]),
+                    "mat": np.asarray(
+                        [
+                            [
+                                [0.0006019, 0.9983447, -0.0575107],
+                                [0.9999997, -0.0006262, -0.0004040],
+                                [-0.0004393, -0.0575104, -0.9983448],
+                            ]
+                        ]
+                    ),
+                }
+            }
+        ]
+    }
+    reference = robot_eef_reference_action(observation)
+    decision = _selector_v2().decide(
+        actions,
+        observation_control_step=0,
+        current_control_step=0,
+        queue_depth_steps=0,
+        last_action=None,
+        safety_reference_action=reference,
+    )
+
+    assert reference[2] == pytest.approx(1.1762330)
+    assert decision.execution_mode == "full_chunk"
+    assert decision.full_chunk_risk.safe
+    assert decision.risk_reference_source == "request_observation_robot_eef"
+    assert decision.full_chunk_risk.position_disagreement_m < 0.02
+
+
+def test_v2_aborts_first_chunk_without_robot_reference() -> None:
+    decision = _selector_v2().decide(
+        _chunk(),
+        observation_control_step=0,
+        current_control_step=0,
+        queue_depth_steps=0,
+        last_action=None,
+    )
+    assert decision.execution_mode == "safe_hold"
+    assert decision.full_chunk_risk.reasons == ("missing_reference_action",)
 
 
 def test_adaptive_safe_hold_discards_pending_but_retains_last_action() -> None:
