@@ -1023,6 +1023,7 @@ def _write_video(
 
 def _base_record(
     *,
+    experiment_id: str,
     run_id: str,
     backend: CurrentLeRobotBackend,
     runtime: str,
@@ -1034,7 +1035,7 @@ def _base_record(
 ) -> dict[str, Any]:
     return {
         "schema_version": 1,
-        "experiment_id": "current_lerobot_async_rtc_20260815",
+        "experiment_id": experiment_id,
         "run_id": run_id,
         "source_commit": _git_commit(),
         "model_key": backend.spec.key,
@@ -1054,6 +1055,7 @@ def _base_record(
 def run_async_episode(
     backend: CurrentLeRobotBackend,
     *,
+    experiment_id: str,
     bindings: Any,
     runtime: str,
     adaptive_selector: AdaptiveSelectorConfig | None,
@@ -1249,6 +1251,7 @@ def run_async_episode(
             fps=int(round(fps)),
         )
     record = _base_record(
+        experiment_id=experiment_id,
         run_id=run_id,
         backend=backend,
         runtime=runtime,
@@ -1309,6 +1312,7 @@ def run_async_episode(
 def run_sync_episode(
     backend: CurrentLeRobotBackend,
     *,
+    experiment_id: str,
     profile: DelayTrace,
     task_id: int,
     episode_index: int,
@@ -1398,6 +1402,7 @@ def run_sync_episode(
             fps=int(round(fps)),
         )
     record = _base_record(
+        experiment_id=experiment_id,
         run_id=run_id,
         backend=backend,
         runtime="sync_hold",
@@ -1536,6 +1541,7 @@ def run(args: argparse.Namespace) -> list[dict[str, Any]]:
                                 if runtime == "sync_hold":
                                     record = run_sync_episode(
                                         backend,
+                                        experiment_id=str(protocol.raw["experiment_id"]),
                                         profile=profile,
                                         task_id=task_id,
                                         episode_index=episode_index,
@@ -1548,6 +1554,7 @@ def run(args: argparse.Namespace) -> list[dict[str, Any]]:
                                 else:
                                     record = run_async_episode(
                                         backend,
+                                        experiment_id=str(protocol.raw["experiment_id"]),
                                         bindings=bindings,
                                         runtime=runtime,
                                         adaptive_selector=protocol.adaptive_selector,

@@ -9,7 +9,12 @@ import numpy as np
 import pytest
 import torch
 
-from actionstream.current_baselines import CurrentLeRobotBackend, DelayTrace, load_protocol
+from actionstream.current_baselines import (
+    CurrentLeRobotBackend,
+    DelayTrace,
+    _base_record,
+    load_protocol,
+)
 from actionstream.runtime import (
     InferencePayload,
     InferenceRequest,
@@ -210,3 +215,28 @@ def test_protocol_rejects_duplicate_keys(tmp_path: Path) -> None:
     path.write_text(json.dumps(source), encoding="utf-8")
     with pytest.raises(ValueError, match="must be unique"):
         load_protocol(path)
+
+
+def test_episode_record_uses_selected_protocol_experiment_id() -> None:
+    backend = SimpleNamespace(
+        spec=SimpleNamespace(
+            key="xvla",
+            model_id="model",
+            revision="revision",
+            control_mode="absolute",
+        )
+    )
+    record = _base_record(
+        experiment_id="adaptive-canary",
+        run_id="run",
+        backend=backend,
+        runtime="actionstream_adaptive",
+        profile=DelayTrace.from_mapping(
+            {"key": "fixed_0000", "kind": "fixed", "milliseconds": 0}
+        ),
+        task_id=3,
+        episode_index=0,
+        initial_state_index=13,
+        seed=17,
+    )
+    assert record["experiment_id"] == "adaptive-canary"
