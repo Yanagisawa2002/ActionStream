@@ -1,0 +1,2 @@
+suite,profile,runtime,success,steps,classification,reserve_activations,reserve_hold_steps,causal_status
+object,high_jitter_v4,actionstream_adaptive,False,300,timeout_after_fragmented_reserve_holds,25,83,trace-supported hypothesis; paired video reviewed separately

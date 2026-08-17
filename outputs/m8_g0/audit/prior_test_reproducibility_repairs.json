@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "milestone": "M8-G0",
+  "recorded_at_utc": "2026-08-03T09:58:47.1259650Z",
+  "scope": "preexisting source-only reproducibility repairs discovered by the starting validation",
+  "historical_raw_evidence_modified": false,
+  "repairs": [
+    {
+      "path": "src/actionstream/m6_conformance.py",
+      "starting_git_blob": "6e3428273bc1a2efcf94d548aa11b16859424774",
+      "repaired_sha256": "c61ca3b8a1333007c4ce1d1995c606b20fa7c3a8e4f8128902aa52fbf0bf63cd",
+      "observed_failure": "inspect.getfile raised for a valid Python namespace package with no __file__",
+      "repair": "validate every discoverable __file__ or __path__ location against the frozen source root",
+      "regression_test": "tests/test_m6_conformance.py::test_source_origin_check_accepts_namespace_package_paths"
+    },
+    {
+      "path": "src/actionstream/benchmark.py",
+      "starting_git_blob": "055a1708a5af271fe188ad503f4cb818b2974923",
+      "repaired_sha256": "f3104fe05705d9e7bb1db08469e107619210ca451f2190660894e9b188e3cb54",
+      "observed_failure": "a fast synthetic backend produced a zero empirical dispatch interval and divided by it while reconstructing delivery age",
+      "repair": "fall back to the declared controller period for a nonpositive or nonfinite empirical step duration",
+      "regression_test": "tests/test_runtime.py::test_measured_control_period_falls_back_for_zero_or_nonfinite_clock_deltas"
+    },
+    {
+      "path": "src/actionstream/m5_validation.py",
+      "starting_git_blob": "2a7ae7d4508145f0a69a1ffa710b28b7bca57e9e",
+      "repaired_sha256": "bd1dfa8df0d9eb57e195fcbbcb779c71a4db4b0f17b36c7b2ab784f85d555539",
+      "observed_failure": "repository-wide Ruff reported F841 for the deliberately parsed M5 configuration payload",
+      "repair": "rename the otherwise unused local to _config while preserving the same required JSON read and validation",
+      "regression_test": "repository-wide Ruff plus the complete 350-test Python and ROS-source suite"
+    }
+  ],
+  "focused_validation": {
+    "command": ".external/m6_venv312/Scripts/python.exe -m pytest -q -p no:cacheprovider tests/test_runtime.py::test_measured_control_period_falls_back_for_zero_or_nonfinite_clock_deltas tests/test_runtime.py::test_observation_request_is_independent_and_immutable tests/test_m6_conformance.py::test_source_origin_check_accepts_namespace_package_paths",
+    "result": "3 passed"
+  },
+  "repository_validation_after_lint_repair": {
+    "lint_command": ".external/m6_venv312/Scripts/ruff.exe check .",
+    "lint_result": "passed",
+    "test_command": ".external/m6_venv312/Scripts/python.exe -m pytest -q tests ros2_ws/src/action_stream_benchmark/test ros2_ws/src/action_stream_isaac/test ros2_ws/src/action_stream_policy/test",
+    "test_result": "350 collected; 348 passed; 2 declared environment skips"
+  },
+  "interpretation": "These repairs restore deterministic execution of already accepted tests. They do not change, regenerate, or reinterpret any M3-M7 raw result."
+}

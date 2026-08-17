@@ -4,12 +4,19 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "actionstream"
-version = "1.0.0"
-description = "Delay-aware asynchronous action-chunk execution benchmark for X-VLA on LIBERO."
+version = "1.1.0rc1"
+description = "Delay-aligned action-chunk inference backend and frozen robot-policy benchmark."
 readme = "README.md"
 requires-python = ">=3.12,<3.13"
 dependencies = [
-  "lerobot[xvla,libero,evaluation]==0.6.0",
+  "lerobot[xvla,libero,evaluation,async] @ git+https://github.com/huggingface/lerobot.git@6adf51511b7625090eade8d82d9f61a1846ebe56",
+]
+
+[dependency-groups]
+dev = [
+  "matplotlib==3.11.1",
+  "pytest==8.4.1",
+  "ruff==0.14.1",
 ]
 
 [project.urls]
@@ -27,3 +34,6 @@ where = ["src"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+
+[tool.uv]
+required-version = "==0.11.32"

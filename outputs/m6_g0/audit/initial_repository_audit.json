@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "milestone": "M6-G0",
+  "recorded_at": "2026-07-31T08:43:58.1523634Z",
+  "repository": "C:/Users/cgliu/OneDrive/Documents/ActionStream",
+  "commands": {
+    "git_status": {
+      "branch": "master",
+      "head": "5f551b7ee93fd4d06a5bb4bceb931ce3f61a133b",
+      "upstream": "origin/master",
+      "ahead": 1,
+      "behind": 0,
+      "worktree_clean": true,
+      "stdout": "On branch master\nYour branch is ahead of 'origin/master' by 1 commit.\n\nnothing to commit, working tree clean"
+    },
+    "git_log_3_oneline": [
+      "5f551b7 m5: add oracle scene-shift gate evaluation",
+      "0a24126 release: publish ActionStream v1.0.0",
+      "d84cb64 feat: complete M4 pressure evaluation"
+    ],
+    "git_branch_vv": "* master 5f551b7 [origin/master: ahead 1] m5: add oracle scene-shift gate evaluation",
+    "git_remote": "origin https://github.com/Yanagisawa2002/ActionStream.git"
+  },
+  "environment_before_upstream_checkout": {
+    "python_version": "3.13.5",
+    "python_executable": "C:/ProgramData/anaconda3/python.exe",
+    "installed_lerobot": false,
+    "installed_lerobot_version": null,
+    "repository_declared_python": ">=3.12,<3.13",
+    "note": "The active shell Python was outside the repository's declared upper bound; the M6 upstream audit therefore uses an ignored, explicitly recorded environment."
+  },
+  "files_reviewed_before_m6_changes": {
+    "runtime_and_queue": [
+      "src/actionstream/runtime.py",
+      "src/actionstream/benchmark.py",
+      "src/actionstream/lerobot_backend.py",
+      "src/actionstream/m5_runtime.py"
+    ],
+    "provenance_and_delay": [
+      "src/actionstream/m5_benchmark.py",
+      "src/actionstream/m5_validation.py",
+      "tests/test_runtime.py",
+      "tests/test_m5_runtime.py"
+    ],
+    "m4": [
+      "outputs/m4/report/m4_report.md",
+      "outputs/m4/report/m4_report.json",
+      "src/actionstream/m4_analysis.py",
+      "src/actionstream/m4_calibration.py",
+      "src/actionstream/m4_report.py",
+      "tests/test_m4_report.py"
+    ],
+    "m5_g0": [
+      "outputs/m5_g0/report/m5_g0_report.md",
+      "outputs/m5_g0/report/acceptance.json",
+      "outputs/m5_g0/report/formal_validation.json",
+      "configs/m5_g0.json",
+      "src/actionstream/m5_analysis.py",
+      "src/actionstream/m5_report.py",
+      "tests/test_m5_report.py",
+      "tests/test_m5_validation.py"
+    ]
+  },
+  "preservation_checks_before_m6_changes": {
+    "command": "PYTHONPATH=src python -m pytest tests/test_m4_report.py::test_complete_synthetic_m4_package_validates_and_reports tests/test_m5_report.py::test_calibration_no_go_with_no_sealed_rows_is_an_honest_hard_stop tests/test_m5_validation.py::test_m4_baseline_validation_uses_runtime_mode -q",
+    "passed": true,
+    "tests_passed": 3,
+    "m4_intact": true,
+    "m5_g0_intact": true,
+    "m5_g0_classification": "NO-GO"
+  },
+  "scope_guards": {
+    "no_training": true,
+    "no_physical_robot_control": true,
+    "no_foundationpose": true,
+    "poseguard_not_revived": true,
+    "m4_artifacts_immutable": true,
+    "m5_artifacts_immutable": true,
+    "no_push": true
+  }
+}

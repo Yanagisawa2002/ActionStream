@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "milestone": "M8-G0",
+  "receipt_kind": "redacted_native_preflight_refusal",
+  "created_utc": "2026-08-03T12:00:58.8739383Z",
+  "evidence_scope": "current-source candidate-0 official Isaac Pixi preflight",
+  "native_episode_executed": false,
+  "suite_manifest": "outputs/m8_g0/baseline_gate/candidate_0/matrix.json",
+  "suite_manifest_sha256": "dfe61569c74fd8faf942871c5f9675f4b0c8f2063e48b44f70cc58ddcc328c4e",
+  "canonical_protocol_sha256": "c7f5686e4187238310f65ceb589527b9eda863314fd884f39f7c802428a89b54",
+  "validated_episode_count": 20,
+  "runtime_config_binding_passed": true,
+  "preflight_phase": "initial_pre_build",
+  "gpu": {
+    "model": "NVIDIA GeForce RTX 4090",
+    "memory_total_mib": 24564,
+    "memory_used_mib": 16022,
+    "memory_threshold_mib": 4096
+  },
+  "outcome": {
+    "status": "refused_gpu_busy",
+    "isaac_started": false,
+    "process_killed": false,
+    "task_episode_count": 0,
+    "interpretation": "Native evaluation was unavailable and not run; this is not a zero-success task result."
+  },
+  "transient_source_receipts": {
+    "validation_log_retained": false,
+    "validation_log_sha256": "877c628977c29e60bdd1e758675a56a517dc31220283bafc3dd8cb893d5584ce",
+    "runner_failure_receipt_retained": false,
+    "runner_failure_receipt_sha256": "89b5ac711dba712cdb2b568175339c914df207867aa89774025a17a34ce68435",
+    "gpu_refusal_receipt_retained": false,
+    "gpu_refusal_receipt_sha256": "55bdb866f887292a6691af730baf40b1e20d21f9a1f344d5985e64b57cc7d561"
+  },
+  "privacy_and_hygiene": "Raw per-run receipts and logs were not committed because they contained local process and path inventories; their immutable hashes are retained here."
+}

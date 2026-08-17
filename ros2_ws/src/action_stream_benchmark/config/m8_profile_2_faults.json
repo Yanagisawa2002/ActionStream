@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "milestone": "M8-G0",
+  "profile": {
+    "profile_id": "profile_2_faults",
+    "strategies": ["sync_hold", "naive_async", "aligned_async"],
+    "base_latency_ms": 850,
+    "jitter_ms": 200,
+    "drop_probability": 0.03,
+    "extra_delay_probability": 0.10,
+    "extra_delay_ms": 900,
+    "duplicate_probability": 0.02,
+    "duplicate_delivery_offset_ms": 50,
+    "communication_pause_probability": 0.03,
+    "communication_pause_ms": 250,
+    "candidate_status": "preregistered_pending_development_calibration"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "observed_at": "2026-08-18T01:06:37+08:00",
+  "status": "BLOCKED_ENVIRONMENT",
+  "evidence_level": "remote_read_only_preflight",
+  "gpu": {
+    "name": "NVIDIA GeForce RTX 5090",
+    "driver_version": "595.71.05",
+    "memory_total_mib": 32607,
+    "memory_used_mib": 2,
+    "utilization_percent": 0
+  },
+  "storage": {
+    "data_volume_size_gib": 250,
+    "data_volume_used_gib": 132,
+    "data_volume_available_gib": 119
+  },
+  "checks": {
+    "running_actionstream_experiment": false,
+    "screen_sessions_present": false,
+    "docker_command_present": false,
+    "isaac_sim_directory_present": false,
+    "python_isaacsim_importable": false,
+    "python_isaaclab_importable": false,
+    "isaaclab_arena_checkout_present": false,
+    "cached_xvla_checkpoint_present": true,
+    "cached_smolvla_checkpoint_present": true
+  },
+  "decision": "Do not run or claim an Arena canary on this host. Resume on an official Arena Docker-capable Isaac Sim 6.0 host.",
+  "learned_policy_result_available": false,
+  "server_shutdown_authorized": false
+}

@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "milestone": "M5-G0",
+  "manifest_name": "runtime_smoke",
+  "pairs": [
+    {
+      "pair_index": 0,
+      "seed": 50001,
+      "initial_state_index": 1
+    }
+  ],
+  "manifest_sha256": "8c15295aad3e81c8760a881840cbb3b9a0090e9aea757aad86526753794a7966"
+}

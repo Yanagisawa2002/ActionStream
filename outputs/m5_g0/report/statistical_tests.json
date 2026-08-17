@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "milestone": "M5-G0",
+  "analysis_unit": "paired episode",
+  "episode_row_count": 0,
+  "pairing_fields": [
+    "seed",
+    "initial_state_index"
+  ],
+  "difference_definition": "gate minus aligned unless marked as reduction",
+  "bootstrap": {
+    "method": "paired nonparametric percentile bootstrap",
+    "seed": 20260731,
+    "resamples": 10000,
+    "confidence_level": 0.95
+  },
+  "shift_comparison": null,
+  "no_shift_comparison": null,
+  "invalid_episodes": [],
+  "invalid_episode_count": 0,
+  "excluded_pairs": [],
+  "excluded_pair_count": 0,
+  "excluded_episode_count": 0,
+  "calibration_no_go_reason": "No magnitude met the frozen behavioral challenge rule",
+  "classification": {
+    "label": "NO-GO",
+    "criteria": {
+      "sealed_30_pairs_complete": false,
+      "stale_duration_reduction_at_least_70pct": false,
+      "stale_duration_reduction_ci_excludes_zero": false,
+      "success_improvement_at_least_15pp": false,
+      "mcnemar_p_below_0_05": false,
+      "success_not_regressed_more_than_5pp": false,
+      "success_does_not_significantly_improve": true,
+      "no_shift_safety_requirements_pass": false,
+      "m4_baseline_intact": true,
+      "source_validation_passed": true,
+      "calibration_challenge_valid": false
+    },
+    "reasons": [
+      "Calibration no-go: No magnitude met the frozen behavioral challenge rule"
+    ]
+  }
+}

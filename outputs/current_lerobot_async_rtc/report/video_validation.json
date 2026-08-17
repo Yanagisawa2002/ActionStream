@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "validated_utc": "2026-08-15T09:31:00Z",
+  "decoder": "ffmpeg 8.1.1 essentials build",
+  "raw_videos": {
+    "xvla": {
+      "decoded": 15,
+      "failed": 0
+    },
+    "smolvla": {
+      "decoded": 20,
+      "failed": 0
+    }
+  },
+  "paired_composites": [
+    {
+      "path": "../videos/xvla_fixed0950_weighted_vs_aligned_task0_ep0.mp4",
+      "sha256": "f67d7ee4c87d52f7645fb88ef9b785e7536a7a24072eb1bd58bf6fbd782b64f8",
+      "codec": "h264",
+      "width": 1280,
+      "height": 640,
+      "fps": 20,
+      "frames": 281,
+      "duration_seconds": 14.05
+    },
+    {
+      "path": "../videos/smolvla_fixed0500_rtc_vs_aligned_task0_ep0.mp4",
+      "sha256": "ee02c94bbb62396849cd63cb280ef8fa57577dbcefdd106c02232f962fa83177",
+      "codec": "h264",
+      "width": 1280,
+      "height": 640,
+      "fps": 20,
+      "frames": 281,
+      "duration_seconds": 14.05
+    }
+  ],
+  "note": "Raw and paired MP4 files are intentionally local and gitignored; metrics, traces, hashes, and this receipt are versioned."
+}

@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "experiment_id": "xvla_isaac_official_render_bridge_v1",
+  "frozen_utc": "2026-08-16T17:56:37Z",
+  "freeze_status": "frozen_before_formal_inference",
+  "evidence_class": "development_reset_scoped_offline_first_chunk_bridge_canary",
+  "causal_question": "Does an official LIBERO renderer retargeted to the measured Isaac EEF and paired with the unchanged Isaac policy state restore the first X-VLA action chunk strongly enough to open a native sync capability gate?",
+  "claim_boundary": "This canary evaluates one matching reset and the first policy chunk. It is not closed-loop task success, dynamic object synchronization, or an async runtime comparison.",
+  "parent_canary": {
+    "path": "configs/xvla_isaac_visual_canary_v2.json",
+    "sha256": "cefc43e94e7fd8ec319d05e9a4dd6b7369530bbc58565d6e07bea112b532f9d5",
+    "reused_without_change": [
+      "paired inference seeds",
+      "full chunk RMSE threshold",
+      "first action XYZ threshold",
+      "first action 7D threshold",
+      "per-seed gripper sign threshold"
+    ]
+  },
+  "policy": {
+    "key": "xvla",
+    "model_id": "lerobot/xvla-libero",
+    "revision": "12e8783e996944f5c97e490d37d4c145484ed70a",
+    "processor_source": "pinned CurrentLeRobotBackend from configs/current_lerobot_baselines.json",
+    "protocol_path": "configs/current_lerobot_baselines.json",
+    "protocol_sha256": "76ed5e5a0d2a0780c2fb858741c9e8a16fdc36cac1f3c991977b9b11fd6a164a",
+    "device": "cuda"
+  },
+  "bridge_candidate": {
+    "key": "official_libero_reset_renderer_with_isaac_eef_ik_v1",
+    "source_parent_git_commit": "ec6d570f37013889e64ae610560da52c469a8f1d",
+    "module_path": "src/actionstream/official_render_bridge.py",
+    "module_sha256": "b5ca8273edb830776ee36260aa50a60b2835b055a883b7ed7a0c1bfa9726b0e9",
+    "runner_path": "src/actionstream/xvla_official_render_bridge_canary.py",
+    "runner_sha256": "2108aad5c32a9ad0adbecb7f5c43204cbdee3e52aded3b8cbc442179921ef6fb",
+    "render_only_probe": {
+      "path": "outputs/official_render_bridge_dev_probe_20260817c/summary.json",
+      "sha256": "496e256c877da5361f92852ebb53332036012faed0d9a155f4a30072e5123cbb",
+      "policy_inference_executed": false,
+      "bridge_image_sha256": "1ea12436b65a96a4f7cf7754be1e461923cda89ea4e00734bf99c4d65bdc0dd8",
+      "bridge_image2_sha256": "0407261dbb0de566909de1c14a0e7e3c3461f08362db8530dfe51f75106521ba"
+    },
+    "state_authority": {
+      "physics_and_policy_state": "measured native Isaac request_records[0].robot_state",
+      "camera_renderer": "pinned official LeRobot LIBERO task reset",
+      "robot_visual_pose": "deterministic damped-least-squares retargeting of Isaac-mapped EEF pose onto canonical LIBERO Panda",
+      "object_visual_state": "matching official task-0 initial state; no post-reset object synchronization is claimed",
+      "gripper_visual_state": "exact mapped Isaac gripper qpos writeback",
+      "physics_steps_after_write": 0
+    },
+    "structural_gate": {
+      "pose_mode": "eef_ik",
+      "eef_position_error_l2_max_m": 0.0001,
+      "eef_orientation_error_l2_max_rad": 0.001,
+      "gripper_write_error_max_abs": 1e-12,
+      "ik_must_converge": true,
+      "no_physics_step_after_write": true
+    }
+  },
+  "official_observation": {
+    "suite": "libero_object",
+    "task_id": 0,
+    "initial_state_index": 0,
+    "environment_seed": 2026081601,
+    "instruction": "pick up the alphabet soup and place it in the basket",
+    "source": "fresh exact observation returned by pinned CurrentLeRobotBackend.reset_episode"
+  },
+  "native_observation": {
+    "summary_path": "outputs/xvla_isaac_visual_canary_v1/learned_isaac_libero_visual_canary_v2_capture/summary.json",
+    "summary_sha256": "fff86a9198f7612323f1835e23147c2acd01e739f9567a180c783f036e0c27d7",
+    "robot_state_source": "request_records[0].robot_state",
+    "instruction": "pick up the alphabet soup and place it in the basket"
+  },
+  "paired_schedule": [
+    {
+      "inference_seed": 2026081701,
+      "condition_order": [
+        "official_render__official_state",
+        "official_render_bridge__isaac_state"
+      ]
+    },
+    {
+      "inference_seed": 2026081702,
+      "condition_order": [
+        "official_render_bridge__isaac_state",
+        "official_render__official_state"
+      ]
+    },
+    {
+      "inference_seed": 2026081703,
+      "condition_order": [
+        "official_render__official_state",
+        "official_render_bridge__isaac_state"
+      ]
+    }
+  ],
+  "acceptance": {
+    "all_required": true,
+    "aggregate_mean_full_chunk_rmse_max": 0.25,
+    "aggregate_mean_first_action_xyz_l2_max_m": 0.05,
+    "aggregate_mean_first_action_7d_l2_max": 0.75,
+    "candidate_gripper_negative_fraction_min_each_seed": 0.9,
+    "on_pass": "open but do not silently broaden into a disjoint native-Isaac sync capability gate",
+    "on_fail": "stop before any sync episode or async matrix and preserve the bridge blocker"
+  },
+  "anti_tuning": {
+    "same_three_v2_inference_seeds_only": true,
+    "no_threshold_changes": true,
+    "no_policy_result_inspection_until_all_six_paired_inferences_complete": true,
+    "no_post_result_bridge_or_input_tuning": true,
+    "no_task_success_claim_from_first_chunk": true
+  }
+}

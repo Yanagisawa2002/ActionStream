@@ -6,6 +6,428 @@ tests whether compensating for observation age when an asynchronous action
 chunk arrives is safer and more efficient than replacing the queue with the
 entire stale chunk.
 
+![ActionStream X-VLA paired runtime result](docs/assets/actionstream_hero.png)
+
+## Release and LeRobot integration status
+
+The `1.1.0rc1` release candidate adds a formal `lerobot-rollout` inference
+backend rather than another standalone selector loop. `ActionStreamInferenceEngine`
+implements `start`, `stop`, `reset`, `get_action` and `notify_observation` with one
+async worker, a thread-safe aligned queue, reset/stale rejection, finite queue-empty
+hold, timeout/disconnect recovery, latest-only fallback, and latency/queue/discard/
+fallback telemetry. Tests use deterministic transports and simulator contracts; this
+is **not** a real-robot safety claim.
+
+LeRobot auto-discovers the companion package as
+`--inference.type=actionstream`. The small upstream patch adds a generic third-party
+inference builder registry; it is prepared for review but has not been submitted or
+merged upstream:
+
+```bash
+git clone https://github.com/huggingface/lerobot.git .external/lerobot
+git -C .external/lerobot checkout 6adf51511b7625090eade8d82d9f61a1846ebe56
+git -C .external/lerobot apply ../../upstream/lerobot/0001-feat-rollout-allow-third-party-inference-engines.patch
+uv sync --locked
+uv pip install --python .venv/bin/python --no-deps --editable integrations/lerobot
+```
+
+The public snapshot technical gate now enforces the exact dependency lock, CI,
+credential patterns, output allowlist, and repository-size limits. Raw evidence is
+retained on the preserved private evidence branch, not copied into ordinary Git.
+Public release is still **BLOCKED** on an owner-selected first-party `LICENSE`, the
+final squash onto `master`, and the GitHub visibility change. See the
+[public release boundary](docs/public_release.md); CI's
+`--allow-missing-license` mode does not waive the legal gate.
+
+## Isaac Lab-Arena integration status
+
+The next scalable benchmark is frozen against official Isaac Lab-Arena
+`release/0.2.1` at commit `8b4a3a47fc53de23e8205089d71109a2e2348acd`.
+The contract expands three distinct DROID task families, eight vectorized GPU
+environments per cell, disjoint reset/network splits, exact X-VLA and SmolVLA
+revisions, and sync/latest-only/RTC/aligned/guarded runtime cells. The DROID
+bridge requires two external camera views plus a wrist view and converts queued
+absolute targets into bounded, current-state-relative IK commands at dispatch.
+
+This is **integration-ready, not a completed Arena result**. The current GPU host
+has an idle RTX 5090 and cached checkpoints, but no Docker, Isaac Sim, Isaac Lab,
+or Arena checkout; Arena's official 0.2.1 workflow requires its Docker source
+environment. Therefore there is no Arena task-success, GPU-parallel throughput,
+or video claim. The adapter currently executes aligned and guarded cells and
+refuses to impersonate upstream LeRobot sync/latest-only/RTC until their
+vector-safe Arena wrappers exist. See the [exact status and resume boundary](docs/isaaclab_arena.md).
+
+## Adaptive Budgeted-Release v5 — mechanism valid, canary NO-GO
+
+Budgeted-Release v5 is a new frozen selector, not a retune of v4. It adds a
+four-command spend budget per reserve activation, protects a one-command floor,
+and releases from reserve using a predicted service deadline or measured
+end-effector progress stall. The canary uses previously unused state 33 and new
+paired traces over the Object, Spatial, and Goal LIBERO task families.
+
+The strict verdict is **NO-GO**. Adaptive succeeded on 5/9 asynchronous rows,
+versus 8/9 for official LeRobot `latest_only` and 7/9 for static aligned. It
+recovered the Object outage in 134 steps where aligned timed out and completed
+Goal high jitter in 88 steps where `latest_only` timed out, but these isolated
+crossed wins did not generalize: Adaptive failed Object high jitter, Spatial
+outage, and both Goal low-jitter and outage conditions.
+
+![Budgeted-Release v5 canary](reports/actionstream_adaptive_budgeted_release_v5/canary_steps.png)
+
+The mechanism did honor its registered bounds: 77 commands were spent, no
+activation exceeded four commands, the active reserve never fell below one,
+and guard discards were zero. However, 76/77 releases came from the deadline
+branch and only one from measured progress stall, so the evaluated method was
+effectively a bounded deadline scheduler rather than a robust
+progress-aware controller. All 36 paired traces were hash-verified, all 36
+formal videos decoded (5,725 frames), and representative MP4s were inspected
+locally at the content level.
+
+The [Budgeted-Release v5 report](reports/actionstream_adaptive_budgeted_release_v5/report.md)
+contains the main table, scheduler audit, failure taxonomy, paired final scenes,
+and task timelines. This is one paired state per task/profile, with no IID-seed
+confidence interval. The formal holdout remains closed and neither v4 nor v5
+will be tuned on these results; any continuation requires a new selector and
+unused split, beginning with frozen replay of phase-aware reserve value.
+
+## Adaptive Queue-Slack v4 — outage recovery, canary NO-GO
+
+Queue-Slack v4 adds online service-time estimation, slack-aware prefetch, and a
+five-command reserve that survives rejected stale results. Its frozen X-VLA
+canary used a fresh registered state and new paired network traces across three
+different LIBERO task families, three delay profiles, and four runtimes (36
+episodes total).
+
+The strict verdict is **NO-GO**. Adaptive and official LeRobot `latest_only`
+both succeeded on 8/9 asynchronous rows, but failed different conditions;
+static aligned succeeded on 9/9. Under the registered 425/1850 ms outage
+profile, Adaptive was 3/3 versus `latest_only` 2/3 and recovered the Object
+failure, while preserving a nonempty action reserve through both long arrivals
+on all three tasks. Under 600–1100 ms jitter, however, Adaptive timed out on
+the Object task at 300 steps while `latest_only` and aligned succeeded in 154
+and 125 steps. Its 25 reserve activations and 83 hold steps support an
+over-conservative reserve-fragmentation hypothesis, not a causal claim from
+one reset.
+
+![Queue-Slack v4 canary](reports/actionstream_adaptive_queue_slack_v4/canary_steps.png)
+
+The [Queue-Slack v4 report](reports/actionstream_adaptive_queue_slack_v4/report.md)
+contains the frozen main table, scheduler audit, failure taxonomy, same-state
+paired frames, and a five-stage high-jitter timeline. All 36 trace hashes and
+36 videos were verified after transfer. The formal holdout remains closed and
+this selector will not be retuned; a future candidate must use a new selector
+and state/trace split with bounded reserve spending or deadline-aware release.
+
+## Adaptive Phase-Stable v3 — strong canary, formal holdout still closed
+
+The frozen Phase-Stable v3 X-VLA canary covers three genuinely different
+LIBERO task families under 0 ms, fixed 950 ms, and scripted phase-outage
+profiles. At fixed 950 ms, Adaptive succeeded on 3/3 tasks and used 351 total
+steps versus 500 for official LeRobot `latest_only`, a 29.8% reduction; at 0 ms
+both methods succeeded 3/3 with exactly 354 total steps. Static aligned failed
+the Object task at 950 ms while Adaptive succeeded.
+
+This result is **PARTIAL_POSITIVE**, not a formal win. There is only one paired
+reset per task/profile, the phase-outage Object row was 124 steps slower than
+`latest_only`, and a separately frozen state-31 mechanism probe was **NO-GO**
+(7/9 success). Instrumentation showed why: every hard outage arrived after the
+active action queue had drained, so queue preservation had no useful slack to
+preserve. The v3 formal holdout therefore remains unopened; the next method
+step is slack-aware prefetch/reserve scheduling, not post-result threshold
+tuning.
+
+![Phase-Stable v3 canary](reports/actionstream_adaptive_phase_stable_v3/canary_steps.png)
+
+The [Phase-Stable v3 report](reports/actionstream_adaptive_phase_stable_v3/report.md)
+contains the frozen main table, mechanism coverage, source provenance,
+content-level paired frames, and raw-archive receipt. All 45 traces were
+hash-verified and all 45 videos decoded; raw MP4s and traces remain outside
+ordinary Git.
+
+### Historical Adaptive v2 formal holdout — bounded positive / overall NO-GO
+
+Adaptive v2 remains an immutable 270-episode X-VLA paired holdout over three
+LIBERO suites, five unseen resets per suite, and six network traces. At fixed
+950 ms it matched official `latest_only` success (14/15 each) while reducing
+mean completion steps by 35.1 (20.6%; paired bootstrap 95% CI -40.3 to -28.5).
+It did not generalize across regimes: static aligned was better at fixed 950
+ms, Adaptive was 44/45 under pooled jitter versus latest-only 45/45, and it
+fell to 13/15 under burst/outage versus latest-only 15/15. Its registered
+verdict remains **NO-GO**.
+
+The [Adaptive v2 report](reports/actionstream_adaptive_v2_holdout/report.md)
+contains the main table, paired CIs, 2,062-decision risk audit, failure
+taxonomy, content-level A/B frames, and archive hashes. A minimal real-robot
+A/B was not run because neither inspected machine exposed a robot driver or
+usable camera; simulation is not relabeled as hardware evidence.
+
+The learned native-Isaac bridge now dynamically synchronizes measured Panda
+and object state into official LIBERO rendering before each X-VLA request.
+Native sync development canaries pass two genuinely different task families:
+object-into-container and object-on-object placement. The latter also passes
+the pinned LIBERO success predicate at control step 120. A third planar-push
+task remains a preserved native contact/robot-limit failure. Official LeRobot
+Async, `latest_only`, RTC where supported, and ActionStream results exist in
+the LIBERO matrix; a native Isaac async/RTC paired matrix does not.
+
+See also the [2026-08-17 learned-policy closure report](docs/learned_policy_closure_20260817.md)
+for denominators, failure classification, provenance, release audit, and exact
+evidence boundaries. The Arena protocol/adapter now exists, but its learned
+simulator run and real-robot paired A/B remain unavailable.
+
+## M8-G0: frozen native Isaac holdout — GO
+
+M8 runs a native Isaac Sim 6.0.1 Franka pick-and-place task with a seeded
+mid-episode destination switch. Old chunks point toward destination A while a
+new observation-conditioned chunk redirects toward B, making stale execution
+physically wrong rather than merely inefficient. The shared policy is a
+deterministic live Cartesian waypoint controller using end-effector/object
+poses, grasp state, phase, destination, and generation; it is not a learned
+VLA and does not replay a recorded trajectory.
+
+The source-matched ROS Jazzy/Isaac workspace passed its native gate on an RTX
+5090: Profile-0 `sync_hold` completed 20/20 tasks and all 20 independent replay
+audits. Candidate `candidate_0` was then selected with **zero behavioral
+calibration changes**, the ledger was closed, and the 166-input freeze was
+created before the first holdout result was observed.
+
+The frozen holdout contains 420 native Isaac episodes over 60 unseen
+scenario/initial-state seeds and 180 unseen network traces. Baseline,
+development, and holdout have zero seed, scenario-hash, or fault-trace-hash
+overlap. This is scenario and network-trace holdout evidence within one task
+family, not cross-task generalization.
+
+| Frozen profile | Method | Task success | Mean episode latency / median episode p50-p95 (ms) | Expired actions executed |
+|---|---|---:|---:|---:|
+| Sanity | `sync_hold` | 60/60 (100.0%) | 15.7 / 15.9-16.4 | 0 |
+| Fixed 850 ms | `sync_hold` | 1/60 (1.7%) | 881.8 / 877.9-898.5 | 0 |
+| Fixed 850 ms | `naive_async` | 0/60 (0.0%) | 905.7 / 895.5-907.7 | 4,244 |
+| Fixed 850 ms | `aligned_async` | 49/60 (81.7%) | 893.8 / 894.5-902.8 | 0 |
+| 850 ms + jitter/faults | `sync_hold` | 15/60 (25.0%) | 1008.9 / 925.7-1379.9 | 0 |
+| 850 ms + jitter/faults | `naive_async` | 0/60 (0.0%) | 986.7 / 918.8-1454.5 | 4,231 |
+| 850 ms + jitter/faults | `aligned_async` | 52/60 (86.7%) | 975.9 / 912.8-1654.9 | 0 |
+
+Aligned minus naive is **+81.7 percentage points** under fixed delay (paired
+95% CI [71.7, 90.0]) and **+86.7 points** under jitter/faults (paired 95% CI
+[76.7, 95.0]). Independent replay passed 420/420 episodes with seed, network
+profile, fault-trace, source-provenance, freeze, and paired-reset checks. The
+registered classification is therefore **GO**. `STRONG GO` remains false: the
+predeclared wall-time and obsolete-command secondary conditions did not pass,
+so no stronger claim is made.
+
+The dominant naive failure is pre-grasp control (`failed_approach`: 115/120
+delayed trials), while aligned failures are mainly safety/workspace limits
+(17) plus two unstable grasps. Aligned executed zero expired actions and had
+zero collisions and timeouts. The figure below is an operating-point view:
+P0/P1/P2 change both latency and fault regime, so unconnected markers are used
+instead of a continuous causal latency curve.
+
+![Frozen M8 latency-success operating points](outputs/m8_g0/holdout_v3/report/figures/latency_success_operating_points.png)
+
+This positive result is still bounded. The policy is a deterministic live
+observation-conditioned controller, not X-VLA/SmolVLA/Pi0.5; the benchmark has
+one Franka destination-switch task family; and this is simulation rather than
+real-robot evidence. Learned-policy Isaac and real-robot paired A/B remain the
+next evidence tiers.
+
+One representative same-reset pair now shows the full content-level contrast:
+naive fails before grasp, while aligned grasps, recovers the step-110 target
+switch, places the cube on the active red destination, releases it, and holds
+the placement stable. The green marker in the final frame is the obsolete
+destination.
+
+![Native Profile-1 naive failure versus aligned success](outputs/m8_g0/development/policy_pair_success_0/paired_success_final.png)
+
+The two raw 1280x720/20 fps viewport MP4s and labelled side-by-side composite
+are retained locally and decode end-to-end. Git keeps the final frame,
+hash/codec validation, raw JSONL, summaries, replay, and native receipts while
+ignoring MP4 payloads.
+
+Evidence: [registered technical report](outputs/m8_g0/holdout_v3/report/m8_g0_registered_report.md),
+[main table](outputs/m8_g0/holdout_v3/report/main_table.md),
+[failure classification](outputs/m8_g0/holdout_v3/report/failure_classification.md),
+[post-hoc findings](outputs/m8_g0/holdout_v3/report/M8_HOLDOUT_FINDINGS.md),
+[canonical analysis](outputs/m8_g0/holdout_v3/analysis.json),
+[420-episode replay](outputs/m8_g0/holdout_v3/replay_validation.json),
+[immutable freeze](outputs/m8_g0/protocol_v3/freeze_manifest.json),
+[archive manifest](outputs/m8_g0/holdout_v3/complete_raw.manifest.json),
+[report compatibility receipt](outputs/m8_g0/holdout_v3/report/m8_g0_registered_report.receipt.json),
+[successful paired findings](outputs/m8_g0/development/policy_pair_success_0/PAIRED_FINDINGS.md),
+[video validation](outputs/m8_g0/development/policy_pair_success_0/video_validation.json),
+[architecture](docs/m8_architecture.md), and
+[protocol and environment guide](docs/m8_environment.md). The older unavailable and
+development-only records remain historical evidence, not the headline result.
+
+This does not change M4's original positive asynchronous result or M7's static
+36/36 saturation. M4, M7, and M8 use different endpoints and denominators; no
+numbers are merged across them.
+
+## Learned X-VLA native Isaac development gate — PARTIAL PASS
+
+The earlier all-zero visual contract is superseded. The current bridge writes
+measured native robot and object state into the pinned official LIBERO
+environment and renders fresh official agent/wrist observations before every
+X-VLA request. Two distinct native sync development canaries now succeed:
+object into container and bowl onto plate. The spatial canary reaches both the
+native proxy and official LIBERO predicate at step 120. All GPU, dynamic-state,
+IK, writeback, command, motion, and video checks pass on both runs.
+
+A third family, planar plate pushing, remains a real failure after reconstructing
+the canonical ten-box plate collision compound and mass. The official X-VLA
+episode succeeds in 148 steps, while the native run reaches 300 steps, hits a
+robot-limit condition, and fails both predicates. No additional seed or
+geometry tuning is used to hide that result.
+
+This is **2/3 development task capability**, not a frozen multi-seed native
+holdout. The official LeRobot Async/RTC matrix remains a separate LIBERO
+evidence class. Full details are in the
+[learned-policy closure report](docs/learned_policy_closure_20260817.md); the
+[learned Isaac status](docs/learned_isaac_status.md) retains the superseded
+diagnostic history.
+
+## M7-G0: ROS 2 / Isaac Sim runtime integration — NO-GO
+
+M7 adds a mixed C++17/Python ROS 2 Jazzy runtime and an official Isaac Sim
+6.0.1 Franka adapter. The implementation is auditable and the native end-to-end
+path runs, but the predeclared reliability hypothesis did not pass: on the
+frozen 36-seed Profile B ROS test-plant holdout, `naive_async` and
+`aligned_async` both succeeded 36/36. Their paired difference is 0.0 percentage
+points (95% paired-bootstrap CI [0.0, 0.0]). A bounded policy-driven Isaac run
+also reached step 180 without lifting the object. M7 is therefore **NO-GO**, not
+an Isaac task-success or production-readiness claim.
+
+The failure mode is temporal, not a policy-learning problem. A reasonable
+naive asynchronous queue executes chunks in response-arrival order, so source
+actions can be applied at later actual timesteps. Aligned execution retains the
+explicit source observation and target step, removes the expired prefix,
+rejects stale episodes/generations/plans, and atomically rebuilds the executable
+queue. No model was trained for M7.
+
+```mermaid
+flowchart LR
+    I["Isaac Sim Franka adapter\nor deterministic ROS test plant"]
+    O["Observation + /clock"]
+    P["Python scripted policy"]
+    F["Python frozen fault injector"]
+    E["C++17 executor\nsync / naive / aligned"]
+    C["RobotCommand"]
+    R["Atomic JSONL recorder\n+ independent replay"]
+
+    I --> O --> E
+    E -->|"InferenceRequest"| P -->|"O+1 ... O+30"| F --> E
+    E --> C --> I
+    O -.-> R
+    P -.-> R
+    F -.-> R
+    E -.-> R
+```
+
+The five packages are `action_stream_msgs`, `action_stream_policy`,
+`action_stream_executor`, `action_stream_benchmark`, and
+`action_stream_isaac`. C++ owns the thread-safe strategy state machines,
+freshness ordering, queue mutation, command selection, and diagnostics. Python
+owns the deterministic policy, simulator glue, fault traces, orchestration,
+atomic recording, replay, statistics, and plotting. The executor uses explicit
+callback groups under a ROS `MultiThreadedExecutor`; observation callbacks do
+not wait for inference.
+
+### Frozen M7 contract
+
+- Observation `O` is the last completed 20 Hz control step. Every returned
+  30-action chunk explicitly targets `O+1` through `O+30`.
+- Final commands are absolute seven-vectors
+  `[x, y, z, axis-angle x, axis-angle y, axis-angle z, gripper]`, with exactly
+  `+1` open and `-1` closed.
+- `generation_id` is an invalidation epoch, not a request ID. Within one
+  generation, plan freshness is ordered lexicographically by
+  `(source_observation_step, request_id)`.
+- A target is expired if it precedes insertion or has already executed. The
+  first duplicate target in a chunk wins; aligned queue replacement is atomic.
+- The deterministic reach/lift task requires a grasped object at least 0.12 m
+  above its initial height for 20 consecutive steps, with a 180-step limit.
+- Profile A is fixed 950 ms latency. Frozen Profile B is 900 ms base,
+  +/-250 ms jitter, 5% drops, 12% additional 1000 ms delay, 2% duplicates, and
+  5% 300 ms communication pauses. Eight development seeds and 36 disjoint
+  holdout seeds are version controlled. One bounded Profile B adjustment was
+  made on development data before the holdout lock; none followed.
+
+### Frozen holdout results (`ros_cpp_test_plant`)
+
+| Profile | Method | Success | Median steps | Median wall time | Mean hold time |
+|---|---|---:|---:|---:|---:|
+| A | `sync_hold` | 36/36 | 47 | 4.350 s | 1.908 s |
+| A | `naive_async` | 36/36 | 88 | 5.956 s | 0.000 s |
+| A | `aligned_async` | 36/36 | 57 | 4.456 s | 0.000 s |
+| B | `sync_hold` | 34/36 | 47 | 4.375 s | 2.800 s |
+| B | `naive_async` | 36/36 | 88 | 5.708 s | 0.125 s |
+| B | `aligned_async` | 36/36 | 57 | 4.262 s | 0.318 s |
+
+Profile A was fully saturated and did not reproduce the historical success
+separation. On Profile B, aligned reduced hold time 88.6% versus sync and used
+31 fewer median steps than naive, but it did not improve reliability over
+naive. The primary gate failed its >=20 point success and positive-CI
+conditions; the >=50% hold-reduction and semantic/replay conditions passed.
+Strong GO was ineligible, and aligned reduced median wall time only 2.6% versus
+sync rather than the required 20%.
+
+Independent replay passed 216/216 episodes with matching metrics and zero
+aligned invariant violations. The deliberately naive baseline executed 3,857
+expired source actions across the matrix; aligned executed none and removed
+3,937 expired actions before queue installation. All 72 seed/profile blocks
+used one identical pre-generated trace across the three methods.
+
+The official native Windows path passed the Isaac 6.0.1 compatibility check,
+loaded the shipped experimental Franka API, enabled `isaacsim.ros2.bridge`
+before importing `rclpy`, and exchanged custom messages with the native C++
+executor. The single aligned Profile A policy episode was replay-clean but
+failed the task: 0/1 success, 180 steps, 18 requests, 165 executed policy
+actions, and 0.75 s hold time. It is integration evidence, not a paired Isaac
+benchmark.
+
+### Reproduce and inspect M7
+
+From PowerShell with Docker available, one command creates a fresh output root,
+builds the pinned ROS image if needed, runs all 216 test-plant episodes, replays
+them, analyzes 20,000 paired bootstrap samples, and writes three PNG/PDF figure
+pairs:
+
+```powershell
+.\scripts\m7_run_ros_holdout.ps1 `
+  -OutputSubdirectory outputs/m7_g0/reproductions/ros_holdout_001
+```
+
+Native Isaac build, launch, policy-smoke, and recording commands are pinned in
+[`docs/m7_environment.md`](docs/m7_environment.md); the architecture and timing
+contract are in [`docs/m7_architecture.md`](docs/m7_architecture.md). A bounded
+visual safe-hold MP4 can be recorded with:
+
+```powershell
+.\scripts\m7_record_demo.ps1
+```
+
+The script refuses overwrite/stale frame reuse, captures one framed viewport
+image per 20 Hz control tick, encodes H.264 at 1280x720/20 fps, verifies the
+non-empty MP4, and stops its owned process tree. `-Headless` is supported; the
+default output is ignored `outputs/m7_g0/demo/<episode>.mp4`. The validated
+recording audit is
+[`demo_capture_validation.json`](outputs/m7_g0/audit/demo_capture_validation.json).
+
+Evidence: [holdout manifest](outputs/m7_g0/holdout/manifest.json),
+[paired analysis](outputs/m7_g0/holdout/analysis.json),
+[independent replay](outputs/m7_g0/holdout/replay_validation.json),
+[Isaac episode summary](outputs/m7_g0/isaac_smoke/aligned_async.summary.json),
+[Isaac replay audit](outputs/m7_g0/isaac_smoke/aligned_async.audit.json), and
+[result figures](outputs/m7_g0/figures/README.md).
+
+Limitations: the paired matrix uses a deterministic ROS test plant rather than
+Isaac physics; the one Isaac task episode failed; standalone pre-Kit Windows
+`rclpy`/`ros2` CLI loading remains blocked, so no rosbag was captured; the
+validated video path is only a safe-hold demo and no video is used as benchmark
+evidence; the policy is scripted; only one reach/lift task and two fault
+profiles were tested; stale-generation execution is covered by deterministic
+tests but no generation transition occurred in the holdout; this is neither
+real-robot nor hard-real-time validation.
+
 M4 extends the completed 0/200 ms matrix into a calibrated 950 ms
 queue-pressure regime. Against naive asynchronous replacement at that pressure,
 alignment improved paired success by 0.333 (95% bootstrap CI 0.133 to 0.533)
@@ -462,3 +884,259 @@ The final M4 validator covers 60 `sync_hold` episodes and traces, 24
 calibration episodes and traces, and 90 pressure episodes and traces. It
 validates exact matrix coverage, finite nonzero 7D actions, telemetry lengths
 and counts, commit/model consistency, and pressure-selection provenance.
+
+## M5-G0 oracle scene-shift gate
+
+M5-G0 tests a different failure mode from M4. M4's stale-prefix alignment
+compensates for delivery age while the scene is unchanged; M5-G0 physically
+moves a normally stationary, task-critical entity while a policy result is in
+flight. An independent oracle detector reads only the entity pose, invalidates
+queued and late-arriving actions generated from the old scene epoch, holds a
+finite environment-ready action while the queue is empty, and requests a fresh
+chunk. The perturbation flag and evaluator-only `world_epoch` are not visible
+to the detector.
+
+The primary candidate is LIBERO Object task 0, “pick up the alphabet soup and
+place it in the basket.” The manipulated object remains `alphabet_soup_1`; the
+moved entity is the normally stationary `basket_1` body
+`basket_1_main`/free joint `basket_1_joint0`. Task 2, which places the salad
+dressing in the same basket, is the single permitted backup. The predeclared
+shift translates the basket along negative x during the first replenishment
+request with a non-empty queue. Static audit covered both tasks, 20 initial
+states, both x directions, and 30/50/70 mm: all 120 configurations met the
+declared workspace, displacement, and non-floor-collision checks.
+
+### M5-G0 calibration result
+
+Five immutable seed/state pairs were run once for each condition and tested
+magnitude. Every perturbation was physically valid and every aligned/gated
+pair used the same shift step and displacement.
+
+| Task | Shift | Aligned success | Oracle-gated success | Gate-only success |
+|---:|---:|---:|---:|---:|
+| 0 | 50 mm | 5/5 | 3/5 | 0/5 |
+| 0 | 30 mm | 5/5 | 2/5 | 0/5 |
+| 2 | 50 mm | 2/5 | 3/5 | 1/5 |
+| 2 | 30 mm | 5/5 | 2/5 | 0/5 |
+
+The frozen challenge rule required gated success of at least 4/5, aligned
+success of at most 3/5, and at least two gate-only successes. No candidate and
+magnitude qualified, so no displacement was selected. The protocol therefore
+froze `calibration_no_go` and `sealed_permitted=false`. Per the hard-stop rule,
+the 10-pair no-shift control and 30-pair sealed evaluation were not run.
+McNemar and paired-bootstrap sealed estimates are consequently unavailable,
+not zero. The predeclared final classification is **NO-GO**.
+
+A calibration-only mechanism diagnostic is retained but is not treated as a
+sealed estimate: aligned executed 405 actions from the pre-shift world epoch,
+whereas the gated runtime executed zero. The gated traces contain 85 independent
+pose-change triggers: 20 at the scripted shift and 65 later, from steps
+106–778, when the dynamic basket again moved relative to newly captured pose
+references. Those later changes are not duplicate firings on the unchanged
+scripted pose, but they show that the receptacle does not remain stationary
+throughout task interaction and contributed 868 gate-hold steps. This overhead
+and the lower gated calibration success are material limitations of the
+candidate, not grounds for retuning it.
+
+The formal run used the unchanged M4 settings (950 ms injected delay, 20 Hz,
+30-action chunks, replanning every 10 control steps, and an 800-step episode
+limit), the frozen X-VLA revision above, and starting commit
+`0a2412625b858af8d507be6650612b13a28b91a5`. The fresh M4 task-0 smoke
+succeeded in 143 steps. Formal producer source hash
+`fc920da5221cbe7d7039fc87512b6757fd476ba33a92535f2fb63d42a3d6fd35`
+binds the 40 calibration episodes.
+
+After calibration had hard-stopped, downstream-only reporting defects were
+found: the validator checked an absent M4 field named `condition` instead of
+the recorded `runtime_mode`; the shell driver supplied inconsistent no-go
+wording and omitted the report's explicit M4 flag; and the paper-style
+Markdown omitted the calibration table and source-drift disclosure. Only
+`src/actionstream/m5_validation.py`, `src/actionstream/m5_report.py`, and the
+post-calibration reporting portion of `scripts/run_m5_g0.sh` were corrected.
+No benchmark runtime, detector, calibration/selection logic, raw evidence,
+seed, or outcome changed, and no seed was rerun. The formal validation artifact
+records both frozen and current hashes for this disclosed source drift.
+
+### M5-G0 commands and evidence
+
+Run the smoke path or a full reproduction from the repository root in the
+pinned WSL environment. Use a fresh output root so the checked-in formal
+evidence remains immutable:
+
+```bash
+export ACTIONSTREAM_OUTPUT_ROOT="$PWD/reproduced_outputs"
+export ACTIONSTREAM_VENV="$HOME/.venvs/actionstream"
+
+bash scripts/run_m5_g0_smoke.sh
+bash scripts/run_m5_g0.sh
+```
+
+The full driver performs task/magnitude calibration in the frozen order and
+automatically stops before no-shift/sealed evaluation when calibration is a
+no-go. It writes transactional per-episode bundles, JSONL aggregates,
+run/attempt manifests, exact request/action/event provenance, source hashes,
+formal validation, statistics, Markdown, and PNG/PDF figures.
+
+- [Task/entity and perturbation audit](outputs/m5_g0/audit/task_entity_audit.md)
+- [Frozen protocol decision](outputs/m5_g0/protocol/frozen_experiment.json)
+- [Formal M5-G0 report](outputs/m5_g0/report/m5_g0_report.md)
+- [Machine-readable aggregate](outputs/m5_g0/report/aggregate_summary.json)
+- [Acceptance decision](outputs/m5_g0/report/acceptance.json)
+- [Formal evidence validation](outputs/m5_g0/report/formal_validation.json)
+- Calibration raw evidence:
+  `outputs/m5_g0/calibration/task{0,2}/magnitude{50,30}/`
+
+## M6-G0 LeRobot async-runtime audit
+
+M6-G0 is a CPU-only, synthetic pre-hardware gate. It compares the fixed
+ActionStream stale-prefix rule with every registered ACT-compatible
+aggregation behavior in official LeRobot at commit
+`62600065cdb349c1e41b0403c511f12ebfa686eb` (source/package version `0.6.1`).
+The adapter calls the frozen upstream `PolicyServer._time_action_chunk` and
+`RobotClient._aggregate_action_queues` methods directly. It does not train a
+policy, use a GPU, or control a robot.
+
+Clone the exact upstream source into the ignored audit directory and install it
+in an isolated environment. Use a fully resolved LeRobot environment for a
+fresh physical deployment; the checked-in
+[`pinned_upstream.json`](outputs/m6_g0/upstream/pinned_upstream.json) records
+the exact CPU-only environment used for the formal source/queue audit.
+
+```powershell
+git clone https://github.com/huggingface/lerobot.git .external/lerobot
+git -C .external/lerobot checkout 62600065cdb349c1e41b0403c511f12ebfa686eb
+
+py -3.12 -m venv .external/m6_venv
+.\.external\m6_venv\Scripts\python.exe -m pip install --upgrade pip
+.\.external\m6_venv\Scripts\python.exe -m pip install `
+  torch==2.7.1 torchvision==0.22.1 `
+  --index-url https://download.pytorch.org/whl/cpu
+.\.external\m6_venv\Scripts\python.exe -m pip install `
+  -e .external/lerobot pytest matplotlib transformers grpcio protobuf
+
+$env:PYTHONPATH=(Resolve-Path src).Path
+.\.external\m6_venv\Scripts\python.exe -m pytest `
+  tests/test_m6_conformance.py tests/test_m6_report.py -q
+
+.\.external\m6_venv\Scripts\python.exe -m actionstream.m6_conformance `
+  --manifest configs/m6_g0.json `
+  --lerobot-root .external/lerobot `
+  --output-root outputs/m6_g0
+
+.\.external\m6_venv\Scripts\python.exe -m actionstream.m6_report `
+  --manifest configs/m6_g0.json `
+  --lerobot-root .external/lerobot `
+  --output-root outputs/m6_g0
+```
+
+The frozen matrix uses a 12-action horizon at 20 Hz, seven latency families,
+four deterministic traces for fixed cases, 50 seeded traces for bounded
+jitter, six runtimes, and identical request/chunk inputs. ActionStream removed
+all stale-prefix execution and improved temporal error, but its queue-underrun
+worsening reached 47.92 percentage points in the fully stale family and 29.17
+points in the out-of-order family. This fails the predeclared 5-point gate, so
+the final M6-G0 classification is **NO-GO** and the recommended next step is
+**termination of this direction**.
+
+- [Paper-style M6-G0 report](outputs/m6_g0/report/m6_g0_report.md)
+- [Source-level semantic crosswalk](outputs/m6_g0/report/source_semantic_crosswalk.md)
+- [SO-101 + ACT portability audit](outputs/m6_g0/report/portability_audit.md)
+- [Frozen scenario](outputs/m6_g0/scenario/frozen_manifest.json)
+- [Aggregate metrics](outputs/m6_g0/metrics/aggregate_metrics.json)
+- [Machine-readable decision](outputs/m6_g0/decision.json)
+- [Formal artifact validation](outputs/m6_g0/report/report_validation.json)
+
+## Current LeRobot policy-driven Async/RTC evaluation
+
+The current policy-driven harness updates the synthetic M6 source audit to
+LeRobot `6adf51511b7625090eade8d82d9f61a1846ebe56` (source version `0.6.2`) and
+executes frozen policy checkpoints in LIBERO. It compares upstream
+`weighted_average`, upstream `latest_only`, ActionStream target-step alignment,
+and upstream RTC only when the loaded policy reports `supports_rtc()`. The
+protocol fixes 0/250/500/950 ms delivery delays and a seeded 500 +/- 250 ms
+jitter trace in
+[`current_lerobot_baselines.json`](configs/current_lerobot_baselines.json).
+
+Run a policy/runtime subset from a checkout of the pinned LeRobot source:
+
+```bash
+export PYTHONPATH="$PWD/src:/path/to/lerobot/src"
+export ACTIONSTREAM_SOURCE_COMMIT="$(git rev-parse HEAD)"
+
+python -m actionstream.current_baselines \
+  --lerobot-root /path/to/lerobot \
+  --output-dir outputs/current_lerobot_async_rtc/run \
+  --models xvla,smolvla \
+  --runtimes lerobot_weighted_average,lerobot_latest_only,actionstream_aligned,lerobot_rtc \
+  --profiles fixed_0000,fixed_0250,fixed_0500,fixed_0950,jitter_0500_pm0250 \
+  --task-ids 0 \
+  --episodes-per-task 3 \
+  --initial-state-indices 0,2,4 \
+  --episode-length 280 \
+  --capture
+
+python -m actionstream.current_results \
+  outputs/current_lerobot_async_rtc/run/episodes.jsonl \
+  --output-dir outputs/current_lerobot_async_rtc/report
+```
+
+The runner records environment-ready 7D actions, request/inference/delivery
+timestamps, queue merges, obsolete-prefix drops, holds, discontinuity and
+acceleration metrics, peak CUDA memory, hashes, and a first paired video per
+condition. Analysis is episode-paired within each policy; it never treats
+individual action frames as independent samples or ranks policy quality across
+different action representations. Short smoke truncations establish only
+compatibility. Native Isaac claims require a separate completed native receipt,
+fair same-reset pair, replay-valid traces, and live observation-conditioned
+policy video.
+
+### Learned-policy native Isaac development bridge
+
+`actionstream.learned_isaac_smoke` keeps the already-provisioned Isaac and
+LeRobot environments separate. A persistent LeRobot worker loads the pinned
+X-VLA checkpoint and its official LIBERO processors; the Isaac process owns the
+official Franka scene, measured state, safety bounds, viewport, and command
+execution. The bridge records both policy-space chunks and mapped Isaac
+commands so a coordinate adapter cannot hide or rewrite a failed policy output.
+
+```bash
+export PYTHONPATH="$PWD/src:$PWD/ros2_ws/src/action_stream_isaac:$PWD/ros2_ws/src/action_stream_policy"
+export HF_HOME=/path/to/hf-cache
+export MUJOCO_GL=egl
+export PYOPENGL_PLATFORM=egl
+
+/path/to/isaac-python -m actionstream.learned_isaac_smoke \
+  --protocol configs/current_lerobot_baselines.json \
+  --scene-protocol configs/m8_g0.json \
+  --policy-python /path/to/lerobot-venv/bin/python \
+  --output-directory /outside/git/learned_isaac_dev_smoke \
+  --seed 2026081601 \
+  --control-steps 20 \
+  --request-interval-steps 10
+```
+
+This command is deliberately a development smoke, not a task-success or paired
+benchmark. Its current adapter uses one development reset calibration, fixes a
+safe downward wrist orientation, and inverts the simulator-specific gripper
+sign. With `--libero-object-task0-scene`, camera 2 is a separately rendered,
+EEF-tracked wrist view whose audited LIBERO mount and Isaac mesh-clearance
+compensation are recorded independently. The smoke must pass learned
+GPU inference, finite varying actions, native Franka movement, collision checks,
+and playable video before a multi-task protocol is frozen. Formal evidence must
+freeze task assets and coordinate calibration, and then run
+sync/latest-only/upstream Async/upstream RTC where supported and
+ActionStream aligned on disjoint initial states and network traces.
+
+The 2026-08-15 task-0 decision matrix contains 105 completed paired episodes,
+105 verified traces, 19,512 finite 7D actions, and 35 locally decoded videos.
+For X-VLA at 950 ms, aligned matched `latest_only` success (3/3) while finishing
+36.3 paired steps earlier on average; at zero delay it was 10.3 steps slower.
+For SmolVLA, RTC was 3/3 at zero delay but 0/3 at 500 ms, 950 ms, and jitter.
+These are compact three-pair findings, not cross-task generalization.
+
+- [Paired condition/effect table](outputs/current_lerobot_async_rtc/report/paired_analysis.md)
+- [Machine-readable paired analysis](outputs/current_lerobot_async_rtc/report/paired_analysis.json)
+- [Findings and limitations](outputs/current_lerobot_async_rtc/report/FINDINGS.md)
+- [Raw episode table](outputs/current_lerobot_async_rtc/report/raw_episodes.csv)
+- [Receipt and artifact validation](outputs/current_lerobot_async_rtc/report/receipt_validation.json)
+- [Native Isaac blocked-attempt summary](outputs/m8_g0/baseline_gate/candidate_0/native_run_logs/20260815T084328618745216Z/attempt_summary.md)

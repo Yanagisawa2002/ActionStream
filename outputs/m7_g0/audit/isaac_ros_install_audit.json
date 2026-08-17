@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-08-03T04:33:00Z",
+  "supported_path": {
+    "workspace_repository": "https://github.com/isaac-sim/IsaacSim-ros_workspaces.git",
+    "workspace_commit": "dd3eeede7912755996a18f4884285d9f50843f79",
+    "workspace": "jazzy_ws",
+    "pixi": "0.75.0",
+    "ros_distribution": "jazzy",
+    "isaac_sim_distribution": "6.0.1.0",
+    "python": "3.12.13",
+    "rmw": "rmw_zenoh_cpp"
+  },
+  "compatibility_check": {
+    "application": "Isaac Sim Compatibility Checker App 6.0.1",
+    "result": "PASSED",
+    "operating_system": "Windows 11 Home v25H2",
+    "operating_system_supported": true,
+    "gpu": "NVIDIA GeForce RTX 4090",
+    "gpu_supported": true,
+    "gpu_vram_gb": 25.76,
+    "gpu_vram_rating": "good",
+    "driver_installed": "591.86",
+    "driver_minimum_reported_by_checker": "537.58",
+    "driver_supported": true,
+    "cpu": "Intel(R) Core(TM) Ultra 7 265K",
+    "cpu_cores": 20,
+    "ram_gb": 33.68,
+    "source_log": "C:/Users/cgliu/.nvidia-omniverse/logs/Kit/Isaac-Sim_Compatibility_Checker/6.0/kit_20260803_123254.log"
+  },
+  "headless_smoke": {
+    "result": "PASSED",
+    "marker": "ACTIONSTREAM_ISAAC_HEADLESS_STARTED",
+    "exit_code": 0,
+    "startup_seconds": 185.143,
+    "renderer": "Vulkan",
+    "warp": "1.13.0",
+    "warp_cuda_toolkit": "12.9",
+    "source_log": "C:/IsaacSim-ros_workspaces/jazzy_ws/.pixi/envs/default/Lib/site-packages/isaacsim/kit/logs/Kit/Isaac-Sim Python/6.0/kit_20260803_123846.log"
+  },
+  "notes": [
+    "The initial audit recorded no pre-existing ROS 2 or Isaac Sim installation; this file records the subsequent supported installation attempt.",
+    "The runtime checker is authoritative for this installed build and reports the 591.86 driver as supported even though the online requirements table inspected before installation listed a newer recommended driver.",
+    "The unrelated pre-existing GPU container was not stopped or modified."
+  ]
+}

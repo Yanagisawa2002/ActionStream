@@ -1,0 +1,5 @@
+suite,profile,runtime,steps,classification,reserve_spend_steps,deadline_spend_steps,progress_spend_steps,reserve_hold_steps,preserved_queue_rejections,latest_success,latest_steps,aligned_success,aligned_steps,causal_status
+object,high_jitter_v5,actionstream_adaptive,300,timeout_after_frequent_deadline_spending,26,25,1,43,0,True,143,True,124,trace-supported classification; causal threshold not identified from one reset
+spatial,outage_v5_requests_03_08,actionstream_adaptive,300,timeout_despite_bounded_outage_reserve,8,8,0,35,6,True,170,True,149,trace-supported classification; causal threshold not identified from one reset
+goal,low_jitter_v5,actionstream_adaptive,300,paired_aligned_family_failure_under_low_jitter,1,1,0,22,6,True,91,False,300,trace-supported classification; causal threshold not identified from one reset
+goal,outage_v5_requests_03_08,actionstream_adaptive,300,timeout_despite_bounded_outage_reserve,12,12,0,57,10,True,127,True,124,trace-supported classification; causal threshold not identified from one reset

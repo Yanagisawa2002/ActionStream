@@ -1,0 +1,483 @@
+{
+  "artifact_kind": "posthoc_frozen_holdout_presentation",
+  "episode_count": 420,
+  "failure_classification": {
+    "raw_completion_reasons": {
+      "destination_switch_recovery_timeout": 3,
+      "failed_approach": 126,
+      "grasp_miss": 2,
+      "joint_or_workspace_limit": 24,
+      "switch_precondition_missed": 7,
+      "unstable_grasp": 81
+    },
+    "rows": [
+      {
+        "completion_reason": "joint_or_workspace_limit",
+        "count": 4,
+        "failure_category": "safety/workspace limit",
+        "method": "Sync hold",
+        "profile": "P1 fixed 850 ms",
+        "profile_id": "profile_1_fixed",
+        "rate_of_failures": 0.06779661016949153,
+        "rate_of_trials": 0.06666666666666667,
+        "strategy": "sync_hold"
+      },
+      {
+        "completion_reason": "unstable_grasp",
+        "count": 55,
+        "failure_category": "grasp instability",
+        "method": "Sync hold",
+        "profile": "P1 fixed 850 ms",
+        "profile_id": "profile_1_fixed",
+        "rate_of_failures": 0.9322033898305084,
+        "rate_of_trials": 0.9166666666666666,
+        "strategy": "sync_hold"
+      },
+      {
+        "completion_reason": "failed_approach",
+        "count": 60,
+        "failure_category": "pre-grasp control",
+        "method": "Naive async",
+        "profile": "P1 fixed 850 ms",
+        "profile_id": "profile_1_fixed",
+        "rate_of_failures": 1.0,
+        "rate_of_trials": 1.0,
+        "strategy": "naive_async"
+      },
+      {
+        "completion_reason": "joint_or_workspace_limit",
+        "count": 11,
+        "failure_category": "safety/workspace limit",
+        "method": "ActionStream aligned",
+        "profile": "P1 fixed 850 ms",
+        "profile_id": "profile_1_fixed",
+        "rate_of_failures": 1.0,
+        "rate_of_trials": 0.18333333333333332,
+        "strategy": "aligned_async"
+      },
+      {
+        "completion_reason": "destination_switch_recovery_timeout",
+        "count": 3,
+        "failure_category": "switch recovery timeout",
+        "method": "Sync hold",
+        "profile": "P2 850 ms + jitter/faults",
+        "profile_id": "profile_2_faults",
+        "rate_of_failures": 0.06666666666666667,
+        "rate_of_trials": 0.05,
+        "strategy": "sync_hold"
+      },
+      {
+        "completion_reason": "failed_approach",
+        "count": 11,
+        "failure_category": "pre-grasp control",
+        "method": "Sync hold",
+        "profile": "P2 850 ms + jitter/faults",
+        "profile_id": "profile_2_faults",
+        "rate_of_failures": 0.24444444444444444,
+        "rate_of_trials": 0.18333333333333332,
+        "strategy": "sync_hold"
+      },
+      {
+        "completion_reason": "grasp_miss",
+        "count": 2,
+        "failure_category": "grasp acquisition miss",
+        "method": "Sync hold",
+        "profile": "P2 850 ms + jitter/faults",
+        "profile_id": "profile_2_faults",
+        "rate_of_failures": 0.044444444444444446,
+        "rate_of_trials": 0.03333333333333333,
+        "strategy": "sync_hold"
+      },
+      {
+        "completion_reason": "joint_or_workspace_limit",
+        "count": 3,
+        "failure_category": "safety/workspace limit",
+        "method": "Sync hold",
+        "profile": "P2 850 ms + jitter/faults",
+        "profile_id": "profile_2_faults",
+        "rate_of_failures": 0.06666666666666667,
+        "rate_of_trials": 0.05,
+        "strategy": "sync_hold"
+      },
+      {
+        "completion_reason": "switch_precondition_missed",
+        "count": 2,
+        "failure_category": "switch timing/precondition",
+        "method": "Sync hold",
+        "profile": "P2 850 ms + jitter/faults",
+        "profile_id": "profile_2_faults",
+        "rate_of_failures": 0.044444444444444446,
+        "rate_of_trials": 0.03333333333333333,
+        "strategy": "sync_hold"
+      },
+      {
+        "completion_reason": "unstable_grasp",
+        "count": 24,
+        "failure_category": "grasp instability",
+        "method": "Sync hold",
+        "profile": "P2 850 ms + jitter/faults",
+        "profile_id": "profile_2_faults",
+        "rate_of_failures": 0.5333333333333333,
+        "rate_of_trials": 0.4,
+        "strategy": "sync_hold"
+      },
+      {
+        "completion_reason": "failed_approach",
+        "count": 55,
+        "failure_category": "pre-grasp control",
+        "method": "Naive async",
+        "profile": "P2 850 ms + jitter/faults",
+        "profile_id": "profile_2_faults",
+        "rate_of_failures": 0.9166666666666666,
+        "rate_of_trials": 0.9166666666666666,
+        "strategy": "naive_async"
+      },
+      {
+        "completion_reason": "switch_precondition_missed",
+        "count": 5,
+        "failure_category": "switch timing/precondition",
+        "method": "Naive async",
+        "profile": "P2 850 ms + jitter/faults",
+        "profile_id": "profile_2_faults",
+        "rate_of_failures": 0.08333333333333333,
+        "rate_of_trials": 0.08333333333333333,
+        "strategy": "naive_async"
+      },
+      {
+        "completion_reason": "joint_or_workspace_limit",
+        "count": 6,
+        "failure_category": "safety/workspace limit",
+        "method": "ActionStream aligned",
+        "profile": "P2 850 ms + jitter/faults",
+        "profile_id": "profile_2_faults",
+        "rate_of_failures": 0.75,
+        "rate_of_trials": 0.1,
+        "strategy": "aligned_async"
+      },
+      {
+        "completion_reason": "unstable_grasp",
+        "count": 2,
+        "failure_category": "grasp instability",
+        "method": "ActionStream aligned",
+        "profile": "P2 850 ms + jitter/faults",
+        "profile_id": "profile_2_faults",
+        "rate_of_failures": 0.25,
+        "rate_of_trials": 0.03333333333333333,
+        "strategy": "aligned_async"
+      }
+    ],
+    "taxonomy_totals": {
+      "grasp acquisition miss": 2,
+      "grasp instability": 81,
+      "pre-grasp control": 126,
+      "safety/workspace limit": 24,
+      "switch recovery timeout": 3,
+      "switch timing/precondition": 7
+    }
+  },
+  "groups": [
+    {
+      "collisions": 0,
+      "expired_actions_executed": 0,
+      "expired_actions_removed": 1346,
+      "failure_count": 0,
+      "failure_reasons": {},
+      "grasp_successes": 60,
+      "mean_action_age_steps": 6.455136721451557,
+      "mean_inference_latency_ms": 15.741484077906344,
+      "mean_obsolete_destination_command_steps": 10.4,
+      "median_episode_p50_inference_latency_ms": 15.8678675,
+      "median_episode_p95_inference_latency_ms": 16.3621036,
+      "median_penalized_recovery_latency_steps": 2.0,
+      "median_wall_clock_seconds": 18.6356983205,
+      "method": "Sync hold",
+      "profile": "P0 sanity",
+      "profile_id": "profile_0_sanity",
+      "recovery_observed": 60,
+      "relative_success_improvement_vs_naive": null,
+      "strategy": "sync_hold",
+      "success_delta_vs_naive_pp": null,
+      "success_rate": 1.0,
+      "success_wilson_95_ci": [
+        0.93982814785791,
+        0.9999999999999998
+      ],
+      "successes": 60,
+      "timeouts": 0,
+      "trials": 60
+    },
+    {
+      "collisions": 0,
+      "expired_actions_executed": 0,
+      "expired_actions_removed": 7096,
+      "failure_count": 59,
+      "failure_reasons": {
+        "joint_or_workspace_limit": 4,
+        "unstable_grasp": 55
+      },
+      "grasp_successes": 60,
+      "mean_action_age_steps": 16.960921104248033,
+      "mean_inference_latency_ms": 881.7742747123585,
+      "mean_obsolete_destination_command_steps": 2.4,
+      "median_episode_p50_inference_latency_ms": 877.9152325,
+      "median_episode_p95_inference_latency_ms": 898.453292175,
+      "median_penalized_recovery_latency_steps": 13.0,
+      "median_wall_clock_seconds": 16.146826041,
+      "method": "Sync hold",
+      "profile": "P1 fixed 850 ms",
+      "profile_id": "profile_1_fixed",
+      "recovery_observed": 60,
+      "relative_success_improvement_vs_naive": null,
+      "strategy": "sync_hold",
+      "success_delta_vs_naive_pp": 1.6666666666666667,
+      "success_rate": 0.016666666666666666,
+      "success_wilson_95_ci": [
+        0.0029481597947862495,
+        0.08855129727590061
+      ],
+      "successes": 1,
+      "timeouts": 0,
+      "trials": 60
+    },
+    {
+      "collisions": 0,
+      "expired_actions_executed": 4244,
+      "expired_actions_removed": 0,
+      "failure_count": 60,
+      "failure_reasons": {
+        "failed_approach": 60
+      },
+      "grasp_successes": 0,
+      "mean_action_age_steps": 40.17442991281019,
+      "mean_inference_latency_ms": 905.7399453854166,
+      "mean_obsolete_destination_command_steps": 0.0,
+      "median_episode_p50_inference_latency_ms": 895.4517020000001,
+      "median_episode_p95_inference_latency_ms": 907.7056149,
+      "median_penalized_recovery_latency_steps": 221.0,
+      "median_wall_clock_seconds": 6.71705859,
+      "method": "Naive async",
+      "profile": "P1 fixed 850 ms",
+      "profile_id": "profile_1_fixed",
+      "recovery_observed": 0,
+      "relative_success_improvement_vs_naive": null,
+      "strategy": "naive_async",
+      "success_delta_vs_naive_pp": 0.0,
+      "success_rate": 0.0,
+      "success_wilson_95_ci": [
+        0.0,
+        0.06017185214208986
+      ],
+      "successes": 0,
+      "timeouts": 0,
+      "trials": 60
+    },
+    {
+      "collisions": 0,
+      "expired_actions_executed": 0,
+      "expired_actions_removed": 14321,
+      "failure_count": 11,
+      "failure_reasons": {
+        "joint_or_workspace_limit": 11
+      },
+      "grasp_successes": 60,
+      "mean_action_age_steps": 17.36556442101652,
+      "mean_inference_latency_ms": 893.8441283803679,
+      "mean_obsolete_destination_command_steps": 5.316666666666666,
+      "median_episode_p50_inference_latency_ms": 894.50942225,
+      "median_episode_p95_inference_latency_ms": 902.8399453750001,
+      "median_penalized_recovery_latency_steps": 13.0,
+      "median_wall_clock_seconds": 18.434545635,
+      "method": "ActionStream aligned",
+      "profile": "P1 fixed 850 ms",
+      "profile_id": "profile_1_fixed",
+      "recovery_observed": 60,
+      "relative_success_improvement_vs_naive": null,
+      "strategy": "aligned_async",
+      "success_delta_vs_naive_pp": 81.66666666666667,
+      "success_rate": 0.8166666666666667,
+      "success_wilson_95_ci": [
+        0.7008024625353194,
+        0.8944220311080237
+      ],
+      "successes": 49,
+      "timeouts": 0,
+      "trials": 60
+    },
+    {
+      "collisions": 0,
+      "expired_actions_executed": 0,
+      "expired_actions_removed": 6932,
+      "failure_count": 45,
+      "failure_reasons": {
+        "destination_switch_recovery_timeout": 3,
+        "failed_approach": 11,
+        "grasp_miss": 2,
+        "joint_or_workspace_limit": 3,
+        "switch_precondition_missed": 2,
+        "unstable_grasp": 24
+      },
+      "grasp_successes": 45,
+      "mean_action_age_steps": 18.129474270498026,
+      "mean_inference_latency_ms": 1008.9254253283045,
+      "mean_obsolete_destination_command_steps": 2.3666666666666667,
+      "median_episode_p50_inference_latency_ms": 925.73723375,
+      "median_episode_p95_inference_latency_ms": 1379.9379978999996,
+      "median_penalized_recovery_latency_steps": 14.0,
+      "median_wall_clock_seconds": 17.06270983,
+      "method": "Sync hold",
+      "profile": "P2 850 ms + jitter/faults",
+      "profile_id": "profile_2_faults",
+      "recovery_observed": 44,
+      "relative_success_improvement_vs_naive": null,
+      "strategy": "sync_hold",
+      "success_delta_vs_naive_pp": 25.0,
+      "success_rate": 0.25,
+      "success_wilson_95_ci": [
+        0.15776522530056675,
+        0.37232070077047824
+      ],
+      "successes": 15,
+      "timeouts": 3,
+      "trials": 60
+    },
+    {
+      "collisions": 0,
+      "expired_actions_executed": 4231,
+      "expired_actions_removed": 0,
+      "failure_count": 60,
+      "failure_reasons": {
+        "failed_approach": 55,
+        "switch_precondition_missed": 5
+      },
+      "grasp_successes": 0,
+      "mean_action_age_steps": 40.62969722584315,
+      "mean_inference_latency_ms": 986.6688527147884,
+      "mean_obsolete_destination_command_steps": 0.0,
+      "median_episode_p50_inference_latency_ms": 918.7692930000001,
+      "median_episode_p95_inference_latency_ms": 1454.5398854499997,
+      "median_penalized_recovery_latency_steps": 221.0,
+      "median_wall_clock_seconds": 6.810949016,
+      "method": "Naive async",
+      "profile": "P2 850 ms + jitter/faults",
+      "profile_id": "profile_2_faults",
+      "recovery_observed": 0,
+      "relative_success_improvement_vs_naive": null,
+      "strategy": "naive_async",
+      "success_delta_vs_naive_pp": 0.0,
+      "success_rate": 0.0,
+      "success_wilson_95_ci": [
+        0.0,
+        0.06017185214208986
+      ],
+      "successes": 0,
+      "timeouts": 0,
+      "trials": 60
+    },
+    {
+      "collisions": 0,
+      "expired_actions_executed": 0,
+      "expired_actions_removed": 14181,
+      "failure_count": 8,
+      "failure_reasons": {
+        "joint_or_workspace_limit": 6,
+        "unstable_grasp": 2
+      },
+      "grasp_successes": 60,
+      "mean_action_age_steps": 17.972086415588116,
+      "mean_inference_latency_ms": 975.8745968455864,
+      "mean_obsolete_destination_command_steps": 6.6,
+      "median_episode_p50_inference_latency_ms": 912.84529575,
+      "median_episode_p95_inference_latency_ms": 1654.8778521499999,
+      "median_penalized_recovery_latency_steps": 12.0,
+      "median_wall_clock_seconds": 19.027201279,
+      "method": "ActionStream aligned",
+      "profile": "P2 850 ms + jitter/faults",
+      "profile_id": "profile_2_faults",
+      "recovery_observed": 60,
+      "relative_success_improvement_vs_naive": null,
+      "strategy": "aligned_async",
+      "success_delta_vs_naive_pp": 86.66666666666667,
+      "success_rate": 0.8666666666666667,
+      "success_wilson_95_ci": [
+        0.7583484032350039,
+        0.9308589051941303
+      ],
+      "successes": 52,
+      "timeouts": 0,
+      "trials": 60
+    }
+  ],
+  "interpretation_boundary": {
+    "latency_plot_is_operating_point_not_continuous_sweep": true,
+    "learned_policy": false,
+    "network_profile_count": 3,
+    "real_robot": false,
+    "task_family": "dynamic_target_pick_place_v1",
+    "task_family_count": 1,
+    "unseen_scenario_seed_count": 60
+  },
+  "milestone": "M8-G0",
+  "official_classification": "GO",
+  "official_primary_conditions": {
+    "aligned_forbidden_execution_count_is_zero": true,
+    "aligned_minus_naive_success_at_least_15pp": true,
+    "frozen_protocol_validated_without_post_holdout_change": true,
+    "native_isaac_evidence_only": true,
+    "paired_95_ci_excludes_zero": true,
+    "paired_fairness_passes": true,
+    "profile_0_ceiling_at_least_90pct": true,
+    "replay_passes_every_episode": true
+  },
+  "official_primary_go_passed": true,
+  "official_strong_conditions": {
+    "aligned_materially_fewer_obsolete_steps": false,
+    "aligned_recovery_at_least_20pct_lower_than_naive": true,
+    "aligned_wall_at_least_15pct_lower_than_sync": false,
+    "aligned_within_5pp_of_sync": true
+  },
+  "official_strong_go_passed": false,
+  "paired_block_count": 180,
+  "paired_comparisons": {
+    "profile_1_fixed": {
+      "aligned_minus_naive_percentage_points": 81.66666666666667,
+      "paired_bootstrap_95_ci_percentage_points": [
+        71.66666666666667,
+        90.0
+      ],
+      "paired_trial_count": 60
+    },
+    "profile_2_faults": {
+      "aligned_minus_naive_percentage_points": 86.66666666666667,
+      "paired_bootstrap_95_ci_percentage_points": [
+        76.66666666666667,
+        95.0
+      ],
+      "paired_trial_count": 60
+    }
+  },
+  "provenance": {
+    "analysis": {
+      "path": "outputs/m8_g0/holdout_v3/analysis.json",
+      "sha256": "ed5d28baa3f92a2f030337bd66523aeb98f1be3e44ee07623dcb5099afb14bab"
+    },
+    "freeze_sha256": "4d63b6b6f2af1458c063ed52eb73e1a2bcb82f412bb0a9b19d352659bbca923f",
+    "matrix": {
+      "path": "outputs/m8_g0/holdout_v3/matrix.json",
+      "sha256": "384be6047398c58b2b871b313b2184dae7917d715f7e43e5e688748610c22562"
+    },
+    "replay": {
+      "path": "outputs/m8_g0/holdout_v3/replay_validation.json",
+      "sha256": "2c4bb98c77f145d998ffa9c259bb7bc9f2e368382ab3edf605b5c57776116695"
+    },
+    "summary_file_count": 420
+  },
+  "schema_version": 1,
+  "seed_count": 60,
+  "validation": {
+    "fairness_passed": true,
+    "freeze_validation_passed": true,
+    "profile_validation_passed": true,
+    "provenance_validation_passed": true,
+    "seed_validation_passed": true
+  }
+}

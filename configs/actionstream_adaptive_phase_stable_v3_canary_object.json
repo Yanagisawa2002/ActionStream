@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "experiment_id": "actionstream_adaptive_phase_stable_v3_canary_object_20260817",
+  "frozen_utc": "2026-08-17T13:35:00Z",
+  "source": {"repository_url": "https://github.com/huggingface/lerobot.git", "commit": "6adf51511b7625090eade8d82d9f61a1846ebe56", "source_version": "0.6.2"},
+  "adaptive_runtime": {"selector_protocol_path": "configs/actionstream_adaptive_phase_stable_v3_selector.json", "selector_protocol_sha256": "c824762ed9b05d37369181812795313c870b3bf8f5714d4c4ccd98e221021c98"},
+  "environment": {"type": "libero", "suite": "libero_object", "task_ids": [5], "episode_length": 300, "control_frequency_hz": 20.0, "initial_state_indices": [30], "base_seed": 2026081730},
+  "models": [{"key": "xvla", "model_id": "lerobot/xvla-libero", "revision": "12e8783e996944f5c97e490d37d4c145484ed70a", "control_mode": "absolute", "chunk_size": 30, "request_interval_steps": 10, "rtc_expected": false, "required": true, "rename_map": {}}],
+  "runtimes": ["sync_hold", "lerobot_latest_only", "actionstream_aligned", "actionstream_adaptive"],
+  "delay_profiles": [
+    {"key": "fixed_0000", "kind": "fixed", "milliseconds": 0},
+    {"key": "fixed_0950", "kind": "fixed", "milliseconds": 950},
+    {"key": "phase_outage_requests_05_13", "kind": "scripted_burst", "base_milliseconds": 350, "burst_milliseconds": 1700, "burst_ordinals": [5, 13], "trace_length": 2048}
+  ],
+  "compact_matrix": {"episodes_per_task": 1, "paired": true, "reuse_delay_trace_across_runtimes": true},
+  "evidence_boundary": {"status": "development_canary_phase_stable_v3", "formal_holdout": false, "v2_holdout_consumed": true, "threshold_tuning_after_first_row": false}
+}

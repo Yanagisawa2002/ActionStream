@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "milestone": "M7-G0",
+  "profile": {
+    "profile_id": "profile_b",
+    "base_latency_ms": 900,
+    "jitter_ms": 250,
+    "drop_probability": 0.05,
+    "extra_delay_probability": 0.12,
+    "extra_delay_ms": 1000,
+    "duplicate_probability": 0.02,
+    "communication_pause_probability": 0.05,
+    "communication_pause_ms": 300,
+    "frozen": true
+  }
+}

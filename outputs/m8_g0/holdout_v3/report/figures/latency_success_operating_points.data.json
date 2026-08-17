@@ -1,0 +1,109 @@
+{
+  "artifact_kind": "m8_latency_success_operating_points",
+  "causal_boundary": "P0/P1/P2 differ in both latency and fault regime; this is not a continuous causal sweep",
+  "rows": [
+    {
+      "profile_id": "profile_0_sanity",
+      "profile_short": "P0",
+      "strategy": "sync_hold",
+      "success_rate": 1.0,
+      "success_wilson_95_ci": [
+        0.93982814785791,
+        0.9999999999999998
+      ],
+      "successes": 60,
+      "trials": 60,
+      "x_latency_p50_ms": 15.8678675,
+      "x_latency_p95_ms": 16.3621036
+    },
+    {
+      "profile_id": "profile_1_fixed",
+      "profile_short": "P1",
+      "strategy": "sync_hold",
+      "success_rate": 0.016666666666666666,
+      "success_wilson_95_ci": [
+        0.0029481597947862495,
+        0.08855129727590061
+      ],
+      "successes": 1,
+      "trials": 60,
+      "x_latency_p50_ms": 877.9152325,
+      "x_latency_p95_ms": 898.453292175
+    },
+    {
+      "profile_id": "profile_1_fixed",
+      "profile_short": "P1",
+      "strategy": "naive_async",
+      "success_rate": 0.0,
+      "success_wilson_95_ci": [
+        0.0,
+        0.06017185214208986
+      ],
+      "successes": 0,
+      "trials": 60,
+      "x_latency_p50_ms": 895.4517020000001,
+      "x_latency_p95_ms": 907.7056149
+    },
+    {
+      "profile_id": "profile_1_fixed",
+      "profile_short": "P1",
+      "strategy": "aligned_async",
+      "success_rate": 0.8166666666666667,
+      "success_wilson_95_ci": [
+        0.7008024625353194,
+        0.8944220311080237
+      ],
+      "successes": 49,
+      "trials": 60,
+      "x_latency_p50_ms": 894.50942225,
+      "x_latency_p95_ms": 902.8399453750001
+    },
+    {
+      "profile_id": "profile_2_faults",
+      "profile_short": "P2",
+      "strategy": "sync_hold",
+      "success_rate": 0.25,
+      "success_wilson_95_ci": [
+        0.15776522530056675,
+        0.37232070077047824
+      ],
+      "successes": 15,
+      "trials": 60,
+      "x_latency_p50_ms": 925.73723375,
+      "x_latency_p95_ms": 1379.9379978999996
+    },
+    {
+      "profile_id": "profile_2_faults",
+      "profile_short": "P2",
+      "strategy": "naive_async",
+      "success_rate": 0.0,
+      "success_wilson_95_ci": [
+        0.0,
+        0.06017185214208986
+      ],
+      "successes": 0,
+      "trials": 60,
+      "x_latency_p50_ms": 918.7692930000001,
+      "x_latency_p95_ms": 1454.5398854499997
+    },
+    {
+      "profile_id": "profile_2_faults",
+      "profile_short": "P2",
+      "strategy": "aligned_async",
+      "success_rate": 0.8666666666666667,
+      "success_wilson_95_ci": [
+        0.7583484032350039,
+        0.9308589051941303
+      ],
+      "successes": 52,
+      "trials": 60,
+      "x_latency_p50_ms": 912.84529575,
+      "x_latency_p95_ms": 1654.8778521499999
+    }
+  ],
+  "schema_version": 1,
+  "source_summary": "outputs/m8_g0/holdout_v3/report/holdout_summary.json",
+  "source_summary_sha256": "36a1ef1724053b047ef0edee98ebf18b777d48e1d997c61cec7db955b0ae1fbf",
+  "x_definition": "median per-episode p50 inference latency; right error reaches median per-episode p95",
+  "y_definition": "task success rate with Wilson 95% confidence interval"
+}

@@ -1,0 +1,3294 @@
+{
+  "schema_version": "actionstream.m8.differential_trace.v1",
+  "milestone": "M8-G0",
+  "frozen": true,
+  "strategy": "aligned_async",
+  "action_dimension": 7,
+  "action_horizon": 30,
+  "control_frequency_hz": 20,
+  "command_token_contract": "Every command repeats one positive integer token in all seven dimensions; tokens are exact in float32 and float64.",
+  "normalization": {
+    "m4_row_to_target_step": "target_step = source_observation_step + row_index + 1",
+    "m4_current_step_to_actual_target": "actual_target_step = current_control_step + 1",
+    "reason_aliases": {
+      "old_episode": "previous_episode",
+      "fully_stale": "fully_expired",
+      "replaced": "aligned_atomic_rebuild",
+      "episode_ended": "episode_terminated"
+    }
+  },
+  "exact_common_domain": [
+    "single active episode with reset changing episode_id",
+    "constant generation within an episode",
+    "unique requests and at most one response per request",
+    "strictly increasing response freshness",
+    "dense ordered unique O+1 through O+H targets",
+    "finite nonzero exact-float32 seven-dimensional commands",
+    "valid provenance and timestamps",
+    "one command per sequential target after the startup chunk"
+  ],
+  "intentional_difference_codes": [
+    "terminal_lifecycle_owned_by_cpp",
+    "duplicate_response_detection",
+    "explicit_duplicate_target_first_wins",
+    "same_generation_freshness",
+    "generation_invalidation_absent_m4",
+    "stale_generation_rejection",
+    "explicit_target_sorting",
+    "observation_generation_validation"
+  ],
+  "events": [
+    {
+      "event_id": "c000",
+      "ordinal": 0,
+      "domain": "common",
+      "operation": "start",
+      "episode_id": "common_a",
+      "generation_id": 1,
+      "observation_step": 0,
+      "tick": 0,
+      "stamp": {
+        "sim_time_ns": 0,
+        "steady_time_ns": 1000,
+        "wall_time_ns": 10000
+      }
+    },
+    {
+      "event_id": "c001",
+      "ordinal": 1,
+      "domain": "common",
+      "operation": "observe",
+      "episode_id": "common_a",
+      "generation_id": 1,
+      "observation_step": 0,
+      "terminated": false,
+      "tick": 0,
+      "stamp": {
+        "sim_time_ns": 0,
+        "steady_time_ns": 1000,
+        "wall_time_ns": 10000
+      }
+    },
+    {
+      "event_id": "c002",
+      "ordinal": 2,
+      "domain": "common",
+      "operation": "request",
+      "episode_id": "common_a",
+      "request_id": 1,
+      "generation_id": 1,
+      "source_observation_step": 0,
+      "expected_horizon": 30,
+      "tick": 0,
+      "stamp": {
+        "sim_time_ns": 0,
+        "steady_time_ns": 1000,
+        "wall_time_ns": 10000
+      }
+    },
+    {
+      "event_id": "c003",
+      "ordinal": 3,
+      "domain": "extended",
+      "operation": "request",
+      "episode_id": "common_a",
+      "request_id": 3,
+      "generation_id": 1,
+      "source_observation_step": 0,
+      "expected_horizon": 30,
+      "tick": 0,
+      "stamp": {
+        "sim_time_ns": 0,
+        "steady_time_ns": 1000,
+        "wall_time_ns": 10000
+      }
+    },
+    {
+      "event_id": "c004",
+      "ordinal": 4,
+      "domain": "common",
+      "operation": "chunk",
+      "episode_id": "common_a",
+      "request_id": 1,
+      "generation_id": 1,
+      "source_observation_step": 0,
+      "actions": [
+        {
+          "target_step": 1,
+          "token": 1001
+        },
+        {
+          "target_step": 2,
+          "token": 1002
+        },
+        {
+          "target_step": 3,
+          "token": 1003
+        },
+        {
+          "target_step": 4,
+          "token": 1004
+        },
+        {
+          "target_step": 5,
+          "token": 1005
+        },
+        {
+          "target_step": 6,
+          "token": 1006
+        },
+        {
+          "target_step": 7,
+          "token": 1007
+        },
+        {
+          "target_step": 8,
+          "token": 1008
+        },
+        {
+          "target_step": 9,
+          "token": 1009
+        },
+        {
+          "target_step": 10,
+          "token": 1010
+        },
+        {
+          "target_step": 11,
+          "token": 1011
+        },
+        {
+          "target_step": 12,
+          "token": 1012
+        },
+        {
+          "target_step": 13,
+          "token": 1013
+        },
+        {
+          "target_step": 14,
+          "token": 1014
+        },
+        {
+          "target_step": 15,
+          "token": 1015
+        },
+        {
+          "target_step": 16,
+          "token": 1016
+        },
+        {
+          "target_step": 17,
+          "token": 1017
+        },
+        {
+          "target_step": 18,
+          "token": 1018
+        },
+        {
+          "target_step": 19,
+          "token": 1019
+        },
+        {
+          "target_step": 20,
+          "token": 1020
+        },
+        {
+          "target_step": 21,
+          "token": 1021
+        },
+        {
+          "target_step": 22,
+          "token": 1022
+        },
+        {
+          "target_step": 23,
+          "token": 1023
+        },
+        {
+          "target_step": 24,
+          "token": 1024
+        },
+        {
+          "target_step": 25,
+          "token": 1025
+        },
+        {
+          "target_step": 26,
+          "token": 1026
+        },
+        {
+          "target_step": 27,
+          "token": 1027
+        },
+        {
+          "target_step": 28,
+          "token": 1028
+        },
+        {
+          "target_step": 29,
+          "token": 1029
+        },
+        {
+          "target_step": 30,
+          "token": 1030
+        }
+      ],
+      "tick": 0,
+      "stamp": {
+        "sim_time_ns": 0,
+        "steady_time_ns": 1000,
+        "wall_time_ns": 10000
+      }
+    },
+    {
+      "event_id": "c005",
+      "ordinal": 5,
+      "domain": "common",
+      "operation": "command",
+      "episode_id": "common_a",
+      "actual_target_step": 1,
+      "tick": 1,
+      "stamp": {
+        "sim_time_ns": 50000000,
+        "steady_time_ns": 1001,
+        "wall_time_ns": 10001
+      }
+    },
+    {
+      "event_id": "c006",
+      "ordinal": 6,
+      "domain": "common",
+      "operation": "observe",
+      "episode_id": "common_a",
+      "generation_id": 1,
+      "observation_step": 1,
+      "terminated": false,
+      "tick": 1,
+      "stamp": {
+        "sim_time_ns": 50000000,
+        "steady_time_ns": 1001,
+        "wall_time_ns": 10001
+      }
+    },
+    {
+      "event_id": "c007",
+      "ordinal": 7,
+      "domain": "common",
+      "operation": "command",
+      "episode_id": "common_a",
+      "actual_target_step": 2,
+      "tick": 2,
+      "stamp": {
+        "sim_time_ns": 100000000,
+        "steady_time_ns": 1002,
+        "wall_time_ns": 10002
+      }
+    },
+    {
+      "event_id": "c008",
+      "ordinal": 8,
+      "domain": "common",
+      "operation": "observe",
+      "episode_id": "common_a",
+      "generation_id": 1,
+      "observation_step": 2,
+      "terminated": false,
+      "tick": 2,
+      "stamp": {
+        "sim_time_ns": 100000000,
+        "steady_time_ns": 1002,
+        "wall_time_ns": 10002
+      }
+    },
+    {
+      "event_id": "c009",
+      "ordinal": 9,
+      "domain": "common",
+      "operation": "command",
+      "episode_id": "common_a",
+      "actual_target_step": 3,
+      "tick": 3,
+      "stamp": {
+        "sim_time_ns": 150000000,
+        "steady_time_ns": 1003,
+        "wall_time_ns": 10003
+      }
+    },
+    {
+      "event_id": "c010",
+      "ordinal": 10,
+      "domain": "common",
+      "operation": "observe",
+      "episode_id": "common_a",
+      "generation_id": 1,
+      "observation_step": 3,
+      "terminated": false,
+      "tick": 3,
+      "stamp": {
+        "sim_time_ns": 150000000,
+        "steady_time_ns": 1003,
+        "wall_time_ns": 10003
+      }
+    },
+    {
+      "event_id": "c011",
+      "ordinal": 11,
+      "domain": "common",
+      "operation": "command",
+      "episode_id": "common_a",
+      "actual_target_step": 4,
+      "tick": 4,
+      "stamp": {
+        "sim_time_ns": 200000000,
+        "steady_time_ns": 1004,
+        "wall_time_ns": 10004
+      }
+    },
+    {
+      "event_id": "c012",
+      "ordinal": 12,
+      "domain": "common",
+      "operation": "observe",
+      "episode_id": "common_a",
+      "generation_id": 1,
+      "observation_step": 4,
+      "terminated": false,
+      "tick": 4,
+      "stamp": {
+        "sim_time_ns": 200000000,
+        "steady_time_ns": 1004,
+        "wall_time_ns": 10004
+      }
+    },
+    {
+      "event_id": "c013",
+      "ordinal": 13,
+      "domain": "common",
+      "operation": "command",
+      "episode_id": "common_a",
+      "actual_target_step": 5,
+      "tick": 5,
+      "stamp": {
+        "sim_time_ns": 250000000,
+        "steady_time_ns": 1005,
+        "wall_time_ns": 10005
+      }
+    },
+    {
+      "event_id": "c014",
+      "ordinal": 14,
+      "domain": "common",
+      "operation": "observe",
+      "episode_id": "common_a",
+      "generation_id": 1,
+      "observation_step": 5,
+      "terminated": false,
+      "tick": 5,
+      "stamp": {
+        "sim_time_ns": 250000000,
+        "steady_time_ns": 1005,
+        "wall_time_ns": 10005
+      }
+    },
+    {
+      "event_id": "c015",
+      "ordinal": 15,
+      "domain": "common",
+      "operation": "request",
+      "episode_id": "common_a",
+      "request_id": 2,
+      "generation_id": 1,
+      "source_observation_step": 5,
+      "expected_horizon": 30,
+      "tick": 5,
+      "stamp": {
+        "sim_time_ns": 250000000,
+        "steady_time_ns": 1005,
+        "wall_time_ns": 10005
+      }
+    },
+    {
+      "event_id": "c016",
+      "ordinal": 16,
+      "domain": "common",
+      "operation": "command",
+      "episode_id": "common_a",
+      "actual_target_step": 6,
+      "tick": 6,
+      "stamp": {
+        "sim_time_ns": 300000000,
+        "steady_time_ns": 1006,
+        "wall_time_ns": 10006
+      }
+    },
+    {
+      "event_id": "c017",
+      "ordinal": 17,
+      "domain": "common",
+      "operation": "observe",
+      "episode_id": "common_a",
+      "generation_id": 1,
+      "observation_step": 6,
+      "terminated": false,
+      "tick": 6,
+      "stamp": {
+        "sim_time_ns": 300000000,
+        "steady_time_ns": 1006,
+        "wall_time_ns": 10006
+      }
+    },
+    {
+      "event_id": "c018",
+      "ordinal": 18,
+      "domain": "common",
+      "operation": "command",
+      "episode_id": "common_a",
+      "actual_target_step": 7,
+      "tick": 7,
+      "stamp": {
+        "sim_time_ns": 350000000,
+        "steady_time_ns": 1007,
+        "wall_time_ns": 10007
+      }
+    },
+    {
+      "event_id": "c019",
+      "ordinal": 19,
+      "domain": "common",
+      "operation": "observe",
+      "episode_id": "common_a",
+      "generation_id": 1,
+      "observation_step": 7,
+      "terminated": false,
+      "tick": 7,
+      "stamp": {
+        "sim_time_ns": 350000000,
+        "steady_time_ns": 1007,
+        "wall_time_ns": 10007
+      }
+    },
+    {
+      "event_id": "c020",
+      "ordinal": 20,
+      "domain": "common",
+      "operation": "command",
+      "episode_id": "common_a",
+      "actual_target_step": 8,
+      "tick": 8,
+      "stamp": {
+        "sim_time_ns": 400000000,
+        "steady_time_ns": 1008,
+        "wall_time_ns": 10008
+      }
+    },
+    {
+      "event_id": "c021",
+      "ordinal": 21,
+      "domain": "common",
+      "operation": "observe",
+      "episode_id": "common_a",
+      "generation_id": 1,
+      "observation_step": 8,
+      "terminated": false,
+      "tick": 8,
+      "stamp": {
+        "sim_time_ns": 400000000,
+        "steady_time_ns": 1008,
+        "wall_time_ns": 10008
+      }
+    },
+    {
+      "event_id": "c022",
+      "ordinal": 22,
+      "domain": "common",
+      "operation": "command",
+      "episode_id": "common_a",
+      "actual_target_step": 9,
+      "tick": 9,
+      "stamp": {
+        "sim_time_ns": 450000000,
+        "steady_time_ns": 1009,
+        "wall_time_ns": 10009
+      }
+    },
+    {
+      "event_id": "c023",
+      "ordinal": 23,
+      "domain": "common",
+      "operation": "observe",
+      "episode_id": "common_a",
+      "generation_id": 1,
+      "observation_step": 9,
+      "terminated": false,
+      "tick": 9,
+      "stamp": {
+        "sim_time_ns": 450000000,
+        "steady_time_ns": 1009,
+        "wall_time_ns": 10009
+      }
+    },
+    {
+      "event_id": "c024",
+      "ordinal": 24,
+      "domain": "common",
+      "operation": "command",
+      "episode_id": "common_a",
+      "actual_target_step": 10,
+      "tick": 10,
+      "stamp": {
+        "sim_time_ns": 500000000,
+        "steady_time_ns": 1010,
+        "wall_time_ns": 10010
+      }
+    },
+    {
+      "event_id": "c025",
+      "ordinal": 25,
+      "domain": "common",
+      "operation": "observe",
+      "episode_id": "common_a",
+      "generation_id": 1,
+      "observation_step": 10,
+      "terminated": false,
+      "tick": 10,
+      "stamp": {
+        "sim_time_ns": 500000000,
+        "steady_time_ns": 1010,
+        "wall_time_ns": 10010
+      }
+    },
+    {
+      "event_id": "c026",
+      "ordinal": 26,
+      "domain": "common",
+      "operation": "chunk",
+      "episode_id": "common_a",
+      "request_id": 2,
+      "generation_id": 1,
+      "source_observation_step": 5,
+      "actions": [
+        {
+          "target_step": 6,
+          "token": 2006
+        },
+        {
+          "target_step": 7,
+          "token": 2007
+        },
+        {
+          "target_step": 8,
+          "token": 2008
+        },
+        {
+          "target_step": 9,
+          "token": 2009
+        },
+        {
+          "target_step": 10,
+          "token": 2010
+        },
+        {
+          "target_step": 11,
+          "token": 2011
+        },
+        {
+          "target_step": 12,
+          "token": 2012
+        },
+        {
+          "target_step": 13,
+          "token": 2013
+        },
+        {
+          "target_step": 14,
+          "token": 2014
+        },
+        {
+          "target_step": 15,
+          "token": 2015
+        },
+        {
+          "target_step": 16,
+          "token": 2016
+        },
+        {
+          "target_step": 17,
+          "token": 2017
+        },
+        {
+          "target_step": 18,
+          "token": 2018
+        },
+        {
+          "target_step": 19,
+          "token": 2019
+        },
+        {
+          "target_step": 20,
+          "token": 2020
+        },
+        {
+          "target_step": 21,
+          "token": 2021
+        },
+        {
+          "target_step": 22,
+          "token": 2022
+        },
+        {
+          "target_step": 23,
+          "token": 2023
+        },
+        {
+          "target_step": 24,
+          "token": 2024
+        },
+        {
+          "target_step": 25,
+          "token": 2025
+        },
+        {
+          "target_step": 26,
+          "token": 2026
+        },
+        {
+          "target_step": 27,
+          "token": 2027
+        },
+        {
+          "target_step": 28,
+          "token": 2028
+        },
+        {
+          "target_step": 29,
+          "token": 2029
+        },
+        {
+          "target_step": 30,
+          "token": 2030
+        },
+        {
+          "target_step": 31,
+          "token": 2031
+        },
+        {
+          "target_step": 32,
+          "token": 2032
+        },
+        {
+          "target_step": 33,
+          "token": 2033
+        },
+        {
+          "target_step": 34,
+          "token": 2034
+        },
+        {
+          "target_step": 35,
+          "token": 2035
+        }
+      ],
+      "tick": 10,
+      "stamp": {
+        "sim_time_ns": 500000000,
+        "steady_time_ns": 1010,
+        "wall_time_ns": 10010
+      }
+    },
+    {
+      "event_id": "c027",
+      "ordinal": 27,
+      "domain": "common",
+      "operation": "command",
+      "episode_id": "common_a",
+      "actual_target_step": 11,
+      "tick": 11,
+      "stamp": {
+        "sim_time_ns": 550000000,
+        "steady_time_ns": 1011,
+        "wall_time_ns": 10011
+      }
+    },
+    {
+      "event_id": "c028",
+      "ordinal": 28,
+      "domain": "common",
+      "operation": "observe",
+      "episode_id": "common_a",
+      "generation_id": 1,
+      "observation_step": 11,
+      "terminated": false,
+      "tick": 11,
+      "stamp": {
+        "sim_time_ns": 550000000,
+        "steady_time_ns": 1011,
+        "wall_time_ns": 10011
+      }
+    },
+    {
+      "event_id": "c029",
+      "ordinal": 29,
+      "domain": "common",
+      "operation": "observe",
+      "episode_id": "common_a",
+      "generation_id": 1,
+      "observation_step": 30,
+      "terminated": false,
+      "tick": 30,
+      "stamp": {
+        "sim_time_ns": 1500000000,
+        "steady_time_ns": 1030,
+        "wall_time_ns": 10030
+      }
+    },
+    {
+      "event_id": "c030",
+      "ordinal": 30,
+      "domain": "extended",
+      "expected_difference": "same_generation_freshness",
+      "operation": "chunk",
+      "episode_id": "common_a",
+      "request_id": 3,
+      "generation_id": 1,
+      "source_observation_step": 0,
+      "actions": [
+        {
+          "target_step": 1,
+          "token": 3001
+        },
+        {
+          "target_step": 2,
+          "token": 3002
+        },
+        {
+          "target_step": 3,
+          "token": 3003
+        },
+        {
+          "target_step": 4,
+          "token": 3004
+        },
+        {
+          "target_step": 5,
+          "token": 3005
+        },
+        {
+          "target_step": 6,
+          "token": 3006
+        },
+        {
+          "target_step": 7,
+          "token": 3007
+        },
+        {
+          "target_step": 8,
+          "token": 3008
+        },
+        {
+          "target_step": 9,
+          "token": 3009
+        },
+        {
+          "target_step": 10,
+          "token": 3010
+        },
+        {
+          "target_step": 11,
+          "token": 3011
+        },
+        {
+          "target_step": 12,
+          "token": 3012
+        },
+        {
+          "target_step": 13,
+          "token": 3013
+        },
+        {
+          "target_step": 14,
+          "token": 3014
+        },
+        {
+          "target_step": 15,
+          "token": 3015
+        },
+        {
+          "target_step": 16,
+          "token": 3016
+        },
+        {
+          "target_step": 17,
+          "token": 3017
+        },
+        {
+          "target_step": 18,
+          "token": 3018
+        },
+        {
+          "target_step": 19,
+          "token": 3019
+        },
+        {
+          "target_step": 20,
+          "token": 3020
+        },
+        {
+          "target_step": 21,
+          "token": 3021
+        },
+        {
+          "target_step": 22,
+          "token": 3022
+        },
+        {
+          "target_step": 23,
+          "token": 3023
+        },
+        {
+          "target_step": 24,
+          "token": 3024
+        },
+        {
+          "target_step": 25,
+          "token": 3025
+        },
+        {
+          "target_step": 26,
+          "token": 3026
+        },
+        {
+          "target_step": 27,
+          "token": 3027
+        },
+        {
+          "target_step": 28,
+          "token": 3028
+        },
+        {
+          "target_step": 29,
+          "token": 3029
+        },
+        {
+          "target_step": 30,
+          "token": 3030
+        }
+      ],
+      "tick": 30,
+      "stamp": {
+        "sim_time_ns": 1500000000,
+        "steady_time_ns": 1030,
+        "wall_time_ns": 10030
+      }
+    },
+    {
+      "event_id": "c031",
+      "ordinal": 31,
+      "domain": "common",
+      "operation": "request",
+      "episode_id": "common_a",
+      "request_id": 4,
+      "generation_id": 1,
+      "source_observation_step": 30,
+      "expected_horizon": 30,
+      "tick": 30,
+      "stamp": {
+        "sim_time_ns": 1500000000,
+        "steady_time_ns": 1030,
+        "wall_time_ns": 10030
+      }
+    },
+    {
+      "event_id": "c032",
+      "ordinal": 32,
+      "domain": "common",
+      "operation": "drop",
+      "episode_id": "common_a",
+      "request_id": 4,
+      "tick": 30,
+      "stamp": {
+        "sim_time_ns": 1500000000,
+        "steady_time_ns": 1030,
+        "wall_time_ns": 10030
+      }
+    },
+    {
+      "event_id": "c033",
+      "ordinal": 33,
+      "domain": "common",
+      "operation": "reset",
+      "episode_id": "common_b",
+      "generation_id": 2,
+      "observation_step": 0,
+      "tick": 0,
+      "stamp": {
+        "sim_time_ns": 0,
+        "steady_time_ns": 1000,
+        "wall_time_ns": 10000
+      }
+    },
+    {
+      "event_id": "c034",
+      "ordinal": 34,
+      "domain": "common",
+      "operation": "chunk",
+      "episode_id": "common_a",
+      "request_id": 4,
+      "generation_id": 1,
+      "source_observation_step": 30,
+      "actions": [
+        {
+          "target_step": 31,
+          "token": 4031
+        },
+        {
+          "target_step": 32,
+          "token": 4032
+        },
+        {
+          "target_step": 33,
+          "token": 4033
+        },
+        {
+          "target_step": 34,
+          "token": 4034
+        },
+        {
+          "target_step": 35,
+          "token": 4035
+        },
+        {
+          "target_step": 36,
+          "token": 4036
+        },
+        {
+          "target_step": 37,
+          "token": 4037
+        },
+        {
+          "target_step": 38,
+          "token": 4038
+        },
+        {
+          "target_step": 39,
+          "token": 4039
+        },
+        {
+          "target_step": 40,
+          "token": 4040
+        },
+        {
+          "target_step": 41,
+          "token": 4041
+        },
+        {
+          "target_step": 42,
+          "token": 4042
+        },
+        {
+          "target_step": 43,
+          "token": 4043
+        },
+        {
+          "target_step": 44,
+          "token": 4044
+        },
+        {
+          "target_step": 45,
+          "token": 4045
+        },
+        {
+          "target_step": 46,
+          "token": 4046
+        },
+        {
+          "target_step": 47,
+          "token": 4047
+        },
+        {
+          "target_step": 48,
+          "token": 4048
+        },
+        {
+          "target_step": 49,
+          "token": 4049
+        },
+        {
+          "target_step": 50,
+          "token": 4050
+        },
+        {
+          "target_step": 51,
+          "token": 4051
+        },
+        {
+          "target_step": 52,
+          "token": 4052
+        },
+        {
+          "target_step": 53,
+          "token": 4053
+        },
+        {
+          "target_step": 54,
+          "token": 4054
+        },
+        {
+          "target_step": 55,
+          "token": 4055
+        },
+        {
+          "target_step": 56,
+          "token": 4056
+        },
+        {
+          "target_step": 57,
+          "token": 4057
+        },
+        {
+          "target_step": 58,
+          "token": 4058
+        },
+        {
+          "target_step": 59,
+          "token": 4059
+        },
+        {
+          "target_step": 60,
+          "token": 4060
+        }
+      ],
+      "tick": 31,
+      "stamp": {
+        "sim_time_ns": 1550000000,
+        "steady_time_ns": 1031,
+        "wall_time_ns": 10031
+      }
+    },
+    {
+      "event_id": "c035",
+      "ordinal": 35,
+      "domain": "common",
+      "operation": "observe",
+      "episode_id": "common_b",
+      "generation_id": 2,
+      "observation_step": 0,
+      "terminated": false,
+      "tick": 0,
+      "stamp": {
+        "sim_time_ns": 0,
+        "steady_time_ns": 1000,
+        "wall_time_ns": 10000
+      }
+    },
+    {
+      "event_id": "c036",
+      "ordinal": 36,
+      "domain": "common",
+      "operation": "request",
+      "episode_id": "common_b",
+      "request_id": 5,
+      "generation_id": 2,
+      "source_observation_step": 0,
+      "expected_horizon": 30,
+      "tick": 0,
+      "stamp": {
+        "sim_time_ns": 0,
+        "steady_time_ns": 1000,
+        "wall_time_ns": 10000
+      }
+    },
+    {
+      "event_id": "c037",
+      "ordinal": 37,
+      "domain": "common",
+      "operation": "chunk",
+      "episode_id": "common_b",
+      "request_id": 5,
+      "generation_id": 2,
+      "source_observation_step": 0,
+      "actions": [
+        {
+          "target_step": 1,
+          "token": 5001
+        },
+        {
+          "target_step": 2,
+          "token": 5002
+        },
+        {
+          "target_step": 3,
+          "token": 5003
+        },
+        {
+          "target_step": 4,
+          "token": 5004
+        },
+        {
+          "target_step": 5,
+          "token": 5005
+        },
+        {
+          "target_step": 6,
+          "token": 5006
+        },
+        {
+          "target_step": 7,
+          "token": 5007
+        },
+        {
+          "target_step": 8,
+          "token": 5008
+        },
+        {
+          "target_step": 9,
+          "token": 5009
+        },
+        {
+          "target_step": 10,
+          "token": 5010
+        },
+        {
+          "target_step": 11,
+          "token": 5011
+        },
+        {
+          "target_step": 12,
+          "token": 5012
+        },
+        {
+          "target_step": 13,
+          "token": 5013
+        },
+        {
+          "target_step": 14,
+          "token": 5014
+        },
+        {
+          "target_step": 15,
+          "token": 5015
+        },
+        {
+          "target_step": 16,
+          "token": 5016
+        },
+        {
+          "target_step": 17,
+          "token": 5017
+        },
+        {
+          "target_step": 18,
+          "token": 5018
+        },
+        {
+          "target_step": 19,
+          "token": 5019
+        },
+        {
+          "target_step": 20,
+          "token": 5020
+        },
+        {
+          "target_step": 21,
+          "token": 5021
+        },
+        {
+          "target_step": 22,
+          "token": 5022
+        },
+        {
+          "target_step": 23,
+          "token": 5023
+        },
+        {
+          "target_step": 24,
+          "token": 5024
+        },
+        {
+          "target_step": 25,
+          "token": 5025
+        },
+        {
+          "target_step": 26,
+          "token": 5026
+        },
+        {
+          "target_step": 27,
+          "token": 5027
+        },
+        {
+          "target_step": 28,
+          "token": 5028
+        },
+        {
+          "target_step": 29,
+          "token": 5029
+        },
+        {
+          "target_step": 30,
+          "token": 5030
+        }
+      ],
+      "tick": 0,
+      "stamp": {
+        "sim_time_ns": 0,
+        "steady_time_ns": 1000,
+        "wall_time_ns": 10000
+      }
+    },
+    {
+      "event_id": "x038",
+      "ordinal": 38,
+      "domain": "extended",
+      "expected_difference": "terminal_lifecycle_owned_by_cpp",
+      "operation": "request",
+      "episode_id": "common_b",
+      "request_id": 6,
+      "generation_id": 2,
+      "source_observation_step": 0,
+      "expected_horizon": 30,
+      "tick": 0,
+      "stamp": {
+        "sim_time_ns": 0,
+        "steady_time_ns": 1000,
+        "wall_time_ns": 10000
+      }
+    },
+    {
+      "event_id": "x039",
+      "ordinal": 39,
+      "domain": "extended",
+      "expected_difference": "terminal_lifecycle_owned_by_cpp",
+      "operation": "terminate",
+      "episode_id": "common_b",
+      "success": false,
+      "tick": 1,
+      "stamp": {
+        "sim_time_ns": 50000000,
+        "steady_time_ns": 1001,
+        "wall_time_ns": 10001
+      }
+    },
+    {
+      "event_id": "x040",
+      "ordinal": 40,
+      "domain": "extended",
+      "expected_difference": "terminal_lifecycle_owned_by_cpp",
+      "operation": "chunk",
+      "episode_id": "common_b",
+      "request_id": 6,
+      "generation_id": 2,
+      "source_observation_step": 0,
+      "actions": [
+        {
+          "target_step": 1,
+          "token": 6001
+        },
+        {
+          "target_step": 2,
+          "token": 6002
+        },
+        {
+          "target_step": 3,
+          "token": 6003
+        },
+        {
+          "target_step": 4,
+          "token": 6004
+        },
+        {
+          "target_step": 5,
+          "token": 6005
+        },
+        {
+          "target_step": 6,
+          "token": 6006
+        },
+        {
+          "target_step": 7,
+          "token": 6007
+        },
+        {
+          "target_step": 8,
+          "token": 6008
+        },
+        {
+          "target_step": 9,
+          "token": 6009
+        },
+        {
+          "target_step": 10,
+          "token": 6010
+        },
+        {
+          "target_step": 11,
+          "token": 6011
+        },
+        {
+          "target_step": 12,
+          "token": 6012
+        },
+        {
+          "target_step": 13,
+          "token": 6013
+        },
+        {
+          "target_step": 14,
+          "token": 6014
+        },
+        {
+          "target_step": 15,
+          "token": 6015
+        },
+        {
+          "target_step": 16,
+          "token": 6016
+        },
+        {
+          "target_step": 17,
+          "token": 6017
+        },
+        {
+          "target_step": 18,
+          "token": 6018
+        },
+        {
+          "target_step": 19,
+          "token": 6019
+        },
+        {
+          "target_step": 20,
+          "token": 6020
+        },
+        {
+          "target_step": 21,
+          "token": 6021
+        },
+        {
+          "target_step": 22,
+          "token": 6022
+        },
+        {
+          "target_step": 23,
+          "token": 6023
+        },
+        {
+          "target_step": 24,
+          "token": 6024
+        },
+        {
+          "target_step": 25,
+          "token": 6025
+        },
+        {
+          "target_step": 26,
+          "token": 6026
+        },
+        {
+          "target_step": 27,
+          "token": 6027
+        },
+        {
+          "target_step": 28,
+          "token": 6028
+        },
+        {
+          "target_step": 29,
+          "token": 6029
+        },
+        {
+          "target_step": 30,
+          "token": 6030
+        }
+      ],
+      "tick": 1,
+      "stamp": {
+        "sim_time_ns": 50000000,
+        "steady_time_ns": 1001,
+        "wall_time_ns": 10001
+      }
+    },
+    {
+      "event_id": "c_full_start",
+      "ordinal": 68,
+      "domain": "common",
+      "operation": "start",
+      "episode_id": "full_expiry",
+      "generation_id": 1,
+      "observation_step": 0,
+      "tick": 0,
+      "stamp": {
+        "sim_time_ns": 0,
+        "steady_time_ns": 1000,
+        "wall_time_ns": 10000
+      }
+    },
+    {
+      "event_id": "c_full_observe_0",
+      "ordinal": 69,
+      "domain": "common",
+      "operation": "observe",
+      "episode_id": "full_expiry",
+      "generation_id": 1,
+      "observation_step": 0,
+      "terminated": false,
+      "tick": 0,
+      "stamp": {
+        "sim_time_ns": 0,
+        "steady_time_ns": 1000,
+        "wall_time_ns": 10000
+      }
+    },
+    {
+      "event_id": "c_full_request",
+      "ordinal": 70,
+      "domain": "common",
+      "operation": "request",
+      "episode_id": "full_expiry",
+      "request_id": 7,
+      "generation_id": 1,
+      "source_observation_step": 0,
+      "expected_horizon": 30,
+      "tick": 0,
+      "stamp": {
+        "sim_time_ns": 0,
+        "steady_time_ns": 1000,
+        "wall_time_ns": 10000
+      }
+    },
+    {
+      "event_id": "c_full_observe_30",
+      "ordinal": 71,
+      "domain": "common",
+      "operation": "observe",
+      "episode_id": "full_expiry",
+      "generation_id": 1,
+      "observation_step": 30,
+      "terminated": false,
+      "tick": 30,
+      "stamp": {
+        "sim_time_ns": 1500000000,
+        "steady_time_ns": 1030,
+        "wall_time_ns": 10030
+      }
+    },
+    {
+      "event_id": "c_full_chunk",
+      "ordinal": 72,
+      "domain": "common",
+      "operation": "chunk",
+      "episode_id": "full_expiry",
+      "request_id": 7,
+      "generation_id": 1,
+      "source_observation_step": 0,
+      "actions": [
+        {
+          "target_step": 1,
+          "token": 7001
+        },
+        {
+          "target_step": 2,
+          "token": 7002
+        },
+        {
+          "target_step": 3,
+          "token": 7003
+        },
+        {
+          "target_step": 4,
+          "token": 7004
+        },
+        {
+          "target_step": 5,
+          "token": 7005
+        },
+        {
+          "target_step": 6,
+          "token": 7006
+        },
+        {
+          "target_step": 7,
+          "token": 7007
+        },
+        {
+          "target_step": 8,
+          "token": 7008
+        },
+        {
+          "target_step": 9,
+          "token": 7009
+        },
+        {
+          "target_step": 10,
+          "token": 7010
+        },
+        {
+          "target_step": 11,
+          "token": 7011
+        },
+        {
+          "target_step": 12,
+          "token": 7012
+        },
+        {
+          "target_step": 13,
+          "token": 7013
+        },
+        {
+          "target_step": 14,
+          "token": 7014
+        },
+        {
+          "target_step": 15,
+          "token": 7015
+        },
+        {
+          "target_step": 16,
+          "token": 7016
+        },
+        {
+          "target_step": 17,
+          "token": 7017
+        },
+        {
+          "target_step": 18,
+          "token": 7018
+        },
+        {
+          "target_step": 19,
+          "token": 7019
+        },
+        {
+          "target_step": 20,
+          "token": 7020
+        },
+        {
+          "target_step": 21,
+          "token": 7021
+        },
+        {
+          "target_step": 22,
+          "token": 7022
+        },
+        {
+          "target_step": 23,
+          "token": 7023
+        },
+        {
+          "target_step": 24,
+          "token": 7024
+        },
+        {
+          "target_step": 25,
+          "token": 7025
+        },
+        {
+          "target_step": 26,
+          "token": 7026
+        },
+        {
+          "target_step": 27,
+          "token": 7027
+        },
+        {
+          "target_step": 28,
+          "token": 7028
+        },
+        {
+          "target_step": 29,
+          "token": 7029
+        },
+        {
+          "target_step": 30,
+          "token": 7030
+        }
+      ],
+      "tick": 30,
+      "stamp": {
+        "sim_time_ns": 1500000000,
+        "steady_time_ns": 1030,
+        "wall_time_ns": 10030
+      }
+    },
+    {
+      "event_id": "c_full_terminate",
+      "ordinal": 73,
+      "domain": "common",
+      "operation": "terminate",
+      "episode_id": "full_expiry",
+      "success": false,
+      "tick": 31,
+      "stamp": {
+        "sim_time_ns": 1550000000,
+        "steady_time_ns": 1031,
+        "wall_time_ns": 10031
+      }
+    },
+    {
+      "event_id": "x041",
+      "ordinal": 41,
+      "domain": "extended",
+      "operation": "start",
+      "episode_id": "extended",
+      "generation_id": 1,
+      "observation_step": 0,
+      "tick": 0,
+      "stamp": {
+        "sim_time_ns": 0,
+        "steady_time_ns": 1000,
+        "wall_time_ns": 10000
+      }
+    },
+    {
+      "event_id": "x042",
+      "ordinal": 42,
+      "domain": "extended",
+      "operation": "observe",
+      "episode_id": "extended",
+      "generation_id": 1,
+      "observation_step": 0,
+      "terminated": false,
+      "tick": 0,
+      "stamp": {
+        "sim_time_ns": 0,
+        "steady_time_ns": 1000,
+        "wall_time_ns": 10000
+      }
+    },
+    {
+      "event_id": "x043",
+      "ordinal": 43,
+      "domain": "extended",
+      "operation": "request",
+      "episode_id": "extended",
+      "request_id": 10,
+      "generation_id": 1,
+      "source_observation_step": 0,
+      "expected_horizon": 30,
+      "tick": 0,
+      "stamp": {
+        "sim_time_ns": 0,
+        "steady_time_ns": 1000,
+        "wall_time_ns": 10000
+      }
+    },
+    {
+      "event_id": "x044",
+      "ordinal": 44,
+      "domain": "extended",
+      "operation": "chunk",
+      "episode_id": "extended",
+      "request_id": 10,
+      "generation_id": 1,
+      "source_observation_step": 0,
+      "actions": [
+        {
+          "target_step": 1,
+          "token": 10001
+        },
+        {
+          "target_step": 2,
+          "token": 10002
+        },
+        {
+          "target_step": 3,
+          "token": 10003
+        },
+        {
+          "target_step": 4,
+          "token": 10004
+        },
+        {
+          "target_step": 5,
+          "token": 10005
+        },
+        {
+          "target_step": 6,
+          "token": 10006
+        },
+        {
+          "target_step": 7,
+          "token": 10007
+        },
+        {
+          "target_step": 8,
+          "token": 10008
+        },
+        {
+          "target_step": 9,
+          "token": 10009
+        },
+        {
+          "target_step": 10,
+          "token": 10010
+        },
+        {
+          "target_step": 11,
+          "token": 10011
+        },
+        {
+          "target_step": 12,
+          "token": 10012
+        },
+        {
+          "target_step": 13,
+          "token": 10013
+        },
+        {
+          "target_step": 14,
+          "token": 10014
+        },
+        {
+          "target_step": 15,
+          "token": 10015
+        },
+        {
+          "target_step": 16,
+          "token": 10016
+        },
+        {
+          "target_step": 17,
+          "token": 10017
+        },
+        {
+          "target_step": 18,
+          "token": 10018
+        },
+        {
+          "target_step": 19,
+          "token": 10019
+        },
+        {
+          "target_step": 20,
+          "token": 10020
+        },
+        {
+          "target_step": 21,
+          "token": 10021
+        },
+        {
+          "target_step": 22,
+          "token": 10022
+        },
+        {
+          "target_step": 23,
+          "token": 10023
+        },
+        {
+          "target_step": 24,
+          "token": 10024
+        },
+        {
+          "target_step": 25,
+          "token": 10025
+        },
+        {
+          "target_step": 26,
+          "token": 10026
+        },
+        {
+          "target_step": 27,
+          "token": 10027
+        },
+        {
+          "target_step": 28,
+          "token": 10028
+        },
+        {
+          "target_step": 29,
+          "token": 10029
+        },
+        {
+          "target_step": 30,
+          "token": 10030
+        }
+      ],
+      "tick": 0,
+      "stamp": {
+        "sim_time_ns": 0,
+        "steady_time_ns": 1000,
+        "wall_time_ns": 10000
+      }
+    },
+    {
+      "event_id": "x045",
+      "ordinal": 45,
+      "domain": "extended",
+      "expected_difference": "duplicate_response_detection",
+      "operation": "chunk",
+      "episode_id": "extended",
+      "request_id": 10,
+      "generation_id": 1,
+      "source_observation_step": 0,
+      "actions": [
+        {
+          "target_step": 1,
+          "token": 10001
+        },
+        {
+          "target_step": 2,
+          "token": 10002
+        },
+        {
+          "target_step": 3,
+          "token": 10003
+        },
+        {
+          "target_step": 4,
+          "token": 10004
+        },
+        {
+          "target_step": 5,
+          "token": 10005
+        },
+        {
+          "target_step": 6,
+          "token": 10006
+        },
+        {
+          "target_step": 7,
+          "token": 10007
+        },
+        {
+          "target_step": 8,
+          "token": 10008
+        },
+        {
+          "target_step": 9,
+          "token": 10009
+        },
+        {
+          "target_step": 10,
+          "token": 10010
+        },
+        {
+          "target_step": 11,
+          "token": 10011
+        },
+        {
+          "target_step": 12,
+          "token": 10012
+        },
+        {
+          "target_step": 13,
+          "token": 10013
+        },
+        {
+          "target_step": 14,
+          "token": 10014
+        },
+        {
+          "target_step": 15,
+          "token": 10015
+        },
+        {
+          "target_step": 16,
+          "token": 10016
+        },
+        {
+          "target_step": 17,
+          "token": 10017
+        },
+        {
+          "target_step": 18,
+          "token": 10018
+        },
+        {
+          "target_step": 19,
+          "token": 10019
+        },
+        {
+          "target_step": 20,
+          "token": 10020
+        },
+        {
+          "target_step": 21,
+          "token": 10021
+        },
+        {
+          "target_step": 22,
+          "token": 10022
+        },
+        {
+          "target_step": 23,
+          "token": 10023
+        },
+        {
+          "target_step": 24,
+          "token": 10024
+        },
+        {
+          "target_step": 25,
+          "token": 10025
+        },
+        {
+          "target_step": 26,
+          "token": 10026
+        },
+        {
+          "target_step": 27,
+          "token": 10027
+        },
+        {
+          "target_step": 28,
+          "token": 10028
+        },
+        {
+          "target_step": 29,
+          "token": 10029
+        },
+        {
+          "target_step": 30,
+          "token": 10030
+        }
+      ],
+      "tick": 1,
+      "stamp": {
+        "sim_time_ns": 50000000,
+        "steady_time_ns": 1001,
+        "wall_time_ns": 10001
+      }
+    },
+    {
+      "event_id": "x046",
+      "ordinal": 46,
+      "domain": "extended",
+      "operation": "request",
+      "episode_id": "extended",
+      "request_id": 11,
+      "generation_id": 1,
+      "source_observation_step": 0,
+      "expected_horizon": 30,
+      "tick": 1,
+      "stamp": {
+        "sim_time_ns": 50000000,
+        "steady_time_ns": 1001,
+        "wall_time_ns": 10001
+      }
+    },
+    {
+      "event_id": "x047",
+      "ordinal": 47,
+      "domain": "extended",
+      "expected_difference": "explicit_duplicate_target_first_wins",
+      "operation": "chunk",
+      "episode_id": "extended",
+      "request_id": 11,
+      "generation_id": 1,
+      "source_observation_step": 0,
+      "actions": [
+        {
+          "target_step": 1,
+          "token": 11001
+        },
+        {
+          "target_step": 1,
+          "token": 11999
+        },
+        {
+          "target_step": 3,
+          "token": 11003
+        },
+        {
+          "target_step": 4,
+          "token": 11004
+        },
+        {
+          "target_step": 5,
+          "token": 11005
+        },
+        {
+          "target_step": 6,
+          "token": 11006
+        },
+        {
+          "target_step": 7,
+          "token": 11007
+        },
+        {
+          "target_step": 8,
+          "token": 11008
+        },
+        {
+          "target_step": 9,
+          "token": 11009
+        },
+        {
+          "target_step": 10,
+          "token": 11010
+        },
+        {
+          "target_step": 11,
+          "token": 11011
+        },
+        {
+          "target_step": 12,
+          "token": 11012
+        },
+        {
+          "target_step": 13,
+          "token": 11013
+        },
+        {
+          "target_step": 14,
+          "token": 11014
+        },
+        {
+          "target_step": 15,
+          "token": 11015
+        },
+        {
+          "target_step": 16,
+          "token": 11016
+        },
+        {
+          "target_step": 17,
+          "token": 11017
+        },
+        {
+          "target_step": 18,
+          "token": 11018
+        },
+        {
+          "target_step": 19,
+          "token": 11019
+        },
+        {
+          "target_step": 20,
+          "token": 11020
+        },
+        {
+          "target_step": 21,
+          "token": 11021
+        },
+        {
+          "target_step": 22,
+          "token": 11022
+        },
+        {
+          "target_step": 23,
+          "token": 11023
+        },
+        {
+          "target_step": 24,
+          "token": 11024
+        },
+        {
+          "target_step": 25,
+          "token": 11025
+        },
+        {
+          "target_step": 26,
+          "token": 11026
+        },
+        {
+          "target_step": 27,
+          "token": 11027
+        },
+        {
+          "target_step": 28,
+          "token": 11028
+        },
+        {
+          "target_step": 29,
+          "token": 11029
+        },
+        {
+          "target_step": 30,
+          "token": 11030
+        }
+      ],
+      "tick": 1,
+      "stamp": {
+        "sim_time_ns": 50000000,
+        "steady_time_ns": 1001,
+        "wall_time_ns": 10001
+      }
+    },
+    {
+      "event_id": "x048",
+      "ordinal": 48,
+      "domain": "extended",
+      "operation": "observe",
+      "episode_id": "extended",
+      "generation_id": 1,
+      "observation_step": 10,
+      "terminated": false,
+      "tick": 10,
+      "stamp": {
+        "sim_time_ns": 500000000,
+        "steady_time_ns": 1010,
+        "wall_time_ns": 10010
+      }
+    },
+    {
+      "event_id": "x049",
+      "ordinal": 49,
+      "domain": "extended",
+      "operation": "request",
+      "episode_id": "extended",
+      "request_id": 12,
+      "generation_id": 1,
+      "source_observation_step": 10,
+      "expected_horizon": 30,
+      "tick": 10,
+      "stamp": {
+        "sim_time_ns": 500000000,
+        "steady_time_ns": 1010,
+        "wall_time_ns": 10010
+      }
+    },
+    {
+      "event_id": "x050",
+      "ordinal": 50,
+      "domain": "extended",
+      "operation": "request",
+      "episode_id": "extended",
+      "request_id": 13,
+      "generation_id": 1,
+      "source_observation_step": 10,
+      "expected_horizon": 30,
+      "tick": 10,
+      "stamp": {
+        "sim_time_ns": 500000000,
+        "steady_time_ns": 1010,
+        "wall_time_ns": 10010
+      }
+    },
+    {
+      "event_id": "x051",
+      "ordinal": 51,
+      "domain": "extended",
+      "operation": "chunk",
+      "episode_id": "extended",
+      "request_id": 13,
+      "generation_id": 1,
+      "source_observation_step": 10,
+      "actions": [
+        {
+          "target_step": 11,
+          "token": 13011
+        },
+        {
+          "target_step": 12,
+          "token": 13012
+        },
+        {
+          "target_step": 13,
+          "token": 13013
+        },
+        {
+          "target_step": 14,
+          "token": 13014
+        },
+        {
+          "target_step": 15,
+          "token": 13015
+        },
+        {
+          "target_step": 16,
+          "token": 13016
+        },
+        {
+          "target_step": 17,
+          "token": 13017
+        },
+        {
+          "target_step": 18,
+          "token": 13018
+        },
+        {
+          "target_step": 19,
+          "token": 13019
+        },
+        {
+          "target_step": 20,
+          "token": 13020
+        },
+        {
+          "target_step": 21,
+          "token": 13021
+        },
+        {
+          "target_step": 22,
+          "token": 13022
+        },
+        {
+          "target_step": 23,
+          "token": 13023
+        },
+        {
+          "target_step": 24,
+          "token": 13024
+        },
+        {
+          "target_step": 25,
+          "token": 13025
+        },
+        {
+          "target_step": 26,
+          "token": 13026
+        },
+        {
+          "target_step": 27,
+          "token": 13027
+        },
+        {
+          "target_step": 28,
+          "token": 13028
+        },
+        {
+          "target_step": 29,
+          "token": 13029
+        },
+        {
+          "target_step": 30,
+          "token": 13030
+        },
+        {
+          "target_step": 31,
+          "token": 13031
+        },
+        {
+          "target_step": 32,
+          "token": 13032
+        },
+        {
+          "target_step": 33,
+          "token": 13033
+        },
+        {
+          "target_step": 34,
+          "token": 13034
+        },
+        {
+          "target_step": 35,
+          "token": 13035
+        },
+        {
+          "target_step": 36,
+          "token": 13036
+        },
+        {
+          "target_step": 37,
+          "token": 13037
+        },
+        {
+          "target_step": 38,
+          "token": 13038
+        },
+        {
+          "target_step": 39,
+          "token": 13039
+        },
+        {
+          "target_step": 40,
+          "token": 13040
+        }
+      ],
+      "tick": 11,
+      "stamp": {
+        "sim_time_ns": 550000000,
+        "steady_time_ns": 1011,
+        "wall_time_ns": 10011
+      }
+    },
+    {
+      "event_id": "x052",
+      "ordinal": 52,
+      "domain": "extended",
+      "expected_difference": "same_generation_freshness",
+      "operation": "chunk",
+      "episode_id": "extended",
+      "request_id": 12,
+      "generation_id": 1,
+      "source_observation_step": 10,
+      "actions": [
+        {
+          "target_step": 11,
+          "token": 12011
+        },
+        {
+          "target_step": 12,
+          "token": 12012
+        },
+        {
+          "target_step": 13,
+          "token": 12013
+        },
+        {
+          "target_step": 14,
+          "token": 12014
+        },
+        {
+          "target_step": 15,
+          "token": 12015
+        },
+        {
+          "target_step": 16,
+          "token": 12016
+        },
+        {
+          "target_step": 17,
+          "token": 12017
+        },
+        {
+          "target_step": 18,
+          "token": 12018
+        },
+        {
+          "target_step": 19,
+          "token": 12019
+        },
+        {
+          "target_step": 20,
+          "token": 12020
+        },
+        {
+          "target_step": 21,
+          "token": 12021
+        },
+        {
+          "target_step": 22,
+          "token": 12022
+        },
+        {
+          "target_step": 23,
+          "token": 12023
+        },
+        {
+          "target_step": 24,
+          "token": 12024
+        },
+        {
+          "target_step": 25,
+          "token": 12025
+        },
+        {
+          "target_step": 26,
+          "token": 12026
+        },
+        {
+          "target_step": 27,
+          "token": 12027
+        },
+        {
+          "target_step": 28,
+          "token": 12028
+        },
+        {
+          "target_step": 29,
+          "token": 12029
+        },
+        {
+          "target_step": 30,
+          "token": 12030
+        },
+        {
+          "target_step": 31,
+          "token": 12031
+        },
+        {
+          "target_step": 32,
+          "token": 12032
+        },
+        {
+          "target_step": 33,
+          "token": 12033
+        },
+        {
+          "target_step": 34,
+          "token": 12034
+        },
+        {
+          "target_step": 35,
+          "token": 12035
+        },
+        {
+          "target_step": 36,
+          "token": 12036
+        },
+        {
+          "target_step": 37,
+          "token": 12037
+        },
+        {
+          "target_step": 38,
+          "token": 12038
+        },
+        {
+          "target_step": 39,
+          "token": 12039
+        },
+        {
+          "target_step": 40,
+          "token": 12040
+        }
+      ],
+      "tick": 12,
+      "stamp": {
+        "sim_time_ns": 600000000,
+        "steady_time_ns": 1012,
+        "wall_time_ns": 10012
+      }
+    },
+    {
+      "event_id": "x053",
+      "ordinal": 53,
+      "domain": "extended",
+      "operation": "request",
+      "episode_id": "extended",
+      "request_id": 14,
+      "generation_id": 1,
+      "source_observation_step": 10,
+      "expected_horizon": 30,
+      "tick": 12,
+      "stamp": {
+        "sim_time_ns": 600000000,
+        "steady_time_ns": 1012,
+        "wall_time_ns": 10012
+      }
+    },
+    {
+      "event_id": "x054",
+      "ordinal": 54,
+      "domain": "extended",
+      "operation": "observe",
+      "episode_id": "extended",
+      "generation_id": 1,
+      "observation_step": 11,
+      "terminated": false,
+      "tick": 11,
+      "stamp": {
+        "sim_time_ns": 550000000,
+        "steady_time_ns": 1011,
+        "wall_time_ns": 10011
+      }
+    },
+    {
+      "event_id": "x055",
+      "ordinal": 55,
+      "domain": "extended",
+      "operation": "request",
+      "episode_id": "extended",
+      "request_id": 15,
+      "generation_id": 1,
+      "source_observation_step": 11,
+      "expected_horizon": 30,
+      "tick": 11,
+      "stamp": {
+        "sim_time_ns": 550000000,
+        "steady_time_ns": 1011,
+        "wall_time_ns": 10011
+      }
+    },
+    {
+      "event_id": "x056",
+      "ordinal": 56,
+      "domain": "extended",
+      "operation": "chunk",
+      "episode_id": "extended",
+      "request_id": 15,
+      "generation_id": 1,
+      "source_observation_step": 11,
+      "actions": [
+        {
+          "target_step": 12,
+          "token": 15012
+        },
+        {
+          "target_step": 13,
+          "token": 15013
+        },
+        {
+          "target_step": 14,
+          "token": 15014
+        },
+        {
+          "target_step": 15,
+          "token": 15015
+        },
+        {
+          "target_step": 16,
+          "token": 15016
+        },
+        {
+          "target_step": 17,
+          "token": 15017
+        },
+        {
+          "target_step": 18,
+          "token": 15018
+        },
+        {
+          "target_step": 19,
+          "token": 15019
+        },
+        {
+          "target_step": 20,
+          "token": 15020
+        },
+        {
+          "target_step": 21,
+          "token": 15021
+        },
+        {
+          "target_step": 22,
+          "token": 15022
+        },
+        {
+          "target_step": 23,
+          "token": 15023
+        },
+        {
+          "target_step": 24,
+          "token": 15024
+        },
+        {
+          "target_step": 25,
+          "token": 15025
+        },
+        {
+          "target_step": 26,
+          "token": 15026
+        },
+        {
+          "target_step": 27,
+          "token": 15027
+        },
+        {
+          "target_step": 28,
+          "token": 15028
+        },
+        {
+          "target_step": 29,
+          "token": 15029
+        },
+        {
+          "target_step": 30,
+          "token": 15030
+        },
+        {
+          "target_step": 31,
+          "token": 15031
+        },
+        {
+          "target_step": 32,
+          "token": 15032
+        },
+        {
+          "target_step": 33,
+          "token": 15033
+        },
+        {
+          "target_step": 34,
+          "token": 15034
+        },
+        {
+          "target_step": 35,
+          "token": 15035
+        },
+        {
+          "target_step": 36,
+          "token": 15036
+        },
+        {
+          "target_step": 37,
+          "token": 15037
+        },
+        {
+          "target_step": 38,
+          "token": 15038
+        },
+        {
+          "target_step": 39,
+          "token": 15039
+        },
+        {
+          "target_step": 40,
+          "token": 15040
+        },
+        {
+          "target_step": 41,
+          "token": 15041
+        }
+      ],
+      "tick": 12,
+      "stamp": {
+        "sim_time_ns": 600000000,
+        "steady_time_ns": 1012,
+        "wall_time_ns": 10012
+      }
+    },
+    {
+      "event_id": "x057",
+      "ordinal": 57,
+      "domain": "extended",
+      "expected_difference": "same_generation_freshness",
+      "operation": "chunk",
+      "episode_id": "extended",
+      "request_id": 14,
+      "generation_id": 1,
+      "source_observation_step": 10,
+      "actions": [
+        {
+          "target_step": 11,
+          "token": 14011
+        },
+        {
+          "target_step": 12,
+          "token": 14012
+        },
+        {
+          "target_step": 13,
+          "token": 14013
+        },
+        {
+          "target_step": 14,
+          "token": 14014
+        },
+        {
+          "target_step": 15,
+          "token": 14015
+        },
+        {
+          "target_step": 16,
+          "token": 14016
+        },
+        {
+          "target_step": 17,
+          "token": 14017
+        },
+        {
+          "target_step": 18,
+          "token": 14018
+        },
+        {
+          "target_step": 19,
+          "token": 14019
+        },
+        {
+          "target_step": 20,
+          "token": 14020
+        },
+        {
+          "target_step": 21,
+          "token": 14021
+        },
+        {
+          "target_step": 22,
+          "token": 14022
+        },
+        {
+          "target_step": 23,
+          "token": 14023
+        },
+        {
+          "target_step": 24,
+          "token": 14024
+        },
+        {
+          "target_step": 25,
+          "token": 14025
+        },
+        {
+          "target_step": 26,
+          "token": 14026
+        },
+        {
+          "target_step": 27,
+          "token": 14027
+        },
+        {
+          "target_step": 28,
+          "token": 14028
+        },
+        {
+          "target_step": 29,
+          "token": 14029
+        },
+        {
+          "target_step": 30,
+          "token": 14030
+        },
+        {
+          "target_step": 31,
+          "token": 14031
+        },
+        {
+          "target_step": 32,
+          "token": 14032
+        },
+        {
+          "target_step": 33,
+          "token": 14033
+        },
+        {
+          "target_step": 34,
+          "token": 14034
+        },
+        {
+          "target_step": 35,
+          "token": 14035
+        },
+        {
+          "target_step": 36,
+          "token": 14036
+        },
+        {
+          "target_step": 37,
+          "token": 14037
+        },
+        {
+          "target_step": 38,
+          "token": 14038
+        },
+        {
+          "target_step": 39,
+          "token": 14039
+        },
+        {
+          "target_step": 40,
+          "token": 14040
+        }
+      ],
+      "tick": 13,
+      "stamp": {
+        "sim_time_ns": 650000000,
+        "steady_time_ns": 1013,
+        "wall_time_ns": 10013
+      }
+    },
+    {
+      "event_id": "x058",
+      "ordinal": 58,
+      "domain": "extended",
+      "operation": "request",
+      "episode_id": "extended",
+      "request_id": 16,
+      "generation_id": 1,
+      "source_observation_step": 11,
+      "expected_horizon": 30,
+      "tick": 13,
+      "stamp": {
+        "sim_time_ns": 650000000,
+        "steady_time_ns": 1013,
+        "wall_time_ns": 10013
+      }
+    },
+    {
+      "event_id": "x059",
+      "ordinal": 59,
+      "domain": "extended",
+      "expected_difference": "generation_invalidation_absent_m4",
+      "operation": "observe",
+      "episode_id": "extended",
+      "generation_id": 2,
+      "observation_step": 11,
+      "terminated": false,
+      "tick": 11,
+      "stamp": {
+        "sim_time_ns": 550000000,
+        "steady_time_ns": 1011,
+        "wall_time_ns": 10011
+      }
+    },
+    {
+      "event_id": "x060",
+      "ordinal": 60,
+      "domain": "extended",
+      "expected_difference": "stale_generation_rejection",
+      "operation": "chunk",
+      "episode_id": "extended",
+      "request_id": 16,
+      "generation_id": 1,
+      "source_observation_step": 11,
+      "actions": [
+        {
+          "target_step": 12,
+          "token": 16012
+        },
+        {
+          "target_step": 13,
+          "token": 16013
+        },
+        {
+          "target_step": 14,
+          "token": 16014
+        },
+        {
+          "target_step": 15,
+          "token": 16015
+        },
+        {
+          "target_step": 16,
+          "token": 16016
+        },
+        {
+          "target_step": 17,
+          "token": 16017
+        },
+        {
+          "target_step": 18,
+          "token": 16018
+        },
+        {
+          "target_step": 19,
+          "token": 16019
+        },
+        {
+          "target_step": 20,
+          "token": 16020
+        },
+        {
+          "target_step": 21,
+          "token": 16021
+        },
+        {
+          "target_step": 22,
+          "token": 16022
+        },
+        {
+          "target_step": 23,
+          "token": 16023
+        },
+        {
+          "target_step": 24,
+          "token": 16024
+        },
+        {
+          "target_step": 25,
+          "token": 16025
+        },
+        {
+          "target_step": 26,
+          "token": 16026
+        },
+        {
+          "target_step": 27,
+          "token": 16027
+        },
+        {
+          "target_step": 28,
+          "token": 16028
+        },
+        {
+          "target_step": 29,
+          "token": 16029
+        },
+        {
+          "target_step": 30,
+          "token": 16030
+        },
+        {
+          "target_step": 31,
+          "token": 16031
+        },
+        {
+          "target_step": 32,
+          "token": 16032
+        },
+        {
+          "target_step": 33,
+          "token": 16033
+        },
+        {
+          "target_step": 34,
+          "token": 16034
+        },
+        {
+          "target_step": 35,
+          "token": 16035
+        },
+        {
+          "target_step": 36,
+          "token": 16036
+        },
+        {
+          "target_step": 37,
+          "token": 16037
+        },
+        {
+          "target_step": 38,
+          "token": 16038
+        },
+        {
+          "target_step": 39,
+          "token": 16039
+        },
+        {
+          "target_step": 40,
+          "token": 16040
+        },
+        {
+          "target_step": 41,
+          "token": 16041
+        }
+      ],
+      "tick": 14,
+      "stamp": {
+        "sim_time_ns": 700000000,
+        "steady_time_ns": 1014,
+        "wall_time_ns": 10014
+      }
+    },
+    {
+      "event_id": "x061",
+      "ordinal": 61,
+      "domain": "extended",
+      "operation": "request",
+      "episode_id": "extended",
+      "request_id": 17,
+      "generation_id": 2,
+      "source_observation_step": 11,
+      "expected_horizon": 30,
+      "tick": 14,
+      "stamp": {
+        "sim_time_ns": 700000000,
+        "steady_time_ns": 1014,
+        "wall_time_ns": 10014
+      }
+    },
+    {
+      "event_id": "x062",
+      "ordinal": 62,
+      "domain": "extended",
+      "operation": "chunk",
+      "episode_id": "extended",
+      "request_id": 17,
+      "generation_id": 2,
+      "source_observation_step": 11,
+      "actions": [
+        {
+          "target_step": 12,
+          "token": 17012
+        },
+        {
+          "target_step": 13,
+          "token": 17013
+        },
+        {
+          "target_step": 14,
+          "token": 17014
+        },
+        {
+          "target_step": 15,
+          "token": 17015
+        },
+        {
+          "target_step": 16,
+          "token": 17016
+        },
+        {
+          "target_step": 17,
+          "token": 17017
+        },
+        {
+          "target_step": 18,
+          "token": 17018
+        },
+        {
+          "target_step": 19,
+          "token": 17019
+        },
+        {
+          "target_step": 20,
+          "token": 17020
+        },
+        {
+          "target_step": 21,
+          "token": 17021
+        },
+        {
+          "target_step": 22,
+          "token": 17022
+        },
+        {
+          "target_step": 23,
+          "token": 17023
+        },
+        {
+          "target_step": 24,
+          "token": 17024
+        },
+        {
+          "target_step": 25,
+          "token": 17025
+        },
+        {
+          "target_step": 26,
+          "token": 17026
+        },
+        {
+          "target_step": 27,
+          "token": 17027
+        },
+        {
+          "target_step": 28,
+          "token": 17028
+        },
+        {
+          "target_step": 29,
+          "token": 17029
+        },
+        {
+          "target_step": 30,
+          "token": 17030
+        },
+        {
+          "target_step": 31,
+          "token": 17031
+        },
+        {
+          "target_step": 32,
+          "token": 17032
+        },
+        {
+          "target_step": 33,
+          "token": 17033
+        },
+        {
+          "target_step": 34,
+          "token": 17034
+        },
+        {
+          "target_step": 35,
+          "token": 17035
+        },
+        {
+          "target_step": 36,
+          "token": 17036
+        },
+        {
+          "target_step": 37,
+          "token": 17037
+        },
+        {
+          "target_step": 38,
+          "token": 17038
+        },
+        {
+          "target_step": 39,
+          "token": 17039
+        },
+        {
+          "target_step": 40,
+          "token": 17040
+        },
+        {
+          "target_step": 41,
+          "token": 17041
+        }
+      ],
+      "tick": 15,
+      "stamp": {
+        "sim_time_ns": 750000000,
+        "steady_time_ns": 1015,
+        "wall_time_ns": 10015
+      }
+    },
+    {
+      "event_id": "x063",
+      "ordinal": 63,
+      "domain": "extended",
+      "operation": "command",
+      "episode_id": "extended",
+      "actual_target_step": 12,
+      "tick": 12,
+      "stamp": {
+        "sim_time_ns": 600000000,
+        "steady_time_ns": 1012,
+        "wall_time_ns": 10012
+      }
+    },
+    {
+      "event_id": "x064",
+      "ordinal": 64,
+      "domain": "extended",
+      "operation": "observe",
+      "episode_id": "extended",
+      "generation_id": 2,
+      "observation_step": 12,
+      "terminated": false,
+      "tick": 12,
+      "stamp": {
+        "sim_time_ns": 600000000,
+        "steady_time_ns": 1012,
+        "wall_time_ns": 10012
+      }
+    },
+    {
+      "event_id": "x065",
+      "ordinal": 65,
+      "domain": "extended",
+      "operation": "request",
+      "episode_id": "extended",
+      "request_id": 18,
+      "generation_id": 2,
+      "source_observation_step": 12,
+      "expected_horizon": 30,
+      "tick": 15,
+      "stamp": {
+        "sim_time_ns": 750000000,
+        "steady_time_ns": 1015,
+        "wall_time_ns": 10015
+      }
+    },
+    {
+      "event_id": "x066",
+      "ordinal": 66,
+      "domain": "extended",
+      "expected_difference": "explicit_target_sorting",
+      "operation": "chunk",
+      "episode_id": "extended",
+      "request_id": 18,
+      "generation_id": 2,
+      "source_observation_step": 12,
+      "actions": [
+        {
+          "target_step": 14,
+          "token": 18014
+        },
+        {
+          "target_step": 13,
+          "token": 18013
+        },
+        {
+          "target_step": 15,
+          "token": 18015
+        },
+        {
+          "target_step": 16,
+          "token": 18016
+        },
+        {
+          "target_step": 17,
+          "token": 18017
+        },
+        {
+          "target_step": 18,
+          "token": 18018
+        },
+        {
+          "target_step": 19,
+          "token": 18019
+        },
+        {
+          "target_step": 20,
+          "token": 18020
+        },
+        {
+          "target_step": 21,
+          "token": 18021
+        },
+        {
+          "target_step": 22,
+          "token": 18022
+        },
+        {
+          "target_step": 23,
+          "token": 18023
+        },
+        {
+          "target_step": 24,
+          "token": 18024
+        },
+        {
+          "target_step": 25,
+          "token": 18025
+        },
+        {
+          "target_step": 26,
+          "token": 18026
+        },
+        {
+          "target_step": 27,
+          "token": 18027
+        },
+        {
+          "target_step": 28,
+          "token": 18028
+        },
+        {
+          "target_step": 29,
+          "token": 18029
+        },
+        {
+          "target_step": 30,
+          "token": 18030
+        },
+        {
+          "target_step": 31,
+          "token": 18031
+        },
+        {
+          "target_step": 32,
+          "token": 18032
+        },
+        {
+          "target_step": 33,
+          "token": 18033
+        },
+        {
+          "target_step": 34,
+          "token": 18034
+        },
+        {
+          "target_step": 35,
+          "token": 18035
+        },
+        {
+          "target_step": 36,
+          "token": 18036
+        },
+        {
+          "target_step": 37,
+          "token": 18037
+        },
+        {
+          "target_step": 38,
+          "token": 18038
+        },
+        {
+          "target_step": 39,
+          "token": 18039
+        },
+        {
+          "target_step": 40,
+          "token": 18040
+        },
+        {
+          "target_step": 41,
+          "token": 18041
+        },
+        {
+          "target_step": 42,
+          "token": 18042
+        }
+      ],
+      "tick": 16,
+      "stamp": {
+        "sim_time_ns": 800000000,
+        "steady_time_ns": 1016,
+        "wall_time_ns": 10016
+      }
+    },
+    {
+      "event_id": "x067",
+      "ordinal": 67,
+      "domain": "extended",
+      "expected_difference": "observation_generation_validation",
+      "operation": "observe",
+      "episode_id": "extended",
+      "generation_id": 1,
+      "observation_step": 13,
+      "terminated": false,
+      "tick": 13,
+      "stamp": {
+        "sim_time_ns": 650000000,
+        "steady_time_ns": 1013,
+        "wall_time_ns": 10013
+      }
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "artifacts": [
+    {
+      "bytes": 103129,
+      "name": "canary_steps.png",
+      "sha256": "40899a63f6b7f6154553dd33a06d886b90f771e8899dd07f9615a5f78c43d804"
+    },
+    {
+      "bytes": 503,
+      "name": "coverage_table.csv",
+      "sha256": "ed164495e18277745f493a37a0dc146a46aab5e15c0a5af05439f031da6b479a"
+    },
+    {
+      "bytes": 883,
+      "name": "main_table.csv",
+      "sha256": "4a72c7ff7e850556ab9c7f67ecd6cc3fc110935fe4a0a381917aaad291333e52"
+    },
+    {
+      "bytes": 74680,
+      "name": "mechanism_coverage.png",
+      "sha256": "2c5b4f86bb4bd55470ae7681cf6a9d65f8bd3b34e1a340a8c866ceac79aadc32"
+    },
+    {
+      "bytes": 1973109,
+      "name": "paired_content_final_frames.png",
+      "sha256": "b03ef7620a81075f80a73a667082589844c82c9442f7026b2da436c08fa0abaf"
+    },
+    {
+      "bytes": 4163,
+      "name": "report.md",
+      "sha256": "6106a4b5e5aad24ae92c8f0b75792506317f1cbeb8722e86bf02dae777318971"
+    },
+    {
+      "bytes": 2250,
+      "name": "summary.json",
+      "sha256": "e1d20af764aec81b125983d575ae471c7b2da47b95e80a2418dd92f63d449d9c"
+    }
+  ],
+  "schema_version": 1
+}

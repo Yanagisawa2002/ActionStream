@@ -1,0 +1,10 @@
+suite,profile,sync_hold_success,sync_hold_steps,lerobot_latest_only_success,lerobot_latest_only_steps,actionstream_aligned_success,actionstream_aligned_steps,actionstream_adaptive_success,actionstream_adaptive_steps,adaptive_minus_latest_steps,adaptive_minus_best_successful_static_steps
+object,fixed_0000,True,136,True,132,True,132,True,134,2,2
+object,fixed_0950,True,136,True,241,False,300,True,142,-99,-99
+object,phase_outage_requests_05_13,True,136,True,156,False,300,True,280,124,124
+spatial,fixed_0000,True,121,True,127,True,131,True,127,0,0
+spatial,fixed_0950,True,121,True,144,True,120,True,119,-25,-1
+spatial,phase_outage_requests_05_13,True,121,True,146,True,129,True,140,-6,11
+goal,fixed_0000,True,87,True,95,True,96,True,93,-2,-2
+goal,fixed_0950,True,87,True,115,True,88,True,90,-25,2
+goal,phase_outage_requests_05_13,True,87,True,108,False,300,True,90,-18,-18

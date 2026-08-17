@@ -1,0 +1,10 @@
+suite,profile,sync_hold_success,sync_hold_steps,lerobot_latest_only_success,lerobot_latest_only_steps,actionstream_aligned_success,actionstream_aligned_steps,actionstream_adaptive_success,actionstream_adaptive_steps,adaptive_minus_latest_steps,adaptive_minus_aligned_steps
+object,low_jitter_v5,True,128,True,128,True,126,True,123,-5,-3
+object,high_jitter_v5,True,128,True,143,True,124,False,300,157,176
+object,outage_v5_requests_03_08,True,128,True,171,False,300,True,134,-37,-166
+spatial,low_jitter_v5,True,123,True,130,True,135,True,125,-5,-10
+spatial,high_jitter_v5,True,123,True,145,True,124,True,126,-19,2
+spatial,outage_v5_requests_03_08,True,123,True,170,True,149,False,300,130,151
+goal,low_jitter_v5,True,88,True,91,False,300,False,300,209,0
+goal,high_jitter_v5,True,88,False,300,True,89,True,88,-212,-1
+goal,outage_v5_requests_03_08,True,88,True,127,True,124,False,300,173,176

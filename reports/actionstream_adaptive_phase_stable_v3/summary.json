@@ -1,0 +1,70 @@
+{
+  "coverage": {
+    "early_outage_both_events_rows": 3,
+    "early_outage_successes": 3,
+    "episodes": 9,
+    "guard_discards": 0,
+    "phase_lock_rejections": 9,
+    "preserved_queue_rejections": 12,
+    "pulse_override_rows": 3,
+    "pulse_phase_rejection_rows": 2,
+    "pulse_preserved_queue_rows": 2,
+    "successes": 7,
+    "zero_successes": 2
+  },
+  "failure_boundary": {
+    "hard_outage_queue_preservation_exercised": false,
+    "next_method": "Slack-aware prefetch/reserve scheduling before phase-stable selection.",
+    "reason": "Every >28-step hard outage arrived after the active queue had drained; safe hold began at queue depth zero."
+  },
+  "findings": {
+    "fixed_0000": {
+      "adaptive_successes": 3,
+      "adaptive_total_steps": 354,
+      "aligned_successes": 3,
+      "latest_successes": 3,
+      "latest_total_steps": 354,
+      "relative_reduction_percent": 0.0
+    },
+    "fixed_0950": {
+      "adaptive_successes": 3,
+      "adaptive_total_steps": 351,
+      "aligned_successes": 2,
+      "latest_successes": 3,
+      "latest_total_steps": 500,
+      "relative_reduction_percent": 29.799999999999997
+    },
+    "overall_adaptive_minus_best_successful_static_steps": 19,
+    "overall_adaptive_minus_latest_steps": -49,
+    "phase_outage": {
+      "adaptive_successes": 3,
+      "adaptive_total_steps": 510,
+      "aligned_successes": 1,
+      "latest_successes": 3,
+      "latest_total_steps": 410,
+      "relative_reduction_percent": -24.390243902439025
+    },
+    "statistical_boundary": "One paired reset per task/profile; no IID-seed CI is reported."
+  },
+  "schema_version": 1,
+  "selector_id": "actionstream_adaptive_phase_stable_v3",
+  "selector_sha256": "c824762ed9b05d37369181812795313c870b3bf8f5714d4c4ccd98e221021c98",
+  "validation": {
+    "adaptive_canary_successes": 9,
+    "aligned_canary_successes": 6,
+    "canary_rows": 36,
+    "coverage_rows": 9,
+    "latest_canary_successes": 9,
+    "phase_async_rows": 9,
+    "phase_async_rows_with_event_13": 7,
+    "phase_async_rows_with_event_5": 9,
+    "sync_canary_successes": 9,
+    "trace_hashes_verified": 45,
+    "videos_decoded": 45
+  },
+  "verdict": {
+    "canary": "PARTIAL_POSITIVE",
+    "coverage": "NO-GO",
+    "formal_holdout_opened": false
+  }
+}

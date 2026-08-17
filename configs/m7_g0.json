@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "milestone": "M7-G0",
+  "title": "ActionStream ROS 2 / Isaac Sim Runtime Integration",
+  "frozen_utc": "2026-08-03T05:24:50Z",
+  "frozen_before_first_holdout_result": true,
+  "starting_commit": "e786a25c5eeadffaed9bf35d6785fe4468ba7462",
+  "runtime": {
+    "control_frequency_hz": 20.0,
+    "use_sim_time": true,
+    "chunk_horizon": 30,
+    "action_dimension": 7,
+    "action_representation": "absolute [x, y, z, axis-angle x, axis-angle y, axis-angle z, gripper]",
+    "gripper_convention": "+1 open, -1 closed",
+    "safe_hold": "repeat the last finite canonical 7D command; the episode's explicit initial command is used before the first execution"
+  },
+  "action_time_contract": {
+    "observation_step": "O is the last completed simulation/control step",
+    "target_steps": "a chunk from observation O explicitly targets O+1 through O+30",
+    "expired_action": "target_step is less than insertion_step or is already executed",
+    "duplicate_target_resolution": "first valid action for a target step wins within a chunk; newer accepted aligned plans atomically replace the executable queue",
+    "routine_request_cadence_steps": 10,
+    "generation": "an explicit invalidation epoch, not a request identifier; routine periodic requests remain in one generation",
+    "same_generation_freshness": "lexicographic maximum of (source_observation_step, request_id)",
+    "cross_generation_rule": "only the active generation may install or execute actions",
+    "episode_rule": "messages not matching the active episode are rejected"
+  },
+  "task": {
+    "task_id": "scripted_reach_lift_v1",
+    "policy": "deterministic scripted chunk policy; no learned model or training",
+    "success": "object remains grasped and at least 0.12 m above its initial height for 20 consecutive control steps",
+    "maximum_episode_steps": 180,
+    "paired_initial_state": true
+  },
+  "methods": [
+    "sync_hold",
+    "naive_async",
+    "aligned_async"
+  ],
+  "profiles": {
+    "profile_a": {
+      "base_latency_ms": 950,
+      "jitter_ms": 0,
+      "drop_probability": 0.0,
+      "extra_delay_probability": 0.0,
+      "extra_delay_ms": 0,
+      "duplicate_probability": 0.0,
+      "communication_pause_probability": 0.0,
+      "communication_pause_ms": 0
+    },
+    "profile_b": {
+      "base_latency_ms": 900,
+      "jitter_ms": 250,
+      "drop_probability": 0.05,
+      "extra_delay_probability": 0.12,
+      "extra_delay_ms": 1000,
+      "duplicate_probability": 0.02,
+      "communication_pause_probability": 0.05,
+      "communication_pause_ms": 300
+    }
+  },
+  "splits": {
+    "development": {
+      "seed_file": "configs/m7_development_seeds.json",
+      "seed_count": 8,
+      "headline_eligible": false,
+      "sha256": "fc795dec1a65559161a71bf305dac9ee228adf64f6a46bfe903b0f7799cc797e"
+    },
+    "holdout": {
+      "seed_file": "configs/m7_holdout_seeds.json",
+      "seed_count": 36,
+      "headline_eligible": true,
+      "sha256": "e33100650c4a709354eb7685791b0f88f1002f13a60c09882c6572a533b8fe03"
+    }
+  },
+  "profile_file_hashes": {
+    "profile_a_sha256": "35c53a14a9047ad04f7f59ae7b5aaccd4d7e5966b0d641435fce527a86df85bf",
+    "profile_b_sha256": "b541d178eb7f8f0c67b28a15e594f3cced194c3cadb0a75c5d637ce1634813c7"
+  },
+  "statistics": {
+    "paired_bootstrap_resamples": 20000,
+    "confidence_level": 0.95,
+    "raw_paired_outcomes_required": true
+  },
+  "primary_profile": "profile_b",
+  "primary_go_gate": {
+    "aligned_minus_naive_success_percentage_points_at_least": 20.0,
+    "paired_success_difference_ci_must_exclude_zero": true,
+    "aligned_hold_reduction_vs_sync_at_least": 0.5,
+    "aligned_forbidden_execution_count_must_equal": 0,
+    "all_acceptance_tests_and_replay_audits_must_pass": true
+  },
+  "strong_go_additional_gate": {
+    "aligned_success_within_sync_percentage_points": 5.0,
+    "aligned_median_wall_reduction_vs_sync_at_least": 0.2
+  },
+  "classification_constraint": "NO-GO if the official Isaac Sim integration cannot be completed, regardless of ROS 2 test-plant results",
+  "holdout_policy": "No code, task, method, profile, seed, threshold, or statistical changes after the first holdout episode begins. Failed episodes remain in the manifest."
+}

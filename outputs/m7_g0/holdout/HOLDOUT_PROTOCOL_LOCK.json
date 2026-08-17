@@ -1,0 +1,81 @@
+{
+  "frozen_before_first_holdout_result": true,
+  "milestone": "M7-G0",
+  "profiles": [
+    {
+      "base_latency_ms": 950,
+      "communication_pause_ms": 0,
+      "communication_pause_probability": 0.0,
+      "drop_probability": 0.0,
+      "duplicate_probability": 0.0,
+      "extra_delay_ms": 0,
+      "extra_delay_probability": 0.0,
+      "frozen": true,
+      "jitter_ms": 0,
+      "profile_id": "profile_a"
+    },
+    {
+      "base_latency_ms": 900,
+      "communication_pause_ms": 300,
+      "communication_pause_probability": 0.05,
+      "drop_probability": 0.05,
+      "duplicate_probability": 0.02,
+      "extra_delay_ms": 1000,
+      "extra_delay_probability": 0.12,
+      "frozen": true,
+      "jitter_ms": 250,
+      "profile_id": "profile_b"
+    }
+  ],
+  "protocol": {
+    "action_dimension": 7,
+    "control_frequency_hz": 20.0,
+    "horizon": 30,
+    "max_steps": 180,
+    "request_interval_steps": 10,
+    "strategies": [
+      "sync_hold",
+      "naive_async",
+      "aligned_async"
+    ]
+  },
+  "schema_version": 1,
+  "seeds": [
+    2026080400,
+    2026080401,
+    2026080402,
+    2026080403,
+    2026080404,
+    2026080405,
+    2026080406,
+    2026080407,
+    2026080408,
+    2026080409,
+    2026080410,
+    2026080411,
+    2026080412,
+    2026080413,
+    2026080414,
+    2026080415,
+    2026080416,
+    2026080417,
+    2026080418,
+    2026080419,
+    2026080420,
+    2026080421,
+    2026080422,
+    2026080423,
+    2026080424,
+    2026080425,
+    2026080426,
+    2026080427,
+    2026080428,
+    2026080429,
+    2026080430,
+    2026080431,
+    2026080432,
+    2026080433,
+    2026080434,
+    2026080435
+  ]
+}

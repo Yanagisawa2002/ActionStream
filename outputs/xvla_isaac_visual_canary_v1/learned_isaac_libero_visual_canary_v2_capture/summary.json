@@ -1,0 +1,582 @@
+{
+  "adapter_contract": {
+    "camera_2_source": "audited_libero_camera_to_eef_rigid_transform_in_native_isaac",
+    "gripper_mapping": "isaac_command=-libero_command",
+    "isaac_action_space": "absolute Cartesian xyz, policy absolute axis-angle xyz, inverted gripper",
+    "isaac_downward_axis_angle_xyz": [
+      3.141592653589793,
+      0.0,
+      0.0
+    ],
+    "isaac_reference_eef_xyz": [
+      0.38932982087135315,
+      0.004671656526625156,
+      0.4563975930213928
+    ],
+    "isaac_reference_joint_pos": [
+      -0.009856946766376495,
+      0.04066438972949982,
+      -0.0019815361592918634,
+      -2.577049732208252,
+      -3.342428681207821e-05,
+      2.6183884143829346,
+      0.77161443233349
+    ],
+    "isaac_to_libero_joint_position_offset": [
+      -0.0006186158336235047,
+      -0.19149073172949982,
+      -0.0014129410107081367,
+      0.10628666220825211,
+      -0.0012434336331879218,
+      -0.3565932443829345,
+      0.002276225666509979
+    ],
+    "libero_reference_eef_axis_angle_xyz": [
+      -2.192830311181439,
+      -2.1906951432053687,
+      0.06340618065030879
+    ],
+    "libero_reference_eef_mat": [
+      [
+        0.000982098451,
+        0.998309689,
+        -0.0581102388
+      ],
+      [
+        0.999999481,
+        -0.000964611704,
+        0.000328973525
+      ],
+      [
+        0.000272363641,
+        -0.0581105317,
+        -0.998310118
+      ]
+    ],
+    "libero_reference_eef_quat": [
+      0.9995766444610013,
+      -0.000492136737,
+      -0.02909065429600386,
+      -0.000152263753
+    ],
+    "libero_reference_eef_world_quaternion_wxyz": [
+      -0.020660158873573083,
+      0.7071521809811441,
+      0.7064636239672519,
+      -0.020447464040385707
+    ],
+    "libero_reference_eef_xyz": [
+      -0.15255246384174243,
+      -0.00627673,
+      0.2484475446081703
+    ],
+    "libero_reference_joint_pos": [
+      -0.0104755626,
+      -0.150826342,
+      -0.00339447717,
+      -2.47076307,
+      -0.00127685792,
+      2.26179517,
+      0.773890658
+    ],
+    "orientation_mapping": "identity_libero_world_axis_angle_to_isaac_world_axis_angle_after_base_axis_alignment",
+    "policy_action_space": "LIBERO absolute Cartesian xyz, axis-angle xyz, gripper",
+    "schema_version": 1,
+    "status": "development_only_not_holdout_frozen",
+    "translation_xyz": [
+      0.6,
+      0.0,
+      0.0
+    ]
+  },
+  "adapter_contract_sha256": "fddb4d92757466553d2195122d1b7e88117f5b9fdbfe5de589404559a908ae24",
+  "checks": {
+    "finite_policy_actions": true,
+    "gpu_inference": true,
+    "learned_checkpoint_loaded": true,
+    "native_franka_moved": true,
+    "no_disqualifying_collision": true,
+    "policy_action_varies": false,
+    "policy_command_applied": true,
+    "video_recorded": true
+  },
+  "control_steps": 1,
+  "development_task_success_observed": false,
+  "evidence_class": "development_learned_policy_native_isaac_smoke",
+  "headline_or_holdout_eligible": false,
+  "instruction": "pick up the alphabet soup and place it in the basket",
+  "known_limitations": [
+    "development smoke only; no manipulation task success is claimed",
+    "coordinate calibration uses one development reset reference",
+    "policy frames apply an explicit vertical row-order transform for LIBERO parity",
+    "canonical distractors are visual-only development geometry",
+    "basket collision uses box proxies rather than converted MuJoCo collision meshes",
+    "formal paired runtimes and network profiles have not yet run"
+  ],
+  "learned_task_scene": {
+    "aligned_home_measurement": {
+      "command_axis_angle_xyz": [
+        -2.192830311181439,
+        -2.1906951432053687,
+        0.06340618065030879
+      ],
+      "command_xyz": [
+        0.44744753615825755,
+        -0.00627673,
+        0.2484475446081703
+      ],
+      "measured_orientation_wxyz": [
+        -0.020968927070498466,
+        0.6927831172943115,
+        0.7205647826194763,
+        -0.019958535209298134
+      ],
+      "measured_xyz": [
+        0.446541965007782,
+        0.0070854173973202705,
+        0.24719172716140747
+      ],
+      "position_error_m": 0.013451547109380412
+    },
+    "asset_source_sha256": {
+      "scenes/libero_living_room_tabletop_base_style.xml": "e22de70abac444dc7602546c46931580a3f06753ce941d0921f4f145e8eec70c",
+      "scenes/living_room_table/living_room_table.mtl": "c09113aa7cc34606d5527ff2434522654d466ae9430db97cf1394ce5b0e2ed93",
+      "scenes/living_room_table/living_room_table.obj": "b4b51693da6e25bb57673593b02a79f5716b3db3603a1d8448893f65ba499fbe",
+      "scenes/living_room_table/living_room_table.xml": "ea29b7ed138bd120d36a407c46bf7175ce551da94adf89852ec139813c4a892e",
+      "scenes/living_room_table/living_room_table_texture.png": "38f401fdbbdeae06bf4c674f2488ab4bda8b89519a1d58976c7265b1f7c8c1e7",
+      "stable_hope_objects/alphabet_soup/alphabet_soup.xml": "09a230f3cc5cbb437190adb9d2212ad20edfb5904bda8094a5db7acb2595afc3",
+      "stable_hope_objects/alphabet_soup/texture_map.png": "cd47556b3b2916ae138e8fd370d4f5192a2fe100369eec254c3c173409f48674",
+      "stable_hope_objects/alphabet_soup/textured.mtl": "ff20af8773aad284ea9020ef6271bb26b256d2e0c0cc830112cff8ccc16bcd29",
+      "stable_hope_objects/alphabet_soup/textured.obj": "9f83394a8b6d243b2133be244b3de83e9318401e53a5768063031795bc6919a0",
+      "stable_hope_objects/butter/butter.mtl": "ff20af8773aad284ea9020ef6271bb26b256d2e0c0cc830112cff8ccc16bcd29",
+      "stable_hope_objects/butter/butter.obj": "4d32a23384f059ee79cc6c9d4d18d2d12c171c13bd89aaa4829a332123a1bd4a",
+      "stable_hope_objects/butter/butter.xml": "2d0d3ffd627243007e8bd8106140f9b5abbf6115a30a59c21405e8c26ffb8aa9",
+      "stable_hope_objects/butter/texture_map.png": "e344d473644d71b919484f6b93d52707ea4821fe05c14514d7cd6cc24f2486c2",
+      "stable_hope_objects/cream_cheese/cream_cheese.mtl": "0adacd422e1e18e861e049ba83d67129eb0286e0fd2704f294f0a49c814de99d",
+      "stable_hope_objects/cream_cheese/cream_cheese.obj": "79ca603fd960a95643cf7532b702343c1b389af5cd86b84dfeb931a2cc23a4b3",
+      "stable_hope_objects/cream_cheese/cream_cheese.xml": "a1bbeb0321d9d20d723aca62baa54f6012bf74c0af5d4f767a58ca0cdde50d95",
+      "stable_hope_objects/cream_cheese/texture_map.png": "6ef390c92c83f6f27da79df09130e48bda6785f98181942d2ec2548ab2afa814",
+      "stable_hope_objects/milk/milk.xml": "41febcc4121fae47a42f2e667a6b18f722b3feb863241b4533613672c36ad160",
+      "stable_hope_objects/milk/texture_map.png": "0e6130ec7a6a611a2574bba4f3d77bfaecd8ff6ed0fd449e34fe8479f4585ec3",
+      "stable_hope_objects/milk/textured.mtl": "ff20af8773aad284ea9020ef6271bb26b256d2e0c0cc830112cff8ccc16bcd29",
+      "stable_hope_objects/milk/textured.obj": "caff7624f6aa1183166344350f3491587c53ed42ca7a57058b6e52796cf42e1f",
+      "stable_hope_objects/salad_dressing/salad_dressing.xml": "dfc46d9f59fce1f814a80d1bd476d93216e8b16489e1761e8f5506e5f30980c8",
+      "stable_hope_objects/salad_dressing/texture_map.png": "17ac6d99eebf065eaa2243ebc578da65e7d5f112bbff75f083e451578efaae22",
+      "stable_hope_objects/salad_dressing/textured.mtl": "ff20af8773aad284ea9020ef6271bb26b256d2e0c0cc830112cff8ccc16bcd29",
+      "stable_hope_objects/salad_dressing/textured.obj": "0045f55b86068e26888bcff4ea8a0eaebe2f3ec791349cae0d593066d68b9ba7",
+      "stable_hope_objects/tomato_sauce/texture_map.png": "9372cff38688004b69e7a1fc60ffa2576d6cf31a884de279d0d67bdd4a35c631",
+      "stable_hope_objects/tomato_sauce/textured.mtl": "05f5f754df97f52f7a7f2055229ee9a9a9172ddcedf720cf86e17fd84cc29e63",
+      "stable_hope_objects/tomato_sauce/textured.obj": "b75cd4063af13da2c3c95f4ed6cc2fbdc00f51730b49b704feb6f1ef362204bf",
+      "stable_hope_objects/tomato_sauce/tomato_sauce.xml": "b13d88bc065d04481150832581812bd0cbc9e4c0efcabccda2dc8d58654ee32b",
+      "stable_scanned_objects/basket/basket.mtl": "082f0815ab36e86a01940a8892acc7f8ecf36e70bedeeb9e3714633fd91fea76",
+      "stable_scanned_objects/basket/basket.obj": "54a789babe3d15e9ac55b837e0cc2dafb9413ae035be6af6d5847f4b14b3d144",
+      "stable_scanned_objects/basket/basket.xml": "9c1a8263944d17f5265de9cb5aec3cee934979dee19361d21f15e2128f22d253",
+      "stable_scanned_objects/basket/texture.png": "89c2107a39ce27d7dffc383153153e021958408cd6fffd8bf8f318a0bb2c302b"
+    },
+    "assets_root": "/root/.cache/libero/assets",
+    "converted_asset_cache": "/root/autodl-tmp/cache/actionstream-libero-usd",
+    "converted_asset_sha256": {
+      "alphabet_soup": "5c917825dedc24ec8e29741370cf434f72d412391d392c8f4bd991ce0cf70327",
+      "basket": "4003d37587ddf5e1a9d1327fefe1333c00a6946bf8fca2e5a441361bf65caa08",
+      "butter": "ebbc6d19c203a65884f4ba7bff91d375c6c22f63d7ac2912948409667380401c",
+      "cream_cheese": "5ad2b301f259988022c9df64a36c9ef35f60cef0b624098584e7e924af3aa5c0",
+      "living_room_table_visual": "7d4f48390cb316e2f839bb66c973f3ce9bd0b74b91c37514b0ea871ace48f207",
+      "milk": "8888cf98d1ee07c32256d9e922c34dd687a0d61d03ee9821a65299b6b030e8e5",
+      "salad_dressing": "c1abcabac601bdb55a7b666859ab5ae401c7d9f06e4eb0064a447f216759d841",
+      "tomato_sauce": "8c7d1779ece3289347154448c478cdd13225a433e45fcd4a8337584aa78185cb"
+    },
+    "policy_observation_render_contract": {
+      "agentview_static_settle_updates": 4,
+      "anti_aliasing": "Isaac headless viewport default DLSS",
+      "eye_in_hand_static_settle_updates": 4
+    },
+    "policy_observation_transform": {
+      "agentview": "vertical_flip_to_match_hf_libero_raw_mujoco_gl_row_order",
+      "eye_in_hand": "vertical_flip_to_match_hf_libero_raw_mujoco_gl_row_order"
+    },
+    "table_material_preparation": {
+      "prepared_mtl_sha256": "b734bdd0b92dda0038d627ab73493c006fc30e497f9abdba7eac118733efb437",
+      "prepared_obj_sha256": "b4b51693da6e25bb57673593b02a79f5716b3db3603a1d8448893f65ba499fbe",
+      "prepared_texture_sha256": "38f401fdbbdeae06bf4c674f2488ab4bda8b89519a1d58976c7265b1f7c8c1e7",
+      "reason": "canonical asset package omits MTL map_Bump target; official XML uses the diffuse texture",
+      "removed_mtl_directives": [
+        "map_Bump -bm 1.000000 louisa-coffee-table-wood-bump.jpg"
+      ],
+      "source_mtl_sha256": "c09113aa7cc34606d5527ff2434522654d466ae9430db97cf1394ce5b0e2ed93"
+    },
+    "table_visual_transform": {
+      "orientation_wxyz": [
+        0.7071067811865476,
+        0.0,
+        0.0,
+        0.7071067811865476
+      ],
+      "position_xyz": [
+        0.35,
+        0.25,
+        -0.39995899999999995
+      ],
+      "scale": 1.5
+    },
+    "task_scene": {
+      "agentview": {
+        "position_xyz": [
+          1.4965773716836135,
+          5.216182733499864e-07,
+          0.65
+        ],
+        "source": "hf-libero canonical task reset camera transform",
+        "target_xyz": [
+          0.6478120576539097,
+          -1.0214773223135394e-06,
+          0.12123025644645968
+        ],
+        "vertical_fov_degrees": 45.0
+      },
+      "body_poses": {
+        "alphabet_soup": {
+          "orientation_wxyz": [
+            -0.0022599053613085035,
+            0.0022578122619941114,
+            0.7077060816721801,
+            0.7064997529545018
+          ],
+          "position_xyz": [
+            0.4809057445180176,
+            -0.2397812171983273,
+            0.038392910369975934
+          ]
+        },
+        "basket": {
+          "orientation_wxyz": [
+            0.7071047512840226,
+            -0.0016942118246894126,
+            0.0016994020664296019,
+            0.7071047522480977
+          ],
+          "position_xyz": [
+            0.6148351148940433,
+            0.25211744175080475,
+            -0.0045823453265843445
+          ]
+        },
+        "butter": {
+          "orientation_wxyz": [
+            5.773097206961297e-24,
+            -2.7148202519327063e-17,
+            1.874776026872469e-17,
+            1.0
+          ],
+          "position_xyz": [
+            0.3953764708417313,
+            -0.07527223776823,
+            0.008695477418599518
+          ]
+        },
+        "cream_cheese": {
+          "orientation_wxyz": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "position_xyz": [
+            0.44872219515484857,
+            0.05836388222182275,
+            0.008921477418607878
+          ]
+        },
+        "milk": {
+          "orientation_wxyz": [
+            0.49999991071252853,
+            0.5000000894751193,
+            0.4999999310315965,
+            0.5000000687807303
+          ],
+          "position_xyz": [
+            0.7043776255935201,
+            -0.19602996396059144,
+            0.06973547626138664
+          ]
+        },
+        "salad_dressing": {
+          "orientation_wxyz": [
+            0.5000063321833649,
+            0.4999936570715062,
+            0.5000059110846429,
+            0.49999409951040047
+          ],
+          "position_xyz": [
+            0.6500007061661082,
+            -0.09999129744571159,
+            0.07270544927976626
+          ]
+        },
+        "tomato_sauce": {
+          "orientation_wxyz": [
+            -0.0022615597956423157,
+            0.0022625459859602127,
+            0.7076760632212669,
+            0.7065297982226948
+          ],
+          "position_xyz": [
+            0.7502390974120274,
+            0.030060769941393967,
+            0.038392596419837076
+          ]
+        }
+      },
+      "coordinate_mapping": "robot-base-anchored world translation; axes unchanged",
+      "initial_state_index": 0,
+      "instruction": "pick up the alphabet soup and place it in the basket",
+      "isaac_aligned_home_eef_axis_angle_xyz": [
+        -2.192830311181439,
+        -2.1906951432053687,
+        0.06340618065030879
+      ],
+      "isaac_aligned_home_eef_xyz": [
+        0.44744753615825755,
+        -0.00627673,
+        0.2484475446081703
+      ],
+      "isaac_robot_base_xyz": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "libero_robot_base_xyz": [
+        -0.6,
+        0.0,
+        0.0
+      ],
+      "physics": {
+        "basket_collision": "five static box proxies",
+        "distractors": "visual-only development geometry",
+        "target_collision": "existing native Isaac dynamic cube proxy",
+        "task_surface": "native ground collision plus large visual task surface",
+        "task_surface_render_clearance_m": 0.001
+      },
+      "schema_version": 1,
+      "status": "development_only_not_holdout_frozen",
+      "suite": "libero_object",
+      "table_top_z_m": 0.0,
+      "table_visual": {
+        "normalization": "dominant source tabletop plane mapped to Isaac task surface Z",
+        "source_asset": "scenes/living_room_table/living_room_table.obj",
+        "source_max_z_m": 0.299668,
+        "source_orientation_wxyz": [
+          0.7071067811865476,
+          0.0,
+          0.0,
+          0.7071067811865476
+        ],
+        "source_position_xyz": [
+          -0.25,
+          0.25,
+          0.0
+        ],
+        "source_scale": 1.5,
+        "source_tabletop_z_m": 0.267306
+      },
+      "task_family": "pick_object_into_container",
+      "task_id": 0,
+      "translation_xyz": [
+        0.6,
+        0.0,
+        0.0
+      ],
+      "wrist_camera": {
+        "audited_camera_to_eef_offset_world_xyz": [
+          0.05555217762730828,
+          -8.014101709790017e-05,
+          0.0938939274870507
+        ],
+        "camera_axes": "usd",
+        "clipping_range_m": [
+          0.01,
+          100.0
+        ],
+        "isaac_clearance_compensation_world_xyz": [
+          0.08,
+          0.0,
+          0.08
+        ],
+        "isaac_eef_offset_world_xyz": [
+          0.13555217762730828,
+          -8.014101709790017e-05,
+          0.17389392748705068
+        ],
+        "isaac_parent_prim_path": "/World",
+        "isaac_world_orientation_wxyz": [
+          0.7064636239671014,
+          -0.020447464044321184,
+          0.0206601587393956,
+          -0.7071521809810737
+        ],
+        "mount_adapter": "audited reference camera-to-EEF transform plus bounded Isaac mesh-clearance compensation, rigidly transported by measured EEF translation and orientation",
+        "source": "hf-libero canonical eye_in_hand camera transform",
+        "source_local_orientation_wxyz": [
+          5.2288855e-05,
+          0.70710677925,
+          0.70710677925,
+          -5.23898294e-05
+        ],
+        "source_local_translation_xyz": [
+          0.05,
+          0.0,
+          0.0
+        ],
+        "source_parent": "robot0_right_hand",
+        "static_settle_updates_before_capture": 4,
+        "vertical_fov_degrees": 75.0
+      }
+    },
+    "task_scene_sha256": "8afe17483fd7395af1858bfd20a71ddaedb4562362a5e5ebb3c5c24a195b96a5"
+  },
+  "metrics": {
+    "final_object_xyz": [
+      0.4807131290435791,
+      -0.23983266949653625,
+      0.02574986405670643
+    ],
+    "maximum_command_delta_m": 0.009999999999999993,
+    "maximum_measured_eef_displacement_m": 0.0022707721348244124,
+    "peak_cuda_memory_mib": 12250.56005859375,
+    "request_count": 1,
+    "translation_limited_chunk_rows": 8,
+    "unique_mapped_actions": 1,
+    "workspace_clipped_chunk_rows": 0
+  },
+  "provenance": {
+    "actionstream_source": {
+      "git_commit": "uncommitted",
+      "git_dirty": null,
+      "git_status_porcelain": [],
+      "source_file_sha256": {
+        "/root/autodl-tmp/actionstream-visual-canary-dev/ros2_ws/src/action_stream_isaac/action_stream_isaac/dynamic_isaac_adapter.py": "991f62e5af0083d2dcce635a703380a791b43b0e0c99d91115b99b714edd350d",
+        "/root/autodl-tmp/actionstream-visual-canary-dev/src/actionstream/isaac_learned.py": "fd53fed878a4ee26ffc9755614b887a58f2b14f15fe04eb4cc4d3a15b92493d6",
+        "/root/autodl-tmp/actionstream-visual-canary-dev/src/actionstream/isaac_libero_task.py": "e021828b194b1bd1da2f8106a4c3d6151a9eae58e031b8f7ecdf70d019dda334",
+        "/root/autodl-tmp/actionstream-visual-canary-dev/src/actionstream/learned_isaac_smoke.py": "ae29a112aded2bebf04d359272cb495c01e78d32531caee95d1e9077c890d791",
+        "/root/autodl-tmp/actionstream-visual-canary-dev/src/actionstream/learned_policy_worker.py": "a5580c0ebea33c94f0107e80db0c6738323ae0b69afe6beaff01e35078ff92cf"
+      },
+      "source_manifest_sha256": "1e6ef9731cab954b994fccb6d3898b6c8f07ed5940bc96b138f71c96f1762fee"
+    },
+    "events_path": "/root/autodl-tmp/results/learned_isaac_libero_visual_canary_v2_capture/events.jsonl",
+    "events_sha256": "69abbed772524d9f41b797d6e84c969ff846706514d41c9a686a9eda2b4b76c0",
+    "finished_wall_time_ns": 1786898085927136994,
+    "policy_actions_path": "/root/autodl-tmp/results/learned_isaac_libero_visual_canary_v2_capture/policy_actions.jsonl",
+    "policy_actions_sha256": "16a165456fe9f7bfb42d0d0cbc069d5d8de610da5a1ec3dc141ecc2e337adef1",
+    "protocol_path": "/root/autodl-tmp/actionstream-visual-canary-dev/configs/current_lerobot_baselines.json",
+    "protocol_sha256": "76ed5e5a0d2a0780c2fb858741c9e8a16fdc36cac1f3c991977b9b11fd6a164a",
+    "scenario_sha256": "05623b707e60693669bc79fa11217a66ea824019e05618b1b3038a11b5205596",
+    "scene_protocol_path": "/root/autodl-tmp/actionstream-visual-canary-dev/configs/learned_isaac_libero_dev.json",
+    "scene_protocol_sha256": "5550f526a6e05aadaed4e8ee5ff1895ff7c6cae441bc64fb055fd5b5de681dad",
+    "started_wall_time_ns": 1786898038122676715,
+    "video_path": "/root/autodl-tmp/results/learned_isaac_libero_visual_canary_v2_capture/learned_isaac_smoke.mp4",
+    "video_sha256": "51a36f4b00a4dface37203f4f6a973b4f2dbf4883fcafe95f9a3ab8d6400b33b"
+  },
+  "request_interval_steps": 1,
+  "request_records": [
+    {
+      "actions_sha256": "289e4212972e3e8935953666a3cabc0042356bd325db60c563cb8956bcdc12b5",
+      "control_step": 0,
+      "event": "inference",
+      "image2_sha256": "545189d26927da1b4eeee4a1c79ff1648022a4f786c53add6faf19c0103d5f14",
+      "image_sha256": "d367b385740ba80dfb5fcd059681f1539d3a8ba315d2155f5f70a606b3419840",
+      "mapped_actions_sha256": "9e482b4fdd83f6de1f7a1c3a70918fd81cd8a4027225d1527ee127c7b178a410",
+      "mapped_translation_limits": 8,
+      "mapped_workspace_clips": 0,
+      "model_latency_seconds": 5.675535013899207,
+      "peak_cuda_memory_mib": 12250.56005859375,
+      "policy_image2_sha256": "545189d26927da1b4eeee4a1c79ff1648022a4f786c53add6faf19c0103d5f14",
+      "policy_image_sha256": "d367b385740ba80dfb5fcd059681f1539d3a8ba315d2155f5f70a606b3419840",
+      "raw_dtype": "torch.float32",
+      "raw_shape": [
+        1,
+        30,
+        20
+      ],
+      "request_id": 0,
+      "robot_state": {
+        "eef": {
+          "mat": [
+            [
+              0.000982098451,
+              0.998309689,
+              -0.0581102388
+            ],
+            [
+              0.999999481,
+              -0.000964611704,
+              0.000328973525
+            ],
+            [
+              0.000272363641,
+              -0.0581105317,
+              -0.998310118
+            ]
+          ],
+          "pos": [
+            -0.153458034992218,
+            0.0070854173973202705,
+            0.24719172716140747
+          ],
+          "quat": [
+            0.9995766444610013,
+            -0.000492136737,
+            -0.02909065429600386,
+            -0.000152263753
+          ]
+        },
+        "gripper": {
+          "qpos": [
+            0.039998870342969894,
+            -0.039998870342969894
+          ],
+          "qvel": [
+            0.0,
+            0.0
+          ]
+        },
+        "joints": {
+          "pos": [
+            0.8024293392025398,
+            -0.13136330579065514,
+            -0.7793332467396205,
+            -2.449119669807739,
+            0.07627562554802546,
+            2.182334072282715,
+            -0.8627951902346741
+          ],
+          "vel": [
+            0.04279064014554024,
+            -0.003960433881729841,
+            -0.07462553679943085,
+            0.01217607967555523,
+            -0.018352044746279716,
+            -0.018894946202635765,
+            -0.032137252390384674
+          ]
+        }
+      },
+      "robot_state_sha256": "3e3ab2426d46b93fb1ba8e953d3381cf49e97cf831f81c713181b0064b482175"
+    }
+  ],
+  "schema_version": 1,
+  "seed": 2026081601,
+  "smoke_pass": false,
+  "task_success_claimed": false,
+  "video_encoder": "ffmpeg_libx264_cpu_fallback",
+  "video_encoder_fallback_reason": "RuntimeError: Failed to open encode session (Error 2: NV_ENC_ERR_UNSUPPORTED_DEVICE)",
+  "worker_ready": {
+    "chunk_size": 30,
+    "cuda_available": true,
+    "cuda_device": "NVIDIA GeForce RTX 5090",
+    "event": "ready",
+    "model_id": "lerobot/xvla-libero",
+    "model_key": "xvla",
+    "model_revision": "12e8783e996944f5c97e490d37d4c145484ed70a",
+    "supports_rtc": false,
+    "template_instruction": "pick up the alphabet soup and place it in the basket"
+  }
+}

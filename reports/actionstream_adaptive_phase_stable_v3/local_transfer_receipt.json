@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "received_utc": "2026-08-17T14:21:00Z",
+  "archive": {
+    "filename": "actionstream_adaptive_phase_stable_v3_evidence_cdaa7f7.tgz",
+    "bytes": 16341849,
+    "sha256": "0d294258d409457c7dceebfe434c80f743d80cc7926161223d1e4cd7eee14086",
+    "git_boundary": "retained under untracked artifacts; not committed"
+  },
+  "source_commits": {
+    "canary": "25fda72abe825cd30784352cad66cb6b87f2f829",
+    "coverage": "c2853770bd8f05735684c247bada3389b5f57d55",
+    "report_generator": "cdaa7f7"
+  },
+  "validation": {
+    "canary_rows": 36,
+    "coverage_rows": 9,
+    "trace_hashes_verified": 45,
+    "videos_decoded": 45,
+    "video_resolution": "640x640",
+    "local_content_review": [
+      "Object task 5 fixed 950 ms: latest-only success, aligned timeout, Adaptive success",
+      "Goal task 2 phase outage: latest-only success, aligned timeout, Adaptive success",
+      "five-frame timelines inspected at 0, 25, 50, 75, and 100 percent"
+    ]
+  },
+  "verdict": {
+    "canary": "PARTIAL_POSITIVE",
+    "coverage": "NO-GO",
+    "formal_holdout_opened": false
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "milestone": "M5-G0",
+  "classification": {
+    "label": "NO-GO",
+    "criteria": {
+      "sealed_30_pairs_complete": false,
+      "stale_duration_reduction_at_least_70pct": false,
+      "stale_duration_reduction_ci_excludes_zero": false,
+      "success_improvement_at_least_15pp": false,
+      "mcnemar_p_below_0_05": false,
+      "success_not_regressed_more_than_5pp": false,
+      "success_does_not_significantly_improve": true,
+      "no_shift_safety_requirements_pass": false,
+      "m4_baseline_intact": true,
+      "source_validation_passed": true,
+      "calibration_challenge_valid": false
+    },
+    "reasons": [
+      "Calibration no-go: No magnitude met the frozen behavioral challenge rule"
+    ]
+  },
+  "calibration_status": "no_go",
+  "sealed_evaluation": {
+    "status": "not_run_due_to_calibration_hard_stop",
+    "valid_pair_count": 0,
+    "required_pair_count": 30,
+    "reason": "No magnitude met the frozen behavioral challenge rule"
+  },
+  "no_shift_safety_requirements_pass": false,
+  "no_shift_action_trace_equivalence_pass": null,
+  "m4_baseline_intact": true,
+  "source_validation_passed": true,
+  "statistics_origin": "reviewed_statistics_input_copied",
+  "acceptance_sha256": "3feb68903bf377239f32b44042ebf063e9c6396ed7cce1991d819fb7b2b2a763"
+}

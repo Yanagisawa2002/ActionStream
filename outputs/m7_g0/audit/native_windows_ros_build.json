@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-08-03T04:44:00Z",
+  "environment": {
+    "ros_distribution": "jazzy",
+    "python": "3.12.13",
+    "visual_studio": "2022 17.14.17",
+    "isaac_sim": "6.0.1.0",
+    "workspace_source": "official IsaacSim-ros_workspaces jazzy_ws",
+    "workspace_commit": "dd3eeede7912755996a18f4884285d9f50843f79"
+  },
+  "packages": [
+    "action_stream_msgs",
+    "action_stream_executor"
+  ],
+  "build": {
+    "result": "PASSED",
+    "package_count": 2,
+    "warnings": [
+      "Upstream GoogleTest CMake minimum-version deprecation warning"
+    ]
+  },
+  "tests": {
+    "result": "PASSED",
+    "gtest_cases": 23,
+    "gtest_suites": 14,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}

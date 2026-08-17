@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "milestone": "M5-G0",
+  "title": "Oracle Scene-Shift Gate",
+  "suite": "libero_object",
+  "model_id": "lerobot/xvla-libero",
+  "model_revision_sha": "12e8783e996944f5c97e490d37d4c145484ed70a",
+  "candidate_tasks": [
+    {
+      "audit_order": 1,
+      "task_id": 0,
+      "instruction": "pick up the alphabet soup and place it in the basket",
+      "source_entity": "alphabet_soup_1",
+      "moved_entity": "basket_1",
+      "moved_body": "basket_1_main",
+      "moved_joint": "basket_1_joint0",
+      "m4_aligned_success_count": 10,
+      "m4_aligned_episode_count": 10
+    },
+    {
+      "audit_order": 2,
+      "task_id": 2,
+      "instruction": "pick up the salad dressing and place it in the basket",
+      "source_entity": "salad_dressing_1",
+      "moved_entity": "basket_1",
+      "moved_body": "basket_1_main",
+      "moved_joint": "basket_1_joint0",
+      "m4_aligned_success_count": 10,
+      "m4_aligned_episode_count": 10
+    }
+  ],
+  "runtime": {
+    "control_frequency_hz": 20.0,
+    "chunk_size_steps": 30,
+    "replan_interval_steps": 10,
+    "injected_delay_ms": 950,
+    "episode_length_steps": 800,
+    "realtime": true
+  },
+  "detector": {
+    "type": "OracleGroundTruthPoseDetector",
+    "translation_threshold_m": 0.01,
+    "rotation_trigger_enabled": false,
+    "confirmation_steps": 1
+  },
+  "perturbation": {
+    "axis_xyz": [
+      -1.0,
+      0.0,
+      0.0
+    ],
+    "initial_magnitude_mm": 50,
+    "stronger_magnitude_mm": 70,
+    "weaker_magnitude_mm": 30,
+    "magnitude_test_limit": 1,
+    "occurrences_per_episode": 1,
+    "schedule": "first_replenishment_request_with_nonempty_action_queue",
+    "midpoint_formula": "request_step + max(1, floor(floor(delay_seconds * control_frequency_hz) / 2))",
+    "displacement_tolerance_m": 0.001,
+    "preserve_height": true,
+    "preserve_orientation": true,
+    "zero_free_joint_velocity": true,
+    "workspace_bounds_m": {
+      "x": [
+        -0.25,
+        0.2
+      ],
+      "y": [
+        0.12,
+        0.38
+      ],
+      "maximum_robot_base_distance": 0.8
+    },
+    "allowed_contact_bodies": [
+      "floor"
+    ]
+  },
+  "conditions": {
+    "shift": [
+      "aligned_shift",
+      "aligned_oracle_pose_gate_shift"
+    ],
+    "no_shift": [
+      "aligned_no_shift",
+      "aligned_oracle_pose_gate_no_shift"
+    ]
+  },
+  "calibration": {
+    "paired_seed_count": 5,
+    "minimum_gate_success_count": 4,
+    "maximum_aligned_success_count": 3,
+    "minimum_gate_only_successes": 2,
+    "all_perturbations_must_be_valid": true,
+    "second_task_candidate_limit": 1
+  },
+  "no_shift_regression": {
+    "paired_seed_count": 10,
+    "required_false_gate_count": 0,
+    "required_queue_invalidation_count": 0,
+    "required_stale_action_steps": 0,
+    "maximum_success_degradation_percentage_points": 5.0
+  },
+  "sealed_evaluation": {
+    "paired_seed_count": 30,
+    "bootstrap_resamples": 10000,
+    "bootstrap_seed": 20260731,
+    "mcnemar_alternative": "two-sided"
+  },
+  "interpretation": {
+    "full_go": {
+      "minimum_stale_action_duration_reduction_fraction": 0.7,
+      "stale_reduction_confidence_interval_excludes_zero": true,
+      "minimum_success_improvement_percentage_points": 15.0,
+      "maximum_mcnemar_p_value_exclusive": 0.05,
+      "maximum_no_shift_success_degradation_percentage_points": 5.0,
+      "required_no_shift_false_gate_count": 0,
+      "existing_m4_must_remain_valid": true
+    },
+    "mechanism_pass_outcome_inconclusive": {
+      "minimum_stale_action_duration_reduction_fraction": 0.7,
+      "no_shift_safety_must_pass": true,
+      "maximum_success_regression_percentage_points": 5.0
+    }
+  }
+}

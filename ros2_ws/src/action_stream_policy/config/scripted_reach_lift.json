@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "task_id": "scripted_reach_lift_v1",
+  "control_frequency_hz": 20.0,
+  "chunk_horizon": 30,
+  "action_dimension": 7,
+  "action_layout": ["x", "y", "z", "axis_angle_x", "axis_angle_y", "axis_angle_z", "gripper"],
+  "gripper_open": 1.0,
+  "gripper_closed": -1.0,
+  "step_convention": {
+    "observation_step": "last completed control step",
+    "target_steps": "O+1 through O+H"
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "artifacts": [
+    {
+      "bytes": 139583,
+      "name": "canary_steps.png",
+      "sha256": "825784163b1c207af78aaa942786f9251991991ce3cf7c0d74ce848e6d7b1adc"
+    },
+    {
+      "bytes": 1034,
+      "name": "failure_taxonomy.csv",
+      "sha256": "27ac1573c6f27aa67339d78531ec7c879a2332eb145336a05b2dbe36ac5f6842"
+    },
+    {
+      "bytes": 1494550,
+      "name": "goal_low_jitter_timeline.png",
+      "sha256": "2c611ce3fc5eaa415ab3bdcb55f1db89cefb9ef4ada85476afe898a897481ebf"
+    },
+    {
+      "bytes": 886,
+      "name": "main_table.csv",
+      "sha256": "abf93c64af4011e4c1bfcc43ff52063a849e7870c4481b7afacac0a9ebe7fa01"
+    },
+    {
+      "bytes": 1886145,
+      "name": "object_high_jitter_timeline.png",
+      "sha256": "d96300fdc2c81f0b7d1868e5c592ef28caf4c0c7b0e4568350e6788dde6bc909"
+    },
+    {
+      "bytes": 3575597,
+      "name": "paired_content_final_frames.png",
+      "sha256": "9dfe151681d5b6bf72e8920e8aa533901f7062bc99f27520ac609022cb11f2a3"
+    },
+    {
+      "bytes": 3959,
+      "name": "report.md",
+      "sha256": "79cc9a1956e6658918d670bcc62438a691cb811420ade9b3866f01f9f28f0daa"
+    },
+    {
+      "bytes": 76094,
+      "name": "scheduler_mechanism.png",
+      "sha256": "0b2ba99eeb6ffd22409555d56bc9007b4305e23f49b0664d74b7223bc64ad8cb"
+    },
+    {
+      "bytes": 3373,
+      "name": "summary.json",
+      "sha256": "bc2a4d3d5b3a9595588ed535a48d214e6d2f3f19fdce6aa4ca450a23953864ef"
+    }
+  ],
+  "schema_version": 1
+}

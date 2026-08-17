@@ -1,0 +1,227 @@
+{
+  "evidence_classes": [
+    "ros_cpp_test_plant"
+  ],
+  "formal_ros_or_isaac_claim_allowed": true,
+  "manifest": "outputs\\m7_g0\\development\\manifest.json",
+  "milestone": "M7-G0",
+  "primary_numerical_gate": {
+    "conditions": {
+      "hold_reduction_at_least_50pct": true,
+      "paired_ci_excludes_zero": false,
+      "success_difference_at_least_20pp": false
+    },
+    "evaluated": true,
+    "numerical_conditions_only": true,
+    "passed": false,
+    "semantic_and_replay_acceptance_must_be_combined_separately": true,
+    "strong_conditions": {
+      "aligned_within_5pp_of_sync": true,
+      "median_wall_reduction_at_least_20pct": false
+    },
+    "strong_passed": false
+  },
+  "profiles": {
+    "profile_a": {
+      "aligned_hold_reduction_vs_sync": 0.9256317036191868,
+      "aligned_median_wall_reduction_vs_sync": -0.02446242783767727,
+      "aligned_minus_naive_percentage_points": -12.5,
+      "aligned_minus_naive_success_rate": -0.125,
+      "paired_bootstrap_95_ci": [
+        -0.375,
+        0.0
+      ],
+      "paired_trial_count": 8,
+      "raw_paired_outcomes": [
+        {
+          "aligned_async": true,
+          "naive_async": true,
+          "seed": 2026080300,
+          "sync_hold": true
+        },
+        {
+          "aligned_async": true,
+          "naive_async": true,
+          "seed": 2026080301,
+          "sync_hold": true
+        },
+        {
+          "aligned_async": true,
+          "naive_async": true,
+          "seed": 2026080302,
+          "sync_hold": true
+        },
+        {
+          "aligned_async": true,
+          "naive_async": true,
+          "seed": 2026080303,
+          "sync_hold": true
+        },
+        {
+          "aligned_async": false,
+          "naive_async": true,
+          "seed": 2026080304,
+          "sync_hold": true
+        },
+        {
+          "aligned_async": true,
+          "naive_async": true,
+          "seed": 2026080305,
+          "sync_hold": true
+        },
+        {
+          "aligned_async": true,
+          "naive_async": true,
+          "seed": 2026080306,
+          "sync_hold": true
+        },
+        {
+          "aligned_async": true,
+          "naive_async": true,
+          "seed": 2026080307,
+          "sync_hold": true
+        }
+      ],
+      "seeds": [
+        2026080300,
+        2026080301,
+        2026080302,
+        2026080303,
+        2026080304,
+        2026080305,
+        2026080306,
+        2026080307
+      ],
+      "strategies": {
+        "aligned_async": {
+          "mean_deadline_miss_rate": 0.020833333333333332,
+          "mean_total_hold_seconds": 0.1875,
+          "median_simulation_steps": 57.0,
+          "median_wall_clock_seconds": 4.456664653,
+          "success_rate": 0.875,
+          "successes": 7,
+          "trials": 8
+        },
+        "naive_async": {
+          "mean_deadline_miss_rate": 0.0,
+          "mean_total_hold_seconds": 0.0,
+          "median_simulation_steps": 88.0,
+          "median_wall_clock_seconds": 5.955740308499999,
+          "success_rate": 1.0,
+          "successes": 8,
+          "trials": 8
+        },
+        "sync_hold": {
+          "mean_deadline_miss_rate": 0.09740259740259741,
+          "mean_total_hold_seconds": 2.521235649125,
+          "median_simulation_steps": 47.0,
+          "median_wall_clock_seconds": 4.3502470485,
+          "success_rate": 1.0,
+          "successes": 8,
+          "trials": 8
+        }
+      }
+    },
+    "profile_b": {
+      "aligned_hold_reduction_vs_sync": 0.9580931114607028,
+      "aligned_median_wall_reduction_vs_sync": 0.03749152756169283,
+      "aligned_minus_naive_percentage_points": 0.0,
+      "aligned_minus_naive_success_rate": 0.0,
+      "paired_bootstrap_95_ci": [
+        0.0,
+        0.0
+      ],
+      "paired_trial_count": 8,
+      "raw_paired_outcomes": [
+        {
+          "aligned_async": true,
+          "naive_async": true,
+          "seed": 2026080300,
+          "sync_hold": true
+        },
+        {
+          "aligned_async": true,
+          "naive_async": true,
+          "seed": 2026080301,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": true,
+          "seed": 2026080302,
+          "sync_hold": true
+        },
+        {
+          "aligned_async": true,
+          "naive_async": true,
+          "seed": 2026080303,
+          "sync_hold": true
+        },
+        {
+          "aligned_async": true,
+          "naive_async": true,
+          "seed": 2026080304,
+          "sync_hold": true
+        },
+        {
+          "aligned_async": true,
+          "naive_async": true,
+          "seed": 2026080305,
+          "sync_hold": true
+        },
+        {
+          "aligned_async": true,
+          "naive_async": true,
+          "seed": 2026080306,
+          "sync_hold": true
+        },
+        {
+          "aligned_async": true,
+          "naive_async": true,
+          "seed": 2026080307,
+          "sync_hold": true
+        }
+      ],
+      "seeds": [
+        2026080300,
+        2026080301,
+        2026080302,
+        2026080303,
+        2026080304,
+        2026080305,
+        2026080306,
+        2026080307
+      ],
+      "strategies": {
+        "aligned_async": {
+          "mean_deadline_miss_rate": 0.05701754385964912,
+          "mean_total_hold_seconds": 0.1625,
+          "median_simulation_steps": 57.0,
+          "median_wall_clock_seconds": 4.2352853855,
+          "success_rate": 1.0,
+          "successes": 8,
+          "trials": 8
+        },
+        "naive_async": {
+          "mean_deadline_miss_rate": 0.023578823883938182,
+          "mean_total_hold_seconds": 0.1875,
+          "median_simulation_steps": 88.0,
+          "median_wall_clock_seconds": 5.959813496000001,
+          "success_rate": 1.0,
+          "successes": 8,
+          "trials": 8
+        },
+        "sync_hold": {
+          "mean_deadline_miss_rate": 0.1737012987012987,
+          "mean_total_hold_seconds": 3.877644121625,
+          "median_simulation_steps": 47.0,
+          "median_wall_clock_seconds": 4.400257771,
+          "success_rate": 0.875,
+          "successes": 7,
+          "trials": 8
+        }
+      }
+    }
+  },
+  "schema_version": 1
+}

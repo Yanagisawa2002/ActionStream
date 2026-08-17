@@ -1,0 +1,23 @@
+{
+  "artifact_kind": "posthoc_publication_figure",
+  "caption": "Frozen M8 holdout latency-success operating points. Unconnected markers avoid implying a causal latency sweep. Horizontal bars span the median per-episode p50-to-p95 measured inference latency; vertical bars are Wilson 95% confidence intervals over 60 unseen seeds. P0 is sanity, P1 is fixed delay, and P2 adds jitter and response faults. P0/P1/P2 change both latency and fault regime.",
+  "files": [
+    {
+      "path": "latency_success_operating_points.pdf",
+      "sha256": "7e83ac3bedc0a072ac982249be42e695b92533069f4368a7256bfc8449021be9"
+    },
+    {
+      "path": "latency_success_operating_points.png",
+      "sha256": "e284910e753b4a1a08cecf9763bacbf934b016d0eb7665b4dfa5e3827a37bcf3"
+    },
+    {
+      "path": "latency_success_operating_points.data.json",
+      "sha256": "73e17a8bae616a90fe077e31979b2c5c16d669bab5fa6d38866632c83a4c3160"
+    }
+  ],
+  "png_dpi": 300,
+  "schema_version": 1,
+  "source_summary": "outputs/m8_g0/holdout_v3/report/holdout_summary.json",
+  "source_summary_sha256": "36a1ef1724053b047ef0edee98ebf18b777d48e1d997c61cec7db955b0ae1fbf",
+  "style": "publication"
+}

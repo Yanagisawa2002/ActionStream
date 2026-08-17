@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "milestone": "M8-G0",
+  "split": "development_demo",
+  "headline_eligible": false,
+  "source_seed_file": "configs/m8_development_seeds.json",
+  "seeds": [2026081100]
+}

@@ -1,0 +1,119 @@
+{
+  "schema_version": 5,
+  "selector_id": "actionstream_adaptive_budgeted_release_v5",
+  "frozen_utc": "2026-08-17T15:27:30Z",
+  "development_parent": {
+    "selector_id": "actionstream_adaptive_queue_slack_v4",
+    "selector_sha256": "7e437cbaeb3d274e098d8a068fafa482697148933eb5431c28c48cd51632a021",
+    "canary_verdict": "NO-GO",
+    "diagnosis": "V4 preserved a nonempty reserve through every registered outage but timed out on Object/high-jitter after 25 reserve activations and 83 hold steps. V5 retains the frozen v4 service-time and prefetch constants and changes only reserve release behavior."
+  },
+  "inputs": {
+    "allowed": [
+      "delivered_result_age_steps",
+      "observed_request_to_delivery_seconds",
+      "controller_period_seconds",
+      "current_control_step",
+      "queue_depth_steps",
+      "outstanding_request_control_steps",
+      "incoming_action_chunk",
+      "request_observation_robot_eef_pose",
+      "measured_robot_eef_pose_history",
+      "last_executed_action",
+      "executed_gripper_command",
+      "active_execution_mode",
+      "active_mode_residency_steps"
+    ],
+    "forbidden": [
+      "delay_profile_key",
+      "task_success",
+      "future_observation",
+      "task_or_suite_label",
+      "object_or_goal_pose",
+      "canary_or_holdout_result"
+    ]
+  },
+  "decision": {
+    "fresh_full_max_age_steps": 5,
+    "aligned_max_age_steps": 20,
+    "hard_max_age_steps": 28,
+    "minimum_aligned_horizon_steps": 10,
+    "age_ewma_alpha": 0.25,
+    "preferred_modes": {
+      "fresh": "full_chunk",
+      "moderate": "age_aligned",
+      "severe_but_bounded": "age_aligned",
+      "outage_or_unsafe": "reject_incoming_preserve_validated_queue_else_safe_hold"
+    }
+  },
+  "phase_stability": {
+    "preserve_validated_queue_on_reject": true,
+    "minimum_mode_residency_steps": 10,
+    "gripper_phase_lock_enabled": true,
+    "gripper_action_convention": "X-VLA LIBERO policy space: values >= +0.5 are closed; values <= -0.5 are open",
+    "gripper_closed_minimum": 0.5,
+    "gripper_open_maximum": -0.5,
+    "release_confirmation_steps": 3,
+    "locked_switch_rule": "While the executed gripper phase is closed and the active queue is nonempty, reject a proposed backend switch and drain the already validated active queue.",
+    "outage_rule": "Reject stale or unsafe incoming chunks without clearing a nonempty validated queue."
+  },
+  "queue_slack_scheduler": {
+    "enabled": true,
+    "queue_reserve_steps": 5,
+    "service_time_ewma_alpha": 0.5,
+    "minimum_request_interval_steps": 3,
+    "maximum_request_interval_steps": 10,
+    "maximum_service_prediction_steps": 28,
+    "service_observation_rule": "ceil(max(request-to-delivery wall time / controller period, delivered control-step age)), clipped to [1, 28]",
+    "prefetch_threshold_rule": "min(chunk_size - 1, ceil(service_time_ewma_steps) + queue_reserve_steps)",
+    "request_interval_rule": "clip(chunk_size - ceil(service_time_ewma_steps) - queue_reserve_steps, 3, 10)",
+    "cold_start_rule": "The first observed service time is clipped to 28 steps so model warm-up cannot demand an impossible horizon."
+  },
+  "reserve_spending": {
+    "enabled": true,
+    "reserve_spend_budget_steps": 4,
+    "minimum_protected_reserve_steps": 1,
+    "minimum_release_wait_steps": 1,
+    "maximum_release_wait_steps": 4,
+    "progress_window_steps": 3,
+    "progress_minimum_translation_m": 0.002,
+    "progress_minimum_rotation_radians": 0.02,
+    "deadline_rule": "At reserve activation and after each spent command, set the next release deadline to current_step + clip(predicted_service_steps - oldest_outstanding_request_age_steps, 1, 4).",
+    "progress_rule": "Before the deadline, release one validated reserve command when measured EEF translation is below 0.002 m and rotation is below 0.02 rad over three executed control steps.",
+    "budget_rule": "Spend at most four queued commands per reserve activation and never consume the final protected command. Hold the last finite absolute command when no release trigger fires or the budget/floor is exhausted.",
+    "reset_rule": "A replenishing accepted chunk or the absence of an unresolved request ends the activation and resets its spend budget."
+  },
+  "risk_gate": {
+    "reference_mode": "request_observation_eef_then_last_action",
+    "maximum_position_disagreement_m": 0.25,
+    "maximum_rotation_geodesic_radians": 0.35,
+    "reject_non_finite": true,
+    "record_gripper_switch": true,
+    "hard_gate_precedes_mode_preference": true,
+    "latest_only_candidate_index": "first non-stale timestamped command",
+    "first_chunk_without_robot_eef_reference": "abort"
+  },
+  "capabilities": {
+    "full_chunk": true,
+    "age_aligned": true,
+    "queue_preserving_reject": true,
+    "closed_gripper_phase_lock": true,
+    "online_service_time_prediction": true,
+    "queue_slack_prefetch": true,
+    "bounded_reserve_spending": true,
+    "deadline_aware_release": true,
+    "measured_eef_progress_release": true,
+    "official_rtc_dynamic_switch": false,
+    "rtc_boundary": "RTC remains an external official baseline; it is not relabeled as an Adaptive branch because RTC changes policy inference as well as queue merge."
+  },
+  "claims": {
+    "primary": "A deterministic task-label-blind runtime that spends a bounded validated reserve when the next result misses its predicted service deadline or the measured EEF stops progressing.",
+    "non_claims": [
+      "Measured EEF motion is a runtime progress signal, not task-goal progress or success prediction.",
+      "No claim of learned scheduler optimality.",
+      "No claim that canary results are a formal holdout.",
+      "No general safety certification.",
+      "No real-robot result until the separately frozen paired protocol is executed."
+    ]
+  }
+}

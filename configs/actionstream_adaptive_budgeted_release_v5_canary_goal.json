@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "experiment_id": "actionstream_adaptive_budgeted_release_v5_canary_goal_20260817",
+  "frozen_utc": "2026-08-17T15:31:00Z",
+  "source": {"repository_url": "https://github.com/huggingface/lerobot.git", "commit": "6adf51511b7625090eade8d82d9f61a1846ebe56", "source_version": "0.6.2"},
+  "adaptive_runtime": {"selector_protocol_path": "configs/actionstream_adaptive_budgeted_release_v5_selector.json", "selector_protocol_sha256": "51b3dbd120a0a39183a21f68e10d801151d255946c9aa7b8821f022ccf425a1b"},
+  "environment": {"type": "libero", "suite": "libero_goal", "task_ids": [2], "episode_length": 300, "control_frequency_hz": 20.0, "initial_state_indices": [33], "base_seed": 2026081803},
+  "models": [{"key": "xvla", "model_id": "lerobot/xvla-libero", "revision": "12e8783e996944f5c97e490d37d4c145484ed70a", "control_mode": "absolute", "chunk_size": 30, "request_interval_steps": 10, "rtc_expected": false, "rtc_execution_horizon": 10, "required": true, "rename_map": {}}],
+  "runtimes": ["sync_hold", "lerobot_latest_only", "actionstream_aligned", "actionstream_adaptive"],
+  "delay_profiles": [
+    {"key": "low_jitter_v5", "kind": "seeded_uniform", "center_milliseconds": 75, "half_width_milliseconds": 50, "seed": 2026081813, "trace_length": 2048},
+    {"key": "high_jitter_v5", "kind": "seeded_uniform", "center_milliseconds": 850, "half_width_milliseconds": 250, "seed": 2026081823, "trace_length": 2048},
+    {"key": "outage_v5_requests_03_08", "kind": "scripted_burst", "base_milliseconds": 425, "burst_milliseconds": 1850, "burst_ordinals": [3, 8], "trace_length": 2048}
+  ],
+  "compact_matrix": {"episodes_per_task": 1, "paired": true, "reuse_delay_trace_across_runtimes": true},
+  "evidence_boundary": {"status": "development_canary_budgeted_release_v5", "formal_holdout": false, "state_and_trace_disjoint_from_v4": true, "selector_constants_inherited_from_v4_except_release_policy": true, "threshold_tuning_after_first_row": false}
+}

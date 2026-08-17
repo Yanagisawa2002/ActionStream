@@ -1,0 +1,15 @@
+{
+  "classification": "NO-GO",
+  "details": {},
+  "evidence_class_required": "ros_cpp_isaac_sim",
+  "headline_eligible": false,
+  "headline_evidence_generated": false,
+  "metrics": null,
+  "milestone": "M8-G0",
+  "native_execution_completed": false,
+  "native_results_status": "unavailable_not_run",
+  "no_test_plant_substitution": true,
+  "reason": "The RTX 4090 remained at 16022 MiB used by unrelated Unity Editor sessions versus the fixed 4096 MiB safety threshold; current-source validation passed, but Isaac was not started and no native episode ran.",
+  "schema_version": 1,
+  "stage": "simulator_baseline_gpu_preflight"
+}

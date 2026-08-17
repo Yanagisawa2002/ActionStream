@@ -1,0 +1,391 @@
+{
+  "schema_version": 1,
+  "experiment_id": "actionstream_isaaclab_arena_v1",
+  "frozen_utc": "2026-08-18T01:20:00Z",
+  "freeze_policy": {
+    "rule": "No threshold, task, reset seed, network trace, model revision, or runtime configuration may change after formal holdout begins.",
+    "revision_rule": "Any contract change creates a new experiment_id and unused reset/network traces."
+  },
+  "arena_source": {
+    "repository_url": "https://github.com/isaac-sim/IsaacLab-Arena.git",
+    "release": "release/0.2.1",
+    "commit": "8b4a3a47fc53de23e8205089d71109a2e2348acd",
+    "maturity": "alpha",
+    "execution_environment": "official Docker source workflow; Isaac Lab 3.0 / Isaac Sim 6.0"
+  },
+  "lerobot_source": {
+    "repository_url": "https://github.com/huggingface/lerobot.git",
+    "version": "0.6.2",
+    "commit": "6adf51511b7625090eade8d82d9f61a1846ebe56"
+  },
+  "arena_integration": {
+    "package": "integrations/isaaclab_arena",
+    "policy_type": "isaaclab_arena_actionstream.policy.ActionStreamArenaPolicy",
+    "reset_seed_scope": "one Arena process per reset seed",
+    "paired_runtime_rule": "same task family, vector env count, reset seed, model checkpoint, observation/action bridge, network trace, episode budget, and success metric"
+  },
+  "control_frequency_hz": 20.0,
+  "tasks": [
+    {
+      "family": "pick_and_place",
+      "arena_env_args": {
+        "num_envs": 8,
+        "env_spacing": 2.5,
+        "enable_cameras": true,
+        "environment": "pick_and_place_maple_table",
+        "pick_up_object": "rubiks_cube_hot3d_robolab",
+        "destination_location": "bowl_ycb_robolab",
+        "embodiment": "droid_differential_ik"
+      }
+    },
+    {
+      "family": "press_button",
+      "arena_env_args": {
+        "num_envs": 8,
+        "env_spacing": 2.5,
+        "enable_cameras": true,
+        "environment": "press_button",
+        "embodiment": "droid_differential_ik"
+      }
+    },
+    {
+      "family": "put_and_close_door",
+      "arena_env_args": {
+        "num_envs": 8,
+        "env_spacing": 2.5,
+        "enable_cameras": true,
+        "environment": "franka_put_and_close_door",
+        "object": "dex_cube",
+        "embodiment": "droid_differential_ik"
+      }
+    }
+  ],
+  "models": [
+    {
+      "key": "xvla",
+      "model_id": "lerobot/xvla-libero",
+      "revision": "12e8783e996944f5c97e490d37d4c145484ed70a",
+      "control_mode": "absolute",
+      "rename_map": {},
+      "chunk_size": 30,
+      "rtc_compatible": false,
+      "required": true
+    },
+    {
+      "key": "smolvla",
+      "model_id": "lerobot/smolvla_libero",
+      "revision": "31d453f7edd78c839a8bbc39744a292686daf0de",
+      "control_mode": "relative",
+      "rename_map": {
+        "observation.images.image": "observation.images.camera1",
+        "observation.images.image2": "observation.images.camera2"
+      },
+      "chunk_size": 50,
+      "rtc_compatible": true,
+      "rtc_execution_horizon": 10,
+      "required": true,
+      "dependency_revisions": {
+        "HuggingFaceTB/SmolVLM2-500M-Video-Instruct": "7b375e1b73b11138ff12fe22c8f2822d8fe03467"
+      }
+    }
+  ],
+  "runtimes": [
+    {
+      "key": "sync",
+      "implementation_source": "lerobot.rollout.inference.sync.SyncInferenceEngine at pinned LeRobot commit"
+    },
+    {
+      "key": "latest_only",
+      "implementation_source": "lerobot.async_inference RobotClient aggregate_fn_name=latest_only at pinned LeRobot commit"
+    },
+    {
+      "key": "rtc",
+      "implementation_source": "lerobot.rollout.inference.rtc.RTCInferenceEngine at pinned LeRobot commit; not_applicable for policies without supports_rtc()"
+    },
+    {
+      "key": "actionstream_aligned",
+      "implementation_source": "actionstream.lerobot_inference.ActionStreamInferenceEngine with stale-prefix alignment and latest fallback disabled"
+    },
+    {
+      "key": "actionstream_guarded",
+      "implementation_source": "actionstream.lerobot_inference.ActionStreamInferenceEngine with bounded hold, stale rejection, timeout/recovery telemetry, and latest-only depletion fallback"
+    }
+  ],
+  "splits": {
+    "development": {
+      "reset_seeds": [
+        2026081811,
+        2026081813
+      ],
+      "network_trace_ids": [
+        "dev_low_a",
+        "dev_high_a",
+        "dev_jitter_fault_a"
+      ]
+    },
+    "holdout": {
+      "reset_seeds": [
+        2026081829,
+        2026081831,
+        2026081837
+      ],
+      "network_trace_ids": [
+        "holdout_low_b",
+        "holdout_high_b",
+        "holdout_jitter_fault_b"
+      ]
+    }
+  },
+  "network_traces": [
+    {
+      "id": "dev_low_a",
+      "kind": "measured_replay_contract",
+      "latency_ms": [
+        8,
+        12,
+        10,
+        15,
+        11,
+        9,
+        13,
+        14,
+        10,
+        12,
+        16,
+        9,
+        11,
+        13,
+        8,
+        14,
+        12,
+        10,
+        15,
+        9,
+        13,
+        11,
+        14,
+        10,
+        12,
+        9,
+        16,
+        11,
+        13,
+        8,
+        14,
+        10
+      ]
+    },
+    {
+      "id": "dev_high_a",
+      "kind": "measured_replay_contract",
+      "latency_ms": [
+        910,
+        935,
+        925,
+        960,
+        945,
+        920,
+        970,
+        940,
+        955,
+        930,
+        965,
+        915,
+        950,
+        925,
+        975,
+        940,
+        960,
+        920,
+        945,
+        935,
+        970,
+        910,
+        955,
+        930,
+        965,
+        920,
+        950,
+        940,
+        975,
+        915,
+        945,
+        935
+      ]
+    },
+    {
+      "id": "dev_jitter_fault_a",
+      "kind": "measured_replay_contract",
+      "latency_ms": [
+        210,
+        480,
+        760,
+        330,
+        1180,
+        540,
+        260,
+        890,
+        410,
+        690,
+        0,
+        0,
+        1320,
+        980,
+        350,
+        570,
+        240,
+        810,
+        450,
+        620,
+        1500,
+        1500,
+        1500,
+        300,
+        520,
+        770,
+        280,
+        940,
+        390,
+        650,
+        220,
+        860
+      ]
+    },
+    {
+      "id": "holdout_low_b",
+      "kind": "sealed_replay_contract",
+      "latency_ms": [
+        7,
+        14,
+        9,
+        13,
+        16,
+        10,
+        12,
+        8,
+        15,
+        11,
+        9,
+        14,
+        10,
+        16,
+        12,
+        7,
+        13,
+        9,
+        15,
+        11,
+        8,
+        14,
+        10,
+        12,
+        16,
+        9,
+        13,
+        7,
+        15,
+        11,
+        8,
+        14
+      ]
+    },
+    {
+      "id": "holdout_high_b",
+      "kind": "sealed_replay_contract",
+      "latency_ms": [
+        942,
+        918,
+        973,
+        929,
+        961,
+        907,
+        956,
+        938,
+        981,
+        924,
+        949,
+        913,
+        968,
+        934,
+        977,
+        921,
+        953,
+        909,
+        964,
+        940,
+        979,
+        926,
+        947,
+        915,
+        971,
+        932,
+        958,
+        905,
+        966,
+        936,
+        983,
+        919
+      ]
+    },
+    {
+      "id": "holdout_jitter_fault_b",
+      "kind": "sealed_replay_contract",
+      "latency_ms": [
+        275,
+        840,
+        430,
+        1010,
+        190,
+        620,
+        1450,
+        1450,
+        370,
+        710,
+        250,
+        930,
+        510,
+        0,
+        0,
+        0,
+        1210,
+        460,
+        780,
+        320,
+        980,
+        205,
+        665,
+        1540,
+        1540,
+        1540,
+        405,
+        735,
+        285,
+        875,
+        545,
+        1120
+      ]
+    }
+  ],
+  "episodes_per_vector_env": 3,
+  "execution_gates": {
+    "observation_contract": "required",
+    "action_contract": "required",
+    "learned_checkpoint": "required",
+    "gpu_inference": "required",
+    "video_content_checked": "required"
+  },
+  "required_metrics": [
+    "success",
+    "gpu_parallel_env_steps_per_second",
+    "queue_age_steps",
+    "discard_count",
+    "fallback_count",
+    "failure_taxonomy"
+  ],
+  "evidence_boundary": {
+    "structural": "Protocol expansion, imports, registry wiring, or zero-action simulator smoke do not count as learned-policy benchmark success.",
+    "simulator_smoke": "Proves Arena task construction and vector stepping only.",
+    "learned_policy_rollout": "Requires the pinned learned checkpoint to drive Arena actions through validated visual/state and relative-IK bridges, plus videos and per-episode provenance.",
+    "safety": "Simulation validation and MockRobot tests are not real-robot safety evidence."
+  }
+}

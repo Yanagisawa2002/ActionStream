@@ -1,0 +1,96 @@
+{
+  "failure_boundary": {
+    "causal_status": "trace-supported hypothesis, not identified from one reset",
+    "classification": "timeout_after_fragmented_reserve_holds",
+    "condition": "Object/high_jitter_v4/actionstream_adaptive",
+    "reserve_activations": 25,
+    "reserve_hold_steps": 83
+  },
+  "formal_holdout_opened": false,
+  "gate": {
+    "adaptive_success_9_of_9": false,
+    "artifacts_valid": true,
+    "outage_mechanism_all_3": true,
+    "outage_ordinals_all_3": true,
+    "prefetch_all_9": true,
+    "sync_capability_3_of_3": true
+  },
+  "mechanism": {
+    "guard_discards": 0,
+    "outage_preserved_queue_rejections": 21,
+    "outage_reserve_hold_steps": 100,
+    "prefetch_requests": 223,
+    "preserved_queue_rejections": 31,
+    "reserve_activations": 47,
+    "reserve_hold_steps": 232
+  },
+  "profiles": {
+    "high_jitter_v4": {
+      "actionstream_adaptive": {
+        "episodes": 3,
+        "successes": 2,
+        "total_steps": 512
+      },
+      "actionstream_aligned": {
+        "episodes": 3,
+        "successes": 3,
+        "total_steps": 339
+      },
+      "lerobot_latest_only": {
+        "episodes": 3,
+        "successes": 3,
+        "total_steps": 397
+      }
+    },
+    "low_jitter_v4": {
+      "actionstream_adaptive": {
+        "episodes": 3,
+        "successes": 3,
+        "total_steps": 359
+      },
+      "actionstream_aligned": {
+        "episodes": 3,
+        "successes": 3,
+        "total_steps": 359
+      },
+      "lerobot_latest_only": {
+        "episodes": 3,
+        "successes": 3,
+        "total_steps": 341
+      }
+    },
+    "outage_v4_requests_02_06": {
+      "actionstream_adaptive": {
+        "episodes": 3,
+        "successes": 3,
+        "total_steps": 481
+      },
+      "actionstream_aligned": {
+        "episodes": 3,
+        "successes": 3,
+        "total_steps": 448
+      },
+      "lerobot_latest_only": {
+        "episodes": 3,
+        "successes": 2,
+        "total_steps": 594
+      }
+    }
+  },
+  "schema_version": 1,
+  "selector_id": "actionstream_adaptive_queue_slack_v4",
+  "selector_sha256": "7e437cbaeb3d274e098d8a068fafa482697148933eb5431c28c48cd51632a021",
+  "source_commit": "d78c81ec89ba460945454220ba276a3a3d63622e",
+  "statistical_boundary": "One paired state per task/profile; no IID-seed confidence interval.",
+  "validation": {
+    "adaptive_successes": 8,
+    "aligned_successes": 9,
+    "decoded_frames": 4883,
+    "latest_successes": 8,
+    "rows": 36,
+    "sync_successes": 9,
+    "trace_hashes_verified": 36,
+    "videos_decoded": 36
+  },
+  "verdict": "NO-GO"
+}

@@ -1,0 +1,58 @@
+{
+  "analysis": {
+    "path": "outputs/m8_g0/holdout_v3/analysis.json",
+    "sha256": "ed5d28baa3f92a2f030337bd66523aeb98f1be3e44ee07623dcb5099afb14bab"
+  },
+  "archive_audit_identity_compatibility_applied": true,
+  "artifact_kind": "registered_report_compatibility_receipt",
+  "canonical_analysis_mutated": false,
+  "compatibility_applied": true,
+  "compatibility_scope": [
+    "Resolve only analysis.freeze_manifest relative to the canonical holdout matrix directory and require it to equal the separately supplied immutable freeze.",
+    "When legacy audit identity fields are absent, compare direct and archive replay audits by the normalized raw-event source path plus strategy; require all identities to be unique and all metric/invariant payloads to match.",
+    "Replace only the four fixed legacy reproduction-command paths with the exact supplied v3 artifact paths, requiring one unambiguous occurrence each."
+  ],
+  "compatibility_wrapper": {
+    "path": "scripts/m8_registered_report_compat.py",
+    "sha256": "26c9356df2a1a8efcca6e6973c28d637078f5a178b8152d752fb7ebf16d73a16"
+  },
+  "freeze_manifest": {
+    "analysis_reference": "../protocol_v3/freeze_manifest.json",
+    "path": "outputs/m8_g0/protocol_v3/freeze_manifest.json",
+    "sha256": "ae84b08dd083d12befe59058897f3abe52949173a08ee4a6b477fba6e62e3a86"
+  },
+  "frozen_report_source_mutated": false,
+  "matrix_relative_freeze_compatibility_applied": true,
+  "milestone": "M8-G0",
+  "registered_report_generator": {
+    "path": "ros2_ws/src/action_stream_benchmark/action_stream_benchmark/m8_report.py",
+    "sha256": "1ef65c9530e6353cc12f591a2afed2d00e8b47113989f915b254bc592be0acf0"
+  },
+  "report": {
+    "path": "outputs/m8_g0/holdout_v3/report/m8_g0_registered_report.md",
+    "sha256": "ab2354cea276c86340ca9b732a139b4c6f36c9e6e44b034a7080ba682d571eeb"
+  },
+  "reproduction_path_rewrites": [
+    {
+      "from": "outputs/m8_g0/protocol/freeze_manifest.json",
+      "replacement_count": 1,
+      "to": "outputs/m8_g0/protocol_v3/freeze_manifest.json"
+    },
+    {
+      "from": "outputs/m8_g0/holdout/matrix.json",
+      "replacement_count": 1,
+      "to": "outputs/m8_g0/holdout_v3/matrix.json"
+    },
+    {
+      "from": "outputs/m8_g0/holdout/matrix.archive.json",
+      "replacement_count": 1,
+      "to": "outputs/m8_g0/holdout_v3/matrix.archive.json"
+    },
+    {
+      "from": "outputs/m8_g0/holdout/replay_validation.archive.json",
+      "replacement_count": 1,
+      "to": "outputs/m8_g0/holdout_v3/replay_validation.archive.json"
+    }
+  ],
+  "schema_version": 1
+}

@@ -1,0 +1,76 @@
+{
+  "classification": "GO",
+  "evidence_class": "ros_cpp_isaac_sim",
+  "figures": [
+    {
+      "caption": "Correct-destination success under the frozen fixed-latency Profile 1. Labels report raw successes and exact paired denominators.",
+      "figure_id": "profile_1_success",
+      "files": [
+        {
+          "format": "pdf",
+          "path": "profile_1_success.pdf",
+          "sha256": "f577acbe1b49f23a72e8cc939edc78ea4228cdb8768cc8f08499fbd0d502c6a1",
+          "size_bytes": 10850,
+          "vector": true
+        },
+        {
+          "dpi": 300,
+          "format": "png",
+          "path": "profile_1_success.png",
+          "sha256": "a314d295f372e416d5c340f1a1b7b72f5bbe3e222f26249cd96d70e849e89b16",
+          "size_bytes": 64141
+        }
+      ]
+    },
+    {
+      "caption": "Median penalized control-step latency from the destination switch to the first executed post-switch-generation command under Profile 1; lower is better.",
+      "figure_id": "profile_1_recovery_latency",
+      "files": [
+        {
+          "format": "pdf",
+          "path": "profile_1_recovery_latency.pdf",
+          "sha256": "d5646c24e1e5ebecdd1f55e2d4fbc7f46785ad994d597e32770fddc7152d0606",
+          "size_bytes": 10289,
+          "vector": true
+        },
+        {
+          "dpi": 300,
+          "format": "png",
+          "path": "profile_1_recovery_latency.png",
+          "sha256": "7267af04326b432d62d982d22d8a9321a92add34c883b93d6ea4c0f063449b80",
+          "size_bytes": 54971
+        }
+      ]
+    },
+    {
+      "caption": "Mean post-switch control steps whose Cartesian commands are geometrically closer to the obsolete destination than the active destination under Profile 1; lower is better.",
+      "figure_id": "profile_1_obsolete_commands",
+      "files": [
+        {
+          "format": "pdf",
+          "path": "profile_1_obsolete_commands.pdf",
+          "sha256": "6491ecb022c55c2197b7946bcf23d8175957f5fee743a9c51712410930226af7",
+          "size_bytes": 10187,
+          "vector": true
+        },
+        {
+          "dpi": 300,
+          "format": "png",
+          "path": "profile_1_obsolete_commands.png",
+          "sha256": "ad2b7cb56d7c023a349593815912347f6b152c83884ed3c51c2329438f74589b",
+          "size_bytes": 50255
+        }
+      ]
+    }
+  ],
+  "latex_includes": {
+    "path": "latex_includes.tex",
+    "sha256": "2c6256e20905e2f92d2a4f2b36112f0a83005edac774e176a35d60a5c5b0aa2d"
+  },
+  "milestone": "M8-G0",
+  "png_dpi": 300,
+  "schema_version": 1,
+  "source_analysis": "../analysis.json",
+  "source_analysis_sha256": "ed5d28baa3f92a2f030337bd66523aeb98f1be3e44ee07623dcb5099afb14bab",
+  "style": "publication"
+}

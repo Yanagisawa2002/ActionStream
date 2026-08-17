@@ -1,0 +1,192 @@
+{
+  "schema_version": 1,
+  "milestone": "M6-G0",
+  "upstream_commit": "62600065cdb349c1e41b0403c511f12ebfa686eb",
+  "checkout_clean": true,
+  "references": {
+    "timed_data": {
+      "file": "src/lerobot/async_inference/helpers.py",
+      "symbol": "TimedData, TimedAction, TimedObservation",
+      "start_line": 202,
+      "end_line": 235,
+      "file_sha256": "28ec46fc6c4682a01f21b4401741c00d602afeeffae0150aff2389549a0b4943",
+      "permalink": "https://github.com/huggingface/lerobot/blob/62600065cdb349c1e41b0403c511f12ebfa686eb/src/lerobot/async_inference/helpers.py#L202-L235"
+    },
+    "aggregate_registry": {
+      "file": "src/lerobot/async_inference/configs.py",
+      "symbol": "AGGREGATE_FUNCTIONS",
+      "start_line": 29,
+      "end_line": 34,
+      "file_sha256": "cc3a84e8b5e058d184d4a9a4132a18e90a2ccd3adb761852c5ac5450cb535c4e",
+      "permalink": "https://github.com/huggingface/lerobot/blob/62600065cdb349c1e41b0403c511f12ebfa686eb/src/lerobot/async_inference/configs.py#L29-L34"
+    },
+    "client_config": {
+      "file": "src/lerobot/async_inference/configs.py",
+      "symbol": "RobotClientConfig",
+      "start_line": 103,
+      "end_line": 143,
+      "file_sha256": "cc3a84e8b5e058d184d4a9a4132a18e90a2ccd3adb761852c5ac5450cb535c4e",
+      "permalink": "https://github.com/huggingface/lerobot/blob/62600065cdb349c1e41b0403c511f12ebfa686eb/src/lerobot/async_inference/configs.py#L103-L143"
+    },
+    "send_observation": {
+      "file": "src/lerobot/async_inference/robot_client.py",
+      "symbol": "RobotClient.send_observation",
+      "start_line": 183,
+      "end_line": 215,
+      "file_sha256": "2e6c54f9ba83c81722ad7cb8f4d5d520416a5c2807afeb2205120d7ac98f5005",
+      "permalink": "https://github.com/huggingface/lerobot/blob/62600065cdb349c1e41b0403c511f12ebfa686eb/src/lerobot/async_inference/robot_client.py#L183-L215"
+    },
+    "aggregate_queues": {
+      "file": "src/lerobot/async_inference/robot_client.py",
+      "symbol": "RobotClient._aggregate_action_queues",
+      "start_line": 224,
+      "end_line": 267,
+      "file_sha256": "2e6c54f9ba83c81722ad7cb8f4d5d520416a5c2807afeb2205120d7ac98f5005",
+      "permalink": "https://github.com/huggingface/lerobot/blob/62600065cdb349c1e41b0403c511f12ebfa686eb/src/lerobot/async_inference/robot_client.py#L224-L267"
+    },
+    "receive_actions": {
+      "file": "src/lerobot/async_inference/robot_client.py",
+      "symbol": "RobotClient.receive_actions",
+      "start_line": 269,
+      "end_line": 337,
+      "file_sha256": "2e6c54f9ba83c81722ad7cb8f4d5d520416a5c2807afeb2205120d7ac98f5005",
+      "permalink": "https://github.com/huggingface/lerobot/blob/62600065cdb349c1e41b0403c511f12ebfa686eb/src/lerobot/async_inference/robot_client.py#L269-L337"
+    },
+    "execute_action": {
+      "file": "src/lerobot/async_inference/robot_client.py",
+      "symbol": "RobotClient.control_loop_action",
+      "start_line": 370,
+      "end_line": 401,
+      "file_sha256": "2e6c54f9ba83c81722ad7cb8f4d5d520416a5c2807afeb2205120d7ac98f5005",
+      "permalink": "https://github.com/huggingface/lerobot/blob/62600065cdb349c1e41b0403c511f12ebfa686eb/src/lerobot/async_inference/robot_client.py#L370-L401"
+    },
+    "request_threshold": {
+      "file": "src/lerobot/async_inference/robot_client.py",
+      "symbol": "RobotClient._ready_to_send_observation",
+      "start_line": 403,
+      "end_line": 406,
+      "file_sha256": "2e6c54f9ba83c81722ad7cb8f4d5d520416a5c2807afeb2205120d7ac98f5005",
+      "permalink": "https://github.com/huggingface/lerobot/blob/62600065cdb349c1e41b0403c511f12ebfa686eb/src/lerobot/async_inference/robot_client.py#L403-L406"
+    },
+    "capture_observation": {
+      "file": "src/lerobot/async_inference/robot_client.py",
+      "symbol": "RobotClient.control_loop_observation",
+      "start_line": 408,
+      "end_line": 453,
+      "file_sha256": "2e6c54f9ba83c81722ad7cb8f4d5d520416a5c2807afeb2205120d7ac98f5005",
+      "permalink": "https://github.com/huggingface/lerobot/blob/62600065cdb349c1e41b0403c511f12ebfa686eb/src/lerobot/async_inference/robot_client.py#L408-L453"
+    },
+    "client_control_loop": {
+      "file": "src/lerobot/async_inference/robot_client.py",
+      "symbol": "RobotClient.control_loop",
+      "start_line": 458,
+      "end_line": 481,
+      "file_sha256": "2e6c54f9ba83c81722ad7cb8f4d5d520416a5c2807afeb2205120d7ac98f5005",
+      "permalink": "https://github.com/huggingface/lerobot/blob/62600065cdb349c1e41b0403c511f12ebfa686eb/src/lerobot/async_inference/robot_client.py#L458-L481"
+    },
+    "server_observation_receive": {
+      "file": "src/lerobot/async_inference/policy_server.py",
+      "symbol": "PolicyServer.SendObservations",
+      "start_line": 173,
+      "end_line": 212,
+      "file_sha256": "49fa914fe8d6e34b9f2d66aa5feda2795e9288e9147ee8ff84bf52a7db7beed6",
+      "permalink": "https://github.com/huggingface/lerobot/blob/62600065cdb349c1e41b0403c511f12ebfa686eb/src/lerobot/async_inference/policy_server.py#L173-L212"
+    },
+    "server_get_actions": {
+      "file": "src/lerobot/async_inference/policy_server.py",
+      "symbol": "PolicyServer.GetActions",
+      "start_line": 214,
+      "end_line": 258,
+      "file_sha256": "49fa914fe8d6e34b9f2d66aa5feda2795e9288e9147ee8ff84bf52a7db7beed6",
+      "permalink": "https://github.com/huggingface/lerobot/blob/62600065cdb349c1e41b0403c511f12ebfa686eb/src/lerobot/async_inference/policy_server.py#L214-L258"
+    },
+    "observation_filter": {
+      "file": "src/lerobot/async_inference/policy_server.py",
+      "symbol": "PolicyServer._obs_sanity_checks, _enqueue_observation",
+      "start_line": 268,
+      "end_line": 310,
+      "file_sha256": "49fa914fe8d6e34b9f2d66aa5feda2795e9288e9147ee8ff84bf52a7db7beed6",
+      "permalink": "https://github.com/huggingface/lerobot/blob/62600065cdb349c1e41b0403c511f12ebfa686eb/src/lerobot/async_inference/policy_server.py#L268-L310"
+    },
+    "time_action_chunk": {
+      "file": "src/lerobot/async_inference/policy_server.py",
+      "symbol": "PolicyServer._time_action_chunk",
+      "start_line": 312,
+      "end_line": 320,
+      "file_sha256": "49fa914fe8d6e34b9f2d66aa5feda2795e9288e9147ee8ff84bf52a7db7beed6",
+      "permalink": "https://github.com/huggingface/lerobot/blob/62600065cdb349c1e41b0403c511f12ebfa686eb/src/lerobot/async_inference/policy_server.py#L312-L320"
+    },
+    "predict_action_chunk": {
+      "file": "src/lerobot/async_inference/policy_server.py",
+      "symbol": "PolicyServer._predict_action_chunk",
+      "start_line": 330,
+      "end_line": 387,
+      "file_sha256": "49fa914fe8d6e34b9f2d66aa5feda2795e9288e9147ee8ff84bf52a7db7beed6",
+      "permalink": "https://github.com/huggingface/lerobot/blob/62600065cdb349c1e41b0403c511f12ebfa686eb/src/lerobot/async_inference/policy_server.py#L330-L387"
+    },
+    "rtc_support_check": {
+      "file": "src/lerobot/rollout/inference/rtc.py",
+      "symbol": "supports_rtc_inference",
+      "start_line": 66,
+      "end_line": 80,
+      "file_sha256": "7aa51b09bf6a16105aa7045004b978a48c64022759a7be731474c25a9dbdc775",
+      "permalink": "https://github.com/huggingface/lerobot/blob/62600065cdb349c1e41b0403c511f12ebfa686eb/src/lerobot/rollout/inference/rtc.py#L66-L80"
+    },
+    "rtc_inference_loop": {
+      "file": "src/lerobot/rollout/inference/rtc.py",
+      "symbol": "RTCInferenceEngine._rtc_loop",
+      "start_line": 288,
+      "end_line": 327,
+      "file_sha256": "7aa51b09bf6a16105aa7045004b978a48c64022759a7be731474c25a9dbdc775",
+      "permalink": "https://github.com/huggingface/lerobot/blob/62600065cdb349c1e41b0403c511f12ebfa686eb/src/lerobot/rollout/inference/rtc.py#L288-L327"
+    },
+    "rtc_queue": {
+      "file": "src/lerobot/policies/rtc/action_queue.py",
+      "symbol": "ActionQueue.merge, _replace_actions_queue",
+      "start_line": 147,
+      "end_line": 188,
+      "file_sha256": "bfdb56609f2442cfb362399b900f3061bb2da36271a94ab24a0e4459f307b5a3",
+      "permalink": "https://github.com/huggingface/lerobot/blob/62600065cdb349c1e41b0403c511f12ebfa686eb/src/lerobot/policies/rtc/action_queue.py#L147-L188"
+    },
+    "base_rtc_support": {
+      "file": "src/lerobot/policies/pretrained.py",
+      "symbol": "PreTrainedPolicy.supports_rtc",
+      "start_line": 252,
+      "end_line": 254,
+      "file_sha256": "7199005e8cb51480b3b3fa7baa152eadc696356100abe919686dfe9ec1f968d1",
+      "permalink": "https://github.com/huggingface/lerobot/blob/62600065cdb349c1e41b0403c511f12ebfa686eb/src/lerobot/policies/pretrained.py#L252-L254"
+    },
+    "act_chunk_signature": {
+      "file": "src/lerobot/policies/act/modeling_act.py",
+      "symbol": "ACTPolicy.predict_action_chunk",
+      "start_line": 125,
+      "end_line": 135,
+      "file_sha256": "985fcd1d09cfbc0e2609adcd2456b8210cc267926b4aaf5e18518f125d5520d1",
+      "permalink": "https://github.com/huggingface/lerobot/blob/62600065cdb349c1e41b0403c511f12ebfa686eb/src/lerobot/policies/act/modeling_act.py#L125-L135"
+    },
+    "rtc_context_guard": {
+      "file": "src/lerobot/rollout/context.py",
+      "symbol": "make_rollout_context RTC guard",
+      "start_line": 227,
+      "end_line": 238,
+      "file_sha256": "ca97728262a2b9b642c77ee9b06ed8750f6aea90b4c96b5ecac39dfedee8f1db",
+      "permalink": "https://github.com/huggingface/lerobot/blob/62600065cdb349c1e41b0403c511f12ebfa686eb/src/lerobot/rollout/context.py#L227-L238"
+    },
+    "so_follower_safety_config": {
+      "file": "src/lerobot/robots/so_follower/config_so_follower.py",
+      "symbol": "SOFollowerConfig.max_relative_target",
+      "start_line": 27,
+      "end_line": 39,
+      "file_sha256": "c3392a9b4d53111e48017501b2e9efef2beeb2c7fe832449f0afbe3410228fb4",
+      "permalink": "https://github.com/huggingface/lerobot/blob/62600065cdb349c1e41b0403c511f12ebfa686eb/src/lerobot/robots/so_follower/config_so_follower.py#L27-L39"
+    },
+    "so_follower_send_action": {
+      "file": "src/lerobot/robots/so_follower/so_follower.py",
+      "symbol": "SOFollower.send_action",
+      "start_line": 205,
+      "end_line": 230,
+      "file_sha256": "599082ff04d93c284b7cf864e58a8f840dc2f10d7457cf0caa8ef2eb743e3f44",
+      "permalink": "https://github.com/huggingface/lerobot/blob/62600065cdb349c1e41b0403c511f12ebfa686eb/src/lerobot/robots/so_follower/so_follower.py#L205-L230"
+    }
+  }
+}

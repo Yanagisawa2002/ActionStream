@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "milestone": "M6-G0",
+  "classification": "NO-GO",
+  "recommended_next_step": "termination of this direction",
+  "best_official_act_compatible_runtime": "lerobot_latest_only",
+  "official_baseline_selection_score": [
+    12.133333333333333,
+    3.1666666666666665,
+    0.28520833333333334
+  ],
+  "criteria": {
+    "materially_distinct_from_best_official_act_async": true,
+    "stale_prefix_execution_reduction_at_least_50pct": true,
+    "median_error_reduction_in_at_least_three_nonzero_families": true,
+    "queue_underrun_or_hold_worsening_within_5pp": false,
+    "zero_latency_no_material_regression": true,
+    "no_policy_retraining_required": true,
+    "no_act_architecture_modification_required": true,
+    "integration_isolated_and_maintainable": true
+  },
+  "measurements": {
+    "delayed_stale_prefix_execution_reduction_fraction": 1.0,
+    "family_median_temporal_error_reduction_fraction": {
+      "quarter_horizon": 1.0,
+      "sixty_percent_horizon": 1.0,
+      "one_twenty_percent_horizon": null,
+      "bounded_jitter": 1.0,
+      "out_of_order": 0.7142857142857143,
+      "late_after_newer_generation": 1.0
+    },
+    "families_meeting_30pct_error_reduction": [
+      "quarter_horizon",
+      "sixty_percent_horizon",
+      "bounded_jitter",
+      "out_of_order",
+      "late_after_newer_generation"
+    ],
+    "queue_underrun_worsening_percentage_points": {
+      "quarter_horizon": 0.0,
+      "sixty_percent_horizon": 4.166666666666666,
+      "one_twenty_percent_horizon": 47.916666666666664,
+      "bounded_jitter": 5.66666666666667,
+      "out_of_order": 29.166666666666664,
+      "late_after_newer_generation": 2.0833333333333313
+    },
+    "maximum_queue_underrun_worsening_percentage_points": 47.916666666666664,
+    "zero_latency_median_error_regression_steps": -1.0,
+    "zero_latency_underrun_worsening_percentage_points": 0.0,
+    "official_equivalent_or_better_families": []
+  },
+  "tooling_diagnostics_materially_absent_upstream": true,
+  "reasons": [
+    "The predeclared PORT GO conjunction failed.",
+    "Official scheduling was not equivalent-or-better in enough families to justify an algorithm-overlap tooling classification.",
+    "Failed gates: queue_underrun_or_hold_worsening_within_5pp"
+  ],
+  "m5_g0_remains_no_go": true,
+  "poseguard_revived": false,
+  "foundationpose_included": false,
+  "rtc_in_act_benchmark": false,
+  "decision_sha256": "77f6e656916b4b503983ec3e9abe974bc0719b71e2385cb1e75fbdbf258a89f1"
+}

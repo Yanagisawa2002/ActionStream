@@ -1,0 +1,13 @@
+[build-system]
+requires = ["hatchling==1.27.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "isaaclab-arena-actionstream"
+version = "0.1.0"
+description = "Pinned Isaac Lab-Arena policy adapter for ActionStream"
+requires-python = ">=3.12,<3.13"
+dependencies = ["actionstream==1.1.0rc1"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/isaaclab_arena_actionstream"]

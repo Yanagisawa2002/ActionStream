@@ -1,0 +1,5121 @@
+{
+  "bootstrap": {
+    "base_seed": 20260808,
+    "confidence": 0.95,
+    "method": "paired_nonparametric_bootstrap",
+    "resamples": 20000
+  },
+  "classification": "GO",
+  "episode_count": 420,
+  "evidence_class": "ros_cpp_isaac_sim",
+  "freeze_manifest": "../protocol_v3/freeze_manifest.json",
+  "freeze_sha256": "4d63b6b6f2af1458c063ed52eb73e1a2bcb82f412bb0a9b19d352659bbca923f",
+  "holdout_seed_file_sha256": "951a340a51ff15c037cd9c4af2f8446e4a2cdcbf2110256b991790ecabb72591",
+  "manifest": "outputs/m8_g0/holdout_v3/matrix.json",
+  "manifest_sha256": "384be6047398c58b2b871b313b2184dae7917d715f7e43e5e688748610c22562",
+  "milestone": "M8-G0",
+  "partial_go_material_secondary_improvement": true,
+  "primary_go_gate": {
+    "aligned_forbidden_execution_count": 0,
+    "conditions": {
+      "aligned_forbidden_execution_count_is_zero": true,
+      "aligned_minus_naive_success_at_least_15pp": true,
+      "frozen_protocol_validated_without_post_holdout_change": true,
+      "native_isaac_evidence_only": true,
+      "paired_95_ci_excludes_zero": true,
+      "paired_fairness_passes": true,
+      "profile_0_ceiling_at_least_90pct": true,
+      "replay_passes_every_episode": true
+    },
+    "passed": true,
+    "profile": "profile_1_fixed"
+  },
+  "profiles": {
+    "profile_0_sanity": {
+      "paired_trial_count": 60,
+      "seeds": [
+        2026081200,
+        2026081201,
+        2026081202,
+        2026081203,
+        2026081204,
+        2026081205,
+        2026081206,
+        2026081207,
+        2026081208,
+        2026081209,
+        2026081210,
+        2026081211,
+        2026081212,
+        2026081213,
+        2026081214,
+        2026081215,
+        2026081216,
+        2026081217,
+        2026081218,
+        2026081219,
+        2026081220,
+        2026081221,
+        2026081222,
+        2026081223,
+        2026081224,
+        2026081225,
+        2026081226,
+        2026081227,
+        2026081228,
+        2026081229,
+        2026081230,
+        2026081231,
+        2026081232,
+        2026081233,
+        2026081234,
+        2026081235,
+        2026081236,
+        2026081237,
+        2026081238,
+        2026081239,
+        2026081240,
+        2026081241,
+        2026081242,
+        2026081243,
+        2026081244,
+        2026081245,
+        2026081246,
+        2026081247,
+        2026081248,
+        2026081249,
+        2026081250,
+        2026081251,
+        2026081252,
+        2026081253,
+        2026081254,
+        2026081255,
+        2026081256,
+        2026081257,
+        2026081258,
+        2026081259
+      ],
+      "strategies": {
+        "sync_hold": {
+          "correct_destination_successes": 60,
+          "descriptive_metrics": {
+            "applied_target_discontinuity_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 112.0,
+              "mean": 83.48333333333333,
+              "median": 83.0,
+              "min": 49.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 16.52320758475451,
+              "sum": 5009.0
+            },
+            "collision": {
+              "count": 60,
+              "false_count": 60,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 0.0,
+              "true_count": 0
+            },
+            "command_motion_audit_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 271.0,
+              "mean": 225.33333333333334,
+              "median": 231.0,
+              "min": 191.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 17.829438827088442,
+              "sum": 13520.0
+            },
+            "completion_reason": {
+              "count": 60,
+              "counts": {
+                "correct_destination_stable_placement": 60
+              },
+              "kind": "categorical",
+              "null_count": 0,
+              "observed_count": 60
+            },
+            "completion_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 271.0,
+              "mean": 225.33333333333334,
+              "median": 231.0,
+              "min": 191.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 17.829438827088442,
+              "sum": 13520.0
+            },
+            "correct_destination_placement_success": {
+              "count": 60,
+              "false_count": 0,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 1.0,
+              "true_count": 60
+            },
+            "deadline_miss_rate": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.005235602094240838,
+              "mean": 0.004466161216712046,
+              "median": 0.004329004329004329,
+              "min": 0.0036900369003690036,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.00035888841147078916,
+              "sum": 0.26796967300272273
+            },
+            "deadline_misses": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 1.0,
+              "mean": 1.0,
+              "median": 1.0,
+              "min": 1.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 60.0
+            },
+            "dropped_responses": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "duplicate_responses": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "duplicate_target_actions_removed": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "executed_actions": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 270.0,
+              "mean": 224.33333333333334,
+              "median": 230.0,
+              "min": 190.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 17.829438827088442,
+              "sum": 13460.0
+            },
+            "expired_actions_executed": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "expired_actions_removed": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 27.0,
+              "mean": 22.433333333333334,
+              "median": 23.0,
+              "min": 19.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 1.7829438827088442,
+              "sum": 1346.0
+            },
+            "grasp_success": {
+              "count": 60,
+              "false_count": 0,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 1.0,
+              "true_count": 60
+            },
+            "hold_control_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.05,
+              "mean": 0.05,
+              "median": 0.05,
+              "min": 0.05,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 3.0
+            },
+            "hold_control_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 1.0,
+              "mean": 1.0,
+              "median": 1.0,
+              "min": 1.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 60.0
+            },
+            "hold_requested_applied_target_mismatch_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "inference_requests": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 28.0,
+              "mean": 23.433333333333334,
+              "median": 24.0,
+              "min": 20.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 1.7829438827088442,
+              "sum": 1406.0
+            },
+            "maximum_applied_target_delta_m": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.13679366091477949,
+              "mean": 0.09719886142343262,
+              "median": 0.10793411398051617,
+              "min": 0.035015296659228944,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.03013059953511908,
+              "sum": 5.831931685405957
+            },
+            "maximum_measured_end_effector_delta_m": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.016356186605400447,
+              "mean": 0.010845018641398176,
+              "median": 0.00966946757430582,
+              "min": 0.00931105747312073,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.002015593946594352,
+              "sum": 0.6507011184838906
+            },
+            "maximum_requested_target_delta_m": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.13679366091477949,
+              "mean": 0.09719886142343262,
+              "median": 0.10793411398051617,
+              "min": 0.035015296659228944,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.03013059953511908,
+              "sum": 5.831931685405957
+            },
+            "mean_action_age_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 6.462962962962963,
+              "mean": 6.455136721451557,
+              "median": 6.456521739130435,
+              "min": 6.447368421052632,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.003621590067241573,
+              "sum": 387.3082032870934
+            },
+            "mean_inference_latency_ms": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 16.56170188,
+              "mean": 15.741484077906344,
+              "median": 16.024823040064103,
+              "min": 14.70614655,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.5790579793463254,
+              "sum": 944.4890446743807
+            },
+            "obsolete_destination_command_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 33.0,
+              "mean": 10.4,
+              "median": 7.5,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 10.725670142233538,
+              "sum": 624.0
+            },
+            "obsolete_destination_motion_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.8500000000000001,
+              "mean": 0.2691666666666667,
+              "median": 0.275,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.22786905352758097,
+              "sum": 16.150000000000002
+            },
+            "obsolete_destination_motion_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 17.0,
+              "mean": 5.383333333333334,
+              "median": 5.5,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 4.557381070551619,
+              "sum": 323.0
+            },
+            "obsolete_destination_placement_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "out_of_order_completions": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "p50_action_age_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 6.0,
+              "mean": 6.0,
+              "median": 6.0,
+              "min": 6.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 360.0
+            },
+            "p50_inference_latency_ms": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 16.232116,
+              "mean": 15.56448695,
+              "median": 15.8678675,
+              "min": 14.596753,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.5539064145539967,
+              "sum": 933.8692169999999
+            },
+            "p95_action_age_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 11.0,
+              "mean": 11.0,
+              "median": 11.0,
+              "min": 11.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 660.0
+            },
+            "p95_inference_latency_ms": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 20.085002,
+              "mean": 16.472179009166666,
+              "median": 16.3621036,
+              "min": 15.0382508,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 1.1169309570960138,
+              "sum": 988.33074055
+            },
+            "penalized_recovery_latency_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 2.0,
+              "mean": 2.0,
+              "median": 2.0,
+              "min": 2.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 120.0
+            },
+            "pre_switch_observation_command_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "queue_rebuild_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 28.0,
+              "mean": 23.433333333333334,
+              "median": 24.0,
+              "min": 20.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 1.7829438827088442,
+              "sum": 1406.0
+            },
+            "recovery_latency_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.1,
+              "mean": 0.1,
+              "median": 0.1,
+              "min": 0.1,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 6.0
+            },
+            "recovery_latency_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 2.0,
+              "mean": 2.0,
+              "median": 2.0,
+              "min": 2.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 120.0
+            },
+            "recovery_observed": {
+              "count": 60,
+              "false_count": 0,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 1.0,
+              "true_count": 60
+            },
+            "requested_target_discontinuity_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 112.0,
+              "mean": 83.48333333333333,
+              "median": 83.0,
+              "min": 49.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 16.52320758475451,
+              "sum": 5009.0
+            },
+            "response_wait_wall_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.460490296,
+              "mean": 0.3690419653,
+              "median": 0.369245243,
+              "min": 0.294122931,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.033214085612321365,
+              "sum": 22.142517918
+            },
+            "returned_responses": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 28.0,
+              "mean": 23.433333333333334,
+              "median": 24.0,
+              "min": 20.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 1.7829438827088442,
+              "sum": 1406.0
+            },
+            "simulation_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 13.55,
+              "mean": 11.266666666666667,
+              "median": 11.55,
+              "min": 9.55,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.8914719413544221,
+              "sum": 676.0
+            },
+            "stable_placement_success": {
+              "count": 60,
+              "false_count": 0,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 1.0,
+              "true_count": 60
+            },
+            "stale_generation_responses_rejected": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "task_success": {
+              "count": 60,
+              "false_count": 0,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 1.0,
+              "true_count": 60
+            },
+            "time_to_final_destination_progress_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 3.0500000000000003,
+              "mean": 0.8,
+              "median": 0.7250000000000001,
+              "min": 0.2,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.49715859307334387,
+              "sum": 48.0
+            },
+            "time_to_final_destination_progress_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 61.0,
+              "mean": 16.0,
+              "median": 14.5,
+              "min": 4.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 9.943171861466876,
+              "sum": 960.0
+            },
+            "timeout": {
+              "count": 60,
+              "false_count": 60,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 0.0,
+              "true_count": 0
+            },
+            "wall_clock_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 21.984260778,
+              "mean": 18.281523712549998,
+              "median": 18.6356983205,
+              "min": 15.373334409,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 1.528369714748284,
+              "sum": 1096.891422753
+            }
+          },
+          "mean_completion_steps": 225.33333333333334,
+          "mean_hold_control_seconds": 0.05,
+          "mean_obsolete_destination_command_steps": 10.4,
+          "mean_pre_switch_observation_command_steps": 0.0,
+          "mean_response_wait_wall_seconds": 0.3690419653,
+          "mean_wall_clock_seconds": 18.281523712549998,
+          "median_completion_steps": 231.0,
+          "median_penalized_recovery_latency_steps": 2.0,
+          "median_wall_clock_seconds": 18.6356983205,
+          "obsolete_destination_placements": 0,
+          "success_rate": 1.0,
+          "successes": 60,
+          "trials": 60
+        }
+      }
+    },
+    "profile_1_fixed": {
+      "aligned_median_wall_reduction_vs_sync": -0.14168230884453847,
+      "aligned_minus_naive_percentage_points": 81.66666666666667,
+      "aligned_minus_naive_success_rate": 0.8166666666666667,
+      "aligned_obsolete_command_reduction_vs_naive": 0.0,
+      "aligned_recovery_latency_reduction_vs_naive": 0.9411764705882353,
+      "paired_bootstrap_95_ci_percentage_points": [
+        71.66666666666667,
+        90.0
+      ],
+      "paired_bootstrap_95_ci_rate": [
+        0.7166666666666667,
+        0.9
+      ],
+      "paired_trial_count": 60,
+      "raw_paired_outcomes": [
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081200,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081201,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081202,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": false,
+          "naive_async": false,
+          "seed": 2026081203,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081204,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081205,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081206,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": false,
+          "naive_async": false,
+          "seed": 2026081207,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081208,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081209,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081210,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081211,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081212,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081213,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081214,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081215,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081216,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081217,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081218,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081219,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081220,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081221,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081222,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": false,
+          "naive_async": false,
+          "seed": 2026081223,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081224,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081225,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081226,
+          "sync_hold": true
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081227,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081228,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": false,
+          "naive_async": false,
+          "seed": 2026081229,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": false,
+          "naive_async": false,
+          "seed": 2026081230,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081231,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081232,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081233,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081234,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081235,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081236,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081237,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081238,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081239,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081240,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": false,
+          "naive_async": false,
+          "seed": 2026081241,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081242,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081243,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081244,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081245,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081246,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": false,
+          "naive_async": false,
+          "seed": 2026081247,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081248,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": false,
+          "naive_async": false,
+          "seed": 2026081249,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081250,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": false,
+          "naive_async": false,
+          "seed": 2026081251,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081252,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081253,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081254,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": false,
+          "naive_async": false,
+          "seed": 2026081255,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081256,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": false,
+          "naive_async": false,
+          "seed": 2026081257,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081258,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081259,
+          "sync_hold": false
+        }
+      ],
+      "seeds": [
+        2026081200,
+        2026081201,
+        2026081202,
+        2026081203,
+        2026081204,
+        2026081205,
+        2026081206,
+        2026081207,
+        2026081208,
+        2026081209,
+        2026081210,
+        2026081211,
+        2026081212,
+        2026081213,
+        2026081214,
+        2026081215,
+        2026081216,
+        2026081217,
+        2026081218,
+        2026081219,
+        2026081220,
+        2026081221,
+        2026081222,
+        2026081223,
+        2026081224,
+        2026081225,
+        2026081226,
+        2026081227,
+        2026081228,
+        2026081229,
+        2026081230,
+        2026081231,
+        2026081232,
+        2026081233,
+        2026081234,
+        2026081235,
+        2026081236,
+        2026081237,
+        2026081238,
+        2026081239,
+        2026081240,
+        2026081241,
+        2026081242,
+        2026081243,
+        2026081244,
+        2026081245,
+        2026081246,
+        2026081247,
+        2026081248,
+        2026081249,
+        2026081250,
+        2026081251,
+        2026081252,
+        2026081253,
+        2026081254,
+        2026081255,
+        2026081256,
+        2026081257,
+        2026081258,
+        2026081259
+      ],
+      "strategies": {
+        "aligned_async": {
+          "correct_destination_successes": 49,
+          "descriptive_metrics": {
+            "applied_target_discontinuity_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 59.0,
+              "mean": 38.55,
+              "median": 37.5,
+              "min": 12.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 9.238371068538003,
+              "sum": 2313.0
+            },
+            "collision": {
+              "count": 60,
+              "false_count": 60,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 0.0,
+              "true_count": 0
+            },
+            "command_motion_audit_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 257.0,
+              "mean": 216.13333333333333,
+              "median": 227.0,
+              "min": 134.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 36.67672589289047,
+              "sum": 12968.0
+            },
+            "completion_reason": {
+              "count": 60,
+              "counts": {
+                "correct_destination_stable_placement": 49,
+                "joint_or_workspace_limit": 11
+              },
+              "kind": "categorical",
+              "null_count": 0,
+              "observed_count": 60
+            },
+            "completion_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 257.0,
+              "mean": 216.13333333333333,
+              "median": 227.0,
+              "min": 134.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 36.67672589289047,
+              "sum": 12968.0
+            },
+            "correct_destination_placement_success": {
+              "count": 60,
+              "false_count": 11,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 0.8166666666666667,
+              "true_count": 49
+            },
+            "deadline_miss_rate": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.1791044776119403,
+              "mean": 0.11319181398516466,
+              "median": 0.1013215859030837,
+              "min": 0.08171206225680934,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.02617364093688269,
+              "sum": 6.79150883910988
+            },
+            "deadline_misses": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 24.0,
+              "mean": 23.516666666666666,
+              "median": 24.0,
+              "min": 21.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.6189148209209047,
+              "sum": 1411.0
+            },
+            "dropped_responses": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "duplicate_responses": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "duplicate_target_actions_removed": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "executed_actions": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 236.0,
+              "mean": 192.61666666666667,
+              "median": 204.0,
+              "min": 110.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 36.78681451583192,
+              "sum": 11557.0
+            },
+            "expired_actions_executed": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "expired_actions_removed": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 288.0,
+              "mean": 238.68333333333334,
+              "median": 252.0,
+              "min": 142.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 43.00019056805317,
+              "sum": 14321.0
+            },
+            "grasp_success": {
+              "count": 60,
+              "false_count": 0,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 1.0,
+              "true_count": 60
+            },
+            "hold_control_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 1.2000000000000002,
+              "mean": 1.1758333333333335,
+              "median": 1.2000000000000002,
+              "min": 1.05,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.030945741046045264,
+              "sum": 70.55000000000001
+            },
+            "hold_control_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 24.0,
+              "mean": 23.516666666666666,
+              "median": 24.0,
+              "min": 21.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.6189148209209047,
+              "sum": 1411.0
+            },
+            "hold_requested_applied_target_mismatch_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 12.0,
+              "mean": 11.516666666666667,
+              "median": 12.0,
+              "min": 9.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.6189148209209047,
+              "sum": 691.0
+            },
+            "inference_requests": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 26.0,
+              "mean": 21.95,
+              "median": 23.0,
+              "min": 14.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 3.5936286211386212,
+              "sum": 1317.0
+            },
+            "maximum_applied_target_delta_m": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.13520421115709041,
+              "mean": 0.131392711801206,
+              "median": 0.13161892842510564,
+              "min": 0.12909805853319614,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0015110757874213022,
+              "sum": 7.883562708072361
+            },
+            "maximum_measured_end_effector_delta_m": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.02889583281695774,
+              "mean": 0.0279584277793096,
+              "median": 0.028286739213895955,
+              "min": 0.026230374305931572,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0005967561161573315,
+              "sum": 1.677505666758576
+            },
+            "maximum_requested_target_delta_m": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.15691499565549835,
+              "mean": 0.15691499565549835,
+              "median": 0.15691499565549835,
+              "min": 0.15691499565549835,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 9.4148997393299
+            },
+            "mean_action_age_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 17.412017167381975,
+              "mean": 17.36556442101652,
+              "median": 17.372549019607842,
+              "min": 17.1858407079646,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.04095966246609269,
+              "sum": 1041.933865260991
+            },
+            "mean_inference_latency_ms": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 918.3210372666666,
+              "mean": 893.8441283803679,
+              "median": 893.5239757463768,
+              "min": 886.83822588,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 3.9560727577341392,
+              "sum": 53630.647702822076
+            },
+            "obsolete_destination_command_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 20.0,
+              "mean": 5.316666666666666,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 8.817580292927433,
+              "sum": 319.0
+            },
+            "obsolete_destination_motion_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.5,
+              "mean": 0.10583333333333335,
+              "median": 0.05,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.13726242101253433,
+              "sum": 6.3500000000000005
+            },
+            "obsolete_destination_motion_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 10.0,
+              "mean": 2.1166666666666667,
+              "median": 1.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 2.7452484202506864,
+              "sum": 127.0
+            },
+            "obsolete_destination_placement_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "out_of_order_completions": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "p50_action_age_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 17.0,
+              "mean": 17.0,
+              "median": 17.0,
+              "min": 17.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 1020.0
+            },
+            "p50_inference_latency_ms": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 900.699767,
+              "mean": 894.4729067666667,
+              "median": 894.50942225,
+              "min": 888.756055,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 2.575449191883295,
+              "sum": 53668.374406
+            },
+            "p95_action_age_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 22.0,
+              "mean": 22.0,
+              "median": 22.0,
+              "min": 22.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 1320.0
+            },
+            "p95_inference_latency_ms": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 1084.2942345,
+              "mean": 906.2406870216668,
+              "median": 902.8399453750001,
+              "min": 892.16258915,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 23.783126845060277,
+              "sum": 54374.4412213
+            },
+            "penalized_recovery_latency_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 13.0,
+              "mean": 13.0,
+              "median": 13.0,
+              "min": 13.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 780.0
+            },
+            "pre_switch_observation_command_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "queue_rebuild_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 24.0,
+              "mean": 19.95,
+              "median": 21.0,
+              "min": 12.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 3.5936286211386212,
+              "sum": 1197.0
+            },
+            "recovery_latency_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.65,
+              "mean": 0.65,
+              "median": 0.65,
+              "min": 0.65,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 39.0
+            },
+            "recovery_latency_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 13.0,
+              "mean": 13.0,
+              "median": 13.0,
+              "min": 13.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 780.0
+            },
+            "recovery_observed": {
+              "count": 60,
+              "false_count": 0,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 1.0,
+              "true_count": 60
+            },
+            "requested_target_discontinuity_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 70.0,
+              "mean": 50.06666666666667,
+              "median": 49.0,
+              "min": 23.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 9.139414034219529,
+              "sum": 3004.0
+            },
+            "response_wait_wall_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "returned_responses": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 26.0,
+              "mean": 21.9,
+              "median": 23.0,
+              "min": 14.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 3.695492750184563,
+              "sum": 1314.0
+            },
+            "simulation_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 12.85,
+              "mean": 10.806666666666667,
+              "median": 11.35,
+              "min": 6.7,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 1.8338362946445232,
+              "sum": 648.4
+            },
+            "stable_placement_success": {
+              "count": 60,
+              "false_count": 11,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 0.8166666666666667,
+              "true_count": 49
+            },
+            "stale_generation_responses_rejected": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 1.0,
+              "mean": 1.0,
+              "median": 1.0,
+              "min": 1.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 60.0
+            },
+            "task_success": {
+              "count": 60,
+              "false_count": 11,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 0.8166666666666667,
+              "true_count": 49
+            },
+            "time_to_final_destination_progress_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 3.6500000000000004,
+              "mean": 1.2916666666666667,
+              "median": 0.75,
+              "min": 0.65,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.7722891657634177,
+              "sum": 77.5
+            },
+            "time_to_final_destination_progress_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 73.0,
+              "mean": 25.833333333333332,
+              "median": 15.0,
+              "min": 13.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 15.445783315268352,
+              "sum": 1550.0
+            },
+            "timeout": {
+              "count": 60,
+              "false_count": 60,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 0.0,
+              "true_count": 0
+            },
+            "wall_clock_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 20.969389833,
+              "mean": 17.526594072149997,
+              "median": 18.434545635,
+              "min": 10.831126196,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 2.966526181340243,
+              "sum": 1051.595644329
+            }
+          },
+          "mean_completion_steps": 216.13333333333333,
+          "mean_hold_control_seconds": 1.1758333333333335,
+          "mean_obsolete_destination_command_steps": 5.316666666666666,
+          "mean_pre_switch_observation_command_steps": 0.0,
+          "mean_response_wait_wall_seconds": 0.0,
+          "mean_wall_clock_seconds": 17.526594072149997,
+          "median_completion_steps": 227.0,
+          "median_penalized_recovery_latency_steps": 13.0,
+          "median_wall_clock_seconds": 18.434545635,
+          "obsolete_destination_placements": 0,
+          "success_rate": 0.8166666666666667,
+          "successes": 49,
+          "trials": 60
+        },
+        "naive_async": {
+          "correct_destination_successes": 0,
+          "descriptive_metrics": {
+            "applied_target_discontinuity_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 55.0,
+              "mean": 28.45,
+              "median": 29.0,
+              "min": 3.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 11.961640077068585,
+              "sum": 1707.0
+            },
+            "collision": {
+              "count": 60,
+              "false_count": 60,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 0.0,
+              "true_count": 0
+            },
+            "command_motion_audit_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 83.0,
+              "mean": 82.31666666666666,
+              "median": 82.0,
+              "min": 80.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.7635807459303539,
+              "sum": 4939.0
+            },
+            "completion_reason": {
+              "count": 60,
+              "counts": {
+                "failed_approach": 60
+              },
+              "kind": "categorical",
+              "null_count": 0,
+              "observed_count": 60
+            },
+            "completion_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 83.0,
+              "mean": 82.31666666666666,
+              "median": 82.0,
+              "min": 80.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.7635807459303539,
+              "sum": 4939.0
+            },
+            "correct_destination_placement_success": {
+              "count": 60,
+              "false_count": 60,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 0.0,
+              "true_count": 0
+            },
+            "deadline_miss_rate": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.14634146341463414,
+              "mean": 0.14067697090681305,
+              "median": 0.14457831325301204,
+              "min": 0.1125,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.006217970020710964,
+              "sum": 8.440618254408783
+            },
+            "deadline_misses": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 12.0,
+              "mean": 11.583333333333334,
+              "median": 12.0,
+              "min": 9.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.585709446360186,
+              "sum": 695.0
+            },
+            "dropped_responses": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "duplicate_responses": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "duplicate_target_actions_removed": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "executed_actions": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 72.0,
+              "mean": 70.73333333333333,
+              "median": 71.0,
+              "min": 70.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.4784233364802441,
+              "sum": 4244.0
+            },
+            "expired_actions_executed": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 72.0,
+              "mean": 70.73333333333333,
+              "median": 71.0,
+              "min": 70.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.4784233364802441,
+              "sum": 4244.0
+            },
+            "expired_actions_removed": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "grasp_success": {
+              "count": 60,
+              "false_count": 60,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 0.0,
+              "true_count": 0
+            },
+            "hold_control_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.6000000000000001,
+              "mean": 0.5791666666666668,
+              "median": 0.6000000000000001,
+              "min": 0.45,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.02928547231800932,
+              "sum": 34.75000000000001
+            },
+            "hold_control_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 12.0,
+              "mean": 11.583333333333334,
+              "median": 12.0,
+              "min": 9.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.585709446360186,
+              "sum": 695.0
+            },
+            "hold_requested_applied_target_mismatch_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 12.0,
+              "mean": 11.583333333333334,
+              "median": 12.0,
+              "min": 9.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.585709446360186,
+              "sum": 695.0
+            },
+            "inference_requests": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 9.0,
+              "mean": 8.983333333333333,
+              "median": 9.0,
+              "min": 8.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.12801909579781012,
+              "sum": 539.0
+            },
+            "maximum_applied_target_delta_m": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.23902967001449849,
+              "mean": 0.23010950262715807,
+              "median": 0.23052354243188028,
+              "min": 0.22250951002112543,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0044096520078884755,
+              "sum": 13.806570157629483
+            },
+            "maximum_measured_end_effector_delta_m": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.03550509592612031,
+              "mean": 0.03399844849054327,
+              "median": 0.033709448203623524,
+              "min": 0.032934149967974675,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0007727976043885879,
+              "sum": 2.0399069094325966
+            },
+            "maximum_requested_target_delta_m": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.23902967001449849,
+              "mean": 0.23010950262715807,
+              "median": 0.23052354243188028,
+              "min": 0.22250951002112543,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0044096520078884755,
+              "sum": 13.806570157629483
+            },
+            "mean_action_age_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 40.67605633802817,
+              "mean": 40.17442991281019,
+              "median": 40.357142857142854,
+              "min": 37.67605633802817,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.6081518776680677,
+              "sum": 2410.4657947686114
+            },
+            "mean_inference_latency_ms": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 1489.305236625,
+              "mean": 905.7399453854166,
+              "median": 895.5877816875,
+              "min": 887.38585775,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 76.07191540616137,
+              "sum": 54344.396723125
+            },
+            "obsolete_destination_command_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "obsolete_destination_motion_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "obsolete_destination_motion_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "obsolete_destination_placement_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "out_of_order_completions": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "p50_action_age_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 40.0,
+              "mean": 39.59166666666667,
+              "median": 40.0,
+              "min": 37.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.5808877305947816,
+              "sum": 2375.5
+            },
+            "p50_inference_latency_ms": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 903.7493675000001,
+              "mean": 895.3369330583333,
+              "median": 895.4517020000001,
+              "min": 888.120496,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 3.6585479895314124,
+              "sum": 53720.2159835
+            },
+            "p95_action_age_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 61.0,
+              "mean": 60.46333333333334,
+              "median": 60.55,
+              "min": 58.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.6280171618320284,
+              "sum": 3627.8
+            },
+            "p95_inference_latency_ms": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 4015.1865160499974,
+              "mean": 959.7219630841666,
+              "median": 907.7056149,
+              "min": 895.27978605,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 397.863424931821,
+              "sum": 57583.31778505
+            },
+            "penalized_recovery_latency_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 231.0,
+              "mean": 222.0,
+              "median": 221.0,
+              "min": 211.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 8.103497187428813,
+              "sum": 13320.0
+            },
+            "pre_switch_observation_command_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "queue_rebuild_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "recovery_latency_seconds": {
+              "count": 60,
+              "kind": "unavailable",
+              "null_count": 60,
+              "observed_count": 0
+            },
+            "recovery_latency_steps": {
+              "count": 60,
+              "kind": "unavailable",
+              "null_count": 60,
+              "observed_count": 0
+            },
+            "recovery_observed": {
+              "count": 60,
+              "false_count": 60,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 0.0,
+              "true_count": 0
+            },
+            "requested_target_discontinuity_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 67.0,
+              "mean": 40.03333333333333,
+              "median": 40.5,
+              "min": 15.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 12.053998875430878,
+              "sum": 2402.0
+            },
+            "response_wait_wall_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "returned_responses": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 8.0,
+              "mean": 8.0,
+              "median": 8.0,
+              "min": 8.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 480.0
+            },
+            "simulation_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 4.15,
+              "mean": 4.115833333333333,
+              "median": 4.1,
+              "min": 4.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.03817903729651794,
+              "sum": 246.95
+            },
+            "stable_placement_success": {
+              "count": 60,
+              "false_count": 60,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 0.0,
+              "true_count": 0
+            },
+            "stale_generation_responses_rejected": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "task_success": {
+              "count": 60,
+              "false_count": 60,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 0.0,
+              "true_count": 0
+            },
+            "time_to_final_destination_progress_seconds": {
+              "count": 60,
+              "kind": "unavailable",
+              "null_count": 60,
+              "observed_count": 0
+            },
+            "time_to_final_destination_progress_steps": {
+              "count": 60,
+              "kind": "unavailable",
+              "null_count": 60,
+              "observed_count": 0
+            },
+            "timeout": {
+              "count": 60,
+              "false_count": 60,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 0.0,
+              "true_count": 0
+            },
+            "wall_clock_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 11.671359079,
+              "mean": 6.793030555866666,
+              "median": 6.71705859,
+              "min": 6.570549277,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.6388323224875273,
+              "sum": 407.581833352
+            }
+          },
+          "mean_completion_steps": 82.31666666666666,
+          "mean_hold_control_seconds": 0.5791666666666668,
+          "mean_obsolete_destination_command_steps": 0.0,
+          "mean_pre_switch_observation_command_steps": 0.0,
+          "mean_response_wait_wall_seconds": 0.0,
+          "mean_wall_clock_seconds": 6.793030555866666,
+          "median_completion_steps": 82.0,
+          "median_penalized_recovery_latency_steps": 221.0,
+          "median_wall_clock_seconds": 6.71705859,
+          "obsolete_destination_placements": 0,
+          "success_rate": 0.0,
+          "successes": 0,
+          "trials": 60
+        },
+        "sync_hold": {
+          "correct_destination_successes": 1,
+          "descriptive_metrics": {
+            "applied_target_discontinuity_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 37.0,
+              "mean": 20.65,
+              "median": 21.0,
+              "min": 10.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 5.912768669019052,
+              "sum": 1239.0
+            },
+            "collision": {
+              "count": 60,
+              "false_count": 60,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 0.0,
+              "true_count": 0
+            },
+            "command_motion_audit_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 247.0,
+              "mean": 196.18333333333334,
+              "median": 202.0,
+              "min": 147.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 16.609727738754646,
+              "sum": 11771.0
+            },
+            "completion_reason": {
+              "count": 60,
+              "counts": {
+                "correct_destination_stable_placement": 1,
+                "joint_or_workspace_limit": 4,
+                "unstable_grasp": 55
+              },
+              "kind": "categorical",
+              "null_count": 0,
+              "observed_count": 60
+            },
+            "completion_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 247.0,
+              "mean": 196.18333333333334,
+              "median": 202.0,
+              "min": 147.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 16.609727738754646,
+              "sum": 11771.0
+            },
+            "correct_destination_placement_success": {
+              "count": 60,
+              "false_count": 59,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 0.016666666666666666,
+              "true_count": 1
+            },
+            "deadline_miss_rate": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.6043956043956044,
+              "mean": 0.5925291730299614,
+              "median": 0.5973492845414028,
+              "min": 0.578125,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.007873081488585029,
+              "sum": 35.55175038179769
+            },
+            "deadline_misses": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 143.0,
+              "mean": 116.25,
+              "median": 121.0,
+              "min": 88.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 10.029331981742354,
+              "sum": 6975.0
+            },
+            "dropped_responses": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "duplicate_responses": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "duplicate_target_actions_removed": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "executed_actions": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 104.0,
+              "mean": 79.93333333333334,
+              "median": 81.0,
+              "min": 59.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 6.879599471545483,
+              "sum": 4796.0
+            },
+            "expired_actions_executed": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "expired_actions_removed": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 144.0,
+              "mean": 118.26666666666667,
+              "median": 120.0,
+              "min": 84.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 10.581220261492632,
+              "sum": 7096.0
+            },
+            "grasp_success": {
+              "count": 60,
+              "false_count": 0,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 1.0,
+              "true_count": 60
+            },
+            "hold_control_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 7.15,
+              "mean": 5.812500000000001,
+              "median": 6.050000000000001,
+              "min": 4.4,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.5014665990871178,
+              "sum": 348.75000000000006
+            },
+            "hold_control_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 143.0,
+              "mean": 116.25,
+              "median": 121.0,
+              "min": 88.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 10.029331981742354,
+              "sum": 6975.0
+            },
+            "hold_requested_applied_target_mismatch_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 12.0,
+              "mean": 11.866666666666667,
+              "median": 12.0,
+              "min": 10.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.3858612300930075,
+              "sum": 712.0
+            },
+            "inference_requests": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 13.0,
+              "mean": 10.516666666666667,
+              "median": 11.0,
+              "min": 8.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.9397103572673633,
+              "sum": 631.0
+            },
+            "maximum_applied_target_delta_m": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.1351965151254988,
+              "mean": 0.13182275203345176,
+              "median": 0.132037957940007,
+              "min": 0.12999999999999973,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0010153144899286088,
+              "sum": 7.909365122007106
+            },
+            "maximum_measured_end_effector_delta_m": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.028931708646322055,
+              "mean": 0.028262619681786894,
+              "median": 0.028307259824656074,
+              "min": 0.02743006513894279,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0002515893273453024,
+              "sum": 1.6957571809072136
+            },
+            "maximum_requested_target_delta_m": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.15691499565549835,
+              "mean": 0.15691499565549835,
+              "median": 0.15691499565549835,
+              "min": 0.15691499565549835,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 9.4148997393299
+            },
+            "mean_action_age_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 17.0,
+              "mean": 16.960921104248033,
+              "median": 16.953137845985204,
+              "min": 16.83050847457627,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.04652110536962196,
+              "sum": 1017.6552662548819
+            },
+            "mean_inference_latency_ms": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 913.8285141818182,
+              "mean": 881.7742747123585,
+              "median": 881.5204313181819,
+              "min": 873.2776577000001,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 5.710928496432907,
+              "sum": 52906.45648274151
+            },
+            "obsolete_destination_command_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 9.0,
+              "mean": 2.4,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 3.97994974842648,
+              "sum": 144.0
+            },
+            "obsolete_destination_motion_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.45,
+              "mean": 0.15083333333333335,
+              "median": 0.15000000000000002,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.12499722219135735,
+              "sum": 9.05
+            },
+            "obsolete_destination_motion_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 9.0,
+              "mean": 3.0166666666666666,
+              "median": 3.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 2.4999444438271468,
+              "sum": 181.0
+            },
+            "obsolete_destination_placement_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "out_of_order_completions": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "p50_action_age_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 17.0,
+              "mean": 17.0,
+              "median": 17.0,
+              "min": 17.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 1020.0
+            },
+            "p50_inference_latency_ms": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 891.8080375,
+              "mean": 878.2009463916667,
+              "median": 877.9152325,
+              "min": 870.923774,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 4.362576848912084,
+              "sum": 52692.0567835
+            },
+            "p95_action_age_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 21.0,
+              "mean": 21.0,
+              "median": 21.0,
+              "min": 21.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 1260.0
+            },
+            "p95_inference_latency_ms": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 1050.9074215,
+              "mean": 900.6000703191668,
+              "median": 898.453292175,
+              "min": 876.48318925,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 20.586565474472597,
+              "sum": 54036.00421915
+            },
+            "penalized_recovery_latency_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 13.0,
+              "mean": 13.0,
+              "median": 13.0,
+              "min": 13.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 780.0
+            },
+            "pre_switch_observation_command_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "queue_rebuild_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 12.0,
+              "mean": 9.866666666666667,
+              "median": 10.0,
+              "min": 7.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.8844332774281066,
+              "sum": 592.0
+            },
+            "recovery_latency_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.65,
+              "mean": 0.65,
+              "median": 0.65,
+              "min": 0.65,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 39.0
+            },
+            "recovery_latency_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 13.0,
+              "mean": 13.0,
+              "median": 13.0,
+              "min": 13.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 780.0
+            },
+            "recovery_observed": {
+              "count": 60,
+              "false_count": 0,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 1.0,
+              "true_count": 60
+            },
+            "requested_target_discontinuity_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 49.0,
+              "mean": 32.516666666666666,
+              "median": 32.5,
+              "min": 22.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 5.909009129193226,
+              "sum": 1951.0
+            },
+            "response_wait_wall_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 11.443429828,
+              "mean": 9.272787623316667,
+              "median": 9.647310751,
+              "min": 7.060353973,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.826593568140271,
+              "sum": 556.367257399
+            },
+            "returned_responses": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 13.0,
+              "mean": 10.516666666666667,
+              "median": 11.0,
+              "min": 8.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.9397103572673633,
+              "sum": 631.0
+            },
+            "simulation_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 12.35,
+              "mean": 9.809166666666666,
+              "median": 10.1,
+              "min": 7.35,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.8304863869377322,
+              "sum": 588.55
+            },
+            "stable_placement_success": {
+              "count": 60,
+              "false_count": 59,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 0.016666666666666666,
+              "true_count": 1
+            },
+            "stale_generation_responses_rejected": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 1.0,
+              "mean": 0.65,
+              "median": 1.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.47696960070847283,
+              "sum": 39.0
+            },
+            "task_success": {
+              "count": 60,
+              "false_count": 59,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 0.016666666666666666,
+              "true_count": 1
+            },
+            "time_to_final_destination_progress_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 3.6500000000000004,
+              "mean": 1.2516666666666667,
+              "median": 0.75,
+              "min": 0.65,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.7581758078147546,
+              "sum": 75.10000000000001
+            },
+            "time_to_final_destination_progress_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 73.0,
+              "mean": 25.033333333333335,
+              "median": 15.0,
+              "min": 13.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 15.16351615629509,
+              "sum": 1502.0
+            },
+            "timeout": {
+              "count": 60,
+              "false_count": 60,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 0.0,
+              "true_count": 0
+            },
+            "wall_clock_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 19.80203202,
+              "mean": 15.7492404715,
+              "median": 16.146826041,
+              "min": 11.815885568,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 1.323565451193394,
+              "sum": 944.95442829
+            }
+          },
+          "mean_completion_steps": 196.18333333333334,
+          "mean_hold_control_seconds": 5.812500000000001,
+          "mean_obsolete_destination_command_steps": 2.4,
+          "mean_pre_switch_observation_command_steps": 0.0,
+          "mean_response_wait_wall_seconds": 9.272787623316667,
+          "mean_wall_clock_seconds": 15.7492404715,
+          "median_completion_steps": 202.0,
+          "median_penalized_recovery_latency_steps": 13.0,
+          "median_wall_clock_seconds": 16.146826041,
+          "obsolete_destination_placements": 0,
+          "success_rate": 0.016666666666666666,
+          "successes": 1,
+          "trials": 60
+        }
+      }
+    },
+    "profile_2_faults": {
+      "aligned_median_wall_reduction_vs_sync": -0.11513361409604417,
+      "aligned_minus_naive_percentage_points": 86.66666666666667,
+      "aligned_minus_naive_success_rate": 0.8666666666666667,
+      "aligned_obsolete_command_reduction_vs_naive": 0.0,
+      "aligned_recovery_latency_reduction_vs_naive": 0.9457013574660633,
+      "paired_bootstrap_95_ci_percentage_points": [
+        76.66666666666667,
+        95.0
+      ],
+      "paired_bootstrap_95_ci_rate": [
+        0.7666666666666667,
+        0.95
+      ],
+      "paired_trial_count": 60,
+      "raw_paired_outcomes": [
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081200,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": false,
+          "naive_async": false,
+          "seed": 2026081201,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081202,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081203,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081204,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081205,
+          "sync_hold": true
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081206,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081207,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081208,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081209,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081210,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081211,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081212,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081213,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081214,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081215,
+          "sync_hold": true
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081216,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081217,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081218,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081219,
+          "sync_hold": true
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081220,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081221,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081222,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081223,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081224,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081225,
+          "sync_hold": true
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081226,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081227,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081228,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": false,
+          "naive_async": false,
+          "seed": 2026081229,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": false,
+          "naive_async": false,
+          "seed": 2026081230,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081231,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081232,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081233,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081234,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081235,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081236,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081237,
+          "sync_hold": true
+        },
+        {
+          "aligned_async": false,
+          "naive_async": false,
+          "seed": 2026081238,
+          "sync_hold": true
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081239,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081240,
+          "sync_hold": true
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081241,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081242,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": false,
+          "naive_async": false,
+          "seed": 2026081243,
+          "sync_hold": true
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081244,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081245,
+          "sync_hold": true
+        },
+        {
+          "aligned_async": false,
+          "naive_async": false,
+          "seed": 2026081246,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": false,
+          "naive_async": false,
+          "seed": 2026081247,
+          "sync_hold": true
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081248,
+          "sync_hold": true
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081249,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081250,
+          "sync_hold": true
+        },
+        {
+          "aligned_async": false,
+          "naive_async": false,
+          "seed": 2026081251,
+          "sync_hold": true
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081252,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081253,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081254,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081255,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081256,
+          "sync_hold": true
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081257,
+          "sync_hold": true
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081258,
+          "sync_hold": false
+        },
+        {
+          "aligned_async": true,
+          "naive_async": false,
+          "seed": 2026081259,
+          "sync_hold": false
+        }
+      ],
+      "seeds": [
+        2026081200,
+        2026081201,
+        2026081202,
+        2026081203,
+        2026081204,
+        2026081205,
+        2026081206,
+        2026081207,
+        2026081208,
+        2026081209,
+        2026081210,
+        2026081211,
+        2026081212,
+        2026081213,
+        2026081214,
+        2026081215,
+        2026081216,
+        2026081217,
+        2026081218,
+        2026081219,
+        2026081220,
+        2026081221,
+        2026081222,
+        2026081223,
+        2026081224,
+        2026081225,
+        2026081226,
+        2026081227,
+        2026081228,
+        2026081229,
+        2026081230,
+        2026081231,
+        2026081232,
+        2026081233,
+        2026081234,
+        2026081235,
+        2026081236,
+        2026081237,
+        2026081238,
+        2026081239,
+        2026081240,
+        2026081241,
+        2026081242,
+        2026081243,
+        2026081244,
+        2026081245,
+        2026081246,
+        2026081247,
+        2026081248,
+        2026081249,
+        2026081250,
+        2026081251,
+        2026081252,
+        2026081253,
+        2026081254,
+        2026081255,
+        2026081256,
+        2026081257,
+        2026081258,
+        2026081259
+      ],
+      "strategies": {
+        "aligned_async": {
+          "correct_destination_successes": 52,
+          "descriptive_metrics": {
+            "applied_target_discontinuity_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 67.0,
+              "mean": 36.18333333333333,
+              "median": 35.0,
+              "min": 11.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 12.322731930145288,
+              "sum": 2171.0
+            },
+            "collision": {
+              "count": 60,
+              "false_count": 60,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 0.0,
+              "true_count": 0
+            },
+            "command_motion_audit_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 269.0,
+              "mean": 226.06666666666666,
+              "median": 228.0,
+              "min": 144.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 30.072061600244318,
+              "sum": 13564.0
+            },
+            "completion_reason": {
+              "count": 60,
+              "counts": {
+                "correct_destination_stable_placement": 52,
+                "joint_or_workspace_limit": 6,
+                "unstable_grasp": 2
+              },
+              "kind": "categorical",
+              "null_count": 0,
+              "observed_count": 60
+            },
+            "completion_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 269.0,
+              "mean": 226.06666666666666,
+              "median": 228.0,
+              "min": 144.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 30.072061600244318,
+              "sum": 13564.0
+            },
+            "correct_destination_placement_success": {
+              "count": 60,
+              "false_count": 8,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 0.8666666666666667,
+              "true_count": 52
+            },
+            "deadline_miss_rate": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.23931623931623933,
+              "mean": 0.1292638542668735,
+              "median": 0.12038069107433766,
+              "min": 0.0860655737704918,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.03300107184712787,
+              "sum": 7.755831256012411
+            },
+            "deadline_misses": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 56.0,
+              "mean": 28.9,
+              "median": 26.5,
+              "min": 20.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 7.540335978367719,
+              "sum": 1734.0
+            },
+            "dropped_responses": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 3.0,
+              "mean": 0.55,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.7836878630339165,
+              "sum": 33.0
+            },
+            "duplicate_responses": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 2.0,
+              "mean": 0.3,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.49328828623162474,
+              "sum": 18.0
+            },
+            "duplicate_target_actions_removed": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "executed_actions": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 243.0,
+              "mean": 197.16666666666666,
+              "median": 203.5,
+              "min": 115.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 28.72871192533506,
+              "sum": 11830.0
+            },
+            "expired_actions_executed": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "expired_actions_removed": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 300.0,
+              "mean": 236.35,
+              "median": 242.0,
+              "min": 123.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 38.17102959051537,
+              "sum": 14181.0
+            },
+            "grasp_success": {
+              "count": 60,
+              "false_count": 0,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 1.0,
+              "true_count": 60
+            },
+            "hold_control_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 2.8000000000000003,
+              "mean": 1.445,
+              "median": 1.3250000000000002,
+              "min": 1.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.37701679891838596,
+              "sum": 86.7
+            },
+            "hold_control_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 56.0,
+              "mean": 28.9,
+              "median": 26.5,
+              "min": 20.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 7.540335978367719,
+              "sum": 1734.0
+            },
+            "hold_requested_applied_target_mismatch_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 27.0,
+              "mean": 12.65,
+              "median": 12.0,
+              "min": 9.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 4.166633333199999,
+              "sum": 759.0
+            },
+            "inference_requests": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 27.0,
+              "mean": 22.966666666666665,
+              "median": 23.0,
+              "min": 15.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 2.943731569888049,
+              "sum": 1378.0
+            },
+            "maximum_applied_target_delta_m": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.27654452333678126,
+              "mean": 0.15850688769762647,
+              "median": 0.14048492551127295,
+              "min": 0.12054466577008781,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.03811667500526372,
+              "sum": 9.510413261857588
+            },
+            "maximum_measured_end_effector_delta_m": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.058832706211866384,
+              "mean": 0.03148088441290723,
+              "median": 0.02976247358746889,
+              "min": 0.026188724886675608,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.006815064714885143,
+              "sum": 1.888853064774434
+            },
+            "maximum_requested_target_delta_m": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.27654452333678126,
+              "mean": 0.17237566007865704,
+              "median": 0.15691499565549835,
+              "min": 0.15691499565549835,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.030368648655204666,
+              "sum": 10.342539604719422
+            },
+            "mean_action_age_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 19.15311004784689,
+              "mean": 17.972086415588116,
+              "median": 18.027363184079604,
+              "min": 16.596774193548388,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.5388877669072127,
+              "sum": 1078.3251849352869
+            },
+            "mean_inference_latency_ms": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 1147.9820604545455,
+              "mean": 975.8745968455864,
+              "median": 972.5747503397745,
+              "min": 846.9850617142857,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 61.32444107366249,
+              "sum": 58552.47581073519
+            },
+            "obsolete_destination_command_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 27.0,
+              "mean": 6.6,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 9.794896630388704,
+              "sum": 396.0
+            },
+            "obsolete_destination_motion_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 1.55,
+              "mean": 0.2025,
+              "median": 0.07500000000000001,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.30976133285698093,
+              "sum": 12.15
+            },
+            "obsolete_destination_motion_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 31.0,
+              "mean": 4.05,
+              "median": 1.5,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 6.195226657139618,
+              "sum": 243.0
+            },
+            "obsolete_destination_placement_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "out_of_order_completions": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 4.0,
+              "mean": 1.1,
+              "median": 1.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.99498743710662,
+              "sum": 66.0
+            },
+            "p50_action_age_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 19.0,
+              "mean": 17.608333333333334,
+              "median": 18.0,
+              "min": 16.5,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.5251322584729383,
+              "sum": 1056.5
+            },
+            "p50_inference_latency_ms": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 1005.1560979999999,
+              "mean": 909.3635910166666,
+              "median": 912.84529575,
+              "min": 821.938713,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 44.303261763625855,
+              "sum": 54561.815461
+            },
+            "p95_action_age_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 28.0,
+              "mean": 25.5,
+              "median": 25.77499999999999,
+              "min": 22.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 1.889973544788392,
+              "sum": 1530.0
+            },
+            "p95_inference_latency_ms": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 1932.4269623999994,
+              "mean": 1518.4363318416663,
+              "median": 1654.8778521499999,
+              "min": 1009.7202202999999,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 330.3779969819899,
+              "sum": 91106.17991049998
+            },
+            "penalized_recovery_latency_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 31.0,
+              "mean": 13.4,
+              "median": 12.0,
+              "min": 10.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 3.7246923810340813,
+              "sum": 804.0
+            },
+            "pre_switch_observation_command_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "queue_rebuild_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 24.0,
+              "mean": 19.466666666666665,
+              "median": 20.0,
+              "min": 11.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 2.8311756490114766,
+              "sum": 1168.0
+            },
+            "recovery_latency_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 1.55,
+              "mean": 0.67,
+              "median": 0.6000000000000001,
+              "min": 0.5,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.18623461905170408,
+              "sum": 40.2
+            },
+            "recovery_latency_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 31.0,
+              "mean": 13.4,
+              "median": 12.0,
+              "min": 10.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 3.7246923810340813,
+              "sum": 804.0
+            },
+            "recovery_observed": {
+              "count": 60,
+              "false_count": 0,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 1.0,
+              "true_count": 60
+            },
+            "requested_target_discontinuity_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 76.0,
+              "mean": 48.833333333333336,
+              "median": 47.5,
+              "min": 24.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 12.36954144483762,
+              "sum": 2930.0
+            },
+            "response_wait_wall_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "returned_responses": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 27.0,
+              "mean": 22.45,
+              "median": 23.0,
+              "min": 14.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 3.0079062485390065,
+              "sum": 1347.0
+            },
+            "simulation_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 13.45,
+              "mean": 11.303333333333335,
+              "median": 11.4,
+              "min": 7.2,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 1.503603080012216,
+              "sum": 678.2
+            },
+            "stable_placement_success": {
+              "count": 60,
+              "false_count": 8,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 0.8666666666666667,
+              "true_count": 52
+            },
+            "stale_generation_responses_rejected": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 2.0,
+              "mean": 0.9166666666666666,
+              "median": 1.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.5565269285688,
+              "sum": 55.0
+            },
+            "task_success": {
+              "count": 60,
+              "false_count": 8,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 0.8666666666666667,
+              "true_count": 52
+            },
+            "time_to_final_destination_progress_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 3.5500000000000003,
+              "mean": 1.4191666666666667,
+              "median": 0.925,
+              "min": 0.6000000000000001,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.8182853855606993,
+              "sum": 85.15
+            },
+            "time_to_final_destination_progress_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 71.0,
+              "mean": 28.383333333333333,
+              "median": 18.5,
+              "min": 12.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 16.365707711213986,
+              "sum": 1703.0
+            },
+            "timeout": {
+              "count": 60,
+              "false_count": 60,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 0.0,
+              "true_count": 0
+            },
+            "wall_clock_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 22.629652429,
+              "mean": 18.731012942583334,
+              "median": 19.027201279,
+              "min": 11.925805085,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 2.5071644804497266,
+              "sum": 1123.860776555
+            }
+          },
+          "mean_completion_steps": 226.06666666666666,
+          "mean_hold_control_seconds": 1.445,
+          "mean_obsolete_destination_command_steps": 6.6,
+          "mean_pre_switch_observation_command_steps": 0.0,
+          "mean_response_wait_wall_seconds": 0.0,
+          "mean_wall_clock_seconds": 18.731012942583334,
+          "median_completion_steps": 228.0,
+          "median_penalized_recovery_latency_steps": 12.0,
+          "median_wall_clock_seconds": 19.027201279,
+          "obsolete_destination_placements": 0,
+          "success_rate": 0.8666666666666667,
+          "successes": 52,
+          "trials": 60
+        },
+        "naive_async": {
+          "correct_destination_successes": 0,
+          "descriptive_metrics": {
+            "applied_target_discontinuity_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 54.0,
+              "mean": 28.75,
+              "median": 28.0,
+              "min": 4.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 11.851336070952788,
+              "sum": 1725.0
+            },
+            "collision": {
+              "count": 60,
+              "false_count": 60,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 0.0,
+              "true_count": 0
+            },
+            "command_motion_audit_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 98.0,
+              "mean": 83.23333333333333,
+              "median": 82.0,
+              "min": 79.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 3.8443320471687783,
+              "sum": 4994.0
+            },
+            "completion_reason": {
+              "count": 60,
+              "counts": {
+                "failed_approach": 55,
+                "switch_precondition_missed": 5
+              },
+              "kind": "categorical",
+              "null_count": 0,
+              "observed_count": 60
+            },
+            "completion_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 98.0,
+              "mean": 83.23333333333333,
+              "median": 82.0,
+              "min": 79.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 3.8443320471687783,
+              "sum": 4994.0
+            },
+            "correct_destination_placement_success": {
+              "count": 60,
+              "false_count": 60,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 0.0,
+              "true_count": 0
+            },
+            "deadline_miss_rate": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.2755102040816326,
+              "mean": 0.1510199848764623,
+              "median": 0.14457831325301204,
+              "min": 0.1125,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.039623654049991325,
+              "sum": 9.061199092587737
+            },
+            "deadline_misses": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 27.0,
+              "mean": 12.716666666666667,
+              "median": 12.0,
+              "min": 9.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 4.10727674039895,
+              "sum": 763.0
+            },
+            "dropped_responses": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 2.0,
+              "mean": 0.26666666666666666,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.5120763831912405,
+              "sum": 16.0
+            },
+            "duplicate_responses": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 1.0,
+              "mean": 0.08333333333333333,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.2763853991962833,
+              "sum": 5.0
+            },
+            "duplicate_target_actions_removed": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "executed_actions": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 71.0,
+              "mean": 70.51666666666667,
+              "median": 71.0,
+              "min": 66.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.9397103572673633,
+              "sum": 4231.0
+            },
+            "expired_actions_executed": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 71.0,
+              "mean": 70.51666666666667,
+              "median": 71.0,
+              "min": 66.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.9397103572673633,
+              "sum": 4231.0
+            },
+            "expired_actions_removed": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "grasp_success": {
+              "count": 60,
+              "false_count": 60,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 0.0,
+              "true_count": 0
+            },
+            "hold_control_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 1.35,
+              "mean": 0.6358333333333335,
+              "median": 0.6000000000000001,
+              "min": 0.45,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.2053638370199475,
+              "sum": 38.150000000000006
+            },
+            "hold_control_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 27.0,
+              "mean": 12.716666666666667,
+              "median": 12.0,
+              "min": 9.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 4.10727674039895,
+              "sum": 763.0
+            },
+            "hold_requested_applied_target_mismatch_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 27.0,
+              "mean": 12.716666666666667,
+              "median": 12.0,
+              "min": 9.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 4.10727674039895,
+              "sum": 763.0
+            },
+            "inference_requests": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 10.0,
+              "mean": 8.816666666666666,
+              "median": 9.0,
+              "min": 8.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.49972214501883166,
+              "sum": 529.0
+            },
+            "maximum_applied_target_delta_m": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.23895276426885367,
+              "mean": 0.2273331127342601,
+              "median": 0.2298445178143766,
+              "min": 0.14705493587570384,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.014770034904815996,
+              "sum": 13.639986764055607
+            },
+            "maximum_measured_end_effector_delta_m": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0355054357842393,
+              "mean": 0.03369238956355961,
+              "median": 0.03373414247909394,
+              "min": 0.02282006096696314,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0019746725686774665,
+              "sum": 2.021543373813577
+            },
+            "maximum_requested_target_delta_m": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.23895276426885367,
+              "mean": 0.22749787069330288,
+              "median": 0.2298445178143766,
+              "min": 0.15691499565549835,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.01390332831818661,
+              "sum": 13.649872241598173
+            },
+            "mean_action_age_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 55.67605633802817,
+              "mean": 40.62969722584315,
+              "median": 39.67605633802817,
+              "min": 31.642857142857142,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 4.086802920870738,
+              "sum": 2437.781833550589
+            },
+            "mean_inference_latency_ms": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 1476.0804541428572,
+              "mean": 986.6688527147884,
+              "median": 970.2494974652778,
+              "min": 813.013559625,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 117.01730248034305,
+              "sum": 59200.1311628873
+            },
+            "obsolete_destination_command_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "obsolete_destination_motion_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "obsolete_destination_motion_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "obsolete_destination_placement_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "out_of_order_completions": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 2.0,
+              "mean": 0.35,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.5722761571129799,
+              "sum": 21.0
+            },
+            "p50_action_age_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 55.0,
+              "mean": 40.275,
+              "median": 39.0,
+              "min": 32.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 4.8161403980089,
+              "sum": 2416.5
+            },
+            "p50_inference_latency_ms": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 1640.31503,
+              "mean": 928.2090472750001,
+              "median": 918.7692930000001,
+              "min": 737.876018,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 113.46202460092756,
+              "sum": 55692.542836500004
+            },
+            "p95_action_age_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 76.0,
+              "mean": 61.545833333333334,
+              "median": 60.275,
+              "min": 47.55,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 5.26648437184512,
+              "sum": 3692.75
+            },
+            "p95_inference_latency_ms": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 2073.8996281,
+              "mean": 1369.1384595874997,
+              "median": 1454.5398854499997,
+              "min": 915.4834785,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 325.95195541892923,
+              "sum": 82148.30757524999
+            },
+            "penalized_recovery_latency_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 231.0,
+              "mean": 222.0,
+              "median": 221.0,
+              "min": 211.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 8.103497187428813,
+              "sum": 13320.0
+            },
+            "pre_switch_observation_command_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "queue_rebuild_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "recovery_latency_seconds": {
+              "count": 60,
+              "kind": "unavailable",
+              "null_count": 60,
+              "observed_count": 0
+            },
+            "recovery_latency_steps": {
+              "count": 60,
+              "kind": "unavailable",
+              "null_count": 60,
+              "observed_count": 0
+            },
+            "recovery_observed": {
+              "count": 60,
+              "false_count": 60,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 0.0,
+              "true_count": 0
+            },
+            "requested_target_discontinuity_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 73.0,
+              "mean": 41.46666666666667,
+              "median": 41.5,
+              "min": 13.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 13.091303304951047,
+              "sum": 2488.0
+            },
+            "response_wait_wall_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "returned_responses": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 10.0,
+              "mean": 8.066666666666666,
+              "median": 8.0,
+              "min": 6.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.8919392106839767,
+              "sum": 484.0
+            },
+            "simulation_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 4.9,
+              "mean": 4.161666666666666,
+              "median": 4.1,
+              "min": 3.95,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.192216602358439,
+              "sum": 249.7
+            },
+            "stable_placement_success": {
+              "count": 60,
+              "false_count": 60,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 0.0,
+              "true_count": 0
+            },
+            "stale_generation_responses_rejected": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "task_success": {
+              "count": 60,
+              "false_count": 60,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 0.0,
+              "true_count": 0
+            },
+            "time_to_final_destination_progress_seconds": {
+              "count": 60,
+              "kind": "unavailable",
+              "null_count": 60,
+              "observed_count": 0
+            },
+            "time_to_final_destination_progress_steps": {
+              "count": 60,
+              "kind": "unavailable",
+              "null_count": 60,
+              "observed_count": 0
+            },
+            "timeout": {
+              "count": 60,
+              "false_count": 60,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 0.0,
+              "true_count": 0
+            },
+            "wall_clock_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 8.103180964,
+              "mean": 6.892830726383334,
+              "median": 6.810949016,
+              "min": 6.479277057,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.3218055245151854,
+              "sum": 413.569843583
+            }
+          },
+          "mean_completion_steps": 83.23333333333333,
+          "mean_hold_control_seconds": 0.6358333333333335,
+          "mean_obsolete_destination_command_steps": 0.0,
+          "mean_pre_switch_observation_command_steps": 0.0,
+          "mean_response_wait_wall_seconds": 0.0,
+          "mean_wall_clock_seconds": 6.892830726383334,
+          "median_completion_steps": 82.0,
+          "median_penalized_recovery_latency_steps": 221.0,
+          "median_wall_clock_seconds": 6.810949016,
+          "obsolete_destination_placements": 0,
+          "success_rate": 0.0,
+          "successes": 0,
+          "trials": 60
+        },
+        "sync_hold": {
+          "correct_destination_successes": 15,
+          "descriptive_metrics": {
+            "applied_target_discontinuity_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 28.0,
+              "mean": 13.95,
+              "median": 14.0,
+              "min": 1.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 7.11436340558076,
+              "sum": 837.0
+            },
+            "collision": {
+              "count": 60,
+              "false_count": 60,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 0.0,
+              "true_count": 0
+            },
+            "command_motion_audit_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 320.0,
+              "mean": 188.35,
+              "median": 212.0,
+              "min": 55.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 70.04137467716255,
+              "sum": 11301.0
+            },
+            "completion_reason": {
+              "count": 60,
+              "counts": {
+                "correct_destination_stable_placement": 15,
+                "destination_switch_recovery_timeout": 3,
+                "failed_approach": 11,
+                "grasp_miss": 2,
+                "joint_or_workspace_limit": 3,
+                "switch_precondition_missed": 2,
+                "unstable_grasp": 24
+              },
+              "kind": "categorical",
+              "null_count": 0,
+              "observed_count": 60
+            },
+            "completion_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 320.0,
+              "mean": 188.35,
+              "median": 212.0,
+              "min": 55.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 70.04137467716255,
+              "sum": 11301.0
+            },
+            "correct_destination_placement_success": {
+              "count": 60,
+              "false_count": 45,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 0.25,
+              "true_count": 15
+            },
+            "deadline_miss_rate": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.9818181818181818,
+              "mean": 0.7071953961635559,
+              "median": 0.6832504312246781,
+              "min": 0.599009900990099,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.08948119554432106,
+              "sum": 42.43172376981335
+            },
+            "deadline_misses": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 286.0,
+              "mean": 130.3,
+              "median": 141.0,
+              "min": 53.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 49.54839385220608,
+              "sum": 7818.0
+            },
+            "dropped_responses": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 2.0,
+              "mean": 0.2833333333333333,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.48619840486049404,
+              "sum": 17.0
+            },
+            "duplicate_responses": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 1.0,
+              "mean": 0.1,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.3,
+              "sum": 6.0
+            },
+            "duplicate_target_actions_removed": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "executed_actions": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 91.0,
+              "mean": 58.05,
+              "median": 70.0,
+              "min": 1.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 27.13265253036152,
+              "sum": 3483.0
+            },
+            "expired_actions_executed": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "expired_actions_removed": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 196.0,
+              "mean": 115.53333333333333,
+              "median": 131.5,
+              "min": 9.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 51.63476434427574,
+              "sum": 6932.0
+            },
+            "grasp_success": {
+              "count": 60,
+              "false_count": 15,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 0.75,
+              "true_count": 45
+            },
+            "hold_control_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 14.3,
+              "mean": 6.515000000000001,
+              "median": 7.050000000000001,
+              "min": 2.6500000000000004,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 2.477419692610304,
+              "sum": 390.90000000000003
+            },
+            "hold_control_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 286.0,
+              "mean": 130.3,
+              "median": 141.0,
+              "min": 53.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 49.54839385220608,
+              "sum": 7818.0
+            },
+            "hold_requested_applied_target_mismatch_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 28.0,
+              "mean": 12.983333333333333,
+              "median": 12.0,
+              "min": 9.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 4.514759745053501,
+              "sum": 779.0
+            },
+            "inference_requests": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 17.0,
+              "mean": 9.716666666666667,
+              "median": 11.0,
+              "min": 2.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 4.231200249994741,
+              "sum": 583.0
+            },
+            "maximum_applied_target_delta_m": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.2499739158651417,
+              "mean": 0.1617843595777058,
+              "median": 0.14902950115834776,
+              "min": 0.09999999999999995,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.043512872901847785,
+              "sum": 9.707061574662347
+            },
+            "maximum_measured_end_effector_delta_m": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.03907758491700396,
+              "mean": 0.03062798146268363,
+              "median": 0.030359121688444922,
+              "min": 0.022089303954601864,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.004504767297446625,
+              "sum": 1.8376788877610177
+            },
+            "maximum_requested_target_delta_m": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.2499739158651417,
+              "mean": 0.17648034908312132,
+              "median": 0.15691499565549835,
+              "min": 0.15691499565549835,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.032179483044234874,
+              "sum": 10.58882094498728
+            },
+            "mean_action_age_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 28.0,
+              "mean": 18.129474270498026,
+              "median": 17.734949832775918,
+              "min": 10.5,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 2.57477079589295,
+              "sum": 1087.7684562298816
+            },
+            "mean_inference_latency_ms": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 1983.535537,
+              "mean": 1008.9254253283045,
+              "median": 949.40318385,
+              "min": 695.638498,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 225.45238615432154,
+              "sum": 60535.52551969827
+            },
+            "obsolete_destination_command_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 11.0,
+              "mean": 2.3666666666666667,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 3.7989764703433244,
+              "sum": 142.0
+            },
+            "obsolete_destination_motion_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.7000000000000001,
+              "mean": 0.14250000000000002,
+              "median": 0.05,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.18092931400595832,
+              "sum": 8.55
+            },
+            "obsolete_destination_motion_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 14.0,
+              "mean": 2.85,
+              "median": 1.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 3.6185862801191666,
+              "sum": 171.0
+            },
+            "obsolete_destination_placement_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "out_of_order_completions": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "p50_action_age_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 28.0,
+              "mean": 17.941666666666666,
+              "median": 17.0,
+              "min": 10.5,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 2.7705168992245635,
+              "sum": 1076.5
+            },
+            "p50_inference_latency_ms": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 1983.535537,
+              "mean": 973.6410851833333,
+              "median": 925.73723375,
+              "min": 695.638498,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 243.47427166689724,
+              "sum": 58418.465111
+            },
+            "p95_action_age_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 29.799999999999997,
+              "mean": 24.633333333333333,
+              "median": 26.025,
+              "min": 10.95,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 4.190909474353057,
+              "sum": 1478.0
+            },
+            "p95_inference_latency_ms": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 2073.5315082999996,
+              "mean": 1394.3350828808332,
+              "median": 1379.9379978999996,
+              "min": 695.638498,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 354.47596185350466,
+              "sum": 83660.10497285
+            },
+            "penalized_recovery_latency_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 231.0,
+              "mean": 69.51666666666667,
+              "median": 14.0,
+              "min": 10.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 92.25986698210417,
+              "sum": 4171.0
+            },
+            "pre_switch_observation_command_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.0,
+              "sum": 0.0
+            },
+            "queue_rebuild_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 17.0,
+              "mean": 8.8,
+              "median": 10.0,
+              "min": 1.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 4.198412398355677,
+              "sum": 528.0
+            },
+            "recovery_latency_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 1.3,
+              "mean": 0.6988636363636364,
+              "median": 0.675,
+              "min": 0.5,
+              "null_count": 16,
+              "observed_count": 44,
+              "std": 0.1807461292065213,
+              "sum": 30.75
+            },
+            "recovery_latency_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 26.0,
+              "mean": 13.977272727272727,
+              "median": 13.5,
+              "min": 10.0,
+              "null_count": 16,
+              "observed_count": 44,
+              "std": 3.614922584130426,
+              "sum": 615.0
+            },
+            "recovery_observed": {
+              "count": 60,
+              "false_count": 16,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 0.7333333333333333,
+              "true_count": 44
+            },
+            "requested_target_discontinuity_count": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 40.0,
+              "mean": 26.933333333333334,
+              "median": 27.0,
+              "min": 10.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 7.098982712724095,
+              "sum": 1616.0
+            },
+            "response_wait_wall_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 40.716656677,
+              "mean": 10.796287964883334,
+              "median": 11.2135878255,
+              "min": 4.294970845,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 5.348116387076167,
+              "sum": 647.777277893
+            },
+            "returned_responses": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 17.0,
+              "mean": 9.45,
+              "median": 10.5,
+              "min": 1.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 4.540282663740956,
+              "sum": 567.0
+            },
+            "simulation_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 16.0,
+              "mean": 9.417499999999999,
+              "median": 10.6,
+              "min": 2.75,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 3.502068733858127,
+              "sum": 565.05
+            },
+            "stable_placement_success": {
+              "count": 60,
+              "false_count": 45,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 0.25,
+              "true_count": 15
+            },
+            "stale_generation_responses_rejected": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 2.0,
+              "mean": 0.3333333333333333,
+              "median": 0.0,
+              "min": 0.0,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 0.5055250296034367,
+              "sum": 20.0
+            },
+            "task_success": {
+              "count": 60,
+              "false_count": 45,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 0.25,
+              "true_count": 15
+            },
+            "time_to_final_destination_progress_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 3.6500000000000004,
+              "mean": 1.7279069767441864,
+              "median": 1.85,
+              "min": 0.6000000000000001,
+              "null_count": 17,
+              "observed_count": 43,
+              "std": 0.8705987197794157,
+              "sum": 74.30000000000001
+            },
+            "time_to_final_destination_progress_steps": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 73.0,
+              "mean": 34.55813953488372,
+              "median": 37.0,
+              "min": 12.0,
+              "null_count": 17,
+              "observed_count": 43,
+              "std": 17.411974395588313,
+              "sum": 1486.0
+            },
+            "timeout": {
+              "count": 60,
+              "false_count": 57,
+              "kind": "boolean",
+              "null_count": 0,
+              "observed_count": 60,
+              "rate": 0.05,
+              "true_count": 3
+            },
+            "wall_clock_seconds": {
+              "count": 60,
+              "kind": "numeric",
+              "max": 25.758324419,
+              "mean": 15.253140439666668,
+              "median": 17.06270983,
+              "min": 4.453396975,
+              "null_count": 0,
+              "observed_count": 60,
+              "std": 5.661817056237011,
+              "sum": 915.18842638
+            }
+          },
+          "mean_completion_steps": 188.35,
+          "mean_hold_control_seconds": 6.515000000000001,
+          "mean_obsolete_destination_command_steps": 2.3666666666666667,
+          "mean_pre_switch_observation_command_steps": 0.0,
+          "mean_response_wait_wall_seconds": 10.796287964883334,
+          "mean_wall_clock_seconds": 15.253140439666668,
+          "median_completion_steps": 212.0,
+          "median_penalized_recovery_latency_steps": 14.0,
+          "median_wall_clock_seconds": 17.06270983,
+          "obsolete_destination_placements": 0,
+          "success_rate": 0.25,
+          "successes": 15,
+          "trials": 60
+        }
+      }
+    }
+  },
+  "replay": "outputs/m8_g0/holdout_v3/replay_validation.json",
+  "replay_sha256": "2c4bb98c77f145d998ffa9c259bb7bc9f2e368382ab3edf605b5c57776116695",
+  "schema_version": 1,
+  "strong_go_gate": {
+    "conditions": {
+      "aligned_materially_fewer_obsolete_steps": false,
+      "aligned_recovery_at_least_20pct_lower_than_naive": true,
+      "aligned_wall_at_least_15pct_lower_than_sync": false,
+      "aligned_within_5pp_of_sync": true
+    },
+    "eligible": true,
+    "passed": false
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "artifacts": [
+    {
+      "bytes": 96670,
+      "name": "canary_steps.png",
+      "sha256": "c6817b6094f4cf98b818876aafe422fd934a6a29d0db831f2d7b2f6a24013e59"
+    },
+    {
+      "bytes": 266,
+      "name": "failure_taxonomy.csv",
+      "sha256": "53c40c0193e8f7706e907daf6bb4888db213f31179ff799553aed35dccb968d0"
+    },
+    {
+      "bytes": 875,
+      "name": "main_table.csv",
+      "sha256": "6b31aab1eaa953ab668a5574c5d485f44e4212b04de49b0179bc46108d43fe57"
+    },
+    {
+      "bytes": 1958111,
+      "name": "object_high_jitter_timeline.png",
+      "sha256": "aa24ea8320d375e338353b9b60835ca9ce90a0b75f2e96ad0fafa9c7d8fa136b"
+    },
+    {
+      "bytes": 2339938,
+      "name": "paired_content_final_frames.png",
+      "sha256": "6c06e5ff1a62345bb027ec53a8260ea9388923c2a89621c24e2dba9390482c42"
+    },
+    {
+      "bytes": 3698,
+      "name": "report.md",
+      "sha256": "28e4e1774cee9e516447c211ef0400ae3681670adb964d78c6657593e9ce9dc1"
+    },
+    {
+      "bytes": 70324,
+      "name": "scheduler_mechanism.png",
+      "sha256": "6a4aec5365260e7c67c06be52f79bf116954f50c4d4bd4a5d86c52ffc73c719f"
+    },
+    {
+      "bytes": 2552,
+      "name": "summary.json",
+      "sha256": "a94486ef13a0b77086789acfa2fe20549cbcf2faf05e2d4792ac46a9311138c1"
+    }
+  ],
+  "schema_version": 1
+}
