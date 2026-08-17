@@ -1,0 +1,16 @@
+{
+  "artifacts": {
+    "canary_task_families.png": "02a321f2b3dd8eca3e5d94ca8ed2fa91fa8bac59025aad40fe3797de6f6553c3",
+    "failure_taxonomy.csv": "7f71c63b404c73392e0c5220d3e9c4cebd246407abc58151aefab80a3e0ceb57",
+    "latency_success_operating_points.pdf": "b21a38fe70dfefe46cb328ea8d974065f504c2442556df1da2954045c2b526a2",
+    "latency_success_operating_points.png": "46d3d5bf9cdcebed0fc82e4bc5af28c05d2cff07a7d7e249db1c1b0aa85c3cfc",
+    "main_table.csv": "b7e5b346dac466ebf1f97f7517b0fa6f34799922df11f55c900485bbc42434b9",
+    "paired_effects.csv": "f5b040a5cdc1737101c4637d7f689015863070703eec6e0189e1eaaf3bdf9694",
+    "paired_failure_content.png": "b3ae27f5212b47ac3bc14e957e0d78e941b7373880d02e6594996fcb8d840bc5",
+    "report.md": "d370efd3a33c546d561a93d335bc38481583703ba45e7f5aa4aa70de6223f963",
+    "summary.json": "5029a13742fadd3c052bc683ee3372883d067a0dfa971f3accd734c96befda09"
+  },
+  "hash_algorithm": "SHA-256",
+  "schema_version": 1,
+  "text_normalization": "CRLF-to-LF for .csv, .json, .md, and .txt; none for binary files"
+}

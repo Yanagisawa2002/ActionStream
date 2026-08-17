@@ -8,14 +8,26 @@ entire stale chunk.
 
 ![ActionStream X-VLA paired runtime result](docs/assets/actionstream_hero.png)
 
-## Current learned-policy result — partial closure
+## Adaptive learned-policy result — bounded positive / overall NO-GO
 
-The strongest learned-policy result is a 180-episode, three-task X-VLA paired
-evaluation using pinned official LeRobot/LIBERO paths. Under seeded
-500 +/- 250 ms transport jitter, LeRobot `latest_only` and ActionStream aligned
-both succeeded 30/30; aligned completed 13.7 control steps sooner on average
-(paired bootstrap 95% CI -15.6 to -11.9). This is not a universal win: aligned
-is 3.6 steps slower at zero delay and drops two task-1 trials at fixed 950 ms.
+ActionStream-Adaptive v2 now has a frozen 270-episode X-VLA paired holdout over
+three genuinely different LIBERO suites, five unseen resets per suite, and six
+network traces. At fixed 950 ms, Adaptive matched official LeRobot
+`latest_only` success (14/15 each) while reducing mean completion steps by 35.1
+(20.6%; paired bootstrap 95% CI -40.3 to -28.5). This is a bounded positive,
+not a universal win: static aligned was better at fixed 950 ms (15/15 and 123.5
+mean steps), Adaptive was 44/45 under pooled jitter versus latest-only 45/45,
+and it fell to 13/15 under burst/outage versus latest-only 15/15. The frozen
+selector therefore remains **NO-GO** overall rather than being tuned after the
+holdout.
+
+The [Adaptive v2 report](reports/actionstream_adaptive_v2_holdout/report.md)
+contains the main table, paired CIs, unconnected latency-success operating
+points, 2,062-decision risk audit, failure taxonomy, content-level A/B frames,
+and archive hashes. The 9/9 three-family canary and all 270 formal traces are
+hash-verified. A minimal real-robot A/B was not run because neither inspected
+machine exposed a robot driver or usable camera; simulation is not relabeled as
+hardware evidence.
 
 The learned native-Isaac bridge now dynamically synchronizes measured Panda
 and object state into official LIBERO rendering before each X-VLA request.
@@ -26,7 +38,7 @@ task remains a preserved native contact/robot-limit failure. Official LeRobot
 Async, `latest_only`, RTC where supported, and ActionStream results exist in
 the LIBERO matrix; a native Isaac async/RTC paired matrix does not.
 
-See the [2026-08-17 learned-policy closure report](docs/learned_policy_closure_20260817.md)
+See also the [2026-08-17 learned-policy closure report](docs/learned_policy_closure_20260817.md)
 for denominators, failure classification, provenance, release audit, and exact
 evidence boundaries. Isaac Lab-Arena and real-robot paired A/B remain future
 work.

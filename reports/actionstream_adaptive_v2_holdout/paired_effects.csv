@@ -1,0 +1,9 @@
+profile_group,network_condition,estimate_runtime,reference_runtime,paired_episode_count,success_rate_difference,success_rate_difference_95_ci_low,success_rate_difference_95_ci_high,environment_steps_difference,environment_steps_difference_95_ci_low,environment_steps_difference_95_ci_high,mean_step_reduction_percent
+zero,Zero injected delay,actionstream_adaptive,lerobot_latest_only,15,0.0,0.0,0.0,0.6,-0.6,1.6666666666666667,-0.46391752577319145
+zero,Zero injected delay,actionstream_adaptive,actionstream_aligned,15,0.0,0.0,0.0,-8.866666666666667,-11.666666666666666,-6.333333333333333,6.388088376561004
+jitter,500 +/- 250 ms jitter (3 traces pooled),actionstream_adaptive,lerobot_latest_only,45,-0.022222222222222223,-0.06666666666666667,0.0,0.9777777777777777,-5.111111111111111,10.889444444444436,-0.747790618626771
+jitter,500 +/- 250 ms jitter (3 traces pooled),actionstream_adaptive,actionstream_aligned,45,0.0,-0.06666666666666667,0.06666666666666667,1.8444444444444446,-10.711666666666666,14.422222222222222,-1.4200171086398554
+fixed950,Fixed 950 ms,actionstream_adaptive,lerobot_latest_only,15,0.0,0.0,0.0,-35.13333333333333,-40.335,-28.466666666666665,20.56184159188452
+fixed950,Fixed 950 ms,actionstream_adaptive,actionstream_aligned,15,-0.06666666666666667,-0.2,0.0,12.266666666666667,-1.1333333333333333,38.0,-9.935205183585301
+burst,Burst/outage,actionstream_adaptive,lerobot_latest_only,15,-0.13333333333333333,-0.3333333333333333,0.0,-18.933333333333334,-41.8,10.066666666666666,10.422018348623856
+burst,Burst/outage,actionstream_adaptive,actionstream_aligned,15,-0.13333333333333333,-0.3333333333333333,0.0,12.266666666666667,-12.466666666666667,44.26833333333331,-8.15241470979175

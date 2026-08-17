@@ -1,0 +1,634 @@
+{
+  "acceptance_gates": [
+    {
+      "evidence": [
+        {
+          "adaptive": 5,
+          "latest": 5,
+          "task_id": 0
+        },
+        {
+          "adaptive": 5,
+          "latest": 5,
+          "task_id": 4
+        },
+        {
+          "adaptive": 5,
+          "latest": 5,
+          "task_id": 6
+        }
+      ],
+      "gate": "zero_delay_no_family_regression",
+      "pass": true
+    },
+    {
+      "evidence": {
+        "adaptive_success": [
+          44,
+          45
+        ],
+        "better_static_success": [
+          45,
+          45
+        ],
+        "completion_step_gain_vs_latest_percent": -0.747790618626771,
+        "required_gain_percent": 8.0
+      },
+      "gate": "moderate_jitter_success_and_8pct_speed_gain",
+      "pass": false
+    },
+    {
+      "evidence": {
+        "adaptive_success": [
+          14,
+          15
+        ],
+        "latest_success": [
+          14,
+          15
+        ]
+      },
+      "gate": "fixed950_no_additional_failures_vs_latest",
+      "pass": true
+    },
+    {
+      "evidence": {
+        "adaptive_success": [
+          13,
+          15
+        ],
+        "latest_success": [
+          15,
+          15
+        ]
+      },
+      "gate": "burst_no_additional_failures_vs_latest",
+      "pass": false
+    },
+    {
+      "evidence": {
+        "adaptive_decisions": 2062,
+        "forbidden_selector_input_keys_found": 0,
+        "trace_files_verified": 270,
+        "unsafe_accepted_merges": 0,
+        "unsafe_selected_decisions": 0
+      },
+      "gate": "risk_and_replay_provenance",
+      "pass": true
+    },
+    {
+      "evidence": {
+        "post_holdout_threshold_changes": 0,
+        "selector_sha256": "8679606e12b85accc26bd1ad1a1d710bade6682c738cebc031a4196d4a367572",
+        "source_commit": "b259ef2f73dd2cea21dc71a2d44b391efac2e8fd"
+      },
+      "gate": "frozen_source_and_thresholds",
+      "pass": true
+    }
+  ],
+  "artifact_kind": "actionstream_adaptive_v2_frozen_holdout_report",
+  "bootstrap": {
+    "confidence_level": 0.95,
+    "method": "paired nonparametric percentile bootstrap",
+    "resamples": 10000,
+    "seed": 20260815
+  },
+  "condition_summaries": [
+    {
+      "episodes": 15,
+      "mean_delivery_latency_p50_ms": 163.04574410120645,
+      "mean_environment_steps": 129.33333333333334,
+      "mean_hold_fraction": 0.0,
+      "profile_group": "zero",
+      "profile_label": "Zero injected delay",
+      "runtime": "lerobot_latest_only",
+      "runtime_label": "LeRobot latest-only",
+      "success_rate": 1.0,
+      "success_wilson_95_ci": [
+        0.7961166989641515,
+        1.0
+      ],
+      "successes": 15
+    },
+    {
+      "episodes": 15,
+      "mean_delivery_latency_p50_ms": 161.2745531834662,
+      "mean_environment_steps": 138.8,
+      "mean_hold_fraction": 0.0,
+      "profile_group": "zero",
+      "profile_label": "Zero injected delay",
+      "runtime": "actionstream_aligned",
+      "runtime_label": "ActionStream aligned",
+      "success_rate": 1.0,
+      "success_wilson_95_ci": [
+        0.7961166989641515,
+        1.0
+      ],
+      "successes": 15
+    },
+    {
+      "episodes": 15,
+      "mean_delivery_latency_p50_ms": 167.60903367151818,
+      "mean_environment_steps": 129.93333333333334,
+      "mean_hold_fraction": 0.0,
+      "profile_group": "zero",
+      "profile_label": "Zero injected delay",
+      "runtime": "actionstream_adaptive",
+      "runtime_label": "ActionStream-Adaptive v2",
+      "success_rate": 1.0,
+      "success_wilson_95_ci": [
+        0.7961166989641515,
+        1.0
+      ],
+      "successes": 15
+    },
+    {
+      "episodes": 45,
+      "mean_delivery_latency_p50_ms": 630.7837777667576,
+      "mean_environment_steps": 130.75555555555556,
+      "mean_hold_fraction": 0.004278809648923399,
+      "profile_group": "jitter",
+      "profile_label": "500 +/- 250 ms jitter (3 traces pooled)",
+      "runtime": "lerobot_latest_only",
+      "runtime_label": "LeRobot latest-only",
+      "success_rate": 1.0,
+      "success_wilson_95_ci": [
+        0.9213484012671117,
+        1.0
+      ],
+      "successes": 45
+    },
+    {
+      "episodes": 45,
+      "mean_delivery_latency_p50_ms": 700.296076739,
+      "mean_environment_steps": 129.88888888888889,
+      "mean_hold_fraction": 0.0,
+      "profile_group": "jitter",
+      "profile_label": "500 +/- 250 ms jitter (3 traces pooled)",
+      "runtime": "actionstream_aligned",
+      "runtime_label": "ActionStream aligned",
+      "success_rate": 0.9777777777777777,
+      "success_wilson_95_ci": [
+        0.8843331823158513,
+        0.9960664011171667
+      ],
+      "successes": 44
+    },
+    {
+      "episodes": 45,
+      "mean_delivery_latency_p50_ms": 658.3281920291483,
+      "mean_environment_steps": 131.73333333333332,
+      "mean_hold_fraction": 0.004142976770732495,
+      "profile_group": "jitter",
+      "profile_label": "500 +/- 250 ms jitter (3 traces pooled)",
+      "runtime": "actionstream_adaptive",
+      "runtime_label": "ActionStream-Adaptive v2",
+      "success_rate": 0.9777777777777777,
+      "success_wilson_95_ci": [
+        0.8843331823158513,
+        0.9960664011171667
+      ],
+      "successes": 44
+    },
+    {
+      "episodes": 15,
+      "mean_delivery_latency_p50_ms": 1071.3862148113549,
+      "mean_environment_steps": 170.86666666666667,
+      "mean_hold_fraction": 0.04095452859588903,
+      "profile_group": "fixed950",
+      "profile_label": "Fixed 950 ms",
+      "runtime": "lerobot_latest_only",
+      "runtime_label": "LeRobot latest-only",
+      "success_rate": 0.9333333333333333,
+      "success_wilson_95_ci": [
+        0.7018347012621998,
+        0.9881331045067315
+      ],
+      "successes": 14
+    },
+    {
+      "episodes": 15,
+      "mean_delivery_latency_p50_ms": 1122.3072680955133,
+      "mean_environment_steps": 123.46666666666667,
+      "mean_hold_fraction": 0.21418675019835212,
+      "profile_group": "fixed950",
+      "profile_label": "Fixed 950 ms",
+      "runtime": "actionstream_aligned",
+      "runtime_label": "ActionStream aligned",
+      "success_rate": 1.0,
+      "success_wilson_95_ci": [
+        0.7961166989641515,
+        1.0
+      ],
+      "successes": 15
+    },
+    {
+      "episodes": 15,
+      "mean_delivery_latency_p50_ms": 1072.6593899540603,
+      "mean_environment_steps": 135.73333333333332,
+      "mean_hold_fraction": 0.07794880773808455,
+      "profile_group": "fixed950",
+      "profile_label": "Fixed 950 ms",
+      "runtime": "actionstream_adaptive",
+      "runtime_label": "ActionStream-Adaptive v2",
+      "success_rate": 0.9333333333333333,
+      "success_wilson_95_ci": [
+        0.7018347012621998,
+        0.9881331045067315
+      ],
+      "successes": 14
+    },
+    {
+      "episodes": 15,
+      "mean_delivery_latency_p50_ms": 513.2615907428166,
+      "mean_environment_steps": 181.66666666666666,
+      "mean_hold_fraction": 0.21532821370385474,
+      "profile_group": "burst",
+      "profile_label": "Burst/outage",
+      "runtime": "lerobot_latest_only",
+      "runtime_label": "LeRobot latest-only",
+      "success_rate": 1.0,
+      "success_wilson_95_ci": [
+        0.7961166989641515,
+        1.0
+      ],
+      "successes": 15
+    },
+    {
+      "episodes": 15,
+      "mean_delivery_latency_p50_ms": 557.4101409253974,
+      "mean_environment_steps": 150.46666666666667,
+      "mean_hold_fraction": 0.19489747862276185,
+      "profile_group": "burst",
+      "profile_label": "Burst/outage",
+      "runtime": "actionstream_aligned",
+      "runtime_label": "ActionStream aligned",
+      "success_rate": 1.0,
+      "success_wilson_95_ci": [
+        0.7961166989641515,
+        1.0
+      ],
+      "successes": 15
+    },
+    {
+      "episodes": 15,
+      "mean_delivery_latency_p50_ms": 503.5366290559371,
+      "mean_environment_steps": 162.73333333333332,
+      "mean_hold_fraction": 0.149414352964473,
+      "profile_group": "burst",
+      "profile_label": "Burst/outage",
+      "runtime": "actionstream_adaptive",
+      "runtime_label": "ActionStream-Adaptive v2",
+      "success_rate": 0.8666666666666667,
+      "success_wilson_95_ci": [
+        0.6211801716767764,
+        0.9626387408969346
+      ],
+      "successes": 13
+    }
+  ],
+  "failures": [
+    {
+      "delay_profile": "burst_outage_seed01",
+      "initial_state_index": 24,
+      "replay_status": "reproduced: 300 steps, 9 outage safe-holds",
+      "runtime": "actionstream_adaptive",
+      "seed": 2026081804,
+      "suite": "LIBERO Object",
+      "task_id": 4,
+      "terminal_condition": "horizon at 300 steps",
+      "trace_sha256": "fa7716a27864d5d19835dd673750a68903194934287817c380f9cf1e3f285ca0",
+      "video_sha256": "",
+      "visual_classification": "late-stage object transfer; receptacle success not reached by horizon"
+    },
+    {
+      "delay_profile": "jitter_0500_pm0250_seed03",
+      "initial_state_index": 21,
+      "replay_status": "not reproduced: same-seed replay succeeded in 101 steps",
+      "runtime": "actionstream_aligned",
+      "seed": 2026081901,
+      "suite": "LIBERO Spatial",
+      "task_id": 6,
+      "terminal_condition": "horizon at 300 steps",
+      "trace_sha256": "d3f0ca3954ff26617455f3430835cfc38d20740fc3b6dc55d815f70ac029e1a8",
+      "video_sha256": "",
+      "visual_classification": "late placement/release stall near target; success predicate false at horizon"
+    },
+    {
+      "delay_profile": "jitter_0500_pm0250_seed03",
+      "initial_state_index": 20,
+      "replay_status": "not replayed",
+      "runtime": "actionstream_adaptive",
+      "seed": 2026081900,
+      "suite": "LIBERO Spatial",
+      "task_id": 6,
+      "terminal_condition": "horizon at 300 steps",
+      "trace_sha256": "8d099f71d326a28dc40197cea740118bfdc2c2556556e0dd1263c93dc1743342",
+      "video_sha256": "3409cf9f0f4fe6076d0c2a2411babbb65e964408846875b1d9d26182a5e8ab72",
+      "visual_classification": "late placement/release stall near target; success predicate false at horizon"
+    },
+    {
+      "delay_profile": "fixed_0950",
+      "initial_state_index": 20,
+      "replay_status": "not replayed",
+      "runtime": "lerobot_latest_only",
+      "seed": 2026081900,
+      "suite": "LIBERO Spatial",
+      "task_id": 6,
+      "terminal_condition": "horizon at 300 steps",
+      "trace_sha256": "619636fda5e7c37d3dd99b9133f72a35621ed8b4b570266711326f8c48e9f2ea",
+      "video_sha256": "f213ebaf638291a25230ec1590bbc88edd7728dfa69f8dfc3f9318f9ab005e9b",
+      "visual_classification": "late placement/release stall near target; success predicate false at horizon"
+    },
+    {
+      "delay_profile": "fixed_0950",
+      "initial_state_index": 20,
+      "replay_status": "not replayed",
+      "runtime": "actionstream_adaptive",
+      "seed": 2026081900,
+      "suite": "LIBERO Spatial",
+      "task_id": 6,
+      "terminal_condition": "horizon at 300 steps",
+      "trace_sha256": "cdeff157755dc563a6443c917cceb9ae8fe2a331aa17f3c53b509ccaf940d0f4",
+      "video_sha256": "22c5af7eea34f3d033b5222dbc987c85cf466840539eda26838881e4de1bd160",
+      "visual_classification": "late placement/release stall near target; success predicate false at horizon"
+    },
+    {
+      "delay_profile": "burst_outage_seed01",
+      "initial_state_index": 20,
+      "replay_status": "not replayed",
+      "runtime": "actionstream_adaptive",
+      "seed": 2026081900,
+      "suite": "LIBERO Spatial",
+      "task_id": 6,
+      "terminal_condition": "horizon at 300 steps",
+      "trace_sha256": "5f0f813e28764acfd1422afd4d93adabd2ee1e1bc1f2a45ac1705f8e8a809e45",
+      "video_sha256": "3e47d3a7524448a0e20edb77893dcb323b56e881e136f2e4e56db72461e34e84",
+      "visual_classification": "late placement/release stall near target; success predicate false at horizon"
+    }
+  ],
+  "figures": {
+    "canary_task_families": "canary_task_families.png",
+    "input_sha256": {
+      "Adaptive v2: failure": "7460230ea1b4a204a251c8c1f3c569f178c2876c181d29d951c963f2421bf7af",
+      "Aligned: success": "026aef4c179505ba42a053b09eaea0e7d47e7cb5aff0329c114138d4f0e6f0ce",
+      "LIBERO Goal": "ee8056f05ca58c8244b4b271bbbf5feb1bdaa4fa3a5d6f382275d687181848dc",
+      "LIBERO Object": "f1755797ca92c9db1118ed3728040f88a82aa7dcd0caca203017601fd584edc5",
+      "LIBERO Spatial": "d5d63f44f0eeb3a560cfc576bde6f0790fa5e4854e25fca4e4f24ae993b5707c"
+    },
+    "latency_success_operating_points": "latency_success_operating_points.png",
+    "paired_failure_content": "paired_failure_content.png"
+  },
+  "formal_verdict": "NO-GO",
+  "paired_effects": [
+    {
+      "environment_steps_difference": {
+        "bootstrap_95_ci": [
+          -0.6,
+          1.6666666666666667
+        ],
+        "mean_difference": 0.6
+      },
+      "estimate_runtime": "actionstream_adaptive",
+      "mean_step_reduction_percent": -0.46391752577319145,
+      "paired_episode_count": 15,
+      "profile_group": "zero",
+      "profile_label": "Zero injected delay",
+      "reference_runtime": "lerobot_latest_only",
+      "success_rate_difference": {
+        "bootstrap_95_ci": [
+          0.0,
+          0.0
+        ],
+        "mean_difference": 0.0
+      }
+    },
+    {
+      "environment_steps_difference": {
+        "bootstrap_95_ci": [
+          -11.666666666666666,
+          -6.333333333333333
+        ],
+        "mean_difference": -8.866666666666667
+      },
+      "estimate_runtime": "actionstream_adaptive",
+      "mean_step_reduction_percent": 6.388088376561004,
+      "paired_episode_count": 15,
+      "profile_group": "zero",
+      "profile_label": "Zero injected delay",
+      "reference_runtime": "actionstream_aligned",
+      "success_rate_difference": {
+        "bootstrap_95_ci": [
+          0.0,
+          0.0
+        ],
+        "mean_difference": 0.0
+      }
+    },
+    {
+      "environment_steps_difference": {
+        "bootstrap_95_ci": [
+          -5.111111111111111,
+          10.889444444444436
+        ],
+        "mean_difference": 0.9777777777777777
+      },
+      "estimate_runtime": "actionstream_adaptive",
+      "mean_step_reduction_percent": -0.747790618626771,
+      "paired_episode_count": 45,
+      "profile_group": "jitter",
+      "profile_label": "500 +/- 250 ms jitter (3 traces pooled)",
+      "reference_runtime": "lerobot_latest_only",
+      "success_rate_difference": {
+        "bootstrap_95_ci": [
+          -0.06666666666666667,
+          0.0
+        ],
+        "mean_difference": -0.022222222222222223
+      }
+    },
+    {
+      "environment_steps_difference": {
+        "bootstrap_95_ci": [
+          -10.711666666666666,
+          14.422222222222222
+        ],
+        "mean_difference": 1.8444444444444446
+      },
+      "estimate_runtime": "actionstream_adaptive",
+      "mean_step_reduction_percent": -1.4200171086398554,
+      "paired_episode_count": 45,
+      "profile_group": "jitter",
+      "profile_label": "500 +/- 250 ms jitter (3 traces pooled)",
+      "reference_runtime": "actionstream_aligned",
+      "success_rate_difference": {
+        "bootstrap_95_ci": [
+          -0.06666666666666667,
+          0.06666666666666667
+        ],
+        "mean_difference": 0.0
+      }
+    },
+    {
+      "environment_steps_difference": {
+        "bootstrap_95_ci": [
+          -40.335,
+          -28.466666666666665
+        ],
+        "mean_difference": -35.13333333333333
+      },
+      "estimate_runtime": "actionstream_adaptive",
+      "mean_step_reduction_percent": 20.56184159188452,
+      "paired_episode_count": 15,
+      "profile_group": "fixed950",
+      "profile_label": "Fixed 950 ms",
+      "reference_runtime": "lerobot_latest_only",
+      "success_rate_difference": {
+        "bootstrap_95_ci": [
+          0.0,
+          0.0
+        ],
+        "mean_difference": 0.0
+      }
+    },
+    {
+      "environment_steps_difference": {
+        "bootstrap_95_ci": [
+          -1.1333333333333333,
+          38.0
+        ],
+        "mean_difference": 12.266666666666667
+      },
+      "estimate_runtime": "actionstream_adaptive",
+      "mean_step_reduction_percent": -9.935205183585301,
+      "paired_episode_count": 15,
+      "profile_group": "fixed950",
+      "profile_label": "Fixed 950 ms",
+      "reference_runtime": "actionstream_aligned",
+      "success_rate_difference": {
+        "bootstrap_95_ci": [
+          -0.2,
+          0.0
+        ],
+        "mean_difference": -0.06666666666666667
+      }
+    },
+    {
+      "environment_steps_difference": {
+        "bootstrap_95_ci": [
+          -41.8,
+          10.066666666666666
+        ],
+        "mean_difference": -18.933333333333334
+      },
+      "estimate_runtime": "actionstream_adaptive",
+      "mean_step_reduction_percent": 10.422018348623856,
+      "paired_episode_count": 15,
+      "profile_group": "burst",
+      "profile_label": "Burst/outage",
+      "reference_runtime": "lerobot_latest_only",
+      "success_rate_difference": {
+        "bootstrap_95_ci": [
+          -0.3333333333333333,
+          0.0
+        ],
+        "mean_difference": -0.13333333333333333
+      }
+    },
+    {
+      "environment_steps_difference": {
+        "bootstrap_95_ci": [
+          -12.466666666666667,
+          44.26833333333331
+        ],
+        "mean_difference": 12.266666666666667
+      },
+      "estimate_runtime": "actionstream_adaptive",
+      "mean_step_reduction_percent": -8.15241470979175,
+      "paired_episode_count": 15,
+      "profile_group": "burst",
+      "profile_label": "Burst/outage",
+      "reference_runtime": "actionstream_aligned",
+      "success_rate_difference": {
+        "bootstrap_95_ci": [
+          -0.3333333333333333,
+          0.0
+        ],
+        "mean_difference": -0.13333333333333333
+      }
+    }
+  ],
+  "provenance": {
+    "analysis_json": "artifacts/adaptive_v2_holdout_combined_b259ef2_analysis/paired_analysis.json",
+    "analysis_json_sha256": "9831e6f60b48d45c5d89de656bea8ef3cc28b5ac2d8b3155922b6582e3e3d1e6",
+    "episodes_csv": "artifacts/adaptive_v2_holdout_combined_b259ef2_analysis/raw_episodes.csv",
+    "episodes_csv_sha256": "bb67ae956f87e75e13751715c01a59135828e944a2b13d49f354cfec72583deb",
+    "evidence_archives": {
+      "canary": "4bdd547631d226595898798ca18a72d93f5ece18ca9ba7aa9e5028ee2aec1bbe",
+      "failure_replays": "4315f5e734a1bf6c03ee9abe9c4c9e9e0675631d5822d7e06886bafdb6adebee",
+      "holdout_goal": "47947ceda298d47825ef7b57f2ce11f9615c7e6112977695652bfa3666d8e180",
+      "holdout_object": "c891bd8223160c050861d757069c96690abe10e60c7ed620b2b7f4c40c377ed3",
+      "holdout_spatial": "4b8267c213b665dbce1acfd848145f09f57b483a08e905e845946ea028556afc"
+    },
+    "lerobot_commit": "6adf51511b7625090eade8d82d9f61a1846ebe56",
+    "model_revision": "12e8783e996944f5c97e490d37d4c145484ed70a",
+    "post_holdout_failure_replays_in_formal_denominator": false,
+    "selector_sha256": "8679606e12b85accc26bd1ad1a1d710bade6682c738cebc031a4196d4a367572",
+    "source_commit": "b259ef2f73dd2cea21dc71a2d44b391efac2e8fd"
+  },
+  "real_robot_ab": {
+    "missing": [
+      "named robot and driver endpoint",
+      "calibrated camera and robot-camera transform",
+      "two named tasks and matched reset fixtures",
+      "workspace, joint, velocity, and force limits",
+      "operator and emergency-stop receipt"
+    ],
+    "paired_resets_per_task": 20,
+    "physical_robot_endpoint_found": false,
+    "required_tasks": 2,
+    "simulator_relabelled_as_real_robot": false,
+    "status": "BLOCKED_NOT_RUN",
+    "usable_camera_endpoint_found": false
+  },
+  "schema_version": 1,
+  "trace_audit": {
+    "adaptive_decisions": 2062,
+    "adaptive_trace_files": 90,
+    "all_trace_hashes_match_csv": true,
+    "execution_mode_counts": {
+      "age_aligned": 1043,
+      "full_chunk": 951,
+      "safe_hold": 68
+    },
+    "forbidden_selector_input_keys_found": 0,
+    "maximum_selected_position_disagreement_m": 0.2495024845183586,
+    "maximum_selected_rotation_geodesic_radians": 0.3433550774473771,
+    "missing_adaptive_decisions": 0,
+    "regime_counts": {
+      "fresh": 322,
+      "moderate": 972,
+      "outage": 68,
+      "severe_but_bounded": 700
+    },
+    "risk_audit_pass": true,
+    "risk_reference_counts": {
+      "last_executed_action": 1972,
+      "request_observation_robot_eef": 90
+    },
+    "safe_hold_decisions": 68,
+    "trace_files_verified": 270,
+    "unsafe_accepted_merges": 0,
+    "unsafe_selected_decisions": 0
+  },
+  "validation": {
+    "episode_count": 270,
+    "failures": 6,
+    "finite_7d_actions_verified_by_source_analysis": 37502,
+    "initial_states_per_family": 5,
+    "successes": 264,
+    "task_family_count": 3,
+    "trace_count_verified_by_source_analysis": 270,
+    "video_count_verified_by_source_analysis": 54
+  }
+}
