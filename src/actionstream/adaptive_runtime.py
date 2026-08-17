@@ -281,6 +281,16 @@ class AdaptiveSelector:
             workspace_inside=workspace_inside,
         )
 
+    def evaluate_candidate(
+        self,
+        candidate: np.ndarray,
+        *,
+        last_action: np.ndarray | None,
+    ) -> CandidateRisk:
+        """Evaluate the command that a selected backend will actually execute."""
+
+        return self._risk(candidate, last_action)
+
     def decide(
         self,
         actions: np.ndarray,

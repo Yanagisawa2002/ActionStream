@@ -627,6 +627,27 @@ class _OfficialAsyncQueue(_RuntimeQueue):
         self.hold_steps = 0
         self.merges = 0
 
+    def reset(self) -> None:
+        with self.adapter.client.action_queue_lock:
+            self.adapter.client.action_queue.queue.clear()
+        with self.adapter.client.latest_action_lock:
+            self.adapter.client.latest_action = -1
+        self._last_action = None
+        self.hold_steps = 0
+        self.merges = 0
+
+    def synchronize_control_step(self, control_step: int) -> None:
+        if control_step < 0:
+            raise ValueError("Official Async control step must be non-negative")
+        with self.adapter.client.latest_action_lock:
+            self.adapter.client.latest_action = int(control_step) - 1
+
+    def discard_pending(self) -> int:
+        with self.adapter.client.action_queue_lock:
+            discarded = len(self.adapter.client.action_queue.queue)
+            self.adapter.client.action_queue.queue.clear()
+        return discarded
+
     def queue_depth(self) -> int:
         return len(self.adapter.queue_items())
 
@@ -723,10 +744,18 @@ class _AdaptiveQueue(_RuntimeQueue):
     def __init__(
         self,
         *,
+        bindings: Any,
+        period: float,
         spec: ModelSpec,
         selector_config: AdaptiveSelectorConfig,
     ) -> None:
-        self.queue = _AdaptiveActionQueue()
+        self.official_queue = _OfficialAsyncQueue(
+            bindings,
+            aggregate="latest_only",
+            period=period,
+            chunk_size=spec.chunk_size,
+        )
+        self.aligned_queue = _AdaptiveActionQueue()
         self.request_interval_steps = spec.request_interval_steps
         self.selector = AdaptiveSelector(
             selector_config,
@@ -736,6 +765,9 @@ class _AdaptiveQueue(_RuntimeQueue):
         self._last_request_step: int | None = None
         self._last_action: np.ndarray | None = None
         self._last_execution_mode: str | None = None
+        self._active_execution_mode = "full_chunk"
+        self._executed_steps = 0
+        self._hold_steps = 0
         self.decision_counts: Counter[str] = Counter()
         self.regime_counts: Counter[str] = Counter()
         self.mode_switches = 0
@@ -745,11 +777,15 @@ class _AdaptiveQueue(_RuntimeQueue):
         self.reset_episode(uuid.uuid4().hex)
 
     def reset_episode(self, episode_id: str) -> None:
-        self.queue.reset_episode(episode_id)
+        self.official_queue.reset()
+        self.aligned_queue.reset_episode(episode_id)
         self.selector.reset()
         self._last_request_step = None
         self._last_action = None
         self._last_execution_mode = None
+        self._active_execution_mode = "full_chunk"
+        self._executed_steps = 0
+        self._hold_steps = 0
         self.decision_counts.clear()
         self.regime_counts.clear()
         self.mode_switches = 0
@@ -758,9 +794,15 @@ class _AdaptiveQueue(_RuntimeQueue):
         self.pending_actions_discarded_by_guard = 0
 
     def queue_depth(self) -> int:
-        return self.queue.queue_length
+        if self._active_execution_mode == "full_chunk":
+            return self.official_queue.queue_depth()
+        if self._active_execution_mode == "age_aligned":
+            return self.aligned_queue.queue_length
+        return 0
 
     def should_request(self, control_step: int) -> bool:
+        if self._active_execution_mode == "full_chunk":
+            return self.official_queue.should_request(control_step)
         return (
             control_step % self.request_interval_steps == 0
             and control_step != self._last_request_step
@@ -779,7 +821,7 @@ class _AdaptiveQueue(_RuntimeQueue):
             self.safe_alternate_overrides += 1
 
     def merge(self, result: InferenceResult, control_step: int) -> dict[str, Any]:
-        before = self.queue.queue_length
+        before = self.queue_depth()
         decision = self.selector.decide(
             result.actions,
             observation_control_step=result.observation_control_step,
@@ -793,16 +835,18 @@ class _AdaptiveQueue(_RuntimeQueue):
             override=decision.safe_alternate_override,
         )
         if decision.execution_mode == "safe_hold":
-            if not self.queue.has_safe_action:
+            if self._last_action is None:
                 raise RuntimeError(
                     "Adaptive risk gate rejected the first chunk; no safe hold action exists"
                 )
-            discarded = self.queue.discard_pending_for_hold()
+            discarded = self.official_queue.discard_pending()
+            discarded += self.aligned_queue.discard_pending_for_hold()
             self.pending_actions_discarded_by_guard += discarded
             self.safe_hold_merges += 1
+            self._active_execution_mode = "safe_hold"
             return {
                 "queue_before": before,
-                "queue_after": self.queue.queue_length,
+                "queue_after": 0,
                 "incoming": len(result.actions),
                 "accepted": False,
                 "reason": "adaptive_safe_hold",
@@ -813,11 +857,72 @@ class _AdaptiveQueue(_RuntimeQueue):
             }
         if decision.merge_mode is None:
             raise RuntimeError("Adaptive executable decision is missing a merge mode")
-        outcome = self.queue.replace(
+        if decision.execution_mode == "full_chunk":
+            self.official_queue.synchronize_control_step(control_step)
+            merge = self.official_queue.merge(result, control_step)
+            queued_items = self.official_queue.adapter.queue_items()
+            if not queued_items:
+                if self._last_action is None:
+                    raise RuntimeError(
+                        "Official latest-only produced no executable first action"
+                    )
+                self._active_execution_mode = "safe_hold"
+                self.safe_hold_merges += 1
+                return {
+                    **merge,
+                    "accepted": False,
+                    "reason": "official_lerobot_latest_only_empty_safe_hold",
+                    "age_steps": decision.result_age_steps,
+                    "execution_backend": "safe_hold",
+                    "adaptive_decision": decision.as_dict(),
+                }
+            actual_candidate = (
+                queued_items[0]
+                .get_action()
+                .detach()
+                .cpu()
+                .numpy()
+                .astype(np.float32, copy=True)
+            )
+            actual_risk = self.selector.evaluate_candidate(
+                actual_candidate,
+                last_action=self._last_action,
+            )
+            if not actual_risk.safe:
+                self.official_queue.discard_pending()
+                if self._last_action is None:
+                    raise RuntimeError(
+                        "Official latest-only first action failed the Adaptive risk gate"
+                    )
+                self._active_execution_mode = "safe_hold"
+                self.safe_hold_merges += 1
+                return {
+                    **merge,
+                    "queue_after": 0,
+                    "accepted": False,
+                    "reason": "official_lerobot_latest_only_risk_safe_hold",
+                    "age_steps": decision.result_age_steps,
+                    "execution_backend": "safe_hold",
+                    "executed_candidate_risk": actual_risk.as_dict(),
+                    "adaptive_decision": decision.as_dict(),
+                }
+            self._active_execution_mode = "full_chunk"
+            return {
+                **merge,
+                "accepted": bool(merge["queue_after"]),
+                "reason": "official_lerobot_latest_only",
+                "age_steps": decision.result_age_steps,
+                "execution_backend": "official_lerobot_latest_only",
+                "executed_candidate_risk": actual_risk.as_dict(),
+                "adaptive_decision": decision.as_dict(),
+            }
+
+        outcome = self.aligned_queue.replace(
             result,
             current_control_step=control_step,
-            mode=decision.merge_mode,
+            mode="async_aligned",
         )
+        self._active_execution_mode = "age_aligned"
         return {
             "queue_before": before,
             "queue_after": outcome.queue_length,
@@ -826,17 +931,30 @@ class _AdaptiveQueue(_RuntimeQueue):
             "reason": outcome.reason,
             "age_steps": outcome.age_steps,
             "dropped_prefix_steps": outcome.dropped_prefix_steps,
+            "execution_backend": "actionstream_age_aligned",
             "adaptive_decision": decision.as_dict(),
         }
 
     def pop(self) -> tuple[np.ndarray, bool]:
-        action, held = self.queue.next_action()
+        if self._active_execution_mode == "full_chunk":
+            action, held = self.official_queue.pop()
+        elif self._active_execution_mode == "age_aligned":
+            action, held = self.aligned_queue.next_action()
+        else:
+            if self._last_action is None:
+                raise QueueNotReady("Adaptive safe hold has no dispatched action")
+            action = self._last_action.copy()
+            held = True
         self._last_action = action.copy()
+        self._executed_steps += 1
+        self.official_queue.synchronize_control_step(self._executed_steps)
+        if held:
+            self._hold_steps += 1
         return action, held
 
     @property
     def hold_steps(self) -> int:
-        return self.queue.hold_steps
+        return self._hold_steps
 
     def summary(self) -> dict[str, Any]:
         return {
@@ -850,6 +968,8 @@ class _AdaptiveQueue(_RuntimeQueue):
             "adaptive_pending_actions_discarded_by_guard": (
                 self.pending_actions_discarded_by_guard
             ),
+            "adaptive_full_chunk_backend": "official_lerobot_latest_only",
+            "adaptive_aligned_backend": "actionstream_age_aligned",
         }
 
 
@@ -948,7 +1068,12 @@ def _make_runtime_queue(
     if runtime == "actionstream_adaptive":
         if adaptive_selector is None:
             raise ValueError("Adaptive runtime requires a frozen selector config")
-        return _AdaptiveQueue(spec=spec, selector_config=adaptive_selector)
+        return _AdaptiveQueue(
+            bindings=bindings,
+            period=period,
+            spec=spec,
+            selector_config=adaptive_selector,
+        )
     if runtime == "lerobot_rtc":
         return _OfficialRTCQueue(
             execution_horizon=spec.rtc_execution_horizon,
