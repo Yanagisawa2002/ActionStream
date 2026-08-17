@@ -164,13 +164,6 @@ class ActionQueue:
     def has_safe_action(self) -> bool:
         return bool(self._queue) or self._last_action is not None
 
-    def discard_pending_for_hold(self) -> int:
-        """Drop queued commands while retaining only the last dispatched command."""
-
-        discarded = len(self._queue)
-        self._queue.clear()
-        return discarded
-
     def replace(
         self,
         result: InferenceResult,

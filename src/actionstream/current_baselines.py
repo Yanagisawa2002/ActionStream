@@ -710,6 +710,15 @@ class _AlignedQueue(_RuntimeQueue):
         return self.queue.hold_steps
 
 
+class _AdaptiveActionQueue(ActionStreamQueue):
+    """Adaptive-only queue extension that preserves the frozen core runtime."""
+
+    def discard_pending_for_hold(self) -> int:
+        discarded = len(self._queue)
+        self._queue.clear()
+        return discarded
+
+
 class _AdaptiveQueue(_RuntimeQueue):
     def __init__(
         self,
@@ -717,7 +726,7 @@ class _AdaptiveQueue(_RuntimeQueue):
         spec: ModelSpec,
         selector_config: AdaptiveSelectorConfig,
     ) -> None:
-        self.queue = ActionStreamQueue()
+        self.queue = _AdaptiveActionQueue()
         self.request_interval_steps = spec.request_interval_steps
         self.selector = AdaptiveSelector(
             selector_config,

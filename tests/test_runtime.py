@@ -122,18 +122,6 @@ def test_underrun_repeats_last_nonzero_command_and_reset_clears_it() -> None:
         queue.next_action()
 
 
-def test_safe_hold_discards_pending_commands_but_retains_last_action() -> None:
-    queue = ActionQueue()
-    queue.reset_episode("episode")
-    queue.replace(result("episode", 0, rows=4), current_control_step=0, mode="async_naive")
-    first, held = queue.next_action()
-    assert not held
-    assert queue.discard_pending_for_hold() == 3
-    repeated, held_repeat = queue.next_action()
-    assert held_repeat
-    np.testing.assert_array_equal(repeated, first)
-
-
 def test_old_episode_chunk_cannot_enter_new_episode() -> None:
     queue = ActionQueue()
     queue.reset_episode("new")

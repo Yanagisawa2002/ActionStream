@@ -10,6 +10,8 @@ from actionstream.adaptive_runtime import (
     load_selector_config,
     rotation_geodesic_radians,
 )
+from actionstream.current_baselines import _AdaptiveActionQueue
+from actionstream.runtime import InferenceResult
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -110,3 +112,26 @@ def test_rotation_disagreement_uses_so3_geodesic() -> None:
     assert rotation_geodesic_radians(
         np.zeros(3), np.asarray([0.0, 0.0, np.pi / 2.0])
     ) == pytest.approx(np.pi / 2.0)
+
+
+def test_adaptive_safe_hold_discards_pending_but_retains_last_action() -> None:
+    actions = _chunk()[:4]
+    result = InferenceResult(
+        actions=actions,
+        episode_id="episode",
+        observation_control_step=0,
+        request_timestamp=1.0,
+        start_timestamp=2.0,
+        end_timestamp=3.0,
+        delivery_timestamp=4.0,
+        model_inference_latency_seconds=1.0,
+    )
+    queue = _AdaptiveActionQueue()
+    queue.reset_episode("episode")
+    queue.replace(result, current_control_step=0, mode="async_naive")
+    first, held = queue.next_action()
+    assert not held
+    assert queue.discard_pending_for_hold() == 3
+    repeated, held_repeat = queue.next_action()
+    assert held_repeat
+    np.testing.assert_array_equal(repeated, first)
