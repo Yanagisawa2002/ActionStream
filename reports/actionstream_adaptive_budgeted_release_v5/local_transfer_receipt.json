@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "transfer_date_utc": "2026-08-17T16:05:30Z",
+  "source": {
+    "remote_host_label": "westd-actionstream",
+    "remote_source_commit": "29aa948ccffef9d3e480192337ab7bb91c6d06d7",
+    "local_freeze_commit": "43547fb",
+    "selector_sha256": "51b3dbd120a0a39183a21f68e10d801151d255946c9aa7b8821f022ccf425a1b"
+  },
+  "archive": {
+    "name": "actionstream_adaptive_budgeted_release_v5_evidence_29aa948.tgz",
+    "bytes": 19093585,
+    "sha256": "08658847eafd176a6ee0bca41e9dcea60fc121fda3fc03274d934bfdf3914e04",
+    "git_tracked": false
+  },
+  "validated_evidence": {
+    "formal_rows": 36,
+    "trace_hashes_verified": 36,
+    "videos_decoded": 36,
+    "decoded_frames": 5725,
+    "video_resolution": "640x640",
+    "representative_videos_ffprobe_checked": 8
+  },
+  "publication_normalization": {
+    "files": [
+      "main_table.csv",
+      "failure_taxonomy.csv"
+    ],
+    "change": "CRLF to repository-required LF only",
+    "semantic_content_changed": false,
+    "tracked_artifact_manifest_updated": true,
+    "original_bytes_preserved_in_untracked_archive": true
+  },
+  "manual_content_review": {
+    "paired_content_final_frames": "Reviewed locally. Object outage shows latest-only and Adaptive v5 completing placement in the basket while static aligned remains holding the object outside; Spatial outage shows latest-only and aligned at the successful terminal scene while Adaptive remains away from the target; Goal low jitter shows latest-only manipulating the bottle while aligned and Adaptive never complete the grasp/placement; Goal high jitter shows the crossed failure with latest-only timing out and aligned/Adaptive completing.",
+    "object_high_jitter_timeline": "Reviewed locally. Latest-only and aligned progress from approach through grasp and basket placement; Adaptive reaches the object region but times out without basket placement.",
+    "goal_low_jitter_timeline": "Reviewed locally. Latest-only reaches and transports the bottle by step 91; aligned and Adaptive drift away after approach and leave the bottle unmoved through step 300.",
+    "motion_check": "The eight representative MP4s contain 89-301 frames at 20 fps and are temporally non-static; this is content-level inspection, not only metric-chart validation."
+  },
+  "decision": {
+    "verdict": "NO-GO",
+    "formal_holdout_opened": false,
+    "retune_v4_or_v5": false
+  }
+}

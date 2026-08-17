@@ -8,6 +8,39 @@ entire stale chunk.
 
 ![ActionStream X-VLA paired runtime result](docs/assets/actionstream_hero.png)
 
+## Adaptive Budgeted-Release v5 — mechanism valid, canary NO-GO
+
+Budgeted-Release v5 is a new frozen selector, not a retune of v4. It adds a
+four-command spend budget per reserve activation, protects a one-command floor,
+and releases from reserve using a predicted service deadline or measured
+end-effector progress stall. The canary uses previously unused state 33 and new
+paired traces over the Object, Spatial, and Goal LIBERO task families.
+
+The strict verdict is **NO-GO**. Adaptive succeeded on 5/9 asynchronous rows,
+versus 8/9 for official LeRobot `latest_only` and 7/9 for static aligned. It
+recovered the Object outage in 134 steps where aligned timed out and completed
+Goal high jitter in 88 steps where `latest_only` timed out, but these isolated
+crossed wins did not generalize: Adaptive failed Object high jitter, Spatial
+outage, and both Goal low-jitter and outage conditions.
+
+![Budgeted-Release v5 canary](reports/actionstream_adaptive_budgeted_release_v5/canary_steps.png)
+
+The mechanism did honor its registered bounds: 77 commands were spent, no
+activation exceeded four commands, the active reserve never fell below one,
+and guard discards were zero. However, 76/77 releases came from the deadline
+branch and only one from measured progress stall, so the evaluated method was
+effectively a bounded deadline scheduler rather than a robust
+progress-aware controller. All 36 paired traces were hash-verified, all 36
+formal videos decoded (5,725 frames), and representative MP4s were inspected
+locally at the content level.
+
+The [Budgeted-Release v5 report](reports/actionstream_adaptive_budgeted_release_v5/report.md)
+contains the main table, scheduler audit, failure taxonomy, paired final scenes,
+and task timelines. This is one paired state per task/profile, with no IID-seed
+confidence interval. The formal holdout remains closed and neither v4 nor v5
+will be tuned on these results; any continuation requires a new selector and
+unused split, beginning with frozen replay of phase-aware reserve value.
+
 ## Adaptive Queue-Slack v4 — outage recovery, canary NO-GO
 
 Queue-Slack v4 adds online service-time estimation, slack-aware prefetch, and a

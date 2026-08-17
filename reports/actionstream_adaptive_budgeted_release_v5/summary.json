@@ -1,0 +1,126 @@
+{
+  "adaptive_failures": [
+    {
+      "condition": "object/high_jitter_v5/actionstream_adaptive",
+      "reserve_hold_steps": 43,
+      "reserve_spend_steps": 26,
+      "steps": 300
+    },
+    {
+      "condition": "spatial/outage_v5_requests_03_08/actionstream_adaptive",
+      "reserve_hold_steps": 35,
+      "reserve_spend_steps": 8,
+      "steps": 300
+    },
+    {
+      "condition": "goal/low_jitter_v5/actionstream_adaptive",
+      "reserve_hold_steps": 22,
+      "reserve_spend_steps": 1,
+      "steps": 300
+    },
+    {
+      "condition": "goal/outage_v5_requests_03_08/actionstream_adaptive",
+      "reserve_hold_steps": 57,
+      "reserve_spend_steps": 12,
+      "steps": 300
+    }
+  ],
+  "formal_holdout_opened": false,
+  "gate": {
+    "adaptive_success_9_of_9": false,
+    "artifacts_valid": true,
+    "bounded_spend_and_floor_all_9": true,
+    "measured_progress_all_9": true,
+    "no_success_regression_vs_successful_latest": false,
+    "outage_mechanism_all_3": true,
+    "outage_ordinals_all_3": true,
+    "prefetch_all_9": true,
+    "release_high_and_outage_all_6": true,
+    "sync_capability_3_of_3": true
+  },
+  "mechanism": {
+    "budget_exhaustions": 9,
+    "deadline_spend_steps": 76,
+    "guard_discards": 0,
+    "maximum_spent_per_activation": 4,
+    "minimum_active_reserve_depth": 1,
+    "outage_preserved_queue_rejections": 22,
+    "outage_reserve_hold_steps": 128,
+    "prefetch_requests": 272,
+    "preserved_queue_rejections": 31,
+    "progress_spend_steps": 1,
+    "protected_floor_hold_steps": 103,
+    "reserve_activations": 61,
+    "reserve_hold_steps": 234,
+    "reserve_spend_steps": 77
+  },
+  "profiles": {
+    "high_jitter_v5": {
+      "actionstream_adaptive": {
+        "episodes": 3,
+        "successes": 2,
+        "total_steps": 514
+      },
+      "actionstream_aligned": {
+        "episodes": 3,
+        "successes": 3,
+        "total_steps": 337
+      },
+      "lerobot_latest_only": {
+        "episodes": 3,
+        "successes": 2,
+        "total_steps": 588
+      }
+    },
+    "low_jitter_v5": {
+      "actionstream_adaptive": {
+        "episodes": 3,
+        "successes": 2,
+        "total_steps": 548
+      },
+      "actionstream_aligned": {
+        "episodes": 3,
+        "successes": 2,
+        "total_steps": 561
+      },
+      "lerobot_latest_only": {
+        "episodes": 3,
+        "successes": 3,
+        "total_steps": 349
+      }
+    },
+    "outage_v5_requests_03_08": {
+      "actionstream_adaptive": {
+        "episodes": 3,
+        "successes": 1,
+        "total_steps": 734
+      },
+      "actionstream_aligned": {
+        "episodes": 3,
+        "successes": 2,
+        "total_steps": 573
+      },
+      "lerobot_latest_only": {
+        "episodes": 3,
+        "successes": 3,
+        "total_steps": 468
+      }
+    }
+  },
+  "schema_version": 1,
+  "selector_id": "actionstream_adaptive_budgeted_release_v5",
+  "selector_sha256": "51b3dbd120a0a39183a21f68e10d801151d255946c9aa7b8821f022ccf425a1b",
+  "source_commit": "29aa948ccffef9d3e480192337ab7bb91c6d06d7",
+  "statistical_boundary": "One paired state per task/profile; no IID-seed confidence interval.",
+  "validation": {
+    "adaptive_successes": 5,
+    "aligned_successes": 7,
+    "decoded_frames": 5725,
+    "latest_successes": 8,
+    "rows": 36,
+    "sync_successes": 9,
+    "trace_hashes_verified": 36,
+    "videos_decoded": 36
+  },
+  "verdict": "NO-GO"
+}
