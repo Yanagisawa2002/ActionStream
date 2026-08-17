@@ -177,6 +177,40 @@ def test_scripted_burst_trace_hits_only_frozen_request_ordinals() -> None:
         trace.seconds_at(16)
 
 
+def test_scripted_override_supports_a_frozen_fresh_return_pulse() -> None:
+    trace = DelayTrace.from_mapping(
+        {
+            "key": "closed_phase_fresh",
+            "kind": "scripted_override",
+            "base_milliseconds": 350,
+            "overrides": [{"ordinal": 8, "milliseconds": 0}],
+            "trace_length": 12,
+        }
+    )
+
+    assert trace.milliseconds[8] == 0
+    assert all(
+        value == (0 if index == 8 else 350)
+        for index, value in enumerate(trace.milliseconds)
+    )
+
+
+def test_scripted_override_rejects_duplicate_ordinals() -> None:
+    with pytest.raises(ValueError, match="Invalid scripted override"):
+        DelayTrace.from_mapping(
+            {
+                "key": "duplicate",
+                "kind": "scripted_override",
+                "base_milliseconds": 350,
+                "overrides": [
+                    {"ordinal": 2, "milliseconds": 0},
+                    {"ordinal": 2, "milliseconds": 50},
+                ],
+                "trace_length": 12,
+            }
+        )
+
+
 def test_adaptive_protocol_freezes_selector_tasks_states_and_network_traces() -> None:
     canary = load_protocol(
         ROOT / "configs" / "actionstream_adaptive_v1_canary_object.json"
@@ -232,6 +266,27 @@ def test_phase_stable_v3_canary_is_disjoint_and_uses_scripted_phase_outages() ->
         assert trace.milliseconds[5] == 1700
         assert trace.milliseconds[13] == 1700
         assert trace.milliseconds[4] == 350
+
+
+def test_phase_stable_v3_coverage_probe_uses_new_state_and_frozen_pulses() -> None:
+    expected_pulse = {"object": 10, "spatial": 8, "goal": 8}
+    for suite, ordinal in expected_pulse.items():
+        protocol = load_protocol(
+            ROOT
+            / "configs"
+            / f"actionstream_adaptive_phase_stable_v3_coverage_{suite}.json"
+        )
+        assert protocol.raw["environment"]["initial_state_indices"] == [31]
+        assert protocol.raw["runtimes"] == ["actionstream_adaptive"]
+        outage = protocol.delays["early_outage_requests_02_05"]
+        assert outage.milliseconds[2] == 1700
+        assert outage.milliseconds[5] == 1700
+        pulse_key = next(
+            key for key in protocol.delays if key.startswith("closed_phase_fresh")
+        )
+        pulse = protocol.delays[pulse_key]
+        assert pulse.milliseconds[ordinal] == 0
+        assert pulse.milliseconds[ordinal - 1] == 350
 
 
 def test_worker_records_per_request_delay_trace_metadata() -> None:

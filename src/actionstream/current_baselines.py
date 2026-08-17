@@ -223,6 +223,31 @@ class DelayTrace:
                 burst if ordinal in selected else base for ordinal in range(length)
             )
             repeat = False
+        elif kind == "scripted_override":
+            base = int(value["base_milliseconds"])
+            length = int(value["trace_length"])
+            raw_overrides = tuple(value["overrides"])
+            overrides = {
+                int(item["ordinal"]): int(item["milliseconds"])
+                for item in raw_overrides
+            }
+            if (
+                base < 0
+                or length <= 0
+                or not raw_overrides
+                or len(overrides) != len(raw_overrides)
+                or any(
+                    ordinal < 0
+                    or ordinal >= length
+                    or milliseconds < 0
+                    for ordinal, milliseconds in overrides.items()
+                )
+            ):
+                raise ValueError(f"Invalid scripted override definition for {key}")
+            milliseconds = tuple(
+                overrides.get(ordinal, base) for ordinal in range(length)
+            )
+            repeat = False
         else:
             raise ValueError(f"Unsupported delay profile kind: {kind}")
         if any(item < 0 for item in milliseconds):
