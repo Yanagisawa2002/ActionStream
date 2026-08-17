@@ -794,6 +794,8 @@ class _AdaptiveQueue(_RuntimeQueue):
         spec: ModelSpec,
         selector_config: AdaptiveSelectorConfig,
     ) -> None:
+        self.period = float(period)
+        self.chunk_size = int(spec.chunk_size)
         self.official_queue = _OfficialAsyncQueue(
             bindings,
             aggregate="latest_only",
@@ -830,6 +832,19 @@ class _AdaptiveQueue(_RuntimeQueue):
         self.residency_rejections = 0
         self.phase_lock_steps = 0
         self.outage_empty_holds = 0
+        self._service_time_ewma_steps: float | None = None
+        self._outstanding_request_steps: list[int] = []
+        self._last_prefetch_threshold_steps: int | None = None
+        self._last_request_interval_steps: int | None = None
+        self._last_observed_service_steps: int | None = None
+        self._scheduler_request_due = False
+        self._reserve_active = False
+        self.prefetch_requests = 0
+        self.reserve_activations = 0
+        self.reserve_releases = 0
+        self.reserve_hold_steps = 0
+        self.scheduler_results_observed = 0
+        self.maximum_observed_service_steps = 0
         self.reset_episode(uuid.uuid4().hex)
 
     def reset_episode(self, episode_id: str) -> None:
@@ -859,6 +874,19 @@ class _AdaptiveQueue(_RuntimeQueue):
         self.residency_rejections = 0
         self.phase_lock_steps = 0
         self.outage_empty_holds = 0
+        self._service_time_ewma_steps = None
+        self._outstanding_request_steps.clear()
+        self._last_prefetch_threshold_steps = None
+        self._last_request_interval_steps = None
+        self._last_observed_service_steps = None
+        self._scheduler_request_due = False
+        self._reserve_active = False
+        self.prefetch_requests = 0
+        self.reserve_activations = 0
+        self.reserve_releases = 0
+        self.reserve_hold_steps = 0
+        self.scheduler_results_observed = 0
+        self.maximum_observed_service_steps = 0
 
     def queue_depth(self) -> int:
         if self._active_execution_mode == "full_chunk":
@@ -867,7 +895,93 @@ class _AdaptiveQueue(_RuntimeQueue):
             return self.aligned_queue.queue_length
         return 0
 
+    @property
+    def _queue_slack_scheduler_enabled(self) -> bool:
+        return bool(
+            self.selector.config.schema_version == 4
+            and self.selector.config.queue_slack_scheduler_enabled
+        )
+
+    def _predicted_service_steps(self) -> int:
+        config = self.selector.config
+        estimate = (
+            float(config.maximum_service_prediction_steps)
+            if self._service_time_ewma_steps is None
+            else self._service_time_ewma_steps
+        )
+        return max(
+            1,
+            min(config.maximum_service_prediction_steps, int(math.ceil(estimate))),
+        )
+
+    def _scheduler_request_parameters(self) -> tuple[int, int]:
+        config = self.selector.config
+        predicted = self._predicted_service_steps()
+        threshold = min(
+            self.chunk_size - 1,
+            predicted + config.queue_reserve_steps,
+        )
+        interval = self.chunk_size - predicted - config.queue_reserve_steps
+        interval = max(config.minimum_request_interval_steps, interval)
+        interval = min(config.maximum_request_interval_steps, interval)
+        return threshold, interval
+
+    def _observe_scheduler_result(
+        self,
+        result: InferenceResult,
+        *,
+        control_step: int,
+    ) -> None:
+        if not self._queue_slack_scheduler_enabled:
+            return
+        config = self.selector.config
+        wall_steps = int(
+            math.ceil(
+                max(0.0, result.delivery_timestamp - result.request_timestamp)
+                / self.period
+            )
+        )
+        control_age_steps = max(
+            0,
+            int(control_step) - int(result.observation_control_step),
+        )
+        observed = max(1, wall_steps, control_age_steps)
+        observed = min(config.maximum_service_prediction_steps, observed)
+        if self._service_time_ewma_steps is None:
+            self._service_time_ewma_steps = float(observed)
+        else:
+            alpha = config.service_time_ewma_alpha
+            self._service_time_ewma_steps = (
+                alpha * observed + (1.0 - alpha) * self._service_time_ewma_steps
+            )
+        self._last_observed_service_steps = observed
+        self.scheduler_results_observed += 1
+        self.maximum_observed_service_steps = max(
+            self.maximum_observed_service_steps,
+            observed,
+        )
+        observation_step = int(result.observation_control_step)
+        self._outstanding_request_steps = [
+            step for step in self._outstanding_request_steps if step > observation_step
+        ]
+
     def should_request(self, control_step: int) -> bool:
+        if self._queue_slack_scheduler_enabled:
+            if control_step == self._last_request_step:
+                self._scheduler_request_due = False
+                return False
+            threshold, interval = self._scheduler_request_parameters()
+            self._last_prefetch_threshold_steps = threshold
+            self._last_request_interval_steps = interval
+            elapsed = (
+                interval
+                if self._last_request_step is None
+                else int(control_step) - self._last_request_step
+            )
+            self._scheduler_request_due = bool(
+                elapsed >= interval and self.queue_depth() <= threshold
+            )
+            return self._scheduler_request_due
         if self._active_execution_mode == "full_chunk":
             return self.official_queue.should_request(control_step)
         return (
@@ -877,6 +991,38 @@ class _AdaptiveQueue(_RuntimeQueue):
 
     def note_request(self, control_step: int) -> None:
         self._last_request_step = control_step
+        if self._queue_slack_scheduler_enabled:
+            self._outstanding_request_steps.append(int(control_step))
+            if self._scheduler_request_due:
+                self.prefetch_requests += 1
+            self._scheduler_request_due = False
+
+    def request_headroom(self) -> int:
+        reserve = (
+            self.selector.config.queue_reserve_steps
+            if self._queue_slack_scheduler_enabled
+            else 0
+        )
+        return max(0, self.queue_depth() - reserve)
+
+    def _note_queue_replenished(self) -> None:
+        if (
+            self._reserve_active
+            and self.queue_depth() > self.selector.config.queue_reserve_steps
+        ):
+            self._reserve_active = False
+            self.reserve_releases += 1
+
+    def action_trace_state(self) -> dict[str, Any]:
+        return {
+            "adaptive_queue_reserve_active": self._reserve_active,
+            "adaptive_predicted_service_steps": (
+                self._predicted_service_steps()
+                if self._queue_slack_scheduler_enabled
+                else None
+            ),
+            "adaptive_outstanding_requests": len(self._outstanding_request_steps),
+        }
 
     def _record_decision(self, mode: str, regime: str, *, override: bool) -> None:
         self.decision_counts[mode] += 1
@@ -904,7 +1050,7 @@ class _AdaptiveQueue(_RuntimeQueue):
 
     def _retire_active_queue_for_switch(self, target_mode: str) -> None:
         if (
-            self.selector.config.schema_version != 3
+            self.selector.config.schema_version < 3
             or target_mode == self._active_execution_mode
         ):
             return
@@ -925,7 +1071,7 @@ class _AdaptiveQueue(_RuntimeQueue):
     ) -> str | None:
         config = self.selector.config
         if (
-            config.schema_version != 3
+            config.schema_version < 3
             or not config.preserve_validated_queue_on_reject
             or queue_depth <= 0
         ):
@@ -976,7 +1122,7 @@ class _AdaptiveQueue(_RuntimeQueue):
 
     def _update_phase_lock(self, action: np.ndarray) -> None:
         config = self.selector.config
-        if config.schema_version != 3 or not config.gripper_phase_lock_enabled:
+        if config.schema_version < 3 or not config.gripper_phase_lock_enabled:
             return
         gripper = float(action[6])
         if gripper >= config.gripper_closed_minimum:
@@ -991,6 +1137,7 @@ class _AdaptiveQueue(_RuntimeQueue):
             self._release_confirmation_count = 0
 
     def merge(self, result: InferenceResult, control_step: int) -> dict[str, Any]:
+        self._observe_scheduler_result(result, control_step=control_step)
         before = self.queue_depth()
         safety_reference = result.metadata.get("safety_reference_action")
         if safety_reference is not None:
@@ -1030,7 +1177,7 @@ class _AdaptiveQueue(_RuntimeQueue):
             discarded += self.aligned_queue.discard_pending_for_hold()
             self.pending_actions_discarded_by_guard += discarded
             self.safe_hold_merges += 1
-            if self.selector.config.schema_version == 3:
+            if self.selector.config.schema_version >= 3:
                 self.outage_empty_holds += 1
             self._activate("safe_hold", control_step=control_step)
             return {
@@ -1059,7 +1206,7 @@ class _AdaptiveQueue(_RuntimeQueue):
                         "Official latest-only produced no executable first action"
                     )
                 if (
-                    self.selector.config.schema_version == 3
+                    self.selector.config.schema_version >= 3
                     and before > 0
                     and self.queue_depth() > 0
                 ):
@@ -1100,7 +1247,7 @@ class _AdaptiveQueue(_RuntimeQueue):
                         "Official latest-only first action failed the Adaptive risk gate"
                     )
                 if (
-                    self.selector.config.schema_version == 3
+                    self.selector.config.schema_version >= 3
                     and self._active_execution_mode == "age_aligned"
                     and self.aligned_queue.queue_length > 0
                 ):
@@ -1125,6 +1272,7 @@ class _AdaptiveQueue(_RuntimeQueue):
                 }
             self._retire_active_queue_for_switch("full_chunk")
             self._activate("full_chunk", control_step=control_step)
+            self._note_queue_replenished()
             return {
                 **merge,
                 "accepted": bool(merge["queue_after"]),
@@ -1142,7 +1290,7 @@ class _AdaptiveQueue(_RuntimeQueue):
             current_control_step=control_step,
             mode="async_aligned",
         )
-        if not outcome.accepted and self.selector.config.schema_version == 3:
+        if not outcome.accepted and self.selector.config.schema_version >= 3:
             if before > 0 and self.queue_depth() > 0:
                 return self._preserve_active_queue(
                     decision=decision,
@@ -1168,6 +1316,7 @@ class _AdaptiveQueue(_RuntimeQueue):
             }
         self._retire_active_queue_for_switch("age_aligned")
         self._activate("age_aligned", control_step=control_step)
+        self._note_queue_replenished()
         return {
             "queue_before": before,
             "queue_after": outcome.queue_length,
@@ -1183,7 +1332,20 @@ class _AdaptiveQueue(_RuntimeQueue):
         }
 
     def pop(self) -> tuple[np.ndarray, bool]:
-        if self._active_execution_mode == "full_chunk":
+        reserve_now = bool(
+            self._queue_slack_scheduler_enabled
+            and self._last_action is not None
+            and 0 < self.queue_depth() <= self.selector.config.queue_reserve_steps
+            and self._outstanding_request_steps
+        )
+        if reserve_now:
+            if not self._reserve_active:
+                self._reserve_active = True
+                self.reserve_activations += 1
+            action = self._last_action.copy()
+            held = True
+            self.reserve_hold_steps += 1
+        elif self._active_execution_mode == "full_chunk":
             action, held = self.official_queue.pop()
         elif self._active_execution_mode == "age_aligned":
             action, held = self.aligned_queue.next_action()
@@ -1238,6 +1400,29 @@ class _AdaptiveQueue(_RuntimeQueue):
             ),
             "adaptive_preserve_validated_queue_on_reject": (
                 self.selector.config.preserve_validated_queue_on_reject
+            ),
+            "adaptive_queue_slack_scheduler_enabled": (
+                self._queue_slack_scheduler_enabled
+            ),
+            "adaptive_queue_reserve_steps": self.selector.config.queue_reserve_steps,
+            "adaptive_service_time_ewma_steps": self._service_time_ewma_steps,
+            "adaptive_last_observed_service_steps": self._last_observed_service_steps,
+            "adaptive_maximum_observed_service_steps": (
+                self.maximum_observed_service_steps
+            ),
+            "adaptive_last_prefetch_threshold_steps": (
+                self._last_prefetch_threshold_steps
+            ),
+            "adaptive_last_request_interval_steps": (
+                self._last_request_interval_steps
+            ),
+            "adaptive_prefetch_requests": self.prefetch_requests,
+            "adaptive_reserve_activations": self.reserve_activations,
+            "adaptive_reserve_releases": self.reserve_releases,
+            "adaptive_reserve_hold_steps": self.reserve_hold_steps,
+            "adaptive_scheduler_results_observed": self.scheduler_results_observed,
+            "adaptive_outstanding_requests_at_end": len(
+                self._outstanding_request_steps
             ),
             "adaptive_full_chunk_backend": "official_lerobot_latest_only",
             "adaptive_aligned_backend": "actionstream_age_aligned",
@@ -1543,6 +1728,12 @@ def run_async_episode(
 
     def submit() -> None:
         nonlocal last_submit_step
+        queue_depth = queue.queue_depth()
+        queue_headroom = (
+            queue.request_headroom()
+            if isinstance(queue, _AdaptiveQueue)
+            else queue_depth
+        )
         worker.submit(
             InferenceRequest(
                 observation=immutable_observation_snapshot(observation),
@@ -1550,8 +1741,8 @@ def run_async_episode(
                 episode_id=episode_id,
                 observation_control_step=control_step,
                 request_timestamp=time.monotonic(),
-                queue_depth_at_request_steps=queue.queue_depth(),
-                queue_headroom_at_request_steps=queue.queue_depth(),
+                queue_depth_at_request_steps=queue_depth,
+                queue_headroom_at_request_steps=queue_headroom,
             )
         )
         last_submit_step = control_step
@@ -1574,6 +1765,12 @@ def run_async_episode(
                         "injected_delivery_delay_seconds"
                     ],
                     "delay_trace_index": result.metadata["delay_trace_index"],
+                    "queue_depth_at_request_steps": (
+                        result.queue_depth_at_request_steps
+                    ),
+                    "queue_headroom_at_request_steps": (
+                        result.queue_headroom_at_request_steps
+                    ),
                     "merge_control_step": control_step,
                     "merge": merge,
                 }
@@ -1613,16 +1810,17 @@ def run_async_episode(
                     acceleration_peaks.append(float(np.linalg.norm(delta - previous_delta)))
                 previous_delta = delta
             previous_action = np.asarray(action).copy()
-            action_rows.append(
-                {
-                    "control_step": control_step,
-                    "dispatch_timestamp": dispatched,
-                    "queue_depth_before": depth_before,
-                    "queue_depth_after": queue.queue_depth(),
-                    "held": held,
-                    "action": np.asarray(action, dtype=np.float32).tolist(),
-                }
-            )
+            action_row = {
+                "control_step": control_step,
+                "dispatch_timestamp": dispatched,
+                "queue_depth_before": depth_before,
+                "queue_depth_after": queue.queue_depth(),
+                "held": held,
+                "action": np.asarray(action, dtype=np.float32).tolist(),
+            }
+            if isinstance(queue, _AdaptiveQueue):
+                action_row.update(queue.action_trace_state())
+            action_rows.append(action_row)
             control_step += 1
             observation = step_output.observation
             success = success or step_output.success

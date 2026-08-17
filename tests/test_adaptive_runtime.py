@@ -28,6 +28,8 @@ SELECTOR_V3_PATH = (
     ROOT / "configs" / "actionstream_adaptive_phase_stable_v3_selector.json"
 )
 SELECTOR_V3_SHA256 = "c824762ed9b05d37369181812795313c870b3bf8f5714d4c4ccd98e221021c98"
+SELECTOR_V4_PATH = ROOT / "configs" / "actionstream_adaptive_queue_slack_v4_selector.json"
+SELECTOR_V4_SHA256 = "7e437cbaeb3d274e098d8a068fafa482697148933eb5431c28c48cd51632a021"
 
 
 def _chunk() -> np.ndarray:
@@ -50,6 +52,11 @@ def _selector_v2() -> AdaptiveSelector:
 
 def _selector_v3() -> AdaptiveSelector:
     config = load_selector_config(SELECTOR_V3_PATH, expected_sha256=SELECTOR_V3_SHA256)
+    return AdaptiveSelector(config, chunk_size=30, control_mode="absolute")
+
+
+def _selector_v4() -> AdaptiveSelector:
+    config = load_selector_config(SELECTOR_V4_PATH, expected_sha256=SELECTOR_V4_SHA256)
     return AdaptiveSelector(config, chunk_size=30, control_mode="absolute")
 
 
@@ -371,6 +378,20 @@ def _v3_queue() -> _AdaptiveQueue:
     return queue
 
 
+def _v4_queue() -> _AdaptiveQueue:
+    selector = load_selector_config(
+        SELECTOR_V4_PATH, expected_sha256=SELECTOR_V4_SHA256
+    )
+    queue = _AdaptiveQueue(
+        bindings=_fake_bindings(),
+        period=0.05,
+        spec=_model_spec(),
+        selector_config=selector,
+    )
+    queue.reset_episode("episode")
+    return queue
+
+
 def test_adaptive_queue_switches_between_official_latest_only_and_aligned() -> None:
     selector = load_selector_config(SELECTOR_PATH, expected_sha256=SELECTOR_SHA256)
     queue = _AdaptiveQueue(
@@ -460,3 +481,62 @@ def test_v3_minimum_residency_suppresses_pregrasp_oscillation() -> None:
 
     settled = queue.merge(_v3_result(open_actions, 0), control_step=14)
     assert settled["execution_backend"] == "actionstream_age_aligned"
+
+
+def test_v4_online_service_estimate_triggers_slack_prefetch() -> None:
+    queue = _v4_queue()
+    queue.note_request(0)
+    queue.merge(_v3_result(_chunk(), 0), control_step=0)
+
+    for _ in range(3):
+        queue.pop()
+
+    assert queue.queue_depth() == 27
+    assert queue.should_request(3)
+    queue.note_request(3)
+    summary = queue.summary()
+    assert summary["adaptive_queue_slack_scheduler_enabled"]
+    assert summary["adaptive_service_time_ewma_steps"] == pytest.approx(28.0)
+    assert summary["adaptive_last_prefetch_threshold_steps"] == 29
+    assert summary["adaptive_last_request_interval_steps"] == 3
+    assert summary["adaptive_prefetch_requests"] == 1
+    assert summary["adaptive_outstanding_requests_at_end"] == 1
+
+
+def test_v4_reserve_holds_five_commands_for_unresolved_request() -> None:
+    queue = _v4_queue()
+    queue.note_request(0)
+    queue.merge(_v3_result(_chunk(), 0), control_step=0)
+    for _ in range(25):
+        _, held = queue.pop()
+        assert not held
+
+    assert queue.queue_depth() == 5
+    assert queue.should_request(25)
+    queue.note_request(25)
+    held_action, held = queue.pop()
+
+    assert held
+    assert np.isfinite(held_action).all()
+    assert queue.queue_depth() == 5
+    assert queue.action_trace_state()["adaptive_queue_reserve_active"]
+    summary = queue.summary()
+    assert summary["adaptive_reserve_activations"] == 1
+    assert summary["adaptive_reserve_hold_steps"] == 1
+
+
+def test_v4_outage_reject_preserves_active_recovery_reserve() -> None:
+    queue = _v4_queue()
+    queue.note_request(0)
+    queue.merge(_v3_result(_chunk(), 0), control_step=0)
+    for _ in range(25):
+        queue.pop()
+    queue.note_request(25)
+    queue.pop()
+
+    outage = queue.merge(_v3_result(_chunk(), 0), control_step=29)
+
+    assert outage["reason"] == "adaptive_rejected_chunk_preserved_validated_queue"
+    assert outage["queue_before"] == 5
+    assert outage["queue_after"] == 5
+    assert queue.summary()["adaptive_pending_actions_discarded_by_guard"] == 0

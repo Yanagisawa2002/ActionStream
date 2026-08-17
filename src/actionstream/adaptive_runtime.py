@@ -73,6 +73,12 @@ class AdaptiveSelectorConfig:
     gripper_closed_minimum: float
     gripper_open_maximum: float
     release_confirmation_steps: int
+    queue_slack_scheduler_enabled: bool
+    queue_reserve_steps: int
+    service_time_ewma_alpha: float
+    minimum_request_interval_steps: int
+    maximum_request_interval_steps: int
+    maximum_service_prediction_steps: int
     source_path: str
     source_sha256: str
 
@@ -85,9 +91,9 @@ class AdaptiveSelectorConfig:
         source_sha256: str,
     ) -> "AdaptiveSelectorConfig":
         schema_version = int(value.get("schema_version", -1))
-        if schema_version not in (1, 2, 3):
+        if schema_version not in (1, 2, 3, 4):
             raise ValueError(
-                "Expected ActionStream-Adaptive selector schema_version=1, 2, or 3"
+                "Expected ActionStream-Adaptive selector schema_version=1, 2, 3, or 4"
             )
         decision = value["decision"]
         risk = value["risk_gate"]
@@ -99,7 +105,7 @@ class AdaptiveSelectorConfig:
         else:
             workspace = None
             reference_mode = str(risk["reference_mode"])
-        if schema_version == 3:
+        if schema_version >= 3:
             stability = value["phase_stability"]
             severe_bounded_mode = str(
                 decision["preferred_modes"]["severe_but_bounded"]
@@ -126,6 +132,27 @@ class AdaptiveSelectorConfig:
             gripper_closed_minimum = 0.5
             gripper_open_maximum = -0.5
             release_confirmation_steps = 1
+        if schema_version == 4:
+            scheduler = value["queue_slack_scheduler"]
+            queue_slack_scheduler_enabled = bool(scheduler["enabled"])
+            queue_reserve_steps = int(scheduler["queue_reserve_steps"])
+            service_time_ewma_alpha = float(scheduler["service_time_ewma_alpha"])
+            minimum_request_interval_steps = int(
+                scheduler["minimum_request_interval_steps"]
+            )
+            maximum_request_interval_steps = int(
+                scheduler["maximum_request_interval_steps"]
+            )
+            maximum_service_prediction_steps = int(
+                scheduler["maximum_service_prediction_steps"]
+            )
+        else:
+            queue_slack_scheduler_enabled = False
+            queue_reserve_steps = 0
+            service_time_ewma_alpha = 1.0
+            minimum_request_interval_steps = 1
+            maximum_request_interval_steps = 1
+            maximum_service_prediction_steps = 1
         config = cls(
             schema_version=schema_version,
             selector_id=str(value["selector_id"]),
@@ -151,6 +178,12 @@ class AdaptiveSelectorConfig:
             gripper_closed_minimum=gripper_closed_minimum,
             gripper_open_maximum=gripper_open_maximum,
             release_confirmation_steps=release_confirmation_steps,
+            queue_slack_scheduler_enabled=queue_slack_scheduler_enabled,
+            queue_reserve_steps=queue_reserve_steps,
+            service_time_ewma_alpha=service_time_ewma_alpha,
+            minimum_request_interval_steps=minimum_request_interval_steps,
+            maximum_request_interval_steps=maximum_request_interval_steps,
+            maximum_service_prediction_steps=maximum_service_prediction_steps,
             source_path=str(source_path.resolve()),
             source_sha256=source_sha256,
         )
@@ -167,9 +200,9 @@ class AdaptiveSelectorConfig:
             raise ValueError(f"Unsupported Adaptive reference mode: {self.reference_mode}")
         if self.schema_version == 1 and self.workspace is None:
             raise ValueError("Adaptive v1 requires absolute workspace bounds")
-        if self.schema_version in (2, 3) and self.workspace is not None:
+        if self.schema_version in (2, 3, 4) and self.workspace is not None:
             raise ValueError(
-                "Adaptive v2/v3 uses a dynamic EEF reference, not global bounds"
+                "Adaptive v2/v3/v4 uses a dynamic EEF reference, not global bounds"
             )
         if not (
             0 <= self.fresh_full_max_age_steps
@@ -211,7 +244,26 @@ class AdaptiveSelectorConfig:
             or self.gripper_phase_lock_enabled
             or self.severe_bounded_mode != "full_chunk"
         ):
-            raise ValueError("Adaptive phase-stable controls require schema_version=3")
+            raise ValueError(
+                "Adaptive phase-stable controls require schema_version=3 or newer"
+            )
+        if self.schema_version < 4 and self.queue_slack_scheduler_enabled:
+            raise ValueError("Adaptive queue-slack scheduling requires schema_version=4")
+        if self.schema_version == 4:
+            if not self.queue_slack_scheduler_enabled:
+                raise ValueError("Adaptive v4 requires queue-slack scheduling")
+            if self.queue_reserve_steps <= 0:
+                raise ValueError("Adaptive queue reserve must be positive")
+            if not 0.0 < self.service_time_ewma_alpha <= 1.0:
+                raise ValueError("Adaptive service-time EWMA alpha must be in (0,1]")
+            if self.minimum_request_interval_steps <= 0:
+                raise ValueError("Adaptive minimum request interval must be positive")
+            if self.maximum_request_interval_steps < self.minimum_request_interval_steps:
+                raise ValueError(
+                    "Adaptive maximum request interval must not be below the minimum"
+                )
+            if self.maximum_service_prediction_steps <= 0:
+                raise ValueError("Adaptive maximum service prediction must be positive")
 
 
 def load_selector_config(
@@ -496,10 +548,10 @@ class AdaptiveSelector:
 
         aligned_index = min(age_steps, len(chunk) - 1)
         # Official LeRobot latest-only timestamps the whole chunk and removes
-        # commands older than the current control step.  V3 therefore gates
+        # commands older than the current control step.  V3/v4 therefore gate
         # the first command that backend will actually dispatch, rather than
         # the raw chunk's index zero.  V1/v2 stay byte-for-behavior compatible.
-        full_index = aligned_index if self.config.schema_version == 3 else 0
+        full_index = aligned_index if self.config.schema_version >= 3 else 0
         full_risk = self._risk(chunk[full_index], reference_action)
         aligned_risk = self._risk(chunk[aligned_index], reference_action)
 

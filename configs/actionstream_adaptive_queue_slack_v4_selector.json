@@ -1,0 +1,101 @@
+{
+  "schema_version": 4,
+  "selector_id": "actionstream_adaptive_queue_slack_v4",
+  "frozen_utc": "2026-08-17T14:37:00Z",
+  "development_parent": {
+    "selector_id": "actionstream_adaptive_phase_stable_v3",
+    "selector_sha256": "c824762ed9b05d37369181812795313c870b3bf8f5714d4c4ccd98e221021c98",
+    "canary_verdict": "PARTIAL_POSITIVE",
+    "coverage_verdict": "NO-GO",
+    "diagnosis": "Every v3 hard outage arrived after the executable queue had drained. V4 adds online service-time prediction, slack-aware prefetch, and a five-command recovery reserve; v3 remains immutable evidence."
+  },
+  "inputs": {
+    "allowed": [
+      "delivered_result_age_steps",
+      "observed_request_to_delivery_seconds",
+      "controller_period_seconds",
+      "queue_depth_steps",
+      "outstanding_request_control_steps",
+      "incoming_action_chunk",
+      "request_observation_robot_eef_pose",
+      "last_executed_action",
+      "executed_gripper_command",
+      "active_execution_mode",
+      "active_mode_residency_steps"
+    ],
+    "forbidden": [
+      "delay_profile_key",
+      "task_success",
+      "future_observation",
+      "task_or_suite_label",
+      "canary_or_holdout_result"
+    ]
+  },
+  "decision": {
+    "fresh_full_max_age_steps": 5,
+    "aligned_max_age_steps": 20,
+    "hard_max_age_steps": 28,
+    "minimum_aligned_horizon_steps": 10,
+    "age_ewma_alpha": 0.25,
+    "preferred_modes": {
+      "fresh": "full_chunk",
+      "moderate": "age_aligned",
+      "severe_but_bounded": "age_aligned",
+      "outage_or_unsafe": "reject_incoming_preserve_validated_queue_else_safe_hold"
+    }
+  },
+  "phase_stability": {
+    "preserve_validated_queue_on_reject": true,
+    "minimum_mode_residency_steps": 10,
+    "gripper_phase_lock_enabled": true,
+    "gripper_action_convention": "X-VLA LIBERO policy space: values >= +0.5 are closed; values <= -0.5 are open",
+    "gripper_closed_minimum": 0.5,
+    "gripper_open_maximum": -0.5,
+    "release_confirmation_steps": 3,
+    "locked_switch_rule": "While the executed gripper phase is closed and the active queue is nonempty, reject a proposed backend switch and drain the already validated active queue.",
+    "outage_rule": "Reject the stale or unsafe incoming chunk without clearing a nonempty active queue; hold the last finite action only after that queue is empty."
+  },
+  "queue_slack_scheduler": {
+    "enabled": true,
+    "queue_reserve_steps": 5,
+    "service_time_ewma_alpha": 0.5,
+    "minimum_request_interval_steps": 3,
+    "maximum_request_interval_steps": 10,
+    "maximum_service_prediction_steps": 28,
+    "service_observation_rule": "ceil(max(request-to-delivery wall time / controller period, delivered control-step age)), clipped to [1, 28]",
+    "prefetch_threshold_rule": "min(chunk_size - 1, ceil(service_time_ewma_steps) + queue_reserve_steps)",
+    "request_interval_rule": "clip(chunk_size - ceil(service_time_ewma_steps) - queue_reserve_steps, 3, 10)",
+    "reserve_rule": "When executable queue depth is in [1, 5] and any submitted request has not returned, repeat the last finite absolute command without consuming the reserve until a replenishing result arrives.",
+    "cold_start_rule": "The first observed service time is clipped to 28 steps so model warm-up cannot demand an impossible horizon."
+  },
+  "risk_gate": {
+    "reference_mode": "request_observation_eef_then_last_action",
+    "maximum_position_disagreement_m": 0.25,
+    "maximum_rotation_geodesic_radians": 0.35,
+    "reject_non_finite": true,
+    "record_gripper_switch": true,
+    "hard_gate_precedes_mode_preference": true,
+    "latest_only_candidate_index": "first non-stale timestamped command",
+    "first_chunk_without_robot_eef_reference": "abort"
+  },
+  "capabilities": {
+    "full_chunk": true,
+    "age_aligned": true,
+    "queue_preserving_reject": true,
+    "closed_gripper_phase_lock": true,
+    "online_service_time_prediction": true,
+    "queue_slack_prefetch": true,
+    "five_command_recovery_reserve": true,
+    "official_rtc_dynamic_switch": false,
+    "rtc_boundary": "RTC remains an external official baseline; it is not relabeled as an Adaptive branch because RTC changes policy inference as well as queue merge."
+  },
+  "claims": {
+    "primary": "A deterministic task-label-blind runtime that schedules requests from observed service time and protects a bounded executable reserve during unresolved inference.",
+    "non_claims": [
+      "No claim of learned scheduler optimality.",
+      "No claim that canary results are a formal holdout.",
+      "No general safety certification.",
+      "No real-robot result until the separately frozen paired protocol is executed."
+    ]
+  }
+}
