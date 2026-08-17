@@ -155,6 +155,28 @@ def test_seeded_burst_trace_is_deterministic_and_contains_outages() -> None:
     assert any(1500 <= item <= 2400 for item in first.milliseconds)
 
 
+def test_scripted_burst_trace_hits_only_frozen_request_ordinals() -> None:
+    trace = DelayTrace.from_mapping(
+        {
+            "key": "phase_burst",
+            "kind": "scripted_burst",
+            "base_milliseconds": 350,
+            "burst_milliseconds": 1700,
+            "burst_ordinals": [5, 13],
+            "trace_length": 16,
+        }
+    )
+
+    assert trace.milliseconds[5] == 1700
+    assert trace.milliseconds[13] == 1700
+    assert all(
+        value == (1700 if index in {5, 13} else 350)
+        for index, value in enumerate(trace.milliseconds)
+    )
+    with pytest.raises(IndexError, match="exhausted"):
+        trace.seconds_at(16)
+
+
 def test_adaptive_protocol_freezes_selector_tasks_states_and_network_traces() -> None:
     canary = load_protocol(
         ROOT / "configs" / "actionstream_adaptive_v1_canary_object.json"
@@ -178,6 +200,38 @@ def test_adaptive_protocol_freezes_selector_tasks_states_and_network_traces() ->
     assert set(canary.raw["environment"]["initial_state_indices"]).isdisjoint(
         holdout.raw["environment"]["initial_state_indices"]
     )
+
+
+def test_phase_stable_v3_canary_is_disjoint_and_uses_scripted_phase_outages() -> None:
+    paths = {
+        "libero_object": (
+            ROOT / "configs" / "actionstream_adaptive_phase_stable_v3_canary_object.json",
+            5,
+        ),
+        "libero_spatial": (
+            ROOT / "configs" / "actionstream_adaptive_phase_stable_v3_canary_spatial.json",
+            7,
+        ),
+        "libero_goal": (
+            ROOT / "configs" / "actionstream_adaptive_phase_stable_v3_canary_goal.json",
+            2,
+        ),
+    }
+
+    for suite, (path, task_id) in paths.items():
+        protocol = load_protocol(path)
+        assert protocol.raw["environment"]["suite"] == suite
+        assert protocol.raw["environment"]["task_ids"] == [task_id]
+        assert protocol.raw["environment"]["initial_state_indices"] == [30]
+        assert protocol.adaptive_selector is not None
+        assert (
+            protocol.adaptive_selector.selector_id
+            == "actionstream_adaptive_phase_stable_v3"
+        )
+        trace = protocol.delays["phase_outage_requests_05_13"]
+        assert trace.milliseconds[5] == 1700
+        assert trace.milliseconds[13] == 1700
+        assert trace.milliseconds[4] == 350
 
 
 def test_worker_records_per_request_delay_trace_metadata() -> None:

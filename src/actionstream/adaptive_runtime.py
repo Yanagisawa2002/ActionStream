@@ -66,6 +66,13 @@ class AdaptiveSelectorConfig:
     ]
     maximum_position_disagreement_m: float
     maximum_rotation_geodesic_radians: float
+    severe_bounded_mode: Literal["full_chunk", "age_aligned"]
+    preserve_validated_queue_on_reject: bool
+    minimum_mode_residency_steps: int
+    gripper_phase_lock_enabled: bool
+    gripper_closed_minimum: float
+    gripper_open_maximum: float
+    release_confirmation_steps: int
     source_path: str
     source_sha256: str
 
@@ -78,8 +85,10 @@ class AdaptiveSelectorConfig:
         source_sha256: str,
     ) -> "AdaptiveSelectorConfig":
         schema_version = int(value.get("schema_version", -1))
-        if schema_version not in (1, 2):
-            raise ValueError("Expected ActionStream-Adaptive selector schema_version=1 or 2")
+        if schema_version not in (1, 2, 3):
+            raise ValueError(
+                "Expected ActionStream-Adaptive selector schema_version=1, 2, or 3"
+            )
         decision = value["decision"]
         risk = value["risk_gate"]
         if schema_version == 1:
@@ -90,6 +99,33 @@ class AdaptiveSelectorConfig:
         else:
             workspace = None
             reference_mode = str(risk["reference_mode"])
+        if schema_version == 3:
+            stability = value["phase_stability"]
+            severe_bounded_mode = str(
+                decision["preferred_modes"]["severe_but_bounded"]
+            )
+            preserve_validated_queue_on_reject = bool(
+                stability["preserve_validated_queue_on_reject"]
+            )
+            minimum_mode_residency_steps = int(
+                stability["minimum_mode_residency_steps"]
+            )
+            gripper_phase_lock_enabled = bool(
+                stability["gripper_phase_lock_enabled"]
+            )
+            gripper_closed_minimum = float(stability["gripper_closed_minimum"])
+            gripper_open_maximum = float(stability["gripper_open_maximum"])
+            release_confirmation_steps = int(
+                stability["release_confirmation_steps"]
+            )
+        else:
+            severe_bounded_mode = "full_chunk"
+            preserve_validated_queue_on_reject = False
+            minimum_mode_residency_steps = 0
+            gripper_phase_lock_enabled = False
+            gripper_closed_minimum = 0.5
+            gripper_open_maximum = -0.5
+            release_confirmation_steps = 1
         config = cls(
             schema_version=schema_version,
             selector_id=str(value["selector_id"]),
@@ -108,6 +144,13 @@ class AdaptiveSelectorConfig:
             maximum_rotation_geodesic_radians=float(
                 risk["maximum_rotation_geodesic_radians"]
             ),
+            severe_bounded_mode=severe_bounded_mode,
+            preserve_validated_queue_on_reject=preserve_validated_queue_on_reject,
+            minimum_mode_residency_steps=minimum_mode_residency_steps,
+            gripper_phase_lock_enabled=gripper_phase_lock_enabled,
+            gripper_closed_minimum=gripper_closed_minimum,
+            gripper_open_maximum=gripper_open_maximum,
+            release_confirmation_steps=release_confirmation_steps,
             source_path=str(source_path.resolve()),
             source_sha256=source_sha256,
         )
@@ -124,8 +167,10 @@ class AdaptiveSelectorConfig:
             raise ValueError(f"Unsupported Adaptive reference mode: {self.reference_mode}")
         if self.schema_version == 1 and self.workspace is None:
             raise ValueError("Adaptive v1 requires absolute workspace bounds")
-        if self.schema_version == 2 and self.workspace is not None:
-            raise ValueError("Adaptive v2 uses a dynamic EEF reference, not global bounds")
+        if self.schema_version in (2, 3) and self.workspace is not None:
+            raise ValueError(
+                "Adaptive v2/v3 uses a dynamic EEF reference, not global bounds"
+            )
         if not (
             0 <= self.fresh_full_max_age_steps
             < self.aligned_max_age_steps
@@ -144,6 +189,29 @@ class AdaptiveSelectorConfig:
             self.maximum_rotation_geodesic_radians <= 0
         ):
             raise ValueError("Adaptive rotation disagreement threshold must be positive")
+        if self.severe_bounded_mode not in ("full_chunk", "age_aligned"):
+            raise ValueError(
+                f"Unsupported severe bounded mode: {self.severe_bounded_mode}"
+            )
+        if self.minimum_mode_residency_steps < 0:
+            raise ValueError("Adaptive minimum mode residency must be non-negative")
+        if not math.isfinite(self.gripper_closed_minimum) or not math.isfinite(
+            self.gripper_open_maximum
+        ):
+            raise ValueError("Adaptive gripper phase thresholds must be finite")
+        if self.gripper_open_maximum >= self.gripper_closed_minimum:
+            raise ValueError(
+                "Adaptive open threshold must be below the closed threshold"
+            )
+        if self.release_confirmation_steps <= 0:
+            raise ValueError("Adaptive release confirmation must be positive")
+        if self.schema_version < 3 and (
+            self.preserve_validated_queue_on_reject
+            or self.minimum_mode_residency_steps
+            or self.gripper_phase_lock_enabled
+            or self.severe_bounded_mode != "full_chunk"
+        ):
+            raise ValueError("Adaptive phase-stable controls require schema_version=3")
 
 
 def load_selector_config(
@@ -427,13 +495,18 @@ class AdaptiveSelector:
         )
 
         aligned_index = min(age_steps, len(chunk) - 1)
-        full_risk = self._risk(chunk[0], reference_action)
+        # Official LeRobot latest-only timestamps the whole chunk and removes
+        # commands older than the current control step.  V3 therefore gates
+        # the first command that backend will actually dispatch, rather than
+        # the raw chunk's index zero.  V1/v2 stay byte-for-behavior compatible.
+        full_index = aligned_index if self.config.schema_version == 3 else 0
+        full_risk = self._risk(chunk[full_index], reference_action)
         aligned_risk = self._risk(chunk[aligned_index], reference_action)
 
         if age_steps <= self.config.fresh_full_max_age_steps:
             regime: AdaptiveRegime = "fresh"
             preferred_mode: AdaptiveExecutionMode = "full_chunk"
-            preferred_index = 0
+            preferred_index = full_index
         elif (
             age_steps <= self.config.aligned_max_age_steps
             and len(chunk) - age_steps
@@ -444,8 +517,10 @@ class AdaptiveSelector:
             preferred_index = aligned_index
         elif age_steps <= self.config.hard_max_age_steps:
             regime = "severe_but_bounded"
-            preferred_mode = "full_chunk"
-            preferred_index = 0
+            preferred_mode = self.config.severe_bounded_mode
+            preferred_index = (
+                aligned_index if preferred_mode == "age_aligned" else full_index
+            )
         else:
             regime = "outage"
             return AdaptiveDecision(
@@ -493,7 +568,9 @@ class AdaptiveSelector:
         alternate_mode: AdaptiveExecutionMode = (
             "age_aligned" if preferred_mode == "full_chunk" else "full_chunk"
         )
-        alternate_index = aligned_index if alternate_mode == "age_aligned" else 0
+        alternate_index = (
+            aligned_index if alternate_mode == "age_aligned" else full_index
+        )
         alternate_risk = aligned_risk if alternate_mode == "age_aligned" else full_risk
         if alternate_risk.safe:
             return AdaptiveDecision(

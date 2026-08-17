@@ -204,6 +204,25 @@ class DelayTrace:
                 for _ in range(length)
             )
             repeat = False
+        elif kind == "scripted_burst":
+            base = int(value["base_milliseconds"])
+            burst = int(value["burst_milliseconds"])
+            length = int(value["trace_length"])
+            burst_ordinals = tuple(int(item) for item in value["burst_ordinals"])
+            if (
+                base < 0
+                or burst < 0
+                or length <= 0
+                or not burst_ordinals
+                or len(set(burst_ordinals)) != len(burst_ordinals)
+                or any(item < 0 or item >= length for item in burst_ordinals)
+            ):
+                raise ValueError(f"Invalid scripted burst definition for {key}")
+            selected = set(burst_ordinals)
+            milliseconds = tuple(
+                burst if ordinal in selected else base for ordinal in range(length)
+            )
+            repeat = False
         else:
             raise ValueError(f"Unsupported delay profile kind: {kind}")
         if any(item < 0 for item in milliseconds):
@@ -767,14 +786,25 @@ class _AdaptiveQueue(_RuntimeQueue):
         self._last_action: np.ndarray | None = None
         self._last_execution_mode: str | None = None
         self._active_execution_mode = "full_chunk"
+        self._active_mode_since_step = 0
+        self._phase_lock_active = False
+        self._release_confirmation_count = 0
         self._executed_steps = 0
         self._hold_steps = 0
         self.decision_counts: Counter[str] = Counter()
         self.regime_counts: Counter[str] = Counter()
+        self.effective_mode_counts: Counter[str] = Counter()
         self.mode_switches = 0
+        self.effective_mode_switches = 0
         self.safe_alternate_overrides = 0
         self.safe_hold_merges = 0
         self.pending_actions_discarded_by_guard = 0
+        self.pending_actions_retired_on_mode_switch = 0
+        self.preserved_queue_rejections = 0
+        self.phase_lock_rejections = 0
+        self.residency_rejections = 0
+        self.phase_lock_steps = 0
+        self.outage_empty_holds = 0
         self.reset_episode(uuid.uuid4().hex)
 
     def reset_episode(self, episode_id: str) -> None:
@@ -785,14 +815,25 @@ class _AdaptiveQueue(_RuntimeQueue):
         self._last_action = None
         self._last_execution_mode = None
         self._active_execution_mode = "full_chunk"
+        self._active_mode_since_step = 0
+        self._phase_lock_active = False
+        self._release_confirmation_count = 0
         self._executed_steps = 0
         self._hold_steps = 0
         self.decision_counts.clear()
         self.regime_counts.clear()
+        self.effective_mode_counts.clear()
         self.mode_switches = 0
+        self.effective_mode_switches = 0
         self.safe_alternate_overrides = 0
         self.safe_hold_merges = 0
         self.pending_actions_discarded_by_guard = 0
+        self.pending_actions_retired_on_mode_switch = 0
+        self.preserved_queue_rejections = 0
+        self.phase_lock_rejections = 0
+        self.residency_rejections = 0
+        self.phase_lock_steps = 0
+        self.outage_empty_holds = 0
 
     def queue_depth(self) -> int:
         if self._active_execution_mode == "full_chunk":
@@ -821,6 +862,109 @@ class _AdaptiveQueue(_RuntimeQueue):
         if override:
             self.safe_alternate_overrides += 1
 
+    def _execution_backend(self, mode: str | None = None) -> str:
+        selected = mode or self._active_execution_mode
+        if selected == "full_chunk":
+            return "official_lerobot_latest_only"
+        if selected == "age_aligned":
+            return "actionstream_age_aligned"
+        return "safe_hold"
+
+    def _activate(self, mode: str, *, control_step: int) -> None:
+        if mode != self._active_execution_mode:
+            self.effective_mode_switches += 1
+            self._active_execution_mode = mode
+            self._active_mode_since_step = int(control_step)
+        self.effective_mode_counts[mode] += 1
+
+    def _retire_active_queue_for_switch(self, target_mode: str) -> None:
+        if (
+            self.selector.config.schema_version != 3
+            or target_mode == self._active_execution_mode
+        ):
+            return
+        if self._active_execution_mode == "full_chunk":
+            retired = self.official_queue.discard_pending()
+        elif self._active_execution_mode == "age_aligned":
+            retired = self.aligned_queue.discard_pending_for_hold()
+        else:
+            retired = 0
+        self.pending_actions_retired_on_mode_switch += retired
+
+    def _preservation_reason(
+        self,
+        decision: Any,
+        *,
+        control_step: int,
+        queue_depth: int,
+    ) -> str | None:
+        config = self.selector.config
+        if (
+            config.schema_version != 3
+            or not config.preserve_validated_queue_on_reject
+            or queue_depth <= 0
+        ):
+            return None
+        if decision.execution_mode == "safe_hold":
+            return "adaptive_rejected_chunk_preserved_validated_queue"
+        if decision.execution_mode == self._active_execution_mode:
+            return None
+        if self._phase_lock_active:
+            return "adaptive_phase_lock_preserved_validated_queue"
+        residency = int(control_step) - self._active_mode_since_step
+        if residency < config.minimum_mode_residency_steps:
+            return "adaptive_residency_preserved_validated_queue"
+        return None
+
+    def _preserve_active_queue(
+        self,
+        *,
+        decision: Any,
+        control_step: int,
+        queue_before: int,
+        reason: str,
+        incoming: int,
+    ) -> dict[str, Any]:
+        self.preserved_queue_rejections += 1
+        if "phase_lock" in reason:
+            self.phase_lock_rejections += 1
+        if "residency" in reason:
+            self.residency_rejections += 1
+        self.effective_mode_counts[self._active_execution_mode] += 1
+        return {
+            "queue_before": queue_before,
+            "queue_after": self.queue_depth(),
+            "incoming": incoming,
+            "accepted": False,
+            "reason": reason,
+            "age_steps": decision.result_age_steps,
+            "dropped_prefix_steps": incoming,
+            "guard_discarded_pending_steps": 0,
+            "execution_backend": self._execution_backend(),
+            "adaptive_effective_execution_mode": self._active_execution_mode,
+            "adaptive_phase_lock_active": self._phase_lock_active,
+            "adaptive_mode_residency_steps": (
+                int(control_step) - self._active_mode_since_step
+            ),
+            "adaptive_decision": decision.as_dict(),
+        }
+
+    def _update_phase_lock(self, action: np.ndarray) -> None:
+        config = self.selector.config
+        if config.schema_version != 3 or not config.gripper_phase_lock_enabled:
+            return
+        gripper = float(action[6])
+        if gripper >= config.gripper_closed_minimum:
+            self._phase_lock_active = True
+            self._release_confirmation_count = 0
+        elif self._phase_lock_active and gripper <= config.gripper_open_maximum:
+            self._release_confirmation_count += 1
+            if self._release_confirmation_count >= config.release_confirmation_steps:
+                self._phase_lock_active = False
+                self._release_confirmation_count = 0
+        elif self._phase_lock_active:
+            self._release_confirmation_count = 0
+
     def merge(self, result: InferenceResult, control_step: int) -> dict[str, Any]:
         before = self.queue_depth()
         safety_reference = result.metadata.get("safety_reference_action")
@@ -839,6 +983,19 @@ class _AdaptiveQueue(_RuntimeQueue):
             decision.regime,
             override=decision.safe_alternate_override,
         )
+        preservation_reason = self._preservation_reason(
+            decision,
+            control_step=control_step,
+            queue_depth=before,
+        )
+        if preservation_reason is not None:
+            return self._preserve_active_queue(
+                decision=decision,
+                control_step=control_step,
+                queue_before=before,
+                reason=preservation_reason,
+                incoming=len(result.actions),
+            )
         if decision.execution_mode == "safe_hold":
             if self._last_action is None:
                 raise RuntimeError(
@@ -848,7 +1005,9 @@ class _AdaptiveQueue(_RuntimeQueue):
             discarded += self.aligned_queue.discard_pending_for_hold()
             self.pending_actions_discarded_by_guard += discarded
             self.safe_hold_merges += 1
-            self._active_execution_mode = "safe_hold"
+            if self.selector.config.schema_version == 3:
+                self.outage_empty_holds += 1
+            self._activate("safe_hold", control_step=control_step)
             return {
                 "queue_before": before,
                 "queue_after": 0,
@@ -858,6 +1017,9 @@ class _AdaptiveQueue(_RuntimeQueue):
                 "age_steps": decision.result_age_steps,
                 "dropped_prefix_steps": len(result.actions),
                 "guard_discarded_pending_steps": discarded,
+                "execution_backend": "safe_hold",
+                "adaptive_effective_execution_mode": "safe_hold",
+                "adaptive_phase_lock_active": self._phase_lock_active,
                 "adaptive_decision": decision.as_dict(),
             }
         if decision.merge_mode is None:
@@ -871,7 +1033,19 @@ class _AdaptiveQueue(_RuntimeQueue):
                     raise RuntimeError(
                         "Official latest-only produced no executable first action"
                     )
-                self._active_execution_mode = "safe_hold"
+                if (
+                    self.selector.config.schema_version == 3
+                    and before > 0
+                    and self.queue_depth() > 0
+                ):
+                    return self._preserve_active_queue(
+                        decision=decision,
+                        control_step=control_step,
+                        queue_before=before,
+                        reason="adaptive_empty_target_preserved_validated_queue",
+                        incoming=len(result.actions),
+                    )
+                self._activate("safe_hold", control_step=control_step)
                 self.safe_hold_merges += 1
                 return {
                     **merge,
@@ -900,7 +1074,19 @@ class _AdaptiveQueue(_RuntimeQueue):
                     raise RuntimeError(
                         "Official latest-only first action failed the Adaptive risk gate"
                     )
-                self._active_execution_mode = "safe_hold"
+                if (
+                    self.selector.config.schema_version == 3
+                    and self._active_execution_mode == "age_aligned"
+                    and self.aligned_queue.queue_length > 0
+                ):
+                    return self._preserve_active_queue(
+                        decision=decision,
+                        control_step=control_step,
+                        queue_before=before,
+                        reason="adaptive_target_risk_preserved_validated_queue",
+                        incoming=len(result.actions),
+                    )
+                self._activate("safe_hold", control_step=control_step)
                 self.safe_hold_merges += 1
                 return {
                     **merge,
@@ -912,13 +1098,16 @@ class _AdaptiveQueue(_RuntimeQueue):
                     "executed_candidate_risk": actual_risk.as_dict(),
                     "adaptive_decision": decision.as_dict(),
                 }
-            self._active_execution_mode = "full_chunk"
+            self._retire_active_queue_for_switch("full_chunk")
+            self._activate("full_chunk", control_step=control_step)
             return {
                 **merge,
                 "accepted": bool(merge["queue_after"]),
                 "reason": "official_lerobot_latest_only",
                 "age_steps": decision.result_age_steps,
                 "execution_backend": "official_lerobot_latest_only",
+                "adaptive_effective_execution_mode": "full_chunk",
+                "adaptive_phase_lock_active": self._phase_lock_active,
                 "executed_candidate_risk": actual_risk.as_dict(),
                 "adaptive_decision": decision.as_dict(),
             }
@@ -928,7 +1117,32 @@ class _AdaptiveQueue(_RuntimeQueue):
             current_control_step=control_step,
             mode="async_aligned",
         )
-        self._active_execution_mode = "age_aligned"
+        if not outcome.accepted and self.selector.config.schema_version == 3:
+            if before > 0 and self.queue_depth() > 0:
+                return self._preserve_active_queue(
+                    decision=decision,
+                    control_step=control_step,
+                    queue_before=before,
+                    reason="adaptive_rejected_target_preserved_validated_queue",
+                    incoming=len(result.actions),
+                )
+            self.safe_hold_merges += 1
+            self._activate("safe_hold", control_step=control_step)
+            return {
+                "queue_before": before,
+                "queue_after": 0,
+                "incoming": outcome.incoming_chunk_steps,
+                "accepted": False,
+                "reason": "adaptive_rejected_target_empty_safe_hold",
+                "age_steps": outcome.age_steps,
+                "dropped_prefix_steps": outcome.dropped_prefix_steps,
+                "execution_backend": "safe_hold",
+                "adaptive_effective_execution_mode": "safe_hold",
+                "adaptive_phase_lock_active": self._phase_lock_active,
+                "adaptive_decision": decision.as_dict(),
+            }
+        self._retire_active_queue_for_switch("age_aligned")
+        self._activate("age_aligned", control_step=control_step)
         return {
             "queue_before": before,
             "queue_after": outcome.queue_length,
@@ -938,6 +1152,8 @@ class _AdaptiveQueue(_RuntimeQueue):
             "age_steps": outcome.age_steps,
             "dropped_prefix_steps": outcome.dropped_prefix_steps,
             "execution_backend": "actionstream_age_aligned",
+            "adaptive_effective_execution_mode": "age_aligned",
+            "adaptive_phase_lock_active": self._phase_lock_active,
             "adaptive_decision": decision.as_dict(),
         }
 
@@ -952,6 +1168,9 @@ class _AdaptiveQueue(_RuntimeQueue):
             action = self._last_action.copy()
             held = True
         self._last_action = action.copy()
+        self._update_phase_lock(action)
+        if self._phase_lock_active:
+            self.phase_lock_steps += 1
         self._executed_steps += 1
         self.official_queue.synchronize_control_step(self._executed_steps)
         if held:
@@ -971,10 +1190,29 @@ class _AdaptiveQueue(_RuntimeQueue):
             "adaptive_decision_counts": dict(sorted(self.decision_counts.items())),
             "adaptive_regime_counts": dict(sorted(self.regime_counts.items())),
             "adaptive_mode_switches": self.mode_switches,
+            "adaptive_effective_mode_counts": dict(
+                sorted(self.effective_mode_counts.items())
+            ),
+            "adaptive_effective_mode_switches": self.effective_mode_switches,
             "adaptive_safe_alternate_overrides": self.safe_alternate_overrides,
             "adaptive_safe_hold_merges": self.safe_hold_merges,
             "adaptive_pending_actions_discarded_by_guard": (
                 self.pending_actions_discarded_by_guard
+            ),
+            "adaptive_pending_actions_retired_on_mode_switch": (
+                self.pending_actions_retired_on_mode_switch
+            ),
+            "adaptive_preserved_queue_rejections": self.preserved_queue_rejections,
+            "adaptive_phase_lock_rejections": self.phase_lock_rejections,
+            "adaptive_residency_rejections": self.residency_rejections,
+            "adaptive_phase_lock_steps": self.phase_lock_steps,
+            "adaptive_outage_empty_holds": self.outage_empty_holds,
+            "adaptive_phase_lock_active_at_end": self._phase_lock_active,
+            "adaptive_minimum_mode_residency_steps": (
+                self.selector.config.minimum_mode_residency_steps
+            ),
+            "adaptive_preserve_validated_queue_on_reject": (
+                self.selector.config.preserve_validated_queue_on_reject
             ),
             "adaptive_full_chunk_backend": "official_lerobot_latest_only",
             "adaptive_aligned_backend": "actionstream_age_aligned",

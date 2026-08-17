@@ -24,6 +24,10 @@ SELECTOR_PATH = ROOT / "configs" / "actionstream_adaptive_v1_selector.json"
 SELECTOR_SHA256 = "e5cd59bbe760a5d7c9b6e4b1addbb039af31f4962d622af8973944e2125006d5"
 SELECTOR_V2_PATH = ROOT / "configs" / "actionstream_adaptive_v2_selector.json"
 SELECTOR_V2_SHA256 = "8679606e12b85accc26bd1ad1a1d710bade6682c738cebc031a4196d4a367572"
+SELECTOR_V3_PATH = (
+    ROOT / "configs" / "actionstream_adaptive_phase_stable_v3_selector.json"
+)
+SELECTOR_V3_SHA256 = "c824762ed9b05d37369181812795313c870b3bf8f5714d4c4ccd98e221021c98"
 
 
 def _chunk() -> np.ndarray:
@@ -41,6 +45,11 @@ def _selector() -> AdaptiveSelector:
 
 def _selector_v2() -> AdaptiveSelector:
     config = load_selector_config(SELECTOR_V2_PATH, expected_sha256=SELECTOR_V2_SHA256)
+    return AdaptiveSelector(config, chunk_size=30, control_mode="absolute")
+
+
+def _selector_v3() -> AdaptiveSelector:
+    config = load_selector_config(SELECTOR_V3_PATH, expected_sha256=SELECTOR_V3_SHA256)
     return AdaptiveSelector(config, chunk_size=30, control_mode="absolute")
 
 
@@ -190,6 +199,36 @@ def test_v2_aborts_first_chunk_without_robot_reference() -> None:
     assert decision.full_chunk_risk.reasons == ("missing_reference_action",)
 
 
+def test_v3_routes_severe_bounded_age_to_aligned_execution() -> None:
+    decision = _selector_v3().decide(
+        _chunk(),
+        observation_control_step=0,
+        current_control_step=23,
+        queue_depth_steps=12,
+        last_action=np.asarray([-0.10, 0.0, 0.10, 0.0, 0.0, 0.0, -1.0]),
+    )
+
+    assert decision.regime == "severe_but_bounded"
+    assert decision.execution_mode == "age_aligned"
+    assert decision.selected_action_index == 23
+
+
+def test_v3_latest_only_risk_gates_first_nonstale_command() -> None:
+    actions = _chunk()
+    actions[0, 0] = 0.80
+    decision = _selector_v3().decide(
+        actions,
+        observation_control_step=0,
+        current_control_step=3,
+        queue_depth_steps=12,
+        last_action=np.asarray([-0.10, 0.0, 0.10, 0.0, 0.0, 0.0, -1.0]),
+    )
+
+    assert decision.execution_mode == "full_chunk"
+    assert decision.selected_action_index == 3
+    assert decision.full_chunk_risk.safe
+
+
 def test_adaptive_safe_hold_discards_pending_but_retains_last_action() -> None:
     actions = _chunk()[:4]
     result = InferenceResult(
@@ -287,8 +326,24 @@ def _result(actions: np.ndarray, observation_step: int) -> InferenceResult:
     )
 
 
-def test_adaptive_queue_switches_between_official_latest_only_and_aligned() -> None:
-    spec = ModelSpec(
+def _v3_result(actions: np.ndarray, observation_step: int) -> InferenceResult:
+    safety_reference = np.asarray(actions[0], dtype=np.float32).copy()
+    safety_reference[6] = 0.0
+    return InferenceResult(
+        actions=actions,
+        episode_id="episode",
+        observation_control_step=observation_step,
+        request_timestamp=1.0,
+        start_timestamp=2.0,
+        end_timestamp=3.0,
+        delivery_timestamp=4.0,
+        model_inference_latency_seconds=1.0,
+        metadata={"safety_reference_action": safety_reference.tolist()},
+    )
+
+
+def _model_spec() -> ModelSpec:
+    return ModelSpec(
         key="xvla",
         model_id="model",
         revision="revision",
@@ -300,11 +355,28 @@ def test_adaptive_queue_switches_between_official_latest_only_and_aligned() -> N
         required=True,
         rename_map={},
     )
+
+
+def _v3_queue() -> _AdaptiveQueue:
+    selector = load_selector_config(
+        SELECTOR_V3_PATH, expected_sha256=SELECTOR_V3_SHA256
+    )
+    queue = _AdaptiveQueue(
+        bindings=_fake_bindings(),
+        period=0.05,
+        spec=_model_spec(),
+        selector_config=selector,
+    )
+    queue.reset_episode("episode")
+    return queue
+
+
+def test_adaptive_queue_switches_between_official_latest_only_and_aligned() -> None:
     selector = load_selector_config(SELECTOR_PATH, expected_sha256=SELECTOR_SHA256)
     queue = _AdaptiveQueue(
         bindings=_fake_bindings(),
         period=0.05,
-        spec=spec,
+        spec=_model_spec(),
         selector_config=selector,
     )
     queue.reset_episode("episode")
@@ -323,3 +395,66 @@ def test_adaptive_queue_switches_between_official_latest_only_and_aligned() -> N
     assert severe["execution_backend"] == "official_lerobot_latest_only"
     assert severe["queue_after"] == 7
     assert severe["queued_timesteps"][0] == 23
+
+
+def test_v3_rejected_outage_preserves_nonempty_active_queue() -> None:
+    queue = _v3_queue()
+    fresh = queue.merge(_v3_result(_chunk(), 0), control_step=0)
+    assert fresh["execution_backend"] == "official_lerobot_latest_only"
+    queue.pop()
+
+    outage = queue.merge(_v3_result(_chunk(), 0), control_step=29)
+
+    assert outage["reason"] == "adaptive_rejected_chunk_preserved_validated_queue"
+    assert outage["execution_backend"] == "official_lerobot_latest_only"
+    assert outage["queue_before"] == 29
+    assert outage["queue_after"] == 29
+    assert outage["guard_discarded_pending_steps"] == 0
+    _, held = queue.pop()
+    assert not held
+    assert queue.summary()["adaptive_pending_actions_discarded_by_guard"] == 0
+
+
+def test_v3_closed_gripper_phase_lock_rejects_backend_switch() -> None:
+    queue = _v3_queue()
+    closed = _chunk()
+    closed[:, 6] = 1.0
+    queue.merge(_v3_result(closed, 0), control_step=0)
+    queue.pop()
+
+    moderate = queue.merge(_v3_result(closed, 0), control_step=14)
+
+    assert moderate["reason"] == "adaptive_phase_lock_preserved_validated_queue"
+    assert moderate["adaptive_phase_lock_active"]
+    assert moderate["execution_backend"] == "official_lerobot_latest_only"
+    assert queue.summary()["adaptive_phase_lock_rejections"] == 1
+
+
+def test_v3_release_confirmation_unlocks_after_three_open_commands() -> None:
+    queue = _v3_queue()
+    phase_actions = _chunk()
+    phase_actions[0, 6] = 1.0
+    phase_actions[1:, 6] = -1.0
+    queue.merge(_v3_result(phase_actions, 0), control_step=0)
+    queue.pop()
+    queue.pop()
+    queue.pop()
+    queue.pop()
+
+    moderate = queue.merge(_v3_result(phase_actions, 0), control_step=14)
+
+    assert moderate["execution_backend"] == "actionstream_age_aligned"
+    assert not moderate["adaptive_phase_lock_active"]
+
+
+def test_v3_minimum_residency_suppresses_pregrasp_oscillation() -> None:
+    queue = _v3_queue()
+    queue.merge(_v3_result(_chunk(), 0), control_step=0)
+    queue.pop()
+
+    early = queue.merge(_v3_result(_chunk(), 0), control_step=6)
+    assert early["reason"] == "adaptive_residency_preserved_validated_queue"
+    assert early["execution_backend"] == "official_lerobot_latest_only"
+
+    settled = queue.merge(_v3_result(_chunk(), 0), control_step=14)
+    assert settled["execution_backend"] == "actionstream_age_aligned"
