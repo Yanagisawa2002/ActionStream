@@ -144,6 +144,8 @@ Changing tasks after reading this canary would invalidate the protocol.
 - `clean_clone_receipt.json`: clean install and true CLI subprocess receipt.
 - `portable_archive_validation.json`: relocated path, manifest, artifact hash,
   and telemetry replay validation.
+- `remote_shutdown_receipt.json`: idle-state check, single shutdown invocation,
+  and the one bounded connection-refused postcheck.
 - `../actionstream_backend_gpu_smolvla_rtc_v4/`: immutable SmolVLA NO-GO
   report, raw canary rows, receipts, and inspected content frames.
 - The 58 MiB raw archive stays under ignored `artifacts/`; its SHA-256 and video

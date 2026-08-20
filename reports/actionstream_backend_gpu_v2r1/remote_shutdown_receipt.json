@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "status": "shutdown_confirmed",
+  "authorization": "explicit user instruction to shut down after completion",
+  "preclose_utc": "2026-08-20T22:04:26Z",
+  "preclose_state": {
+    "pid1": "bash",
+    "screen_sessions": 0,
+    "experiment_processes": 0,
+    "gpu": "NVIDIA GeForce RTX 5090",
+    "gpu_utilization_percent": 0,
+    "gpu_memory_used_mib": 2,
+    "gpu_memory_total_mib": 32607,
+    "evidence_archive_sha256": "d1ed7990ce87e9eb22668631792ede46201bbb48fcc383f1f1e0e19640944668",
+    "data_disk_used_percent": 54
+  },
+  "invocation": {
+    "utc": "2026-08-20T22:04:38Z",
+    "command": "/usr/bin/shutdown",
+    "invocation_count": 1,
+    "sync_completed_first": true,
+    "ssh_closed_by_remote_host": true
+  },
+  "bounded_postcheck": {
+    "attempts": 1,
+    "credential_free": true,
+    "connect_timeout_seconds": 10,
+    "result": "connection_refused"
+  },
+  "instance_or_disk_released": false
+}
