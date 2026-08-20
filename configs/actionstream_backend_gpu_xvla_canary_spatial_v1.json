@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "experiment_id": "actionstream_backend_gpu_xvla_canary_spatial_v1",
+  "protocol_status": "frozen_canary_not_holdout",
+  "frozen_utc": "2026-08-20T10:06:00Z",
+  "candidate": {"base_commit": "6751b25adea2748b198935cdef6e1b3995b3a5c5", "current_baselines_sha256": "0e929c7ee82acfed38d06ab67a36aadbdeb22b7b1b0f34eca0f35ccd4722d0fd", "lerobot_inference_sha256": "d04549c847f7101ab78df52567a273cf1a9b707d0c219c6033237bd36cdb19d2"},
+  "source": {"repository_url": "https://github.com/huggingface/lerobot.git", "commit": "6adf51511b7625090eade8d82d9f61a1846ebe56", "source_version": "0.6.2"},
+  "environment": {"type": "libero", "suite": "libero_spatial", "task_ids": [7], "task_description": "pick up the black bowl on the stove and place it on the plate", "episode_length": 300, "control_frequency_hz": 20.0, "initial_state_indices": [37], "base_seed": 2026082237},
+  "gpu_warmup": {"task_id": 7, "initial_state_index": 36, "seed": 2026082236, "inference_calls": 1},
+  "models": [{"key": "xvla", "model_id": "lerobot/xvla-libero", "revision": "12e8783e996944f5c97e490d37d4c145484ed70a", "control_mode": "absolute", "chunk_size": 30, "request_interval_steps": 10, "rtc_expected": false, "required": true, "rename_map": {}}],
+  "runtimes": ["sync_hold", "lerobot_weighted_average", "lerobot_latest_only", "actionstream_backend_aligned", "actionstream_backend_guarded"],
+  "delay_profiles": [
+    {"key": "fixed_0000", "kind": "fixed", "milliseconds": 0},
+    {"key": "fixed_0950", "kind": "fixed", "milliseconds": 950},
+    {"key": "burst_0250_to1800_canary", "kind": "seeded_burst", "base_center_milliseconds": 250, "base_half_width_milliseconds": 100, "burst_probability": 0.15, "burst_min_milliseconds": 1600, "burst_max_milliseconds": 2000, "seed": 202608223701, "trace_length": 512},
+    {"key": "disconnect_recovery_canary", "kind": "fixed", "milliseconds": 250, "disconnect_ordinals": [0, 7]}
+  ],
+  "actionstream_backend": {"common": {"inference_timeout_s": 5.0, "bounded_hold_steps": 2, "retry_backoff_s": 0.05, "max_consecutive_failures": 10, "join_timeout_s": 10.0}, "actionstream_backend_aligned": {"latest_only_fallback": false}, "actionstream_backend_guarded": {"latest_only_fallback": true}},
+  "compact_matrix": {"episodes_per_task": 1, "paired": true, "reuse_delay_trace_across_runtimes": true},
+  "evidence_boundary": {"holdout_eligible": false, "disconnect_profile": "backend-only recovery canary; excluded from official-baseline effect estimates", "no_result_tuning": true}
+}

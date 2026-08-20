@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "observed_at": "2026-08-20T20:52:00+08:00",
+  "formal_report_path": "reports/actionstream_backend_gpu_v1/formal_xvla",
+  "qualitative_contact_sheet_count": 11,
+  "decoded_video_count": 11,
+  "human_visual_inspection_completed": true,
+  "archives": [
+    {
+      "role": "formal_small",
+      "local_path": "reports/actionstream_backend_gpu_v1/actionstream_gpu_formal_small_20260820.tgz",
+      "bytes": 359822,
+      "sha256": "fa79ba56845c225f6968f025e42898273ab9586c44277a1220858d6d5cd15828",
+      "git_tracked": false
+    },
+    {
+      "role": "selected_video_and_native_evidence",
+      "local_path": "reports/actionstream_backend_gpu_v1/actionstream_gpu_native_selected_evidence_20260820.tgz",
+      "remote_path": "/root/autodl-tmp/actionstream_gpu_native_selected_evidence_20260820.tgz",
+      "bytes": 3831424,
+      "sha256": "7a0121bf6e694b413291dae6042a992afc60a0aaa4ddcbc0d50783874715ce27",
+      "git_tracked": false
+    },
+    {
+      "role": "full_raw_replay_video_and_native_runs",
+      "local_path": "reports/actionstream_backend_gpu_v1/raw/actionstream_backend_gpu_native_raw_20260820.tgz",
+      "remote_path": "/root/autodl-tmp/actionstream_backend_gpu_native_raw_20260820.tgz",
+      "bytes": 173564849,
+      "sha256": "b721f425341b74e5ab081ce59953992b3f13cc90f13064b89e3d592659fb39bc",
+      "remote_hash_verified": true,
+      "local_hash_verified": true,
+      "git_tracked": false
+    }
+  ],
+  "inspection_notes": [
+    "Object burst: latest-only and aligned place the can in the basket; guarded leaves it outside.",
+    "Goal fixed 950 ms: latest-only completes bottle-on-cabinet; aligned and guarded do not complete by 300 steps.",
+    "Goal jitter: aligned completes; guarded stalls early.",
+    "Native Object0 and Spatial2 visibly complete their proxy tasks.",
+    "Native Goal2 visibly places the bottle, but the earlier 96.46 N disallowed collision keeps the run at safety NO-GO."
+  ]
+}

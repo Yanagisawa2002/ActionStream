@@ -8,11 +8,11 @@
     "maximum_episode_steps": 320
   },
   "learned_task_override": {
-    "task_keys": ["object0", "spatial2", "goal5"],
+    "task_keys": ["object0", "spatial2", "goal2"],
     "task_families": [
       "pick_object_into_container",
       "spatial_object_on_object",
-      "planar_contact_push"
+      "elevated_fixture_placement"
     ],
     "initial_state_index": 0,
     "action_source": "lerobot/xvla-libero checkpoint absolute 7D policy output",
@@ -69,7 +69,7 @@
   "evidence_boundary": {
     "headline_or_holdout_eligible": false,
     "task_success_claimed": false,
-    "calibration_change": "Adds two audited tabletop task coordinate maps, task-specific rigid contact scales, final official predicate evaluation, and expands only the native x safety bound from 0.70 m to 0.85 m.",
+    "calibration_change": "Uses the audited spatial2 bowl proxy and replaces the failed goal5 contact task with the exact reset-0 wine-bottle box colliders and cabinet-top site from pinned official LIBERO; final official predicate evaluation remains authoritative.",
     "next_gate": "Demonstrate sync capability on all three task families, then freeze disjoint paired resets and network traces before runtime comparison."
   }
 }

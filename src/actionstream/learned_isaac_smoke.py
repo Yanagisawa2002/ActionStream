@@ -403,6 +403,8 @@ def _write_json(path: Path, value: Any) -> None:
 
 
 def _parser() -> argparse.ArgumentParser:
+    from actionstream.isaac_libero_proxy_tasks import LIBERO_PROXY_TASK_SPECS
+
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--protocol", type=Path, required=True)
     parser.add_argument("--scene-protocol", type=Path, required=True)
@@ -430,7 +432,7 @@ def _parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--libero-task-scene",
-        choices=("object0", "spatial2", "goal5"),
+        choices=("object0", *sorted(LIBERO_PROXY_TASK_SPECS)),
         default=None,
         help="select one audited learned-policy native Isaac task scene",
     )
@@ -490,7 +492,7 @@ def _validate_args(args: Any) -> tuple[Path, Path, Path, Path]:
         raise ValueError(
             "--official-render-bridge requires an audited --libero-task-scene"
         )
-    if task_scene_key in {"spatial2", "goal5"} and not args.official_render_bridge:
+    if task_scene_key not in {None, "object0"} and not args.official_render_bridge:
         raise ValueError("proxy task scenes require --official-render-bridge")
     if task_scene_key is not None:
         if task_scene_key == "object0":
@@ -543,7 +545,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         scene_protocol = json.loads(scene_protocol_path.read_text(encoding="utf-8"))
         task_config, policy_config = runtime_configs_from_protocol(scene_protocol)
         proxy_scene_spec: Any | None = None
-        if task_scene_key in {"spatial2", "goal5"}:
+        if task_scene_key not in {None, "object0"}:
             from actionstream.isaac_libero_proxy_tasks import proxy_task_spec
 
             proxy_scene_spec = proxy_task_spec(task_scene_key)
@@ -734,6 +736,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         total_workspace_clips = 0
         total_translation_limits = 0
         task_success_control_step: int | None = None
+        maximum_disallowed_contact_force_n = float(
+            reset_measurement.max_disallowed_contact_force_n
+        )
 
         with (
             events_path.open("w", encoding="utf-8") as events,
@@ -883,6 +888,10 @@ def main(argv: Sequence[str] | None = None) -> int:
                 measurement = scene.measure()
                 if learned_task_scene is not None:
                     learned_task_scene.sync(measurement)
+                maximum_disallowed_contact_force_n = max(
+                    maximum_disallowed_contact_force_n,
+                    float(measurement.max_disallowed_contact_force_n),
+                )
                 maximum_command_delta = max(
                     maximum_command_delta,
                     float(np.linalg.norm(command[:3] - before_target)),
@@ -902,6 +911,9 @@ def main(argv: Sequence[str] | None = None) -> int:
                     "gripper_aperture_m": measurement.gripper_aperture_m,
                     "collision": measurement.collision,
                     "joint_or_workspace_limit": measurement.joint_or_workspace_limit,
+                    "max_disallowed_contact_force_n": (
+                        measurement.max_disallowed_contact_force_n
+                    ),
                 }
                 events.write(json.dumps(event, sort_keys=True, separators=(",", ":")) + "\n")
                 events.flush()
@@ -1071,6 +1083,9 @@ def main(argv: Sequence[str] | None = None) -> int:
                 "peak_cuda_memory_mib": peak_memory,
                 "workspace_clipped_chunk_rows": total_workspace_clips,
                 "translation_limited_chunk_rows": total_translation_limits,
+                "maximum_disallowed_contact_force_n": (
+                    maximum_disallowed_contact_force_n
+                ),
                 "final_object_xyz": list(final_measurement.object_xyz),
             },
             "video_encoder": recorder.encoder,

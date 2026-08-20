@@ -14,6 +14,7 @@ import math
 import os
 import random
 import subprocess
+import threading
 import time
 import uuid
 from collections import Counter
@@ -39,6 +40,10 @@ from actionstream.lerobot_backend import (
     thaw_observation_snapshot,
 )
 from actionstream.libero_config import ensure_isolated_libero_config
+from actionstream.lerobot_inference import (
+    ActionStreamInferenceConfig,
+    ActionStreamInferenceEngine,
+)
 from actionstream.m6_conformance import (
     OfficialLeRobotAdapter,
     load_upstream_bindings,
@@ -59,9 +64,15 @@ RUNTIMES = (
     "lerobot_weighted_average",
     "lerobot_latest_only",
     "actionstream_aligned",
+    "actionstream_backend_aligned",
+    "actionstream_backend_guarded",
     "actionstream_adaptive",
     "lerobot_rtc",
 )
+ACTIONSTREAM_BACKEND_RUNTIMES = {
+    "actionstream_backend_aligned",
+    "actionstream_backend_guarded",
+}
 OFFICIAL_ASYNC_AGGREGATES = {
     "lerobot_weighted_average": "weighted_average",
     "lerobot_latest_only": "latest_only",
@@ -1845,6 +1856,7 @@ def _base_record(
         "model_revision": backend.spec.revision,
         "control_mode": backend.spec.control_mode,
         "runtime": runtime,
+        "suite": backend.suite,
         "delay_profile": profile.key,
         "delay_trace_sha256": profile.trace_sha256,
         "task_id": task_id,
@@ -1852,6 +1864,410 @@ def _base_record(
         "initial_state_index": initial_state_index,
         "seed": seed,
     }
+
+
+def _actionstream_backend_config(
+    protocol: Protocol,
+    runtime: str,
+) -> ActionStreamInferenceConfig:
+    if runtime not in ACTIONSTREAM_BACKEND_RUNTIMES:
+        raise ValueError(f"Not an ActionStream backend runtime: {runtime}")
+    raw = protocol.raw.get("actionstream_backend", {})
+    common = dict(raw.get("common", {}))
+    common.update(raw.get(runtime, {}))
+    allowed = {
+        "inference_timeout_s",
+        "bounded_hold_steps",
+        "retry_backoff_s",
+        "max_consecutive_failures",
+        "join_timeout_s",
+        "latest_only_fallback",
+    }
+    unknown = set(common) - allowed
+    if unknown:
+        raise ValueError(
+            f"Unknown ActionStream backend configuration for {runtime}: "
+            f"{sorted(unknown)}"
+        )
+    expected_fallback = runtime == "actionstream_backend_guarded"
+    actual_fallback = bool(common.get("latest_only_fallback", expected_fallback))
+    if actual_fallback is not expected_fallback:
+        raise ValueError(
+            f"{runtime} must freeze latest_only_fallback={expected_fallback}"
+        )
+    common["latest_only_fallback"] = actual_fallback
+    return ActionStreamInferenceConfig(**common)
+
+
+def _safe_noop_action(
+    backend: CurrentLeRobotBackend,
+    observation: Mapping[str, Any],
+    previous_action: np.ndarray | None,
+) -> np.ndarray:
+    if backend.spec.control_mode == "absolute":
+        action = np.asarray(robot_eef_reference_action(observation), dtype=np.float32)
+    else:
+        action = np.zeros(7, dtype=np.float32)
+        if previous_action is not None:
+            action[-1] = float(np.asarray(previous_action).reshape(-1)[-1])
+    if action.shape != (7,) or not np.isfinite(action).all():
+        raise RuntimeError(f"Invalid queue-depletion safe hold: {action}")
+    return action
+
+
+def run_gpu_warmup(
+    backend: CurrentLeRobotBackend,
+    config: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Execute a frozen, non-scored warmup before steady-state GPU cells."""
+
+    task_id = int(config["task_id"])
+    initial_state_index = int(config["initial_state_index"])
+    seed = int(config["seed"])
+    inference_calls = int(config.get("inference_calls", 1))
+    if task_id not in backend.task_ids:
+        raise ValueError(f"GPU warmup task {task_id} is not in {backend.task_ids}")
+    if initial_state_index < 0 or inference_calls <= 0:
+        raise ValueError("GPU warmup requires a non-negative state and positive calls")
+
+    observation, _, instruction = backend.reset_episode(
+        task_id=task_id,
+        seed=seed,
+        initial_state_index=initial_state_index,
+    )
+    if torch.cuda.is_available():
+        torch.cuda.reset_peak_memory_stats()
+    latencies: list[float] = []
+    started = time.monotonic()
+    for _ in range(inference_calls):
+        output = backend.infer_action_chunk(observation, instruction)
+        latencies.append(output.model_latency_seconds)
+    finished = time.monotonic()
+    return {
+        "status": "completed_non_scored_warmup",
+        "task_id": task_id,
+        "initial_state_index": initial_state_index,
+        "seed": seed,
+        "inference_calls": inference_calls,
+        "wall_clock_seconds": finished - started,
+        "inference_latency_seconds": latencies,
+        "peak_cuda_memory_mib": backend.peak_cuda_memory_mib,
+    }
+
+
+def run_actionstream_backend_episode(
+    backend: CurrentLeRobotBackend,
+    *,
+    experiment_id: str,
+    runtime: str,
+    engine_config: ActionStreamInferenceConfig,
+    profile: DelayTrace,
+    task_id: int,
+    episode_index: int,
+    initial_state_index: int,
+    seed: int,
+    run_id: str,
+    trace_path: Path,
+    video_path: Path | None = None,
+) -> dict[str, Any]:
+    """Run the formal LeRobot ``InferenceEngine`` backend in closed-loop LIBERO."""
+
+    debug_backend = os.environ.get("ACTIONSTREAM_BACKEND_DEBUG") == "1"
+
+    observation, _, instruction = backend.reset_episode(
+        task_id=task_id,
+        seed=seed,
+        initial_state_index=initial_state_index,
+    )
+    fps = backend.controller_frequency_hz(task_id)
+    period = 1.0 / fps
+    disconnect_ordinals = {
+        int(item) for item in profile.definition.get("disconnect_ordinals", [])
+    }
+    if any(item < 0 for item in disconnect_ordinals):
+        raise ValueError(f"Negative disconnect ordinal in {profile.key}")
+
+    inference_events: list[dict[str, Any]] = []
+    inference_event_lock = threading.Lock()
+    inference_ordinal = 0
+
+    def infer_chunk(
+        frozen_observation: Mapping[str, Any],
+        task_instruction: str,
+    ) -> torch.Tensor:
+        nonlocal inference_ordinal
+        ordinal = inference_ordinal
+        inference_ordinal += 1
+        request_timestamp = time.monotonic()
+        if debug_backend:
+            print(f"[backend-debug] inference {ordinal} entered", flush=True)
+        if ordinal in disconnect_ordinals:
+            with inference_event_lock:
+                inference_events.append(
+                    {
+                        "ordinal": ordinal,
+                        "status": "injected_disconnect",
+                        "request_timestamp": request_timestamp,
+                        "model_inference_latency_seconds": None,
+                        "injected_delivery_delay_seconds": 0.0,
+                        "delivery_timestamp": request_timestamp,
+                    }
+                )
+            raise ConnectionError(
+                f"Frozen transport disconnect at inference ordinal {ordinal}"
+            )
+
+        thawed = thaw_observation_snapshot(frozen_observation)
+        if debug_backend:
+            print(f"[backend-debug] inference {ordinal} thawed", flush=True)
+        output = backend.infer_action_chunk(thawed, task_instruction)
+        if debug_backend:
+            print(f"[backend-debug] inference {ordinal} model complete", flush=True)
+        model_finished = time.monotonic()
+        injected_delay = profile.seconds_at(ordinal)
+        if injected_delay:
+            time.sleep(injected_delay)
+        delivery_timestamp = time.monotonic()
+        with inference_event_lock:
+            inference_events.append(
+                {
+                    "ordinal": ordinal,
+                    "status": "completed",
+                    "request_timestamp": request_timestamp,
+                    "model_finished_timestamp": model_finished,
+                    "delivery_timestamp": delivery_timestamp,
+                    "model_inference_latency_seconds": output.model_latency_seconds,
+                    "injected_delivery_delay_seconds": injected_delay,
+                    "raw_shape": list(output.raw_shape),
+                    "raw_dtype": output.raw_dtype,
+                }
+            )
+        return torch.from_numpy(output.actions)
+
+    engine = ActionStreamInferenceEngine(
+        policy=backend.policy,
+        preprocessor=backend.preprocessor,
+        postprocessor=backend.postprocessor,
+        hw_features={},
+        task=instruction,
+        device=str(backend.policy.config.device),
+        robot_type="libero",
+        config=engine_config,
+        infer_chunk=infer_chunk,
+        reset_provider=lambda: None,
+    )
+    if torch.cuda.is_available():
+        torch.cuda.reset_peak_memory_stats()
+
+    action_rows: list[dict[str, Any]] = []
+    frames: list[np.ndarray] = [_capture_frame(observation)] if video_path else []
+    queue_depth_samples: list[float] = []
+    queue_age_samples: list[float] = []
+    discontinuities: list[float] = []
+    acceleration_peaks: list[float] = []
+    previous_action: np.ndarray | None = None
+    previous_delta: np.ndarray | None = None
+    depletion_safe_hold_steps = 0
+    control_step = 0
+    success = False
+    engine_started = time.monotonic()
+    scheduled: float | None = None
+
+    engine.reset()
+    engine.start()
+    engine.resume()
+    engine.notify_observation(immutable_observation_snapshot(observation))
+    try:
+        first_action_deadline = time.monotonic() + 300.0
+        next_debug_at = time.monotonic() + 5.0
+        while engine.telemetry.queue_depth == 0:
+            if engine.failed:
+                raise RuntimeError(engine.failure_traceback or "ActionStream backend failed")
+            if time.monotonic() >= first_action_deadline:
+                raise TimeoutError("Timed out waiting for the first ActionStream backend chunk")
+            if debug_backend and time.monotonic() >= next_debug_at:
+                print(
+                    f"[backend-debug] waiting for first chunk: {engine.telemetry.to_dict()}",
+                    flush=True,
+                )
+                next_debug_at += 5.0
+            time.sleep(min(0.01, period / 5.0))
+
+        scheduled = time.monotonic()
+        while control_step < backend.episode_length:
+            if engine.failed:
+                break
+            if scheduled is None:
+                raise RuntimeError("Missing ActionStream backend control schedule")
+            remaining = scheduled - time.monotonic()
+            if remaining > 0:
+                time.sleep(remaining)
+
+            before = engine.telemetry
+            queue_depth_samples.append(float(before.queue_depth))
+            if before.queue_age_steps is not None:
+                queue_age_samples.append(float(before.queue_age_steps))
+            action_tensor = engine.get_action(None)
+            source = "backend_queue"
+            bounded_hold = False
+            depletion_safe_hold = False
+            if action_tensor is None:
+                action = _safe_noop_action(backend, observation, previous_action)
+                source = "queue_depletion_safe_hold"
+                depletion_safe_hold = True
+                depletion_safe_hold_steps += 1
+            else:
+                action = action_tensor.detach().cpu().numpy().astype(np.float32, copy=True)
+                after_pop = engine.telemetry
+                bounded_hold = after_pop.hold_actions > before.hold_actions
+                if bounded_hold:
+                    source = "bounded_last_action_hold"
+
+            dispatched = time.monotonic()
+            step_output = backend.step(task_id, action)
+            if previous_action is not None:
+                delta = np.asarray(action) - previous_action
+                discontinuities.append(float(np.linalg.norm(delta)))
+                if previous_delta is not None:
+                    acceleration_peaks.append(float(np.linalg.norm(delta - previous_delta)))
+                previous_delta = delta
+            previous_action = np.asarray(action).copy()
+            after = engine.telemetry
+            action_rows.append(
+                {
+                    "control_step": control_step,
+                    "dispatch_timestamp": dispatched,
+                    "source": source,
+                    "bounded_hold": bounded_hold,
+                    "depletion_safe_hold": depletion_safe_hold,
+                    "queue_depth_before": before.queue_depth,
+                    "queue_depth_after": after.queue_depth,
+                    "queue_age_steps": before.queue_age_steps,
+                    "fallback_activations": after.fallback_activations,
+                    "stale_actions_discarded": after.stale_actions_discarded,
+                    "action": action.tolist(),
+                }
+            )
+            control_step += 1
+            observation = step_output.observation
+            success = success or step_output.success
+            if video_path:
+                frames.append(_capture_frame(observation))
+            if success or step_output.terminated or step_output.truncated:
+                break
+            engine.notify_observation(immutable_observation_snapshot(observation))
+            scheduled += period
+    finally:
+        engine.pause()
+        engine.stop()
+
+    finished = time.monotonic()
+    telemetry = engine.telemetry
+    with inference_event_lock:
+        ordered_events = sorted(inference_events, key=lambda item: int(item["ordinal"]))
+    _write_trace(trace_path, action_rows, ordered_events)
+    if video_path:
+        _write_video(
+            video_path,
+            frames,
+            runtime=runtime,
+            model_key=backend.spec.key,
+            profile_key=profile.key,
+            success=success,
+            fps=int(round(fps)),
+        )
+
+    completed_events = [
+        event for event in ordered_events if event["status"] == "completed"
+    ]
+    model_latencies = [
+        float(event["model_inference_latency_seconds"])
+        for event in completed_events
+    ]
+    delivery_latencies = [
+        float(event["delivery_timestamp"] - event["request_timestamp"])
+        for event in completed_events
+    ]
+    wall_seconds = finished - engine_started
+    record = _base_record(
+        experiment_id=experiment_id,
+        run_id=run_id,
+        backend=backend,
+        runtime=runtime,
+        profile=profile,
+        task_id=task_id,
+        episode_index=episode_index,
+        initial_state_index=initial_state_index,
+        seed=seed,
+    )
+    record.update(
+        {
+            "status": "completed" if not telemetry.failed else "engine_failed",
+            "success": bool(success and not telemetry.failed),
+            "task_instruction": instruction,
+            "environment_steps": control_step,
+            "wall_clock_episode_seconds": wall_seconds,
+            "environment_steps_per_second": (
+                control_step / wall_seconds if wall_seconds > 0 else None
+            ),
+            "completed_inferences_per_second": (
+                telemetry.inference_completed / wall_seconds if wall_seconds > 0 else None
+            ),
+            "inference_calls": telemetry.inference_started,
+            "inference_completed": telemetry.inference_completed,
+            "inference_latency_p50_seconds": _percentile(model_latencies, 50),
+            "inference_latency_p95_seconds": _percentile(model_latencies, 95),
+            "delivery_latency_p50_seconds": _percentile(delivery_latencies, 50),
+            "delivery_latency_p95_seconds": _percentile(delivery_latencies, 95),
+            "queue_depth_p50_steps": _percentile(queue_depth_samples, 50),
+            "queue_depth_p95_steps": _percentile(queue_depth_samples, 95),
+            "queue_age_p50_steps": _percentile(queue_age_samples, 50),
+            "queue_age_p95_steps": _percentile(queue_age_samples, 95),
+            "bounded_hold_steps": telemetry.hold_actions,
+            "depletion_safe_hold_steps": depletion_safe_hold_steps,
+            "hold_steps": telemetry.hold_actions + depletion_safe_hold_steps,
+            "hold_fraction": (
+                (telemetry.hold_actions + depletion_safe_hold_steps) / control_step
+                if control_step
+                else None
+            ),
+            "observations_received": telemetry.observations_received,
+            "observations_superseded": telemetry.observations_superseded,
+            "inference_timeouts": telemetry.inference_timeouts,
+            "inference_errors": telemetry.inference_errors,
+            "disconnects": telemetry.disconnects,
+            "recoveries": telemetry.recoveries,
+            "chunks_accepted": telemetry.chunks_accepted,
+            "chunks_rejected_stale": telemetry.chunks_rejected_stale,
+            "chunks_rejected_reset": telemetry.chunks_rejected_reset,
+            "stale_actions_discarded": telemetry.stale_actions_discarded,
+            "fallback_activations": telemetry.fallback_activations,
+            "fallback_chunks_accepted": telemetry.fallback_chunks_accepted,
+            "dropped_prefix_steps": telemetry.stale_actions_discarded,
+            "action_discontinuity_mean_l2": (
+                float(np.mean(discontinuities)) if discontinuities else None
+            ),
+            "action_discontinuity_max_l2": max(discontinuities, default=None),
+            "action_acceleration_max_l2": max(acceleration_peaks, default=None),
+            "controller_frequency_hz": fps,
+            "chunk_size": backend.spec.chunk_size,
+            "request_interval_steps": None,
+            "peak_cuda_memory_mib": backend.peak_cuda_memory_mib,
+            "engine_config": {
+                "inference_timeout_s": engine_config.inference_timeout_s,
+                "bounded_hold_steps": engine_config.bounded_hold_steps,
+                "retry_backoff_s": engine_config.retry_backoff_s,
+                "max_consecutive_failures": engine_config.max_consecutive_failures,
+                "join_timeout_s": engine_config.join_timeout_s,
+                "latest_only_fallback": engine_config.latest_only_fallback,
+            },
+            "trace_path": str(trace_path),
+            "trace_sha256": _sha256_file(trace_path),
+            "video_path": str(video_path) if video_path else None,
+            "video_sha256": _sha256_file(video_path) if video_path else None,
+        }
+    )
+    return record
 
 
 def run_async_episode(
@@ -2310,6 +2726,7 @@ def run(args: argparse.Namespace) -> list[dict[str, Any]]:
     run_id = args.run_id or f"current-{int(time.time())}-{uuid.uuid4().hex[:8]}"
     records: list[dict[str, Any]] = []
     compatibility: list[dict[str, Any]] = []
+    warmup_records: list[dict[str, Any]] = []
     base_seed = int(environment["base_seed"])
     mode = "a" if args.append else "w"
     with metrics_path.open(mode, encoding="utf-8", buffering=1) as stream:
@@ -2338,6 +2755,14 @@ def run(args: argparse.Namespace) -> list[dict[str, Any]]:
                 if actual_rtc is not spec.rtc_expected:
                     raise RuntimeError(
                         f"RTC capability drift for {model_key}: expected={spec.rtc_expected}, actual={actual_rtc}"
+                    )
+                warmup_config = protocol.raw.get("gpu_warmup")
+                if warmup_config is not None:
+                    warmup_records.append(
+                        {
+                            "model_key": model_key,
+                            **run_gpu_warmup(backend, warmup_config),
+                        }
                     )
                 for profile_key in profile_keys:
                     profile = protocol.delays[profile_key]
@@ -2368,6 +2793,24 @@ def run(args: argparse.Namespace) -> list[dict[str, Any]]:
                                     record = run_sync_episode(
                                         backend,
                                         experiment_id=str(protocol.raw["experiment_id"]),
+                                        profile=profile,
+                                        task_id=task_id,
+                                        episode_index=episode_index,
+                                        initial_state_index=state,
+                                        seed=seed,
+                                        run_id=run_id,
+                                        trace_path=trace_path,
+                                        video_path=video_path,
+                                    )
+                                elif runtime in ACTIONSTREAM_BACKEND_RUNTIMES:
+                                    record = run_actionstream_backend_episode(
+                                        backend,
+                                        experiment_id=str(protocol.raw["experiment_id"]),
+                                        runtime=runtime,
+                                        engine_config=_actionstream_backend_config(
+                                            protocol,
+                                            runtime,
+                                        ),
                                         profile=profile,
                                         task_id=task_id,
                                         episode_index=episode_index,
@@ -2413,6 +2856,7 @@ def run(args: argparse.Namespace) -> list[dict[str, Any]]:
         "protocol_sha256": _sha256_file(Path(args.protocol)),
         "upstream": source_receipt,
         "compatibility": compatibility,
+        "gpu_warmup": warmup_records,
         "adaptive_selector": (
             None
             if protocol.adaptive_selector is None
@@ -2421,10 +2865,12 @@ def run(args: argparse.Namespace) -> list[dict[str, Any]]:
                 "selector_protocol_sha256": protocol.adaptive_selector.source_sha256,
             }
         ),
+        "actionstream_backend": protocol.raw.get("actionstream_backend"),
         "selection": {
             "models": model_keys,
             "runtimes": runtimes,
             "profiles": profile_keys,
+            "suite": environment["suite"],
             "task_ids": task_ids,
             "episodes_per_task": episodes,
             "initial_state_indices": state_indices[:episodes],

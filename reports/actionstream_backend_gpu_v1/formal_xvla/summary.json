@@ -1,0 +1,56 @@
+{
+  "condition_count": 51,
+  "failure_count": 93,
+  "gates": {
+    "smolvla_rtc_completion_gate": true,
+    "smolvla_sync_zero_delay_gate": false,
+    "smolvla_upstream_rtc_capability_gate": true,
+    "xvla_disconnect_recovery_gate": true,
+    "xvla_disconnect_rows": 6,
+    "xvla_sync_success_suites": [
+      "libero_goal",
+      "libero_object",
+      "libero_spatial"
+    ],
+    "xvla_sync_zero_delay_three_suite_gate": true
+  },
+  "gpu_memory_summary": {
+    "non_scored_warmup_peak_cuda_memory_mib_max": 12250.8251953125,
+    "nvidia_smi_process_residency_mib": null,
+    "scored_episode_peak_cuda_memory_mib_max": 12258.9501953125
+  },
+  "paired_effect_count": 76,
+  "schema_version": 1,
+  "telemetry_boundary": {
+    "disconnect_recovery": "Backend-only canary, excluded from official-baseline paired effects.",
+    "gpu_memory": "torch.cuda.max_memory_allocated, not total nvidia-smi process residency.",
+    "gpu_throughput": "Chunk actions divided by GPU-synchronized p50 predict_action_chunk latency; excludes simulator and injected network delay.",
+    "queue_age": "Available for ActionStreamInferenceEngine records; N/A for upstream queues that do not expose action-source age."
+  },
+  "validation": {
+    "action_count_verified": 75043,
+    "episode_count": 435,
+    "pair_fields": [
+      "suite",
+      "task_id",
+      "episode_index",
+      "initial_state_index",
+      "seed"
+    ],
+    "pair_invariants": [
+      "source_commit",
+      "model_id",
+      "model_revision",
+      "control_mode",
+      "delay_trace_sha256",
+      "controller_frequency_hz",
+      "chunk_size"
+    ],
+    "receipt_count": 10,
+    "source_commits": [
+      "6751b25adea2748b198935cdef6e1b3995b3a5c5+backend-gpu-v1"
+    ],
+    "trace_count_verified": 435,
+    "video_count_verified": 135
+  }
+}

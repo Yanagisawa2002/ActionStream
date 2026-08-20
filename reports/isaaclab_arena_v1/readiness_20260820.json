@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "observed_at": "2026-08-20T20:43:49+08:00",
+  "status": "BLOCKED_OFFICIAL_ARENA_STACK_ABSENT",
+  "evidence_level": "remote_read_only_preflight_plus_native_isaac_execution",
+  "host": {
+    "gpu": "NVIDIA GeForce RTX 5090",
+    "driver_version": "595.71.05",
+    "gpu_memory_total_mib": 32607,
+    "data_volume_size_gib": 250,
+    "data_volume_available_gib_at_preflight": 119
+  },
+  "checks": {
+    "docker_command_present": false,
+    "isaac_sim_workspace_present": true,
+    "isaacsim_version": "6.0.1.0",
+    "python_isaacsim_importable": true,
+    "python_isaaclab_importable": false,
+    "python_isaaclab_arena_importable": false,
+    "official_isaaclab_arena_checkout_present": false,
+    "actionstream_structural_integration_present": true,
+    "actionstream_structural_integration_is_official_arena": false
+  },
+  "available_evidence": {
+    "lerobot_gpu_holdout_episodes": 375,
+    "lerobot_gpu_holdout_task_families": 3,
+    "native_xvla_object0_sync_smoke_pass": true,
+    "native_xvla_spatial2_sync_smoke_pass": true,
+    "native_xvla_goal2_official_task_success": true,
+    "native_xvla_goal2_smoke_pass": false,
+    "native_xvla_goal2_max_disallowed_contact_force_n": 96.45884520146177,
+    "native_runtime_paired_holdout_available": false
+  },
+  "decision": "Do not label the local adapter as an Arena benchmark and do not install a second large simulator stack on this cloned host. Arena GPU-parallel throughput and cross-environment results remain N/A until an official Isaac Lab plus Isaac Lab-Arena checkout and its task registry are provisioned.",
+  "not_claimed": [
+    "official Isaac Lab-Arena execution",
+    "vectorized Arena GPU environments",
+    "Arena throughput",
+    "native Isaac async runtime ranking",
+    "real-robot safety"
+  ]
+}

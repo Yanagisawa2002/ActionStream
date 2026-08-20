@@ -166,7 +166,7 @@ def test_reset_rejects_inflight_chunk_and_resets_provider_on_worker() -> None:
         engine.stop()
 
 
-def test_timeout_is_discarded_then_a_fresh_request_recovers() -> None:
+def test_timeout_retries_the_only_observation_and_recovers() -> None:
     calls = 0
 
     def infer(_obs, _task):
@@ -190,8 +190,6 @@ def test_timeout_is_discarded_then_a_fresh_request_recovers() -> None:
     try:
         engine.notify_observation({"step": 0})
         _wait_for(lambda: engine.telemetry.inference_timeouts == 1)
-        assert engine.get_action(None) is None
-        engine.notify_observation({"step": 1})
         _wait_for(lambda: engine.telemetry.chunks_accepted == 1)
         torch.testing.assert_close(engine.get_action(None), torch.tensor([2.0, 2.0]))
         telemetry = engine.telemetry
@@ -203,7 +201,7 @@ def test_timeout_is_discarded_then_a_fresh_request_recovers() -> None:
         engine.stop()
 
 
-def test_disconnect_is_retried_and_recovery_is_observable() -> None:
+def test_disconnect_automatically_retries_and_recovery_is_observable() -> None:
     calls = 0
 
     def infer(_obs, _task):
@@ -223,11 +221,44 @@ def test_disconnect_is_retried_and_recovery_is_observable() -> None:
     try:
         engine.notify_observation({"step": 0})
         _wait_for(lambda: engine.telemetry.inference_errors == 1)
-        engine.notify_observation({"step": 1})
         _wait_for(lambda: engine.telemetry.chunks_accepted == 1)
         assert not engine.failed
         assert engine.telemetry.disconnects == 1
         assert engine.telemetry.recoveries == 1
+    finally:
+        engine.stop()
+
+
+def test_failed_request_does_not_overwrite_a_newer_mailbox_observation() -> None:
+    entered = threading.Event()
+    release = threading.Event()
+    calls: list[int] = []
+
+    def infer(obs, _task):
+        calls.append(obs["step"])
+        if len(calls) == 1:
+            entered.set()
+            assert release.wait(2)
+            raise ConnectionError("mock remote unavailable")
+        return torch.full((1, 4, 2), float(obs["step"]))
+
+    engine = _engine(
+        infer,
+        config=ActionStreamInferenceConfig(retry_backoff_s=0.0),
+    )
+    engine.reset()
+    engine.start()
+    engine.resume()
+    try:
+        engine.notify_observation({"step": 0})
+        assert entered.wait(2)
+        engine.notify_observation({"step": 1})
+        engine.notify_observation({"step": 2})
+        release.set()
+        _wait_for(lambda: engine.telemetry.chunks_accepted == 1)
+        assert calls == [0, 2]
+        torch.testing.assert_close(engine.get_action(None), torch.tensor([2.0, 2.0]))
+        assert engine.telemetry.observations_superseded == 1
     finally:
         engine.stop()
 
@@ -321,8 +352,6 @@ def test_repeated_failures_mark_engine_failed_and_signal_rollout_shutdown() -> N
     engine.resume()
     try:
         engine.notify_observation({"step": 0})
-        _wait_for(lambda: engine.telemetry.inference_errors == 1)
-        engine.notify_observation({"step": 1})
         assert shutdown.wait(2)
         assert engine.failed
         assert "ConnectionError" in (engine.failure_traceback or "")

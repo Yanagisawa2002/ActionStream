@@ -1,0 +1,30 @@
+{
+  "failure_taxonomy.csv": {
+    "bytes": 5078,
+    "sha256": "9c6e7dfabc23fd586df10728eebe583ce7b21e5108f364db756c5bca082e1398"
+  },
+  "latency_success_operating_points.png": {
+    "bytes": 111107,
+    "sha256": "b45ae466e07e9f6c2f769d0696973bc82527bf40b6f41663c3fd526e7a9773e8"
+  },
+  "main_table.csv": {
+    "bytes": 14349,
+    "sha256": "0216f3d5090911dd9a13b93022e1d7cf729485f73132b4c33759fe46fb3ce6ec"
+  },
+  "paired_effects.csv": {
+    "bytes": 11779,
+    "sha256": "a8940b2d31b041749e143fcfa74dabd9355493fc270e6ccbdc88b617076dc438"
+  },
+  "report.md": {
+    "bytes": 9637,
+    "sha256": "683b39136c2770ebfe39515ddc6a0f9bf59e4aa13b5fb1294140c7a30cb1f293"
+  },
+  "summary.json": {
+    "bytes": 1794,
+    "sha256": "b1838d4e0cbbc0e1cd091a6bbf2561bf5c203a082502261c04d03fbe6f0877e2"
+  },
+  "task_table.csv": {
+    "bytes": 37069,
+    "sha256": "be9e16480436af9d2315ea44e25cf0d96def6d7460ca6ebcd7bd014c3c94c677"
+  }
+}

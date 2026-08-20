@@ -1,0 +1,621 @@
+{
+  "actions_executed": 0,
+  "bddl": {
+    "path": "/root/autodl-tmp/venvs/actionstream_current/lib/python3.12/site-packages/libero/libero/bddl_files/libero_goal/put_the_wine_bottle_on_top_of_the_cabinet.bddl",
+    "sha256": "2ef6f403a8451e216af44158c1a6c975cf8e5058ad02d78367ac0be443d096fe"
+  },
+  "environment_seed": 2026081700,
+  "evidence_class": "development_state_only_official_libero_reset_audit",
+  "initial_state_index": 0,
+  "lerobot": {
+    "commit": "6adf51511b7625090eade8d82d9f61a1846ebe56",
+    "root": "/root/autodl-tmp/external/lerobot-current"
+  },
+  "objects": [
+    {
+      "contact_geoms": [
+        {
+          "body_id": 25,
+          "body_name": "wine_bottle_1_main",
+          "local_orientation_wxyz": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "local_position_xyz": [
+            -0.0,
+            -0.0,
+            0.03726
+          ],
+          "name": "wine_bottle_1_g3",
+          "size": [
+            0.01503,
+            0.01503,
+            0.03615
+          ],
+          "type": 6
+        },
+        {
+          "body_id": 25,
+          "body_name": "wine_bottle_1_main",
+          "local_orientation_wxyz": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "local_position_xyz": [
+            -0.0,
+            -0.0,
+            0.10286
+          ],
+          "name": "wine_bottle_1_g4",
+          "size": [
+            0.0052,
+            0.0052,
+            0.05518
+          ],
+          "type": 6
+        },
+        {
+          "body_id": 25,
+          "body_name": "wine_bottle_1_main",
+          "local_orientation_wxyz": [
+            0.5,
+            0.5,
+            -0.5,
+            0.5
+          ],
+          "local_position_xyz": [
+            -0.0,
+            -0.0,
+            0.08109
+          ],
+          "name": "wine_bottle_1_g5",
+          "size": [
+            0.007,
+            0.0118,
+            0.0118
+          ],
+          "type": 6
+        },
+        {
+          "body_id": 25,
+          "body_name": "wine_bottle_1_main",
+          "local_orientation_wxyz": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "local_position_xyz": [
+            0.0045,
+            0.0,
+            0.10286
+          ],
+          "name": "wine_bottle_1_g6",
+          "size": [
+            0.00258,
+            0.00258,
+            0.05518
+          ],
+          "type": 6
+        },
+        {
+          "body_id": 25,
+          "body_name": "wine_bottle_1_main",
+          "local_orientation_wxyz": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "local_position_xyz": [
+            0.00381,
+            -0.00246,
+            0.10286
+          ],
+          "name": "wine_bottle_1_g7",
+          "size": [
+            0.00258,
+            0.00258,
+            0.05518
+          ],
+          "type": 6
+        },
+        {
+          "body_id": 25,
+          "body_name": "wine_bottle_1_main",
+          "local_orientation_wxyz": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "local_position_xyz": [
+            0.00223,
+            -0.0039,
+            0.10286
+          ],
+          "name": "wine_bottle_1_g8",
+          "size": [
+            0.00258,
+            0.00258,
+            0.05518
+          ],
+          "type": 6
+        },
+        {
+          "body_id": 25,
+          "body_name": "wine_bottle_1_main",
+          "local_orientation_wxyz": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "local_position_xyz": [
+            0.00012,
+            -0.00478,
+            0.10286
+          ],
+          "name": "wine_bottle_1_g9",
+          "size": [
+            0.00258,
+            0.00258,
+            0.05518
+          ],
+          "type": 6
+        },
+        {
+          "body_id": 25,
+          "body_name": "wine_bottle_1_main",
+          "local_orientation_wxyz": [
+            0.0,
+            0.7071067811865476,
+            0.7071067811865476,
+            0.0
+          ],
+          "local_position_xyz": [
+            -0.00357,
+            -0.00301,
+            0.10286
+          ],
+          "name": "wine_bottle_1_g10",
+          "size": [
+            0.00258,
+            0.00258,
+            0.05518
+          ],
+          "type": 6
+        },
+        {
+          "body_id": 25,
+          "body_name": "wine_bottle_1_main",
+          "local_orientation_wxyz": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "local_position_xyz": [
+            -0.00384,
+            -0.00096,
+            0.10286
+          ],
+          "name": "wine_bottle_1_g11",
+          "size": [
+            0.00258,
+            0.00258,
+            0.05518
+          ],
+          "type": 6
+        },
+        {
+          "body_id": 25,
+          "body_name": "wine_bottle_1_main",
+          "local_orientation_wxyz": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "local_position_xyz": [
+            -0.00343,
+            0.00314,
+            0.10286
+          ],
+          "name": "wine_bottle_1_g12",
+          "size": [
+            0.00258,
+            0.00258,
+            0.05518
+          ],
+          "type": 6
+        },
+        {
+          "body_id": 25,
+          "body_name": "wine_bottle_1_main",
+          "local_orientation_wxyz": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "local_position_xyz": [
+            -0.0007,
+            0.00424,
+            0.10286
+          ],
+          "name": "wine_bottle_1_g13",
+          "size": [
+            0.00258,
+            0.00258,
+            0.05518
+          ],
+          "type": 6
+        },
+        {
+          "body_id": 25,
+          "body_name": "wine_bottle_1_main",
+          "local_orientation_wxyz": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "local_position_xyz": [
+            0.00272,
+            0.00383,
+            0.10286
+          ],
+          "name": "wine_bottle_1_g14",
+          "size": [
+            0.00258,
+            0.00258,
+            0.05518
+          ],
+          "type": 6
+        },
+        {
+          "body_id": 25,
+          "body_name": "wine_bottle_1_main",
+          "local_orientation_wxyz": [
+            0.5,
+            0.5,
+            -0.5,
+            0.5
+          ],
+          "local_position_xyz": [
+            -0.0,
+            -0.0,
+            0.09305
+          ],
+          "name": "wine_bottle_1_g15",
+          "size": [
+            0.007,
+            0.00803,
+            0.00803
+          ],
+          "type": 6
+        },
+        {
+          "body_id": 25,
+          "body_name": "wine_bottle_1_main",
+          "local_orientation_wxyz": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "local_position_xyz": [
+            -0.0173,
+            -0.0,
+            0.03331
+          ],
+          "name": "wine_bottle_1_g16",
+          "size": [
+            0.00193,
+            0.01055,
+            0.02979
+          ],
+          "type": 6
+        },
+        {
+          "body_id": 25,
+          "body_name": "wine_bottle_1_main",
+          "local_orientation_wxyz": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "local_position_xyz": [
+            0.01789,
+            0.0,
+            0.03331
+          ],
+          "name": "wine_bottle_1_g17",
+          "size": [
+            0.00193,
+            0.01055,
+            0.02979
+          ],
+          "type": 6
+        },
+        {
+          "body_id": 25,
+          "body_name": "wine_bottle_1_main",
+          "local_orientation_wxyz": [
+            -0.0,
+            -0.7238877058225237,
+            -0.6899178134814343,
+            -0.0
+          ],
+          "local_position_xyz": [
+            0.00086,
+            0.01787,
+            0.03331
+          ],
+          "name": "wine_bottle_1_g18",
+          "size": [
+            0.00193,
+            0.01055,
+            0.02979
+          ],
+          "type": 6
+        },
+        {
+          "body_id": 25,
+          "body_name": "wine_bottle_1_main",
+          "local_orientation_wxyz": [
+            -0.0,
+            -0.7118308999683758,
+            -0.7023508879827891,
+            -0.0
+          ],
+          "local_position_xyz": [
+            -0.00024,
+            -0.01789,
+            0.03331
+          ],
+          "name": "wine_bottle_1_g19",
+          "size": [
+            0.00193,
+            0.01055,
+            0.02979
+          ],
+          "type": 6
+        },
+        {
+          "body_id": 25,
+          "body_name": "wine_bottle_1_main",
+          "local_orientation_wxyz": [
+            0.0,
+            -0.4311904476405956,
+            0.9022609366826776,
+            0.0
+          ],
+          "local_position_xyz": [
+            -0.01124,
+            -0.01392,
+            0.03331
+          ],
+          "name": "wine_bottle_1_g20",
+          "size": [
+            0.00193,
+            0.01055,
+            0.02979
+          ],
+          "type": 6
+        },
+        {
+          "body_id": 25,
+          "body_name": "wine_bottle_1_main",
+          "local_orientation_wxyz": [
+            0.0,
+            -0.8940228247589797,
+            0.4480214155707009,
+            0.0
+          ],
+          "local_position_xyz": [
+            -0.01071,
+            0.01433,
+            0.03331
+          ],
+          "name": "wine_bottle_1_g21",
+          "size": [
+            0.00193,
+            0.01055,
+            0.02979
+          ],
+          "type": 6
+        },
+        {
+          "body_id": 25,
+          "body_name": "wine_bottle_1_main",
+          "local_orientation_wxyz": [
+            -0.0,
+            -0.9156091040769301,
+            -0.40206960657508245,
+            -0.0
+          ],
+          "local_position_xyz": [
+            0.0121,
+            0.01317,
+            0.03331
+          ],
+          "name": "wine_bottle_1_g22",
+          "size": [
+            0.00193,
+            0.01055,
+            0.02979
+          ],
+          "type": 6
+        },
+        {
+          "body_id": 25,
+          "body_name": "wine_bottle_1_main",
+          "local_orientation_wxyz": [
+            0.0,
+            0.3448196204744936,
+            0.9386689668545702,
+            0.0
+          ],
+          "local_position_xyz": [
+            0.01363,
+            -0.01158,
+            0.03331
+          ],
+          "name": "wine_bottle_1_g23",
+          "size": [
+            0.00193,
+            0.01055,
+            0.02979
+          ],
+          "type": 6
+        }
+      ],
+      "joint_name": "wine_bottle_1_joint0",
+      "joint_type": 0,
+      "name": "wine_bottle_1",
+      "qpos": [
+        -0.19619289660932765,
+        -0.03928502007441934,
+        0.8988754774200162,
+        1.1093590910050036e-08,
+        -6.204091071455122e-06,
+        3.8784043933347096e-07,
+        0.9999999999806799
+      ],
+      "qpos_indexes": [
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29
+      ],
+      "qvel": [
+        2.4351030863029934e-15,
+        -1.5346308989856128e-16,
+        2.202387385821654e-11,
+        7.099175849567274e-14,
+        1.135205111754405e-12,
+        -7.855589585730176e-16
+      ],
+      "qvel_indexes": [
+        21,
+        22,
+        23,
+        24,
+        25,
+        26
+      ],
+      "root_body_mass_kg": 0.015394148066399988,
+      "root_body_name": "wine_bottle_1_main",
+      "root_body_world_orientation_wxyz": [
+        1.1093590909264478e-08,
+        -6.204091070319916e-06,
+        3.878404392624792e-07,
+        0.9999999999806799
+      ],
+      "root_body_world_position_xyz": [
+        -0.19619289660932765,
+        -0.03928502007441934,
+        0.8988754774199721
+      ]
+    }
+  ],
+  "policy_loaded": false,
+  "robot": {
+    "eef_orientation_wxyz": [
+      0.9995809332776665,
+      -0.00017274388727905876,
+      -0.028945625952622955,
+      0.00028058066253625405
+    ],
+    "eef_position_xyz": [
+      -0.20988666395259398,
+      -0.013834632172711187,
+      1.1619094360625652
+    ],
+    "gripper_qpos": [
+      0.03872098407137602,
+      -0.03872453980221517
+    ],
+    "joint_position": [
+      -0.0010875840118434452,
+      -0.14533226729401771,
+      -0.028839763672316377,
+      -2.4603687255426356,
+      -0.008310495537439655,
+      2.2572496800181994,
+      0.7621789921472412
+    ]
+  },
+  "schema_version": 1,
+  "sites": [
+    {
+      "body_id": 28,
+      "body_name": "wooden_cabinet_1_base",
+      "local_orientation_wxyz": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "local_position_xyz": [
+        0.00354,
+        0.01567,
+        0.22152
+      ],
+      "name": "wooden_cabinet_1_top_side",
+      "parent_body_world_orientation_wxyz": [
+        6.123233995736766e-17,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "parent_body_world_position_xyz": [
+        0.03549224508607897,
+        -0.23477283833219229,
+        0.905
+      ],
+      "size": [
+        0.12534,
+        0.09438,
+        0.00147
+      ],
+      "type": 6,
+      "world_orientation_matrix": [
+        [
+          -1.0,
+          -1.2246467991473532e-16,
+          0.0
+        ],
+        [
+          1.2246467991473532e-16,
+          -1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "world_position_xyz": [
+        0.03195224508607897,
+        -0.2504428383321923,
+        1.12652
+      ]
+    }
+  ],
+  "suite": "libero_goal",
+  "task_description": "put the wine bottle on top of the cabinet",
+  "task_id": 2,
+  "task_success_claimed": false
+}

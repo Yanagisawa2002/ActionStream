@@ -13,12 +13,12 @@ from actionstream.isaac_libero_proxy_tasks import (
 
 def test_proxy_tasks_are_distinct_suites_and_task_families() -> None:
     spatial = proxy_task_spec("spatial2")
-    goal = proxy_task_spec("goal5")
+    goal = proxy_task_spec("goal2")
     assert spatial.suite == "libero_spatial"
     assert goal.suite == "libero_goal"
     assert spatial.task_family != goal.task_family
     assert spatial.official_object_name == "akita_black_bowl_1"
-    assert goal.official_object_name == "plate_1"
+    assert goal.official_object_name == "wine_bottle_1"
     assert len(proxy_task_specs_sha256()) == 64
 
 
@@ -65,6 +65,12 @@ def test_goal5_proxy_uses_the_frozen_official_plate_collision_envelope() -> None
 def test_spatial2_proxy_is_an_explicit_graspable_rim_contact_patch() -> None:
     spec = proxy_task_spec("spatial2")
     assert spec.collision_scale_xyz == pytest.approx((0.024, 0.020, 0.040))
+    assert spec.native_target_collision_center_xyz == pytest.approx(
+        (0.7316035813031363, 0.20039036544318572, 0.00325)
+    )
+    assert spec.native_target_collision_scale_xyz == pytest.approx(
+        (0.145, 0.145, 0.0065)
+    )
     mapped_root = spec.map_position(spec.official_object_position_xyz)
     proxy_center = tuple(
         root + offset
@@ -81,3 +87,25 @@ def test_spatial2_proxy_is_an_explicit_graspable_rim_contact_patch() -> None:
     )
     reconstructed = np.asarray(proxy_center) + rotation @ proxy_to_root_local
     assert reconstructed == pytest.approx(mapped_root)
+
+
+def test_goal2_proxy_matches_the_audited_bottle_and_cabinet_top() -> None:
+    spec = proxy_task_spec("goal2")
+    assert spec.task_family == "elevated_fixture_placement"
+    assert spec.official_object_position_xyz == pytest.approx(
+        (-0.19619289660932765, -0.03928502007441934, 0.8988754774200162)
+    )
+    assert spec.native_target_collision_center_xyz == pytest.approx(
+        (0.691952245086079, -0.2504428383321923, 0.22652)
+    )
+    assert spec.native_target_collision_scale_xyz == pytest.approx(
+        (0.25068, 0.18876, 0.00294)
+    )
+    assert len(spec.compound_collision_boxes) == 21
+    assert spec.object_mass_kg == pytest.approx(0.015394148066399988)
+    bottom = (
+        spec.map_position(spec.official_object_position_xyz)[2]
+        + spec.compound_collision_boxes[0].position_xyz[2]
+        - spec.compound_collision_boxes[0].half_extents_xyz[2]
+    )
+    assert bottom == pytest.approx(-1.4522579983855533e-05, abs=1e-10)

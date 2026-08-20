@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "experiment_id": "actionstream_backend_gpu_smolvla_rtc_holdout_goal_v1",
+  "protocol_status": "frozen_holdout",
+  "frozen_utc": "2026-08-20T10:06:00Z",
+  "candidate": {"base_commit": "6751b25adea2748b198935cdef6e1b3995b3a5c5", "current_baselines_sha256": "0e929c7ee82acfed38d06ab67a36aadbdeb22b7b1b0f34eca0f35ccd4722d0fd", "lerobot_inference_sha256": "d04549c847f7101ab78df52567a273cf1a9b707d0c219c6033237bd36cdb19d2"},
+  "source": {"repository_url": "https://github.com/huggingface/lerobot.git", "commit": "6adf51511b7625090eade8d82d9f61a1846ebe56", "source_version": "0.6.2"},
+  "environment": {"type": "libero", "suite": "libero_goal", "task_ids": [2], "task_description": "put the wine bottle on top of the cabinet", "episode_length": 300, "control_frequency_hz": 20.0, "initial_state_indices": [40, 41, 42, 43, 44], "base_seed": 2026082640},
+  "gpu_warmup": {"task_id": 2, "initial_state_index": 38, "seed": 2026082638, "inference_calls": 1},
+  "models": [{"key": "smolvla", "model_id": "lerobot/smolvla_libero", "revision": "31d453f7edd78c839a8bbc39744a292686daf0de", "control_mode": "relative", "chunk_size": 50, "request_interval_steps": 10, "rtc_expected": true, "rtc_execution_horizon": 10, "required": true, "dependencies": [{"model_id": "HuggingFaceTB/SmolVLM2-500M-Video-Instruct", "revision": "7b375e1b73b11138ff12fe22c8f2822d8fe03467"}], "rename_map": {"observation.images.image": "observation.images.camera1", "observation.images.image2": "observation.images.camera2"}}],
+  "runtimes": ["sync_hold", "lerobot_latest_only", "lerobot_rtc"],
+  "delay_profiles": [
+    {"key": "fixed_0000", "kind": "fixed", "milliseconds": 0},
+    {"key": "fixed_0250", "kind": "fixed", "milliseconds": 250},
+    {"key": "fixed_0950", "kind": "fixed", "milliseconds": 950},
+    {"key": "jitter_0600_pm0400_holdout", "kind": "seeded_uniform", "center_milliseconds": 600, "half_width_milliseconds": 400, "seed": 202608264001, "trace_length": 4096},
+    {"key": "burst_0250_to2000_holdout", "kind": "seeded_burst", "base_center_milliseconds": 250, "base_half_width_milliseconds": 100, "burst_probability": 0.15, "burst_min_milliseconds": 1600, "burst_max_milliseconds": 2200, "seed": 202608264002, "trace_length": 4096}
+  ],
+  "compact_matrix": {"episodes_per_task": 5, "paired": true, "reuse_delay_trace_across_runtimes": true},
+  "evidence_boundary": {"holdout_eligible": true, "development_states": [36], "canary_states": [37], "warmup_states": [38], "holdout_states": [40, 41, 42, 43, 44], "post_holdout_tuning_forbidden": true, "cross_model_pooling_forbidden": true}
+}

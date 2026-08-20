@@ -69,6 +69,8 @@ class LiberoProxyTaskSpec:
     collision_proxy_source: str
     native_target_kind: str
     official_target_position_xyz: tuple[float, float, float] | None = None
+    native_target_collision_center_xyz: tuple[float, float, float] | None = None
+    native_target_collision_scale_xyz: tuple[float, float, float] | None = None
     official_goal_region_xyxy: tuple[float, float, float, float] | None = None
     official_fixture_position_xyz: tuple[float, float, float] | None = None
     compound_collision_boxes: tuple[CollisionBoxSpec, ...] = ()
@@ -100,8 +102,24 @@ class LiberoProxyTaskSpec:
         ):
             raise ValueError("object_mass_kg must be finite and lie in (0,10]")
         if self.native_target_kind == "placement":
-            if self.official_target_position_xyz is None:
-                raise ValueError("placement proxy task requires a target position")
+            if (
+                self.official_target_position_xyz is None
+                or self.native_target_collision_center_xyz is None
+                or self.native_target_collision_scale_xyz is None
+            ):
+                raise ValueError(
+                    "placement proxy task requires an official target and an explicit native collision target"
+                )
+            if len(self.native_target_collision_center_xyz) != 3 or not all(
+                math.isfinite(float(value))
+                for value in self.native_target_collision_center_xyz
+            ):
+                raise ValueError("native placement target center must contain three finite values")
+            if len(self.native_target_collision_scale_xyz) != 3 or any(
+                not math.isfinite(float(value)) or value <= 0.0 or value > 1.0
+                for value in self.native_target_collision_scale_xyz
+            ):
+                raise ValueError("native placement target scale must contain three values in (0,1]")
         elif self.native_target_kind == "push_region":
             if self.official_goal_region_xyxy is None:
                 raise ValueError("push proxy task requires a goal region")
@@ -171,6 +189,194 @@ LIBERO_PROXY_TASK_SPECS: Mapping[str, LiberoProxyTaskSpec] = {
             0.20039036544318572,
             0.9025063385290465,
         ),
+        native_target_collision_center_xyz=(
+            0.7316035813031363,
+            0.20039036544318572,
+            0.00325,
+        ),
+        native_target_collision_scale_xyz=(0.145, 0.145, 0.0065),
+    ),
+    "goal2": LiberoProxyTaskSpec(
+        key="goal2",
+        suite="libero_goal",
+        task_id=2,
+        task_family="elevated_fixture_placement",
+        instruction="put the wine bottle on top of the cabinet",
+        initial_state_index=0,
+        coordinate_translation_xyz=(0.66, 0.0, -0.90),
+        official_reference_eef_xyz=(
+            -0.20988666395259398,
+            -0.013834632172711187,
+            1.1619094360625652,
+        ),
+        official_object_name="wine_bottle_1",
+        official_object_position_xyz=(
+            -0.19619289660932765,
+            -0.03928502007441934,
+            0.8988754774200162,
+        ),
+        official_object_orientation_wxyz=(
+            1.1093590910050036e-08,
+            -6.204091071455122e-06,
+            3.8784043933347096e-07,
+            0.9999999999806799,
+        ),
+        collision_scale_xyz=(0.04, 0.04, 0.16),
+        reference_root_to_proxy_world_xyz=(0.0, 0.0, 0.0),
+        collision_proxy_source=(
+            "the 21 compiled box collision geoms and body mass from the pinned "
+            "official LIBERO wine_bottle reset audit"
+        ),
+        native_target_kind="placement",
+        official_target_position_xyz=(
+            0.03195224508607897,
+            -0.2504428383321923,
+            1.12652,
+        ),
+        native_target_collision_center_xyz=(
+            0.691952245086079,
+            -0.2504428383321923,
+            0.22652,
+        ),
+        native_target_collision_scale_xyz=(0.25068, 0.18876, 0.00294),
+        compound_collision_boxes=(
+            CollisionBoxSpec(
+                position_xyz=(0.0, 0.0, 0.03726),
+                orientation_wxyz=(0.0, 0.0, 0.0, 1.0),
+                half_extents_xyz=(0.01503, 0.01503, 0.03615),
+            ),
+            CollisionBoxSpec(
+                position_xyz=(0.0, 0.0, 0.10286),
+                orientation_wxyz=(0.0, 0.0, 0.0, 1.0),
+                half_extents_xyz=(0.0052, 0.0052, 0.05518),
+            ),
+            CollisionBoxSpec(
+                position_xyz=(0.0, 0.0, 0.08109),
+                orientation_wxyz=(0.5, 0.5, -0.5, 0.5),
+                half_extents_xyz=(0.007, 0.0118, 0.0118),
+            ),
+            CollisionBoxSpec(
+                position_xyz=(0.0045, 0.0, 0.10286),
+                orientation_wxyz=(0.0, 0.0, 0.0, 1.0),
+                half_extents_xyz=(0.00258, 0.00258, 0.05518),
+            ),
+            CollisionBoxSpec(
+                position_xyz=(0.00381, -0.00246, 0.10286),
+                orientation_wxyz=(0.0, 0.0, 0.0, 1.0),
+                half_extents_xyz=(0.00258, 0.00258, 0.05518),
+            ),
+            CollisionBoxSpec(
+                position_xyz=(0.00223, -0.0039, 0.10286),
+                orientation_wxyz=(0.0, 0.0, 0.0, 1.0),
+                half_extents_xyz=(0.00258, 0.00258, 0.05518),
+            ),
+            CollisionBoxSpec(
+                position_xyz=(0.00012, -0.00478, 0.10286),
+                orientation_wxyz=(0.0, 0.0, 0.0, 1.0),
+                half_extents_xyz=(0.00258, 0.00258, 0.05518),
+            ),
+            CollisionBoxSpec(
+                position_xyz=(-0.00357, -0.00301, 0.10286),
+                orientation_wxyz=(0.0, 0.7071067811865476, 0.7071067811865476, 0.0),
+                half_extents_xyz=(0.00258, 0.00258, 0.05518),
+            ),
+            CollisionBoxSpec(
+                position_xyz=(-0.00384, -0.00096, 0.10286),
+                orientation_wxyz=(0.0, 0.0, 1.0, 0.0),
+                half_extents_xyz=(0.00258, 0.00258, 0.05518),
+            ),
+            CollisionBoxSpec(
+                position_xyz=(-0.00343, 0.00314, 0.10286),
+                orientation_wxyz=(0.0, 0.0, 0.0, 1.0),
+                half_extents_xyz=(0.00258, 0.00258, 0.05518),
+            ),
+            CollisionBoxSpec(
+                position_xyz=(-0.0007, 0.00424, 0.10286),
+                orientation_wxyz=(0.0, 0.0, 1.0, 0.0),
+                half_extents_xyz=(0.00258, 0.00258, 0.05518),
+            ),
+            CollisionBoxSpec(
+                position_xyz=(0.00272, 0.00383, 0.10286),
+                orientation_wxyz=(0.0, 0.0, 0.0, 1.0),
+                half_extents_xyz=(0.00258, 0.00258, 0.05518),
+            ),
+            CollisionBoxSpec(
+                position_xyz=(0.0, 0.0, 0.09305),
+                orientation_wxyz=(0.5, 0.5, -0.5, 0.5),
+                half_extents_xyz=(0.007, 0.00803, 0.00803),
+            ),
+            CollisionBoxSpec(
+                position_xyz=(-0.0173, 0.0, 0.03331),
+                orientation_wxyz=(0.0, 0.0, 1.0, 0.0),
+                half_extents_xyz=(0.00193, 0.01055, 0.02979),
+            ),
+            CollisionBoxSpec(
+                position_xyz=(0.01789, 0.0, 0.03331),
+                orientation_wxyz=(0.0, 0.0, 1.0, 0.0),
+                half_extents_xyz=(0.00193, 0.01055, 0.02979),
+            ),
+            CollisionBoxSpec(
+                position_xyz=(0.00086, 0.01787, 0.03331),
+                orientation_wxyz=(
+                    0.0,
+                    -0.7238877058225237,
+                    -0.6899178134814343,
+                    0.0,
+                ),
+                half_extents_xyz=(0.00193, 0.01055, 0.02979),
+            ),
+            CollisionBoxSpec(
+                position_xyz=(-0.00024, -0.01789, 0.03331),
+                orientation_wxyz=(
+                    0.0,
+                    -0.7118308999683758,
+                    -0.7023508879827891,
+                    0.0,
+                ),
+                half_extents_xyz=(0.00193, 0.01055, 0.02979),
+            ),
+            CollisionBoxSpec(
+                position_xyz=(-0.01124, -0.01392, 0.03331),
+                orientation_wxyz=(
+                    0.0,
+                    -0.4311904476405956,
+                    0.9022609366826776,
+                    0.0,
+                ),
+                half_extents_xyz=(0.00193, 0.01055, 0.02979),
+            ),
+            CollisionBoxSpec(
+                position_xyz=(-0.01071, 0.01433, 0.03331),
+                orientation_wxyz=(
+                    0.0,
+                    -0.8940228247589797,
+                    0.4480214155707009,
+                    0.0,
+                ),
+                half_extents_xyz=(0.00193, 0.01055, 0.02979),
+            ),
+            CollisionBoxSpec(
+                position_xyz=(0.0121, 0.01317, 0.03331),
+                orientation_wxyz=(
+                    0.0,
+                    -0.9156091040769301,
+                    -0.40206960657508245,
+                    0.0,
+                ),
+                half_extents_xyz=(0.00193, 0.01055, 0.02979),
+            ),
+            CollisionBoxSpec(
+                position_xyz=(0.01363, -0.01158, 0.03331),
+                orientation_wxyz=(
+                    0.0,
+                    0.3448196204744936,
+                    0.9386689668545702,
+                    0.0,
+                ),
+                half_extents_xyz=(0.00193, 0.01055, 0.02979),
+            ),
+        ),
+        object_mass_kg=0.015394148066399988,
     ),
     "goal5": LiberoProxyTaskSpec(
         key="goal5",
@@ -359,22 +565,22 @@ class LiberoProxyTaskScene:
         target_geometry: dict[str, Any]
         if spec.native_target_kind == "placement":
             assert spec.official_target_position_xyz is not None
-            target = spec.map_position(spec.official_target_position_xyz)
-            plate_proxy = Cube(
+            assert spec.native_target_collision_center_xyz is not None
+            assert spec.native_target_collision_scale_xyz is not None
+            target = spec.native_target_collision_center_xyz
+            target_scale = spec.native_target_collision_scale_xyz
+            placement_target = Cube(
                 paths="/World/LiberoProxyTask/PlacementTarget",
-                positions=(target[0], target[1], 0.00325),
+                positions=target,
                 sizes=1.0,
-                scales=(0.145, 0.145, 0.0065),
+                scales=target_scale,
                 colors=(0.90, 0.90, 0.90),
             )
-            GeomPrim(paths=plate_proxy.paths, apply_collision_apis=True)
+            GeomPrim(paths=placement_target.paths, apply_collision_apis=True)
             target_geometry = {
-                "kind": "static_colliding_plate_footprint",
-                "center_xyz": [target[0], target[1], 0.00325],
-                "scale_xyz": [0.145, 0.145, 0.0065],
-                "height_source": (
-                    "official predicate sweep: on(bowl,plate) first accepts root z=0.905 m"
-                ),
+                "kind": "static_colliding_audited_target",
+                "center_xyz": list(target),
+                "scale_xyz": list(target_scale),
             }
         else:
             assert spec.official_goal_region_xyxy is not None

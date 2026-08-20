@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import time
 from pathlib import Path
 from types import SimpleNamespace
@@ -10,11 +11,16 @@ import pytest
 import torch
 
 from actionstream.current_baselines import (
+    CurrentInferenceOutput,
     CurrentLeRobotBackend,
     DelayTrace,
     _base_record,
     load_protocol,
+    run_actionstream_backend_episode,
+    run_gpu_warmup,
 )
+from actionstream.lerobot_backend import StepOutput
+from actionstream.lerobot_inference import ActionStreamInferenceConfig
 from actionstream.runtime import (
     InferencePayload,
     InferenceRequest,
@@ -23,6 +29,10 @@ from actionstream.runtime import (
 
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def _sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def test_current_protocol_freezes_models_delays_and_rtc_boundary() -> None:
@@ -46,6 +56,70 @@ def test_current_protocol_freezes_models_delays_and_rtc_boundary() -> None:
         "fixed_0950",
         "jitter_0500_pm0250",
     }
+
+
+def test_backend_gpu_v1_freezes_candidate_and_disjoint_canary_holdout() -> None:
+    expected_tasks = {
+        "object": ("libero_object", 5),
+        "spatial": ("libero_spatial", 7),
+        "goal": ("libero_goal", 2),
+    }
+    candidate_hashes = {
+        "current_baselines_sha256": _sha256(
+            ROOT / "src" / "actionstream" / "current_baselines.py"
+        ),
+        "lerobot_inference_sha256": _sha256(
+            ROOT / "src" / "actionstream" / "lerobot_inference.py"
+        ),
+    }
+
+    holdout_seeded_trace_hashes: set[str] = set()
+    canary_seeded_trace_hashes: set[str] = set()
+    for family, (suite, task_id) in expected_tasks.items():
+        canary = load_protocol(
+            ROOT / "configs" / f"actionstream_backend_gpu_xvla_canary_{family}_v1.json"
+        )
+        holdout = load_protocol(
+            ROOT / "configs" / f"actionstream_backend_gpu_xvla_holdout_{family}_v1.json"
+        )
+        assert canary.raw["candidate"] | candidate_hashes == canary.raw["candidate"]
+        assert holdout.raw["candidate"] | candidate_hashes == holdout.raw["candidate"]
+        assert canary.raw["environment"]["suite"] == suite
+        assert holdout.raw["environment"]["task_ids"] == [task_id]
+        assert canary.raw["environment"]["initial_state_indices"] == [37]
+        assert holdout.raw["environment"]["initial_state_indices"] == [40, 41, 42, 43, 44]
+        assert canary.raw["gpu_warmup"]["initial_state_index"] == 36
+        assert holdout.raw["gpu_warmup"]["initial_state_index"] == 38
+        assert canary.raw["environment"]["base_seed"] != holdout.raw["environment"]["base_seed"]
+        canary_seeded_trace_hashes.update(
+            item.trace_sha256
+            for item in canary.delays.values()
+            if item.definition["kind"].startswith("seeded_")
+        )
+        holdout_seeded_trace_hashes.update(
+            item.trace_sha256
+            for item in holdout.delays.values()
+            if item.definition["kind"].startswith("seeded_")
+        )
+
+    assert canary_seeded_trace_hashes.isdisjoint(holdout_seeded_trace_hashes)
+    assert len(canary_seeded_trace_hashes) == 3
+    assert len(holdout_seeded_trace_hashes) == 6
+
+    for family, (suite, task_id) in expected_tasks.items():
+        holdout = load_protocol(
+            ROOT
+            / "configs"
+            / f"actionstream_backend_gpu_smolvla_rtc_holdout_{family}_v1.json"
+        )
+        assert holdout.raw["candidate"] | candidate_hashes == holdout.raw["candidate"]
+        assert holdout.raw["environment"]["suite"] == suite
+        assert holdout.raw["environment"]["task_ids"] == [task_id]
+        assert holdout.raw["runtimes"] == [
+            "sync_hold",
+            "lerobot_latest_only",
+            "lerobot_rtc",
+        ]
 
 
 def test_xvla_task_seed_expansion_is_disjoint_and_paired() -> None:
@@ -328,6 +402,7 @@ def test_protocol_rejects_duplicate_keys(tmp_path: Path) -> None:
 
 def test_episode_record_uses_selected_protocol_experiment_id() -> None:
     backend = SimpleNamespace(
+        suite="libero_object",
         spec=SimpleNamespace(
             key="xvla",
             model_id="model",
@@ -349,3 +424,120 @@ def test_episode_record_uses_selected_protocol_experiment_id() -> None:
         seed=17,
     )
     assert record["experiment_id"] == "adaptive-canary"
+    assert record["suite"] == "libero_object"
+
+
+class _BackendBenchmarkHarness:
+    def __init__(self) -> None:
+        self.spec = SimpleNamespace(
+            key="fake",
+            model_id="fake/model",
+            revision="f" * 40,
+            control_mode="relative",
+            chunk_size=3,
+            request_interval_steps=1,
+        )
+        self.suite = "libero_goal"
+        self.task_ids = [2]
+        self.policy = SimpleNamespace(config=SimpleNamespace(device="cpu"))
+        self.preprocessor = object()
+        self.postprocessor = object()
+        self.episode_length = 8
+        self.peak_cuda_memory_mib = 0.0
+        self.steps = 0
+        self.inferences = 0
+
+    def reset_episode(self, **_kwargs):
+        self.steps = 0
+        self.inferences = 0
+        return {"state": np.zeros((1, 4), dtype=np.float32)}, {}, "do the task"
+
+    def controller_frequency_hz(self, _task_id: int) -> float:
+        return 100.0
+
+    def infer_action_chunk(self, _observation, _instruction) -> CurrentInferenceOutput:
+        self.inferences += 1
+        actions = np.full((3, 7), self.inferences, dtype=np.float32)
+        return CurrentInferenceOutput(
+            actions=actions,
+            raw_actions=actions.copy(),
+            model_latency_seconds=0.001,
+            raw_shape=(1, 3, 7),
+            raw_dtype="torch.float32",
+        )
+
+    def step(self, _task_id: int, _action: np.ndarray) -> StepOutput:
+        self.steps += 1
+        return StepOutput(
+            observation={"state": np.full((1, 4), self.steps, dtype=np.float32)},
+            reward=float(self.steps >= 5),
+            terminated=False,
+            truncated=False,
+            success=self.steps >= 5,
+            info={},
+        )
+
+
+def test_gpu_warmup_is_non_scored_and_records_latency() -> None:
+    backend = _BackendBenchmarkHarness()
+
+    record = run_gpu_warmup(
+        backend,
+        {
+            "task_id": 2,
+            "initial_state_index": 38,
+            "seed": 2026082038,
+            "inference_calls": 2,
+        },
+    )
+
+    assert record["status"] == "completed_non_scored_warmup"
+    assert record["initial_state_index"] == 38
+    assert record["inference_calls"] == 2
+    assert record["inference_latency_seconds"] == [0.001, 0.001]
+    assert backend.steps == 0
+
+
+def test_formal_backend_episode_records_disconnect_recovery_and_queue_telemetry(
+    tmp_path: Path,
+) -> None:
+    backend = _BackendBenchmarkHarness()
+    profile = DelayTrace.from_mapping(
+        {
+            "key": "disconnect_recovery",
+            "kind": "fixed",
+            "milliseconds": 0,
+            "disconnect_ordinals": [1],
+        }
+    )
+
+    record = run_actionstream_backend_episode(
+        backend,
+        experiment_id="backend-formal-test",
+        runtime="actionstream_backend_guarded",
+        engine_config=ActionStreamInferenceConfig(
+            inference_timeout_s=1.0,
+            bounded_hold_steps=1,
+            retry_backoff_s=0.0,
+            max_consecutive_failures=3,
+            join_timeout_s=1.0,
+            latest_only_fallback=True,
+        ),
+        profile=profile,
+        task_id=2,
+        episode_index=0,
+        initial_state_index=40,
+        seed=2026082100,
+        run_id="test-run",
+        trace_path=tmp_path / "trace.json",
+    )
+
+    assert record["status"] == "completed"
+    assert record["success"] is True
+    assert record["suite"] == "libero_goal"
+    assert record["disconnects"] == 1
+    assert record["recoveries"] == 1
+    assert record["inference_errors"] == 1
+    assert record["queue_depth_p50_steps"] is not None
+    assert record["environment_steps_per_second"] > 0
+    assert Path(record["trace_path"]).is_file()

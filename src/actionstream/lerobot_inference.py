@@ -396,10 +396,12 @@ class ActionStreamInferenceEngine(InferenceEngine):
                     self._record_latency(latency_s)
                     if latency_s > self._config.inference_timeout_s:
                         self._record_transient_failure(timeout=True)
+                        self._retry_failed_observation(envelope)
                         continue
                     actions = self._validate_chunk(chunk)
                 except Exception as exc:
                     self._record_transient_failure(error=exc)
+                    self._retry_failed_observation(envelope)
                     continue
 
                 with self._condition:
@@ -421,6 +423,27 @@ class ActionStreamInferenceEngine(InferenceEngine):
                 )
         except BaseException as exc:
             self._mark_fatal(exc)
+
+    def _retry_failed_observation(self, envelope: _ObservationEnvelope) -> None:
+        """Retry a failed request unless a newer observation already won.
+
+        Before the first action is available, the control loop cannot publish a
+        fresher observation.  Dropping a timed-out or disconnected request there
+        would leave the rollout waiting forever.  During normal control, the
+        single-slot mailbox still gives precedence to any observation published
+        while inference was in flight.
+        """
+
+        with self._condition:
+            if (
+                self._fatal_error.is_set()
+                or self._shutdown.is_set()
+                or envelope.epoch != self._epoch
+                or self._latest_observation is not None
+            ):
+                return
+            self._latest_observation = envelope
+            self._condition.notify_all()
 
     def _reset_provider(self) -> None:
         if self._reset_provider_override is not None:

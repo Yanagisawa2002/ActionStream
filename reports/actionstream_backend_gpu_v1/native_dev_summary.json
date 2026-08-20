@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "evidence_class": "development_learned_policy_native_isaac_smoke",
+  "headline_or_holdout_eligible": false,
+  "frozen_collision_force_limit_n": 40.0,
+  "runs": [
+    {
+      "suite": "libero_object",
+      "task_id": 0,
+      "initial_state_index": 0,
+      "seed": 2026081601,
+      "learned_checkpoint_loaded": true,
+      "gpu_inference": true,
+      "official_task_success": true,
+      "native_task_success": true,
+      "success_control_step": 150,
+      "no_disqualifying_collision": true,
+      "maximum_disallowed_contact_force_n": 0.0,
+      "smoke_pass": true
+    },
+    {
+      "suite": "libero_spatial",
+      "task_id": 2,
+      "initial_state_index": 0,
+      "seed": 2026081700,
+      "learned_checkpoint_loaded": true,
+      "gpu_inference": true,
+      "official_task_success": true,
+      "native_task_success": true,
+      "success_control_step": 120,
+      "no_disqualifying_collision": true,
+      "maximum_disallowed_contact_force_n": 0.0,
+      "smoke_pass": true
+    },
+    {
+      "suite": "libero_goal",
+      "task_id": 2,
+      "initial_state_index": 0,
+      "seed": 2026081700,
+      "learned_checkpoint_loaded": true,
+      "gpu_inference": true,
+      "official_task_success": true,
+      "native_task_success": true,
+      "success_control_step": 90,
+      "no_disqualifying_collision": false,
+      "maximum_disallowed_contact_force_n": 96.45884520146177,
+      "smoke_pass": false
+    }
+  ],
+  "decision": "Two task families pass development smoke. Goal2 is a safety NO-GO. Native paired holdout remains unavailable because the runner lacks disjoint reset support and formal asynchronous runtime backends."
+}
