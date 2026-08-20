@@ -4,13 +4,16 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "lerobot_policy_actionstream"
-version = "0.1.0"
+version = "0.2.0"
 description = "ActionStream inference backend plugin for lerobot-rollout"
 readme = "README.md"
 requires-python = ">=3.12,<3.13"
 dependencies = [
-  "actionstream>=1.0.0",
+  "actionstream==1.1.0",
 ]
+
+[tool.uv.sources]
+actionstream = { workspace = true }
 
 [project.urls]
 Repository = "https://github.com/Yanagisawa2002/ActionStream"

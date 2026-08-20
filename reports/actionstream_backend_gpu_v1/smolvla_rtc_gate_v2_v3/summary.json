@@ -1,0 +1,84 @@
+{
+  "canary_condition_count": 6,
+  "claim_boundary": "Learned SmolVLA sync motion and several successful unseen resets are real; three-suite reset robustness did not pass, so official RTC holdout/effect was not run.",
+  "development_condition_count": 33,
+  "formal_rtc_effect": null,
+  "gates": {
+    "formal_holdout_record_count": 0,
+    "formal_rtc_paired_effect_available": false,
+    "formal_rtc_record_count": 0,
+    "formal_rtc_status": "NOT_RUN_BY_FROZEN_SYNC_GATE",
+    "smolvla_v2_suite_successes": {
+      "libero_goal": "1/2",
+      "libero_object": "2/2",
+      "libero_spatial": "2/2"
+    },
+    "smolvla_v2_three_suite_sync_gate": false,
+    "smolvla_v3_suite_successes": {
+      "libero_goal": "2/2",
+      "libero_object": "1/2",
+      "libero_spatial": "2/2"
+    },
+    "smolvla_v3_three_suite_sync_gate": false
+  },
+  "lerobot_commit": "d451fe4f1f1b00a812f95aa9534389b5e42ab155",
+  "model_id": "lerobot/smolvla_libero",
+  "model_revision": "31d453f7edd78c839a8bbc39744a292686daf0de",
+  "raw_archive_sha256": "8176c702c3af827937997cadd8c945d4c6a4f1b6f5464ee82f48cf9b684af340",
+  "schema_version": 1,
+  "validation": {
+    "v2": {
+      "action_count_verified": 4887,
+      "episode_count": 33,
+      "pair_fields": [
+        "suite",
+        "task_id",
+        "episode_index",
+        "initial_state_index",
+        "seed"
+      ],
+      "pair_invariants": [
+        "source_commit",
+        "model_id",
+        "model_revision",
+        "control_mode",
+        "delay_trace_sha256",
+        "controller_frequency_hz",
+        "chunk_size"
+      ],
+      "receipt_count": 6,
+      "source_commits": [
+        "6751b25adea2748b198935cdef6e1b3995b3a5c5"
+      ],
+      "trace_count_verified": 33,
+      "video_count_verified": 3
+    },
+    "v3": {
+      "action_count_verified": 3220,
+      "episode_count": 18,
+      "pair_fields": [
+        "suite",
+        "task_id",
+        "episode_index",
+        "initial_state_index",
+        "seed"
+      ],
+      "pair_invariants": [
+        "source_commit",
+        "model_id",
+        "model_revision",
+        "control_mode",
+        "delay_trace_sha256",
+        "controller_frequency_hz",
+        "chunk_size"
+      ],
+      "receipt_count": 4,
+      "source_commits": [
+        "6751b25adea2748b198935cdef6e1b3995b3a5c5"
+      ],
+      "trace_count_verified": 18,
+      "video_count_verified": 4
+    }
+  },
+  "verdict": "NO_GO"
+}

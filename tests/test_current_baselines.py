@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import hashlib
 import time
 from pathlib import Path
 from types import SimpleNamespace
@@ -31,13 +30,11 @@ from actionstream.runtime import (
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def _sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
-
-
 def test_current_protocol_freezes_models_delays_and_rtc_boundary() -> None:
     protocol = load_protocol(ROOT / "configs" / "current_lerobot_baselines.json")
-    assert protocol.raw["source"]["commit"] == "6adf51511b7625090eade8d82d9f61a1846ebe56"
+    assert (
+        protocol.raw["source"]["commit"] == "6adf51511b7625090eade8d82d9f61a1846ebe56"
+    )
     assert set(protocol.models) == {"xvla", "pi05", "smolvla"}
     assert protocol.models["xvla"].rtc_expected is False
     assert protocol.models["pi05"].rtc_expected is True
@@ -64,12 +61,15 @@ def test_backend_gpu_v1_freezes_candidate_and_disjoint_canary_holdout() -> None:
         "spatial": ("libero_spatial", 7),
         "goal": ("libero_goal", 2),
     }
-    candidate_hashes = {
-        "current_baselines_sha256": _sha256(
-            ROOT / "src" / "actionstream" / "current_baselines.py"
+    # v1 is an immutable historical protocol.  New backend revisions must pin
+    # themselves in a new namespace instead of rewriting v1 to match HEAD.
+    candidate = {
+        "base_commit": "6751b25adea2748b198935cdef6e1b3995b3a5c5",
+        "current_baselines_sha256": (
+            "0e929c7ee82acfed38d06ab67a36aadbdeb22b7b1b0f34eca0f35ccd4722d0fd"
         ),
-        "lerobot_inference_sha256": _sha256(
-            ROOT / "src" / "actionstream" / "lerobot_inference.py"
+        "lerobot_inference_sha256": (
+            "d04549c847f7101ab78df52567a273cf1a9b707d0c219c6033237bd36cdb19d2"
         ),
     }
 
@@ -82,15 +82,24 @@ def test_backend_gpu_v1_freezes_candidate_and_disjoint_canary_holdout() -> None:
         holdout = load_protocol(
             ROOT / "configs" / f"actionstream_backend_gpu_xvla_holdout_{family}_v1.json"
         )
-        assert canary.raw["candidate"] | candidate_hashes == canary.raw["candidate"]
-        assert holdout.raw["candidate"] | candidate_hashes == holdout.raw["candidate"]
+        assert canary.raw["candidate"] == candidate
+        assert holdout.raw["candidate"] == candidate
         assert canary.raw["environment"]["suite"] == suite
         assert holdout.raw["environment"]["task_ids"] == [task_id]
         assert canary.raw["environment"]["initial_state_indices"] == [37]
-        assert holdout.raw["environment"]["initial_state_indices"] == [40, 41, 42, 43, 44]
+        assert holdout.raw["environment"]["initial_state_indices"] == [
+            40,
+            41,
+            42,
+            43,
+            44,
+        ]
         assert canary.raw["gpu_warmup"]["initial_state_index"] == 36
         assert holdout.raw["gpu_warmup"]["initial_state_index"] == 38
-        assert canary.raw["environment"]["base_seed"] != holdout.raw["environment"]["base_seed"]
+        assert (
+            canary.raw["environment"]["base_seed"]
+            != holdout.raw["environment"]["base_seed"]
+        )
         canary_seeded_trace_hashes.update(
             item.trace_sha256
             for item in canary.delays.values()
@@ -112,7 +121,7 @@ def test_backend_gpu_v1_freezes_candidate_and_disjoint_canary_holdout() -> None:
             / "configs"
             / f"actionstream_backend_gpu_smolvla_rtc_holdout_{family}_v1.json"
         )
-        assert holdout.raw["candidate"] | candidate_hashes == holdout.raw["candidate"]
+        assert holdout.raw["candidate"] == candidate
         assert holdout.raw["environment"]["suite"] == suite
         assert holdout.raw["environment"]["task_ids"] == [task_id]
         assert holdout.raw["runtimes"] == [
@@ -146,9 +155,10 @@ def test_xvla_task_seed_expansion_is_disjoint_and_paired() -> None:
         "fixed_0950",
         "jitter_0500_pm0250",
     }
-    assert expansion.raw["environment"]["base_seed"] > original.raw["environment"][
-        "base_seed"
-    ]
+    assert (
+        expansion.raw["environment"]["base_seed"]
+        > original.raw["environment"]["base_seed"]
+    )
     assert set(expansion.raw["environment"]["initial_state_indices"]).isdisjoint(
         original.raw["environment"]["initial_state_indices"]
     )
@@ -313,11 +323,15 @@ def test_adaptive_protocol_freezes_selector_tasks_states_and_network_traces() ->
 def test_phase_stable_v3_canary_is_disjoint_and_uses_scripted_phase_outages() -> None:
     paths = {
         "libero_object": (
-            ROOT / "configs" / "actionstream_adaptive_phase_stable_v3_canary_object.json",
+            ROOT
+            / "configs"
+            / "actionstream_adaptive_phase_stable_v3_canary_object.json",
             5,
         ),
         "libero_spatial": (
-            ROOT / "configs" / "actionstream_adaptive_phase_stable_v3_canary_spatial.json",
+            ROOT
+            / "configs"
+            / "actionstream_adaptive_phase_stable_v3_canary_spatial.json",
             7,
         ),
         "libero_goal": (
@@ -384,19 +398,36 @@ def test_worker_records_per_request_delay_trace_metadata() -> None:
         result = worker.drain_results()[0]
         assert observed == [(3, 0)]
         assert result.metadata["delay_trace_index"] == 0
-        assert result.metadata["injected_delivery_delay_seconds"] == pytest.approx(0.001)
+        assert result.metadata["injected_delivery_delay_seconds"] == pytest.approx(
+            0.001
+        )
     finally:
         worker.close()
 
 
 def test_protocol_rejects_duplicate_keys(tmp_path: Path) -> None:
     source = json.loads(
-        (ROOT / "configs" / "current_lerobot_baselines.json").read_text(encoding="utf-8")
+        (ROOT / "configs" / "current_lerobot_baselines.json").read_text(
+            encoding="utf-8"
+        )
     )
     source["models"].append(dict(source["models"][0]))
     path = tmp_path / "duplicate.json"
     path.write_text(json.dumps(source), encoding="utf-8")
     with pytest.raises(ValueError, match="must be unique"):
+        load_protocol(path)
+
+
+def test_protocol_rejects_policy_seed_outside_numpy_range(tmp_path: Path) -> None:
+    source = json.loads(
+        (ROOT / "configs" / "current_lerobot_baselines.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    source["environment"]["base_seed"] = 2**32
+    path = tmp_path / "bad-seed.json"
+    path.write_text(json.dumps(source), encoding="utf-8")
+    with pytest.raises(ValueError, match="NumPy/LeRobot seed range"):
         load_protocol(path)
 
 
@@ -408,7 +439,7 @@ def test_episode_record_uses_selected_protocol_experiment_id() -> None:
             model_id="model",
             revision="revision",
             control_mode="absolute",
-        )
+        ),
     )
     record = _base_record(
         experiment_id="adaptive-canary",
@@ -530,6 +561,12 @@ def test_formal_backend_episode_records_disconnect_recovery_and_queue_telemetry(
         seed=2026082100,
         run_id="test-run",
         trace_path=tmp_path / "trace.json",
+        worker_warmup={
+            "task_id": 2,
+            "initial_state_index": 45,
+            "seed": 2026082145,
+            "inference_calls": 2,
+        },
     )
 
     assert record["status"] == "completed"
@@ -540,4 +577,9 @@ def test_formal_backend_episode_records_disconnect_recovery_and_queue_telemetry(
     assert record["inference_errors"] == 1
     assert record["queue_depth_p50_steps"] is not None
     assert record["environment_steps_per_second"] > 0
+    assert record["worker_warmup"]["execution_context"] == (
+        "actionstream_inference_worker"
+    )
+    assert len(record["worker_warmup"]["request_wall_latency_seconds"]) == 2
+    assert record["inference_requests_per_second"] > 0
     assert Path(record["trace_path"]).is_file()

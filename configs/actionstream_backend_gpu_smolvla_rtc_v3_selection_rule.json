@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "experiment_family": "actionstream_backend_gpu_smolvla_rtc_v3",
+  "protocol_status": "frozen_before_goal_v3_screen",
+  "frozen_utc": "2026-08-21T00:17:00+08:00",
+  "reason_for_new_namespace": "v2 remains NO-GO because selected Goal task 1 passed only 1/2 canary resets; v3 strengthens development screening without changing v2 or reading any holdout.",
+  "v2_canary_receipts": {
+    "libero_object": {"successes": "2/2", "metrics_sha256": "9916fe7dcfbe34794ff35187952e84f24b6bfbf2c94a3a6019a179e855a5c41f4", "receipt_sha256": "a7cfedef9c680635c427ae1a346947048493bb790c18758215c34f63cc8863f60"},
+    "libero_spatial": {"successes": "2/2", "metrics_sha256": "afac7cc88fa57efbe185f4ee2f8f892661c25b1e071e94bdb206a80844ea1b401", "receipt_sha256": "ff0cec5d467c63618da5d282bf006aedc8ac5ddbff45faf16c5cd969aa43468a3"},
+    "libero_goal": {"successes": "1/2", "metrics_sha256": "c25592665fdba081cc5f6600b62e80320c3560fde48fb88c6649f5ac22b468716", "receipt_sha256": "269b4acb20a69cba3ed76c38aeddcbae42303925615c30797493767e11661446a"}
+  },
+  "task_selection": {
+    "libero_object": {"selected_task_id": 0, "source": "v2 development screen"},
+    "libero_spatial": {"selected_task_id": 0, "source": "v2 development screen"},
+    "libero_goal": {
+      "candidate_task_ids": [3, 4, 5, 6, 7, 8],
+      "development_state_indices": [37, 39],
+      "selection_rule": "Select the numerically smallest candidate with 2/2 sync_hold success; if none, stop with NO-GO."
+    }
+  },
+  "canary_gate_after_goal_selection": {
+    "state_indices": [45, 46],
+    "runtime": "sync_hold",
+    "delay_profile": "fixed_0000",
+    "required_successes_per_suite": "2/2",
+    "required_suites": ["libero_object", "libero_spatial", "libero_goal"]
+  },
+  "formal_holdout_if_gate_passes": {
+    "state_indices": [40, 41, 42, 43, 44],
+    "runtimes": ["sync_hold", "lerobot_latest_only", "lerobot_rtc"],
+    "profiles": {
+      "fixed": [0, 250, 950],
+      "jitter": {"center_ms": 600, "half_width_ms": 400, "trace_length": 4096, "seeds_by_suite": {"libero_object": 20260851001, "libero_spatial": 20260852001, "libero_goal": 20260853001}},
+      "burst": {"base_center_ms": 250, "base_half_width_ms": 100, "probability": 0.15, "min_ms": 1600, "max_ms": 2200, "trace_length": 4096, "seeds_by_suite": {"libero_object": 20260851002, "libero_spatial": 20260852002, "libero_goal": 20260853002}}
+    },
+    "paired": true,
+    "cross_model_pooling_forbidden": true,
+    "post_holdout_tuning_forbidden": true
+  }
+}

@@ -19,7 +19,7 @@ import time
 import uuid
 from collections import Counter
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any
 
@@ -40,6 +40,7 @@ from actionstream.lerobot_backend import (
     thaw_observation_snapshot,
 )
 from actionstream.libero_config import ensure_isolated_libero_config
+from actionstream.gpu_measurement import NvidiaSmiMonitor
 from actionstream.lerobot_inference import (
     ActionStreamInferenceConfig,
     ActionStreamInferenceEngine,
@@ -159,10 +160,14 @@ class ModelSpec:
             rtc_expected=bool(value["rtc_expected"]),
             rtc_execution_horizon=int(value.get("rtc_execution_horizon", 10)),
             required=bool(value.get("required", False)),
-            rename_map={str(key): str(item) for key, item in value.get("rename_map", {}).items()},
+            rename_map={
+                str(key): str(item) for key, item in value.get("rename_map", {}).items()
+            },
         )
         if spec.control_mode not in {"absolute", "relative"}:
-            raise ValueError(f"Invalid control mode for {spec.key}: {spec.control_mode}")
+            raise ValueError(
+                f"Invalid control mode for {spec.key}: {spec.control_mode}"
+            )
         if spec.chunk_size <= 0 or spec.request_interval_steps <= 0:
             raise ValueError(f"Invalid chunk/request interval for {spec.key}")
         return spec
@@ -190,7 +195,8 @@ class DelayTrace:
                 raise ValueError(f"Invalid jitter definition for {key}")
             rng = random.Random(int(value["seed"]))
             milliseconds = tuple(
-                rng.randint(center - half_width, center + half_width) for _ in range(length)
+                rng.randint(center - half_width, center + half_width)
+                for _ in range(length)
             )
             repeat = False
         elif kind == "seeded_burst":
@@ -249,9 +255,7 @@ class DelayTrace:
                 or not raw_overrides
                 or len(overrides) != len(raw_overrides)
                 or any(
-                    ordinal < 0
-                    or ordinal >= length
-                    or milliseconds < 0
+                    ordinal < 0 or ordinal >= length or milliseconds < 0
                     for ordinal, milliseconds in overrides.items()
                 )
             ):
@@ -264,7 +268,9 @@ class DelayTrace:
             raise ValueError(f"Unsupported delay profile kind: {kind}")
         if any(item < 0 for item in milliseconds):
             raise ValueError(f"Delay profile {key} contains a negative delay")
-        return cls(key=key, milliseconds=milliseconds, repeat=repeat, definition=dict(value))
+        return cls(
+            key=key, milliseconds=milliseconds, repeat=repeat, definition=dict(value)
+        )
 
     def seconds_at(self, ordinal: int) -> float:
         if ordinal < 0:
@@ -302,13 +308,30 @@ def load_protocol(path: Path | str) -> Protocol:
     if len(str(source.get("commit", ""))) != 40:
         raise ValueError("Protocol must freeze a full LeRobot commit SHA")
     model_items = [ModelSpec.from_mapping(item) for item in raw.get("models", [])]
-    delay_items = [DelayTrace.from_mapping(item) for item in raw.get("delay_profiles", [])]
+    delay_items = [
+        DelayTrace.from_mapping(item) for item in raw.get("delay_profiles", [])
+    ]
     models = {item.key: item for item in model_items}
     delays = {item.key: item for item in delay_items}
     if len(models) != len(model_items) or len(delays) != len(delay_items):
         raise ValueError("Model and delay profile keys must be unique")
     if not models or not delays:
         raise ValueError("Protocol requires at least one model and delay profile")
+    environment = raw.get("environment", {})
+    policy_seeds = {
+        "environment.base_seed": environment.get("base_seed"),
+    }
+    measurement = raw.get("measurement_v2")
+    if measurement is not None:
+        policy_seeds["measurement_v2.worker_warmup.seed"] = measurement.get(
+            "worker_warmup", {}
+        ).get("seed")
+    for label, value in policy_seeds.items():
+        if not isinstance(value, int) or not 0 <= value <= (2**32 - 1):
+            raise ValueError(
+                f"{label} must be an integer in NumPy/LeRobot seed range "
+                f"[0, 2**32 - 1], got {value!r}"
+            )
     unknown_runtimes = set(raw.get("runtimes", [])) - set(RUNTIMES)
     if unknown_runtimes:
         raise ValueError(f"Unknown runtimes in protocol: {sorted(unknown_runtimes)}")
@@ -369,8 +392,13 @@ class CurrentLeRobotBackend:
         device: str = "cuda",
     ) -> None:
         ensure_isolated_libero_config()
-        if os.environ.get("MUJOCO_GL") != "egl" or os.environ.get("PYOPENGL_PLATFORM") != "egl":
-            raise RuntimeError("CurrentLeRobotBackend requires MUJOCO_GL=egl and PYOPENGL_PLATFORM=egl")
+        if (
+            os.environ.get("MUJOCO_GL") != "egl"
+            or os.environ.get("PYOPENGL_PLATFORM") != "egl"
+        ):
+            raise RuntimeError(
+                "CurrentLeRobotBackend requires MUJOCO_GL=egl and PYOPENGL_PLATFORM=egl"
+            )
 
         from lerobot.configs import PreTrainedConfig
         from lerobot.envs import make_env, make_env_config, make_env_pre_post_processors
@@ -397,7 +425,9 @@ class CurrentLeRobotBackend:
             episode_length=self.episode_length,
             max_parallel_tasks=1,
         )
-        policy_cfg = PreTrainedConfig.from_pretrained(spec.model_id, revision=spec.revision)
+        policy_cfg = PreTrainedConfig.from_pretrained(
+            spec.model_id, revision=spec.revision
+        )
         policy_cfg.device = device
         policy_cfg.pretrained_path = Path(spec.model_id)
         policy_cfg.pretrained_revision = spec.revision
@@ -471,7 +501,9 @@ class CurrentLeRobotBackend:
     def _sub_env(self, task_id: int) -> Any:
         env = self._env(task_id)
         if len(env.envs) != 1:
-            raise RuntimeError(f"Expected one synchronous sub-environment, got {len(env.envs)}")
+            raise RuntimeError(
+                f"Expected one synchronous sub-environment, got {len(env.envs)}"
+            )
         return env.envs[0]
 
     def official_render_sub_env(self, task_id: int) -> Any:
@@ -523,17 +555,22 @@ class CurrentLeRobotBackend:
         from lerobot.utils.constants import ACTION
 
         if raw_chunk.ndim != 3 or raw_chunk.shape[0] != 1:
-            raise RuntimeError(f"Expected [1,T,D] policy chunk, got {tuple(raw_chunk.shape)}")
+            raise RuntimeError(
+                f"Expected [1,T,D] policy chunk, got {tuple(raw_chunk.shape)}"
+            )
         if rtc:
             policy_chunk = self.postprocessor(raw_chunk)
             if policy_chunk.ndim != 3:
                 raise RuntimeError(
                     f"RTC policy postprocessor returned {tuple(policy_chunk.shape)}, expected [1,T,D]"
                 )
-            policy_steps = [policy_chunk[:, index, :] for index in range(policy_chunk.shape[1])]
+            policy_steps = [
+                policy_chunk[:, index, :] for index in range(policy_chunk.shape[1])
+            ]
         else:
             policy_steps = [
-                self.postprocessor(raw_chunk[:, index, :]) for index in range(raw_chunk.shape[1])
+                self.postprocessor(raw_chunk[:, index, :])
+                for index in range(raw_chunk.shape[1])
             ]
         final_steps: list[torch.Tensor] = []
         for index, action in enumerate(policy_steps):
@@ -576,7 +613,9 @@ class CurrentLeRobotBackend:
         predicted_delay_steps: int | None = None
         if rtc:
             if not self.supports_rtc:
-                raise RuntimeError(f"Policy {self.spec.key} does not declare RTC support")
+                raise RuntimeError(
+                    f"Policy {self.spec.key} does not declare RTC support"
+                )
             if controller_period_seconds is None or controller_period_seconds <= 0:
                 raise ValueError("RTC inference requires a positive controller period")
             predicted_delay_steps = math.ceil(
@@ -610,7 +649,9 @@ class CurrentLeRobotBackend:
             torch.cuda.synchronize()
         model_latency = time.perf_counter() - started
         if rtc:
-            self._rtc_latency_max_seconds = max(self._rtc_latency_max_seconds, model_latency)
+            self._rtc_latency_max_seconds = max(
+                self._rtc_latency_max_seconds, model_latency
+            )
         final_chunk = self._finalize_chunk(raw_chunk, rtc=rtc)
         actions = final_chunk[0].detach().cpu().numpy().astype(np.float32, copy=True)
         raw_actions = raw_chunk[0].detach().cpu().numpy().copy()
@@ -631,7 +672,9 @@ class CurrentLeRobotBackend:
         command = np.asarray(action, dtype=np.float32)
         if command.shape != (7,) or not np.isfinite(command).all():
             raise ValueError(f"Expected one finite 7D command, got {command}")
-        observation, reward, terminated, truncated, info = self._env(task_id).step(command[None, :])
+        observation, reward, terminated, truncated, info = self._env(task_id).step(
+            command[None, :]
+        )
         reward_scalar = float(np.asarray(reward).reshape(-1)[0])
         return StepOutput(
             observation=observation,
@@ -644,7 +687,11 @@ class CurrentLeRobotBackend:
 
     @property
     def peak_cuda_memory_mib(self) -> float:
-        return torch.cuda.max_memory_allocated() / 2**20 if torch.cuda.is_available() else 0.0
+        return (
+            torch.cuda.max_memory_allocated() / 2**20
+            if torch.cuda.is_available()
+            else 0.0
+        )
 
     def close(self) -> None:
         for task_map in self.envs.values():
@@ -670,7 +717,9 @@ class _RuntimeQueue:
 
 
 class _OfficialAsyncQueue(_RuntimeQueue):
-    def __init__(self, bindings: Any, *, aggregate: str, period: float, chunk_size: int) -> None:
+    def __init__(
+        self, bindings: Any, *, aggregate: str, period: float, chunk_size: int
+    ) -> None:
         self.adapter = OfficialLeRobotAdapter(
             bindings,
             aggregate_name=aggregate,
@@ -728,7 +777,8 @@ class _OfficialAsyncQueue(_RuntimeQueue):
             "latest_action_timestep": int(self.adapter.client.latest_action),
             "queued_timesteps": [int(item.get_timestep()) for item in items],
             "dropped_prefix_steps": sum(
-                item.get_timestep() <= self.adapter.client.latest_action for item in timed
+                item.get_timestep() <= self.adapter.client.latest_action
+                for item in timed
             ),
         }
 
@@ -1127,7 +1177,10 @@ class _AdaptiveQueue(_RuntimeQueue):
             for step, pose in self._control_eef_history
             if step >= first_allowed
         ]
-        if not candidates or latest_step - candidates[0][0] < config.progress_window_steps:
+        if (
+            not candidates
+            or latest_step - candidates[0][0] < config.progress_window_steps
+        ):
             return False
         first = candidates[0][1]
         translation = float(np.linalg.norm(latest[:3] - first[:3]))
@@ -1504,9 +1557,7 @@ class _AdaptiveQueue(_RuntimeQueue):
                     self._reserve_active = True
                     self.reserve_activations += 1
             spend_reason = (
-                self._reserve_spend_reason()
-                if self._reserve_spending_enabled
-                else None
+                self._reserve_spend_reason() if self._reserve_spending_enabled else None
             )
             config = self.selector.config
             spend_budget_available = bool(
@@ -1536,7 +1587,10 @@ class _AdaptiveQueue(_RuntimeQueue):
                 held = True
                 self.reserve_hold_steps += 1
                 if self._reserve_spending_enabled and spend_reason:
-                    if not spend_budget_available and not self._reserve_budget_exhausted_noted:
+                    if (
+                        not spend_budget_available
+                        and not self._reserve_budget_exhausted_noted
+                    ):
                         self.reserve_budget_exhaustions += 1
                         self._reserve_budget_exhausted_noted = True
                     if not protected_floor_available:
@@ -1619,9 +1673,7 @@ class _AdaptiveQueue(_RuntimeQueue):
             "adaptive_last_prefetch_threshold_steps": (
                 self._last_prefetch_threshold_steps
             ),
-            "adaptive_last_request_interval_steps": (
-                self._last_request_interval_steps
-            ),
+            "adaptive_last_request_interval_steps": (self._last_request_interval_steps),
             "adaptive_prefetch_requests": self.prefetch_requests,
             "adaptive_reserve_activations": self.reserve_activations,
             "adaptive_reserve_releases": self.reserve_releases,
@@ -1646,9 +1698,7 @@ class _AdaptiveQueue(_RuntimeQueue):
             ),
             "adaptive_progress_observations": self.progress_observations,
             "adaptive_last_reserve_release_reason": self._last_reserve_release_reason,
-            "adaptive_last_progress_translation_m": (
-                self._last_progress_translation_m
-            ),
+            "adaptive_last_progress_translation_m": (self._last_progress_translation_m),
             "adaptive_last_progress_rotation_radians": (
                 self._last_progress_rotation_radians
             ),
@@ -1701,7 +1751,9 @@ class _OfficialRTCQueue(_RuntimeQueue):
         before = self.queue_depth()
         real_delay = max(
             0,
-            math.ceil((result.delivery_timestamp - result.start_timestamp) / self.period),
+            math.ceil(
+                (result.delivery_timestamp - result.start_timestamp) / self.period
+            ),
         )
         self.queue.merge(
             torch.as_tensor(raw),
@@ -1772,11 +1824,19 @@ def _make_runtime_queue(
     raise ValueError(f"No asynchronous queue for {runtime}")
 
 
-def _write_trace(path: Path, actions: Sequence[Mapping[str, Any]], events: Sequence[Mapping[str, Any]]) -> None:
+def _write_trace(
+    path: Path,
+    actions: Sequence[Mapping[str, Any]],
+    events: Sequence[Mapping[str, Any]],
+) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
         json.dumps(
-            {"schema_version": 1, "actions": list(actions), "inference_events": list(events)},
+            {
+                "schema_version": 1,
+                "actions": list(actions),
+                "inference_events": list(events),
+            },
             sort_keys=True,
             separators=(",", ":"),
             allow_nan=False,
@@ -1819,7 +1879,11 @@ def _write_video(
             canvas = Image.new("RGB", (640, 640), (8, 15, 28))
             canvas.paste(image, (40, 58))
             draw = ImageDraw.Draw(canvas)
-            draw.text((20, 12), f"{model_key} | {runtime} | {profile_key}", fill=(235, 240, 247))
+            draw.text(
+                (20, 12),
+                f"{model_key} | {runtime} | {profile_key}",
+                fill=(235, 240, 247),
+            )
             draw.text(
                 (20, 34),
                 f"step {index:03d} | {'SUCCESS' if success else 'RUN/FAIL'}",
@@ -1969,15 +2033,27 @@ def run_actionstream_backend_episode(
     run_id: str,
     trace_path: Path,
     video_path: Path | None = None,
+    worker_warmup: Mapping[str, Any] | None = None,
+    system_monitor: NvidiaSmiMonitor | None = None,
 ) -> dict[str, Any]:
     """Run the formal LeRobot ``InferenceEngine`` backend in closed-loop LIBERO."""
 
     debug_backend = os.environ.get("ACTIONSTREAM_BACKEND_DEBUG") == "1"
 
+    warmup_phase = worker_warmup is not None
+    if worker_warmup is not None and int(worker_warmup["task_id"]) != task_id:
+        raise ValueError("worker warmup must use the scored task id")
+    reset_task_id = task_id
+    reset_seed = int(worker_warmup["seed"]) if worker_warmup is not None else seed
+    reset_state = (
+        int(worker_warmup["initial_state_index"])
+        if worker_warmup is not None
+        else initial_state_index
+    )
     observation, _, instruction = backend.reset_episode(
-        task_id=task_id,
-        seed=seed,
-        initial_state_index=initial_state_index,
+        task_id=reset_task_id,
+        seed=reset_seed,
+        initial_state_index=reset_state,
     )
     fps = backend.controller_frequency_hz(task_id)
     period = 1.0 / fps
@@ -2001,11 +2077,13 @@ def run_actionstream_backend_episode(
         request_timestamp = time.monotonic()
         if debug_backend:
             print(f"[backend-debug] inference {ordinal} entered", flush=True)
-        if ordinal in disconnect_ordinals:
+        phase = "worker_warmup" if warmup_phase else "steady_state"
+        if not warmup_phase and ordinal in disconnect_ordinals:
             with inference_event_lock:
                 inference_events.append(
                     {
                         "ordinal": ordinal,
+                        "phase": phase,
                         "status": "injected_disconnect",
                         "request_timestamp": request_timestamp,
                         "model_inference_latency_seconds": None,
@@ -2024,7 +2102,7 @@ def run_actionstream_backend_episode(
         if debug_backend:
             print(f"[backend-debug] inference {ordinal} model complete", flush=True)
         model_finished = time.monotonic()
-        injected_delay = profile.seconds_at(ordinal)
+        injected_delay = 0.0 if warmup_phase else profile.seconds_at(ordinal)
         if injected_delay:
             time.sleep(injected_delay)
         delivery_timestamp = time.monotonic()
@@ -2032,6 +2110,7 @@ def run_actionstream_backend_episode(
             inference_events.append(
                 {
                     "ordinal": ordinal,
+                    "phase": phase,
                     "status": "completed",
                     "request_timestamp": request_timestamp,
                     "model_finished_timestamp": model_finished,
@@ -2044,6 +2123,19 @@ def run_actionstream_backend_episode(
             )
         return torch.from_numpy(output.actions)
 
+    telemetry_jsonl_path = (
+        trace_path.with_suffix(".telemetry.jsonl")
+        if worker_warmup is not None
+        else None
+    )
+    effective_engine_config = (
+        replace(
+            engine_config,
+            telemetry_jsonl_path=str(telemetry_jsonl_path),
+        )
+        if telemetry_jsonl_path is not None
+        else engine_config
+    )
     engine = ActionStreamInferenceEngine(
         policy=backend.policy,
         preprocessor=backend.preprocessor,
@@ -2052,7 +2144,7 @@ def run_actionstream_backend_episode(
         task=instruction,
         device=str(backend.policy.config.device),
         robot_type="libero",
-        config=engine_config,
+        config=effective_engine_config,
         infer_chunk=infer_chunk,
         reset_provider=lambda: None,
     )
@@ -2060,7 +2152,7 @@ def run_actionstream_backend_episode(
         torch.cuda.reset_peak_memory_stats()
 
     action_rows: list[dict[str, Any]] = []
-    frames: list[np.ndarray] = [_capture_frame(observation)] if video_path else []
+    frames: list[np.ndarray] = []
     queue_depth_samples: list[float] = []
     queue_age_samples: list[float] = []
     discontinuities: list[float] = []
@@ -2070,21 +2162,99 @@ def run_actionstream_backend_episode(
     depletion_safe_hold_steps = 0
     control_step = 0
     success = False
-    engine_started = time.monotonic()
+    engine_started = 0.0
     scheduled: float | None = None
+    worker_warmup_record: dict[str, Any] | None = None
 
     engine.reset()
     engine.start()
     engine.resume()
+    if worker_warmup is not None:
+        if system_monitor is not None:
+            system_monitor.set_phase(
+                "worker_warmup",
+                runtime=runtime,
+                profile=profile.key,
+                task_id=task_id,
+                episode_index=episode_index,
+            )
+        warmup_calls = int(worker_warmup.get("inference_calls", 2))
+        if warmup_calls <= 0:
+            raise ValueError("worker warmup inference_calls must be positive")
+        warmup_started = time.monotonic()
+        call_wall_latencies: list[float] = []
+        for _ in range(warmup_calls):
+            completed_before = engine.telemetry.inference_completed
+            call_started = time.monotonic()
+            engine.notify_observation(immutable_observation_snapshot(observation))
+            deadline = time.monotonic() + 300.0
+            while engine.telemetry.inference_completed <= completed_before:
+                if engine.failed:
+                    raise RuntimeError(
+                        engine.failure_traceback or "ActionStream warmup failed"
+                    )
+                if time.monotonic() >= deadline:
+                    raise TimeoutError("Timed out during ActionStream worker warmup")
+                time.sleep(0.005)
+            call_wall_latencies.append(time.monotonic() - call_started)
+        with inference_event_lock:
+            warmup_events = list(inference_events)
+        worker_warmup_record = {
+            "execution_context": "actionstream_inference_worker",
+            "task_id": task_id,
+            "initial_state_index": reset_state,
+            "seed": reset_seed,
+            "inference_calls": warmup_calls,
+            "wall_clock_seconds": time.monotonic() - warmup_started,
+            "request_wall_latency_seconds": call_wall_latencies,
+            "model_inference_latency_seconds": [
+                float(event["model_inference_latency_seconds"])
+                for event in warmup_events
+                if event["status"] == "completed"
+            ],
+            "startup_latency_seconds": call_wall_latencies[0],
+            "post_startup_warmup_latency_p50_seconds": _percentile(
+                call_wall_latencies[1:], 50
+            ),
+        }
+        engine.pause()
+        observation, _, instruction = backend.reset_episode(
+            task_id=task_id,
+            seed=seed,
+            initial_state_index=initial_state_index,
+        )
+        warmup_phase = False
+        inference_ordinal = 0
+        with inference_event_lock:
+            inference_events.clear()
+        engine.reset()
+        engine.resume()
+    if torch.cuda.is_available():
+        torch.cuda.reset_peak_memory_stats()
+    if system_monitor is not None:
+        system_monitor.set_phase(
+            "steady_state",
+            runtime=runtime,
+            profile=profile.key,
+            task_id=task_id,
+            episode_index=episode_index,
+        )
+    if video_path:
+        frames.append(_capture_frame(observation))
+    engine_started = time.monotonic()
     engine.notify_observation(immutable_observation_snapshot(observation))
     try:
         first_action_deadline = time.monotonic() + 300.0
         next_debug_at = time.monotonic() + 5.0
         while engine.telemetry.queue_depth == 0:
             if engine.failed:
-                raise RuntimeError(engine.failure_traceback or "ActionStream backend failed")
+                raise RuntimeError(
+                    engine.failure_traceback or "ActionStream backend failed"
+                )
             if time.monotonic() >= first_action_deadline:
-                raise TimeoutError("Timed out waiting for the first ActionStream backend chunk")
+                raise TimeoutError(
+                    "Timed out waiting for the first ActionStream backend chunk"
+                )
             if debug_backend and time.monotonic() >= next_debug_at:
                 print(
                     f"[backend-debug] waiting for first chunk: {engine.telemetry.to_dict()}",
@@ -2117,7 +2287,9 @@ def run_actionstream_backend_episode(
                 depletion_safe_hold = True
                 depletion_safe_hold_steps += 1
             else:
-                action = action_tensor.detach().cpu().numpy().astype(np.float32, copy=True)
+                action = (
+                    action_tensor.detach().cpu().numpy().astype(np.float32, copy=True)
+                )
                 after_pop = engine.telemetry
                 bounded_hold = after_pop.hold_actions > before.hold_actions
                 if bounded_hold:
@@ -2129,7 +2301,9 @@ def run_actionstream_backend_episode(
                 delta = np.asarray(action) - previous_action
                 discontinuities.append(float(np.linalg.norm(delta)))
                 if previous_delta is not None:
-                    acceleration_peaks.append(float(np.linalg.norm(delta - previous_delta)))
+                    acceleration_peaks.append(
+                        float(np.linalg.norm(delta - previous_delta))
+                    )
                 previous_delta = delta
             previous_action = np.asarray(action).copy()
             after = engine.telemetry
@@ -2181,8 +2355,7 @@ def run_actionstream_backend_episode(
         event for event in ordered_events if event["status"] == "completed"
     ]
     model_latencies = [
-        float(event["model_inference_latency_seconds"])
-        for event in completed_events
+        float(event["model_inference_latency_seconds"]) for event in completed_events
     ]
     delivery_latencies = [
         float(event["delivery_timestamp"] - event["request_timestamp"])
@@ -2210,8 +2383,13 @@ def run_actionstream_backend_episode(
             "environment_steps_per_second": (
                 control_step / wall_seconds if wall_seconds > 0 else None
             ),
+            "inference_requests_per_second": (
+                telemetry.inference_started / wall_seconds if wall_seconds > 0 else None
+            ),
             "completed_inferences_per_second": (
-                telemetry.inference_completed / wall_seconds if wall_seconds > 0 else None
+                telemetry.inference_completed / wall_seconds
+                if wall_seconds > 0
+                else None
             ),
             "inference_calls": telemetry.inference_started,
             "inference_completed": telemetry.inference_completed,
@@ -2253,6 +2431,15 @@ def run_actionstream_backend_episode(
             "chunk_size": backend.spec.chunk_size,
             "request_interval_steps": None,
             "peak_cuda_memory_mib": backend.peak_cuda_memory_mib,
+            "worker_warmup": worker_warmup_record,
+            "telemetry_jsonl_path": (
+                str(telemetry_jsonl_path) if telemetry_jsonl_path is not None else None
+            ),
+            "telemetry_jsonl_sha256": (
+                _sha256_file(telemetry_jsonl_path)
+                if telemetry_jsonl_path is not None
+                else None
+            ),
             "engine_config": {
                 "inference_timeout_s": engine_config.inference_timeout_s,
                 "bounded_hold_steps": engine_config.bounded_hold_steps,
@@ -2285,11 +2472,22 @@ def run_async_episode(
     run_id: str,
     trace_path: Path,
     video_path: Path | None = None,
+    worker_warmup: Mapping[str, Any] | None = None,
+    system_monitor: NvidiaSmiMonitor | None = None,
 ) -> dict[str, Any]:
+    warmup_phase = worker_warmup is not None
+    if worker_warmup is not None and int(worker_warmup["task_id"]) != task_id:
+        raise ValueError("worker warmup must use the scored task id")
+    reset_seed = int(worker_warmup["seed"]) if worker_warmup is not None else seed
+    reset_state = (
+        int(worker_warmup["initial_state_index"])
+        if worker_warmup is not None
+        else initial_state_index
+    )
     observation, _, instruction = backend.reset_episode(
         task_id=task_id,
-        seed=seed,
-        initial_state_index=initial_state_index,
+        seed=reset_seed,
+        initial_state_index=reset_state,
     )
     fps = backend.controller_frequency_hz(task_id)
     period = 1.0 / fps
@@ -2300,18 +2498,31 @@ def run_async_episode(
         period=period,
         adaptive_selector=adaptive_selector,
     )
-    episode_id = f"{run_id}-{runtime}-{backend.spec.key}-{task_id}-{episode_index}"
-    if isinstance(queue, _AlignedQueue):
-        queue.queue.reset_episode(episode_id)
-        queue.episode_id = episode_id
-    elif isinstance(queue, _AdaptiveQueue):
-        queue.reset_episode(episode_id)
-        queue.note_control_observation(robot_eef_reference_action(observation))
+    scored_episode_id = (
+        f"{run_id}-{runtime}-{backend.spec.key}-{task_id}-{episode_index}"
+    )
+    episode_id = (
+        f"{scored_episode_id}-worker-warmup"
+        if worker_warmup is not None
+        else scored_episode_id
+    )
+
+    def reset_runtime_queue(active_episode_id: str) -> None:
+        if isinstance(queue, _AlignedQueue):
+            queue.queue.reset_episode(active_episode_id)
+            queue.episode_id = active_episode_id
+        elif isinstance(queue, _AdaptiveQueue):
+            queue.reset_episode(active_episode_id)
+            queue.note_control_observation(robot_eef_reference_action(observation))
+
+    reset_runtime_queue(episode_id)
 
     def infer(request: InferenceRequest) -> InferencePayload:
         thawed = thaw_observation_snapshot(request.observation)
         safety_reference_action: list[float] | None = None
-        if isinstance(queue, _AdaptiveQueue) and queue.selector.config.reference_mode == (
+        if isinstance(
+            queue, _AdaptiveQueue
+        ) and queue.selector.config.reference_mode == (
             "request_observation_eef_then_last_action"
         ):
             safety_reference_action = robot_eef_reference_action(thawed).tolist()
@@ -2344,11 +2555,86 @@ def run_async_episode(
 
     worker = LatestRequestWorker(
         infer,
-        delivery_delay_seconds=lambda _request, ordinal: profile.seconds_at(ordinal),
+        delivery_delay_seconds=lambda _request, ordinal: (
+            0.0 if warmup_phase else profile.seconds_at(ordinal)
+        ),
     )
     worker.reset_episode(episode_id)
+    worker_warmup_record: dict[str, Any] | None = None
+    if worker_warmup is not None:
+        if system_monitor is not None:
+            system_monitor.set_phase(
+                "worker_warmup",
+                runtime=runtime,
+                profile=profile.key,
+                task_id=task_id,
+                episode_index=episode_index,
+            )
+        warmup_calls = int(worker_warmup.get("inference_calls", 2))
+        if warmup_calls <= 0:
+            raise ValueError("worker warmup inference_calls must be positive")
+        warmup_started = time.monotonic()
+        warmup_results: list[InferenceResult] = []
+        for call in range(warmup_calls):
+            request_timestamp = time.monotonic()
+            worker.submit(
+                InferenceRequest(
+                    observation=immutable_observation_snapshot(observation),
+                    task_instruction=instruction,
+                    episode_id=episode_id,
+                    observation_control_step=call,
+                    request_timestamp=request_timestamp,
+                    queue_depth_at_request_steps=0,
+                    queue_headroom_at_request_steps=0,
+                )
+            )
+            if not worker.wait_idle(timeout=300):
+                raise TimeoutError("Timed out during official worker warmup")
+            warmup_results.extend(worker.drain_all_results())
+        worker_warmup_record = {
+            "execution_context": "latest_request_worker",
+            "task_id": task_id,
+            "initial_state_index": reset_state,
+            "seed": reset_seed,
+            "inference_calls": warmup_calls,
+            "wall_clock_seconds": time.monotonic() - warmup_started,
+            "request_wall_latency_seconds": [
+                result.end_timestamp - result.request_timestamp
+                for result in warmup_results
+            ],
+            "model_inference_latency_seconds": [
+                result.model_inference_latency_seconds for result in warmup_results
+            ],
+            "startup_latency_seconds": (
+                warmup_results[0].end_timestamp - warmup_results[0].request_timestamp
+            ),
+            "post_startup_warmup_latency_p50_seconds": _percentile(
+                [
+                    result.end_timestamp - result.request_timestamp
+                    for result in warmup_results[1:]
+                ],
+                50,
+            ),
+        }
+        observation, _, instruction = backend.reset_episode(
+            task_id=task_id,
+            seed=seed,
+            initial_state_index=initial_state_index,
+        )
+        warmup_phase = False
+        episode_id = scored_episode_id
+        reset_runtime_queue(episode_id)
+        worker.reset_episode(episode_id)
     if torch.cuda.is_available():
         torch.cuda.reset_peak_memory_stats()
+    if system_monitor is not None:
+        system_monitor.set_phase(
+            "steady_state",
+            runtime=runtime,
+            profile=profile.key,
+            task_id=task_id,
+            episode_index=episode_index,
+        )
 
     control_step = 0
     success = False
@@ -2445,7 +2731,9 @@ def run_async_episode(
                 delta = np.asarray(action) - previous_action
                 discontinuities.append(float(np.linalg.norm(delta)))
                 if previous_delta is not None:
-                    acceleration_peaks.append(float(np.linalg.norm(delta - previous_delta)))
+                    acceleration_peaks.append(
+                        float(np.linalg.norm(delta - previous_delta))
+                    )
                 previous_delta = delta
             previous_action = np.asarray(action).copy()
             action_row = {
@@ -2462,9 +2750,7 @@ def run_async_episode(
             control_step += 1
             observation = step_output.observation
             if isinstance(queue, _AdaptiveQueue):
-                queue.note_control_observation(
-                    robot_eef_reference_action(observation)
-                )
+                queue.note_control_observation(robot_eef_reference_action(observation))
             success = success or step_output.success
             if video_path:
                 frames.append(_capture_frame(observation))
@@ -2481,6 +2767,7 @@ def run_async_episode(
         worker.close()
 
     finished = time.monotonic()
+    wall_seconds = finished - episode_started
     _write_trace(trace_path, action_rows, inference_events)
     if video_path:
         _write_video(
@@ -2508,28 +2795,54 @@ def run_async_episode(
             "status": "completed",
             "success": success,
             "environment_steps": control_step,
-            "wall_clock_episode_seconds": finished - episode_started,
+            "wall_clock_episode_seconds": wall_seconds,
+            "environment_steps_per_second": (
+                control_step / wall_seconds if wall_seconds > 0 else None
+            ),
+            "inference_requests_per_second": (
+                worker.calls_started / wall_seconds if wall_seconds > 0 else None
+            ),
+            "completed_inferences_per_second": (
+                worker.calls_completed / wall_seconds if wall_seconds > 0 else None
+            ),
             "inference_calls": worker.calls_started,
             "hold_steps": int(getattr(queue, "hold_steps", 0)),
             "hold_fraction": (
-                float(getattr(queue, "hold_steps", 0)) / control_step if control_step else None
+                float(getattr(queue, "hold_steps", 0)) / control_step
+                if control_step
+                else None
             ),
             "inference_latency_p50_seconds": _percentile(
-                [event["model_inference_latency_seconds"] for event in inference_events], 50
+                [
+                    event["model_inference_latency_seconds"]
+                    for event in inference_events
+                ],
+                50,
             ),
             "inference_latency_p95_seconds": _percentile(
-                [event["model_inference_latency_seconds"] for event in inference_events], 95
+                [
+                    event["model_inference_latency_seconds"]
+                    for event in inference_events
+                ],
+                95,
             ),
             "delivery_latency_p50_seconds": _percentile(
-                [event["delivery_timestamp"] - event["request_timestamp"] for event in inference_events],
+                [
+                    event["delivery_timestamp"] - event["request_timestamp"]
+                    for event in inference_events
+                ],
                 50,
             ),
             "delivery_latency_p95_seconds": _percentile(
-                [event["delivery_timestamp"] - event["request_timestamp"] for event in inference_events],
+                [
+                    event["delivery_timestamp"] - event["request_timestamp"]
+                    for event in inference_events
+                ],
                 95,
             ),
             "dropped_prefix_steps": sum(
-                int(event["merge"].get("dropped_prefix_steps", 0)) for event in inference_events
+                int(event["merge"].get("dropped_prefix_steps", 0))
+                for event in inference_events
             ),
             "action_discontinuity_mean_l2": (
                 float(np.mean(discontinuities)) if discontinuities else None
@@ -2540,6 +2853,7 @@ def run_async_episode(
             "chunk_size": backend.spec.chunk_size,
             "request_interval_steps": backend.spec.request_interval_steps,
             "peak_cuda_memory_mib": backend.peak_cuda_memory_mib,
+            "worker_warmup": worker_warmup_record,
             "trace_path": str(trace_path),
             "trace_sha256": _sha256_file(trace_path),
             "video_path": str(video_path) if video_path else None,
@@ -2563,12 +2877,69 @@ def run_sync_episode(
     run_id: str,
     trace_path: Path,
     video_path: Path | None = None,
+    worker_warmup: Mapping[str, Any] | None = None,
+    system_monitor: NvidiaSmiMonitor | None = None,
 ) -> dict[str, Any]:
+    worker_warmup_record: dict[str, Any] | None = None
+    if worker_warmup is not None:
+        if int(worker_warmup["task_id"]) != task_id:
+            raise ValueError("worker warmup must use the scored task id")
+        if system_monitor is not None:
+            system_monitor.set_phase(
+                "worker_warmup",
+                runtime="sync_hold",
+                profile=profile.key,
+                task_id=task_id,
+                episode_index=episode_index,
+            )
+        warmup_observation, _, warmup_instruction = backend.reset_episode(
+            task_id=task_id,
+            seed=int(worker_warmup["seed"]),
+            initial_state_index=int(worker_warmup["initial_state_index"]),
+        )
+        warmup_calls = int(worker_warmup.get("inference_calls", 2))
+        if warmup_calls <= 0:
+            raise ValueError("worker warmup inference_calls must be positive")
+        warmup_started = time.monotonic()
+        warmup_latencies: list[float] = []
+        request_wall_latencies: list[float] = []
+        for _ in range(warmup_calls):
+            call_started = time.monotonic()
+            output = backend.infer_action_chunk(
+                warmup_observation,
+                warmup_instruction,
+            )
+            request_wall_latencies.append(time.monotonic() - call_started)
+            warmup_latencies.append(output.model_latency_seconds)
+        worker_warmup_record = {
+            "execution_context": "synchronous_control_process",
+            "task_id": task_id,
+            "initial_state_index": int(worker_warmup["initial_state_index"]),
+            "seed": int(worker_warmup["seed"]),
+            "inference_calls": warmup_calls,
+            "wall_clock_seconds": time.monotonic() - warmup_started,
+            "request_wall_latency_seconds": request_wall_latencies,
+            "model_inference_latency_seconds": warmup_latencies,
+            "startup_latency_seconds": request_wall_latencies[0],
+            "post_startup_warmup_latency_p50_seconds": _percentile(
+                request_wall_latencies[1:], 50
+            ),
+        }
     observation, _, instruction = backend.reset_episode(
         task_id=task_id,
         seed=seed,
         initial_state_index=initial_state_index,
     )
+    if torch.cuda.is_available():
+        torch.cuda.reset_peak_memory_stats()
+    if system_monitor is not None:
+        system_monitor.set_phase(
+            "steady_state",
+            runtime="sync_hold",
+            profile=profile.key,
+            task_id=task_id,
+            episode_index=episode_index,
+        )
     fps = backend.controller_frequency_hz(task_id)
     period = 1.0 / fps
     pending: list[np.ndarray] = []
@@ -2581,9 +2952,6 @@ def run_sync_episode(
     started = time.monotonic()
     previous_action: np.ndarray | None = None
     discontinuities: list[float] = []
-    if torch.cuda.is_available():
-        torch.cuda.reset_peak_memory_stats()
-
     while step < backend.episode_length:
         if not pending:
             request_time = time.monotonic()
@@ -2661,16 +3029,33 @@ def run_sync_episode(
             "success": success,
             "environment_steps": step,
             "wall_clock_episode_seconds": finished - started,
+            "environment_steps_per_second": (
+                step / (finished - started) if finished > started else None
+            ),
+            "inference_requests_per_second": (
+                len(events) / (finished - started) if finished > started else None
+            ),
+            "completed_inferences_per_second": (
+                len(events) / (finished - started) if finished > started else None
+            ),
             "inference_calls": len(events),
             "hold_steps": 0,
             "hold_fraction": 0.0,
             "inference_latency_p50_seconds": _percentile(latencies, 50),
             "inference_latency_p95_seconds": _percentile(latencies, 95),
             "delivery_latency_p50_seconds": _percentile(
-                [event["delivery_timestamp"] - event["request_timestamp"] for event in events], 50
+                [
+                    event["delivery_timestamp"] - event["request_timestamp"]
+                    for event in events
+                ],
+                50,
             ),
             "delivery_latency_p95_seconds": _percentile(
-                [event["delivery_timestamp"] - event["request_timestamp"] for event in events], 95
+                [
+                    event["delivery_timestamp"] - event["request_timestamp"]
+                    for event in events
+                ],
+                95,
             ),
             "dropped_prefix_steps": 0,
             "action_discontinuity_mean_l2": (
@@ -2682,6 +3067,7 @@ def run_sync_episode(
             "chunk_size": backend.spec.chunk_size,
             "request_interval_steps": backend.spec.chunk_size,
             "peak_cuda_memory_mib": backend.peak_cuda_memory_mib,
+            "worker_warmup": worker_warmup_record,
             "trace_path": str(trace_path),
             "trace_sha256": _sha256_file(trace_path),
             "video_path": str(video_path) if video_path else None,
@@ -2691,7 +3077,9 @@ def run_sync_episode(
     return record
 
 
-def _selected(values: Sequence[str] | None, available: Mapping[str, Any], label: str) -> list[str]:
+def _selected(
+    values: Sequence[str] | None, available: Mapping[str, Any], label: str
+) -> list[str]:
     selected = list(values) if values else list(available)
     unknown = set(selected) - set(available)
     if unknown:
@@ -2710,8 +3098,12 @@ def run(args: argparse.Namespace) -> list[dict[str, Any]]:
         raise ValueError(f"Unknown runtimes: {sorted(unknown_runtimes)}")
     environment = protocol.raw["environment"]
     task_ids = list(args.task_ids or environment["task_ids"])
-    state_indices = list(args.initial_state_indices or environment["initial_state_indices"])
-    episodes = args.episodes_per_task or int(protocol.raw["compact_matrix"]["episodes_per_task"])
+    state_indices = list(
+        args.initial_state_indices or environment["initial_state_indices"]
+    )
+    episodes = args.episodes_per_task or int(
+        protocol.raw["compact_matrix"]["episodes_per_task"]
+    )
     if len(state_indices) < episodes:
         raise ValueError("Not enough initial-state indices for requested episodes")
     episode_length = int(args.episode_length or environment["episode_length"])
@@ -2721,6 +3113,23 @@ def run(args: argparse.Namespace) -> list[dict[str, Any]]:
     receipt_path = output_dir / "run_receipt.json"
     if not args.append and (metrics_path.exists() or receipt_path.exists()):
         raise FileExistsError(f"Refusing to overwrite existing run in {output_dir}")
+
+    measurement_v2 = protocol.raw.get("measurement_v2")
+    if measurement_v2 is not None and len(runtimes) != 1:
+        raise ValueError(
+            "measurement_v2 requires exactly one runtime per fresh process"
+        )
+    worker_warmup = (
+        None if measurement_v2 is None else measurement_v2.get("worker_warmup")
+    )
+    system_monitor: NvidiaSmiMonitor | None = None
+    if measurement_v2 is not None:
+        system_monitor = NvidiaSmiMonitor(
+            output_dir / "system_telemetry.jsonl",
+            interval_s=float(measurement_v2.get("nvidia_smi_interval_seconds", 0.2)),
+        )
+        system_monitor.start()
+        system_monitor.set_phase("process_startup", runtime=runtimes[0])
 
     bindings = load_upstream_bindings(args.lerobot_root)
     run_id = args.run_id or f"current-{int(time.time())}-{uuid.uuid4().hex[:8]}"
@@ -2732,6 +3141,13 @@ def run(args: argparse.Namespace) -> list[dict[str, Any]]:
     with metrics_path.open(mode, encoding="utf-8", buffering=1) as stream:
         for model_key in model_keys:
             spec = protocol.models[model_key]
+            if system_monitor is not None:
+                system_monitor.set_phase(
+                    "model_load",
+                    runtime=runtimes[0],
+                    model_key=model_key,
+                )
+            model_load_started = time.monotonic()
             backend = CurrentLeRobotBackend(
                 spec=spec,
                 task_ids=task_ids,
@@ -2740,6 +3156,7 @@ def run(args: argparse.Namespace) -> list[dict[str, Any]]:
                 seed=base_seed,
                 device=args.device,
             )
+            model_load_wall_seconds = time.monotonic() - model_load_started
             try:
                 actual_rtc = backend.supports_rtc
                 compatibility.append(
@@ -2750,6 +3167,7 @@ def run(args: argparse.Namespace) -> list[dict[str, Any]]:
                         "rtc_expected": spec.rtc_expected,
                         "rtc_supported": actual_rtc,
                         "rtc_expectation_match": actual_rtc is spec.rtc_expected,
+                        "model_load_wall_seconds": model_load_wall_seconds,
                     }
                 )
                 if actual_rtc is not spec.rtc_expected:
@@ -2787,12 +3205,22 @@ def run(args: argparse.Namespace) -> list[dict[str, Any]]:
                                     f"task{task_id}__ep{episode_index}"
                                 )
                                 trace_path = output_dir / "traces" / f"{stem}.json"
-                                capture = bool(args.capture and task_id == task_ids[0] and episode_index == 0)
-                                video_path = output_dir / "videos" / f"{stem}.mp4" if capture else None
+                                capture = bool(
+                                    args.capture
+                                    and task_id == task_ids[0]
+                                    and episode_index == 0
+                                )
+                                video_path = (
+                                    output_dir / "videos" / f"{stem}.mp4"
+                                    if capture
+                                    else None
+                                )
                                 if runtime == "sync_hold":
                                     record = run_sync_episode(
                                         backend,
-                                        experiment_id=str(protocol.raw["experiment_id"]),
+                                        experiment_id=str(
+                                            protocol.raw["experiment_id"]
+                                        ),
                                         profile=profile,
                                         task_id=task_id,
                                         episode_index=episode_index,
@@ -2801,11 +3229,15 @@ def run(args: argparse.Namespace) -> list[dict[str, Any]]:
                                         run_id=run_id,
                                         trace_path=trace_path,
                                         video_path=video_path,
+                                        worker_warmup=worker_warmup,
+                                        system_monitor=system_monitor,
                                     )
                                 elif runtime in ACTIONSTREAM_BACKEND_RUNTIMES:
                                     record = run_actionstream_backend_episode(
                                         backend,
-                                        experiment_id=str(protocol.raw["experiment_id"]),
+                                        experiment_id=str(
+                                            protocol.raw["experiment_id"]
+                                        ),
                                         runtime=runtime,
                                         engine_config=_actionstream_backend_config(
                                             protocol,
@@ -2819,11 +3251,15 @@ def run(args: argparse.Namespace) -> list[dict[str, Any]]:
                                         run_id=run_id,
                                         trace_path=trace_path,
                                         video_path=video_path,
+                                        worker_warmup=worker_warmup,
+                                        system_monitor=system_monitor,
                                     )
                                 else:
                                     record = run_async_episode(
                                         backend,
-                                        experiment_id=str(protocol.raw["experiment_id"]),
+                                        experiment_id=str(
+                                            protocol.raw["experiment_id"]
+                                        ),
                                         bindings=bindings,
                                         runtime=runtime,
                                         adaptive_selector=protocol.adaptive_selector,
@@ -2835,8 +3271,13 @@ def run(args: argparse.Namespace) -> list[dict[str, Any]]:
                                         run_id=run_id,
                                         trace_path=trace_path,
                                         video_path=video_path,
+                                        worker_warmup=worker_warmup,
+                                        system_monitor=system_monitor,
                                     )
-                                stream.write(json.dumps(record, sort_keys=True, allow_nan=False) + "\n")
+                                stream.write(
+                                    json.dumps(record, sort_keys=True, allow_nan=False)
+                                    + "\n"
+                                )
                                 records.append(record)
                                 print(
                                     f"{model_key} {runtime} {profile_key} task={task_id} "
@@ -2846,6 +3287,12 @@ def run(args: argparse.Namespace) -> list[dict[str, Any]]:
                                 )
             finally:
                 backend.close()
+
+    system_gpu_summary: dict[str, Any] | None = None
+    if system_monitor is not None:
+        system_monitor.set_phase("process_close", runtime=runtimes[0])
+        system_monitor.stop()
+        system_gpu_summary = system_monitor.summary()
 
     receipt = {
         "schema_version": 1,
@@ -2866,6 +3313,11 @@ def run(args: argparse.Namespace) -> list[dict[str, Any]]:
             }
         ),
         "actionstream_backend": protocol.raw.get("actionstream_backend"),
+        "measurement_v2": measurement_v2,
+        "system_gpu": system_gpu_summary,
+        "system_telemetry_sha256": (
+            None if system_monitor is None else _sha256_file(system_monitor.path)
+        ),
         "selection": {
             "models": model_keys,
             "runtimes": runtimes,

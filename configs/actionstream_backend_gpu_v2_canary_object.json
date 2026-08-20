@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "benchmark_version": 2,
+  "experiment_id": "actionstream_backend_gpu_v2_canary_object",
+  "protocol_status": "frozen_canary",
+  "frozen_utc": "2026-08-20T19:04:59Z",
+  "task_family": "object",
+  "candidate": {
+    "base_commit": "b3da160f7fe22cc3182e5e1991c27e5cdac5e12a",
+    "current_baselines_sha256": "3a9c989595af7b998a7588c1acd45a02d320f763faa0b0da2de659385b315cb9",
+    "lerobot_inference_sha256": "36648e28f58c37d36b3432e2db970d4a5bc47fcd0066f244d1eb3fa310ed9144",
+    "gpu_measurement_sha256": "73ef342a0f2da5f7f69394c347c5d4e2432a7dde47460ded1de712102aa7f6a0",
+    "orchestrator_sha256": "ff8e321245b263ac104ac3af6e44ca7b0c9d8411ffc6cc9662e481e5e4b38d72",
+    "report_sha256": "c25223ca81ddfcd661017e990883b5df3fb188195f8389cfafcefda0dc57aef2"
+  },
+  "source": {
+    "repository_url": "https://github.com/huggingface/lerobot.git",
+    "commit": "6adf51511b7625090eade8d82d9f61a1846ebe56",
+    "source_version": "0.6.2"
+  },
+  "models": [
+    {
+      "key": "xvla",
+      "model_id": "lerobot/xvla-libero",
+      "revision": "12e8783e996944f5c97e490d37d4c145484ed70a",
+      "control_mode": "absolute",
+      "chunk_size": 30,
+      "request_interval_steps": 10,
+      "rtc_expected": false,
+      "required": true,
+      "rename_map": {}
+    }
+  ],
+  "runtimes": [
+    "sync_hold",
+    "lerobot_weighted_average",
+    "lerobot_latest_only",
+    "actionstream_backend_aligned",
+    "actionstream_backend_guarded"
+  ],
+  "environment": {
+    "type": "libero",
+    "suite": "libero_object",
+    "task_ids": [5],
+    "task_description_source": "official LIBERO task registry",
+    "episode_length": 300,
+    "control_frequency_hz": 20.0,
+    "initial_state_indices": [46],
+    "base_seed": 202608214600
+  },
+  "delay_profiles": [
+    {"key": "fixed_0000", "kind": "fixed", "milliseconds": 0},
+    {"key": "fixed_0250", "kind": "fixed", "milliseconds": 250},
+    {"key": "fixed_0950", "kind": "fixed", "milliseconds": 950},
+    {
+      "key": "jitter_0600_pm0400_v2",
+      "kind": "seeded_uniform",
+      "center_milliseconds": 600,
+      "half_width_milliseconds": 400,
+      "seed": 202608214601,
+      "trace_length": 4096
+    },
+    {
+      "key": "burst_0250_to2000_v2",
+      "kind": "seeded_burst",
+      "base_center_milliseconds": 250,
+      "base_half_width_milliseconds": 100,
+      "burst_probability": 0.15,
+      "burst_min_milliseconds": 1600,
+      "burst_max_milliseconds": 2200,
+      "seed": 202608214602,
+      "trace_length": 4096
+    },
+    {
+      "key": "disconnect_recovery_v2_canary",
+      "kind": "fixed",
+      "milliseconds": 250,
+      "disconnect_ordinals": [0, 7],
+      "comparison_eligible": false
+    }
+  ],
+  "actionstream_backend": {
+    "common": {
+      "inference_timeout_s": 5.0,
+      "bounded_hold_steps": 2,
+      "retry_backoff_s": 0.05,
+      "max_consecutive_failures": 10,
+      "join_timeout_s": 10.0
+    },
+    "actionstream_backend_aligned": {"latest_only_fallback": false},
+    "actionstream_backend_guarded": {"latest_only_fallback": true}
+  },
+  "measurement_v2": {
+    "fresh_process_per_runtime": true,
+    "nvidia_smi_interval_seconds": 0.2,
+    "worker_warmup": {
+      "task_id": 5,
+      "initial_state_index": 45,
+      "seed": 202608214500,
+      "inference_calls": 2
+    },
+    "startup_latency_definition": "wall time of the first inference submitted through the actual scored runtime execution context",
+    "steady_state_definition": "all scored inference calls after two non-scored calls in that same worker or synchronous execution context",
+    "vram_definition": "nvidia-smi process residency sampled in a fresh runtime process; torch allocated peak retained as a separate field",
+    "gpu_utilization_definition": "nvidia-smi device utilization samples with process PID residency provenance",
+    "request_rate_definition": "scored inference requests started divided by scored episode wall time"
+  },
+  "compact_matrix": {
+    "episodes_per_task": 1,
+    "paired": true,
+    "reuse_delay_trace_across_runtimes": true
+  },
+  "evidence_boundary": {
+    "reset_identity": "suite + task_id + initial_state_index + seed",
+    "worker_warmup_states": [45],
+    "canary_states": [46],
+    "holdout_states": [47, 48, 49],
+    "seeded_network_traces_disjoint_from_v1_and_between_canary_holdout": true,
+    "fixed_profiles_are_shared_deterministic_operating_points_by_definition": true,
+    "post_holdout_tuning_forbidden": true
+  },
+  "fairness": {
+    "same_task_checkpoint_observation_action_success_and_safety_contract": true,
+    "same_reset_seed_and_network_trace_across_runtimes": true,
+    "official_async_source": "pinned LeRobot weighted_average aggregation",
+    "latest_only_source": "pinned LeRobot latest_only aggregation",
+    "actionstream_source": "formal ActionStreamInferenceEngine",
+    "disconnect_profile_scope": "backend engineering canary only; excluded from official baseline effects"
+  },
+  "decision_rule": {
+    "primary_reference": "lerobot_latest_only",
+    "secondary_reference": "lerobot_weighted_average",
+    "fixed_0950_regression_rule": "aligned is LIMITED_OPERATING_ENVELOPE if observed paired success difference is negative or paired mean environment-step difference is positive",
+    "no_universal_superiority_claim": true
+  }
+}

@@ -17,7 +17,7 @@ Validated 435 episodes, 435 traces, 135 videos, and 75043 final 7D actions.
 The report contains 375 holdout condition-episodes across 1 model(s) and 5 runtime label(s).
 Peak allocated CUDA memory was 12259.0 MiB during scored episodes and 12250.8 MiB during non-scored cold warmup.
 
-See `main_table.csv`, `paired_effects.csv`, `failure_taxonomy.csv`, and `latency_success_operating_points.png` for the auditable results.
+See `main_table.csv`, `paired_effects.csv`, `failure_taxonomy.csv`, and `latency_success_operating_points.png` for the auditable results. The separately labeled `secondary_paired_effects.csv` contrasts aligned with official weighted-average Async.
 
 ## Holdout main table
 
@@ -95,5 +95,17 @@ Positive success differences favor the estimate runtime; negative step differenc
 | xvla | jitter_0600_pm0400_holdout | lerobot_weighted_average | environment_steps | 15 | 62.87 | [22.00, 104.60] |
 | xvla | jitter_0600_pm0400_holdout | sync_hold | success | 15 | 0.0000 | [0.0000, 0.0000] |
 | xvla | jitter_0600_pm0400_holdout | sync_hold | environment_steps | 15 | -14.20 | [-20.53, -8.07] |
+
+## Secondary paired contrast versus official weighted-average Async
+
+This contrast uses the same frozen X-VLA holdout cells and pairing invariants. The official Async baseline was included in the frozen protocol, but latest-only remains the primary reference. This secondary table was added after the holdout and must not be presented as a comparator switch or universal superiority claim.
+
+| Profile | Async success | Aligned success | Success difference [95% CI] | Async mean steps | Aligned mean steps | Step difference [95% CI] |
+|---|---:|---:|---:|---:|---:|---:|
+| burst_0250_to2000_holdout | 9/15 | 13/15 | 0.2667 [0.0000, 0.5333] | 208.80 | 186.07 | -22.73 [-66.73, 19.53] |
+| fixed_0000 | 10/15 | 12/15 | 0.1333 [-0.1333, 0.4000] | 189.00 | 184.93 | -4.07 [-50.40, 38.67] |
+| fixed_0250 | 9/15 | 13/15 | 0.2667 [0.0000, 0.5333] | 194.60 | 149.00 | -45.60 [-92.60, -1.20] |
+| fixed_0950 | 11/15 | 10/15 | -0.0667 [-0.4000, 0.2667] | 187.00 | 206.80 | 19.80 [-32.87, 75.53] |
+| jitter_0600_pm0400_holdout | 8/15 | 14/15 | 0.4000 [0.1333, 0.6667] | 207.20 | 144.87 | -62.33 [-105.20, -21.53] |
 
 Queue-age cells unsupported by upstream queues are blank rather than zero. Disconnect/recovery is a backend-only canary and is not treated as a fair official-baseline effect. This benchmark is LIBERO simulation evidence, not real-robot safety evidence.

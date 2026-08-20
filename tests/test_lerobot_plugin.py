@@ -3,17 +3,11 @@ from __future__ import annotations
 from types import SimpleNamespace
 from unittest.mock import MagicMock
 
-import pytest
-
 from actionstream.lerobot_inference import ActionStreamInferenceEngine
 
 import lerobot.rollout.inference as lerobot_inference
 
-
-if not hasattr(lerobot_inference, "register_inference_engine"):
-    pytest.skip(
-        "pinned upstream registry patch is not applied", allow_module_level=True
-    )
+assert hasattr(lerobot_inference, "register_inference_engine")
 
 from lerobot.rollout.inference import create_inference_engine  # noqa: E402
 from lerobot_policy_actionstream import ActionStreamRolloutInferenceConfig  # noqa: E402

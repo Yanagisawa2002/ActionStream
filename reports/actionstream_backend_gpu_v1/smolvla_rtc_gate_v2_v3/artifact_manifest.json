@@ -1,0 +1,26 @@
+{
+  "canary_table.csv": {
+    "bytes": 812,
+    "sha256": "fcb1062655f797b3886e26e9f59381addc39d6c34e0eb7c847c23c7478377198"
+  },
+  "development_task_screen.csv": {
+    "bytes": 3561,
+    "sha256": "f294c50ee2f6cd55743cc6f0dc369b3d4ed8157e3436dde23c3fd6340cc783b5"
+  },
+  "failure_taxonomy.csv": {
+    "bytes": 169,
+    "sha256": "7b11d2fc5896f1eab3a661f742efec20f9a041aad4315ea5b8782bf95e2dc466"
+  },
+  "report.md": {
+    "bytes": 2504,
+    "sha256": "adddfc990aaaff6392b7f4aacf96650738e333ea4ce9d13e111e16ec71261749"
+  },
+  "summary.json": {
+    "bytes": 2396,
+    "sha256": "4749fa4df926ff3d39df9a33a2691ea72c2ec4f6d0b4b5ce7cacf0b11bc6fff5"
+  },
+  "sync_gate_by_suite.png": {
+    "bytes": 65766,
+    "sha256": "c1df9133ec837bea6ad48c1b7bd18038c3e83b1e479d0e02462bb5945bfd714c"
+  }
+}

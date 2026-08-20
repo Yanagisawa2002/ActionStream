@@ -285,7 +285,12 @@ def build_task_table(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return task_rows
 
 
-def build_paired_effects(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def _build_paired_effects(
+    rows: list[dict[str, Any]],
+    *,
+    reference_name: str,
+    estimate_names: set[str] | None = None,
+) -> list[dict[str, Any]]:
     groups: dict[tuple[str, str, str], list[dict[str, Any]]] = defaultdict(list)
     for row in rows:
         groups[(_split(row), str(row["model_key"]), str(row["delay_profile"]))].append(row)
@@ -294,12 +299,13 @@ def build_paired_effects(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
         by_runtime: dict[str, dict[tuple[Any, ...], dict[str, Any]]] = defaultdict(dict)
         for row in group:
             by_runtime[str(row["runtime"])][_pair_key(row)] = row
-        reference_name = "lerobot_latest_only"
         if reference_name not in by_runtime:
             continue
         reference = by_runtime[reference_name]
         for runtime, estimate in sorted(by_runtime.items()):
-            if runtime == reference_name:
+            if runtime == reference_name or (
+                estimate_names is not None and runtime not in estimate_names
+            ):
                 continue
             if set(reference) != set(estimate):
                 raise ValueError(
@@ -340,6 +346,33 @@ def build_paired_effects(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
                     }
                 )
     return effects
+
+
+def build_paired_effects(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Build the preregistered primary contrasts against latest-only."""
+
+    return _build_paired_effects(rows, reference_name="lerobot_latest_only")
+
+
+def build_secondary_paired_effects(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Contrast aligned with official weighted-average Async as secondary evidence.
+
+    The frozen protocol included both runtimes, but latest-only remains the
+    primary report reference.  Keeping this contrast in a separate artifact
+    prevents a post-holdout comparator switch from being mistaken for the
+    headline analysis.
+    """
+
+    formal_xvla = [
+        row
+        for row in rows
+        if _split(row) == "holdout" and str(row["model_key"]) == "xvla"
+    ]
+    return _build_paired_effects(
+        formal_xvla,
+        reference_name="lerobot_weighted_average",
+        estimate_names={"actionstream_backend_aligned"},
+    )
 
 
 def build_failure_taxonomy(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -485,6 +518,7 @@ def write_report(input_root: Path, output_dir: Path) -> dict[str, Any]:
     main_table = build_main_table(rows)
     task_table = build_task_table(rows)
     paired_effects = build_paired_effects(rows)
+    secondary_paired_effects = build_secondary_paired_effects(rows)
     failures = build_failure_taxonomy(rows)
     gates = evaluate_gates(rows, receipts)
     warmup_peaks = [
@@ -497,6 +531,7 @@ def write_report(input_root: Path, output_dir: Path) -> dict[str, Any]:
     _write_csv(output_dir / "main_table.csv", main_table)
     _write_csv(output_dir / "task_table.csv", task_table)
     _write_csv(output_dir / "paired_effects.csv", paired_effects)
+    _write_csv(output_dir / "secondary_paired_effects.csv", secondary_paired_effects)
     _write_csv(output_dir / "failure_taxonomy.csv", failures)
     _write_latency_plot(output_dir / "latency_success_operating_points.png", main_table)
 
@@ -506,6 +541,13 @@ def write_report(input_root: Path, output_dir: Path) -> dict[str, Any]:
         "gates": gates,
         "condition_count": len(main_table),
         "paired_effect_count": len(paired_effects),
+        "secondary_paired_effect_count": len(secondary_paired_effects),
+        "secondary_contrast": {
+            "reference_runtime": "lerobot_weighted_average",
+            "estimate_runtime": "actionstream_backend_aligned",
+            "status": "secondary_post_holdout_analysis_of_frozen_predeclared_cells",
+            "primary_reference_unchanged": "lerobot_latest_only",
+        },
         "failure_count": sum(int(row["count"]) for row in failures),
         "gpu_memory_summary": {
             "non_scored_warmup_peak_cuda_memory_mib_max": (
@@ -569,7 +611,8 @@ def write_report(input_root: Path, output_dir: Path) -> dict[str, Any]:
             ),
             "",
             "See `main_table.csv`, `paired_effects.csv`, `failure_taxonomy.csv`, and "
-            "`latency_success_operating_points.png` for the auditable results.",
+            "`latency_success_operating_points.png` for the auditable results. The separately labeled "
+            "`secondary_paired_effects.csv` contrasts aligned with official weighted-average Async.",
             "",
             "## Holdout main table",
             "",
@@ -622,6 +665,44 @@ def write_report(input_root: Path, output_dir: Path) -> dict[str, Any]:
                     str(row["paired_episode_count"]),
                     compact(row["paired_mean_difference"], digits=4 if row["metric"] == "success" else 2),
                     f"[{compact(row['ci95_low'], digits=4 if row['metric'] == 'success' else 2)}, {compact(row['ci95_high'], digits=4 if row['metric'] == 'success' else 2)}]",
+                )
+            )
+            + " |"
+        )
+    secondary_by_profile: dict[str, dict[str, dict[str, Any]]] = defaultdict(dict)
+    for row in secondary_paired_effects:
+        secondary_by_profile[str(row["delay_profile"])][str(row["metric"])] = row
+    report_lines.extend(
+        [
+            "",
+            "## Secondary paired contrast versus official weighted-average Async",
+            "",
+            "This contrast uses the same frozen X-VLA holdout cells and pairing invariants. The official Async "
+            "baseline was included in the frozen protocol, but latest-only remains the primary reference. This "
+            "secondary table was added after the holdout and must not be presented as a comparator switch or "
+            "universal superiority claim.",
+            "",
+            "| Profile | Async success | Aligned success | Success difference [95% CI] | Async mean steps | Aligned mean steps | Step difference [95% CI] |",
+            "|---|---:|---:|---:|---:|---:|---:|",
+        ]
+    )
+    for profile, metrics in sorted(secondary_by_profile.items()):
+        success_effect = metrics["success"]
+        step_effect = metrics["environment_steps"]
+        paired_n = int(success_effect["paired_episode_count"])
+        report_lines.append(
+            "| "
+            + " | ".join(
+                (
+                    profile,
+                    f"{int(round(float(success_effect['reference_mean']) * paired_n))}/{paired_n}",
+                    f"{int(round(float(success_effect['estimate_mean']) * paired_n))}/{paired_n}",
+                    f"{compact(success_effect['paired_mean_difference'], digits=4)} "
+                    f"[{compact(success_effect['ci95_low'], digits=4)}, {compact(success_effect['ci95_high'], digits=4)}]",
+                    compact(step_effect["reference_mean"]),
+                    compact(step_effect["estimate_mean"]),
+                    f"{compact(step_effect['paired_mean_difference'])} "
+                    f"[{compact(step_effect['ci95_low'])}, {compact(step_effect['ci95_high'])}]",
                 )
             )
             + " |"

@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "experiment_id": "actionstream_backend_gpu_smolvla_rtc_canary_object_v2",
+  "protocol_status": "frozen_canary_gate_not_holdout",
+  "frozen_utc": "2026-08-21T00:08:00+08:00",
+  "candidate": {
+    "base_commit": "6751b25adea2748b198935cdef6e1b3995b3a5c5",
+    "current_baselines_sha256": "0e929c7ee82acfed38d06ab67a36aadbdeb22b7b1b0f34eca0f35ccd4722d0fd",
+    "lerobot_inference_sha256": "d04549c847f7101ab78df52567a273cf1a9b707d0c219c6033237bd36cdb19d2"
+  },
+  "source": {"repository_url": "https://github.com/huggingface/lerobot.git", "commit": "d451fe4f1f1b00a812f95aa9534389b5e42ab155", "source_version": "0.6.2"},
+  "selection": {
+    "rule_sha256": "d54c4e61275d9e1ef9174473af618b2f2bc83825895889a44cbec85e92c9d5b3",
+    "development_metrics_sha256": "546829a0838c322eb69c59950230654f38f07d7bc0526f9ae0c00a3ebb529f0c1",
+    "development_receipt_sha256": "d6e1ce0f00fe8194e4330597b797603215d9a8cd4fc275e0b7d4e65188579f354",
+    "selected_task_id": 0
+  },
+  "environment": {
+    "type": "libero", "suite": "libero_object", "task_ids": [0],
+    "task_description": "pick up the alphabet soup and place it in the basket",
+    "episode_length": 300, "control_frequency_hz": 20.0,
+    "initial_state_indices": [37, 39], "base_seed": 2026083101
+  },
+  "gpu_warmup": {"task_id": 0, "initial_state_index": 38, "seed": 2026083198, "inference_calls": 1},
+  "models": [{
+    "key": "smolvla", "model_id": "lerobot/smolvla_libero", "revision": "31d453f7edd78c839a8bbc39744a292686daf0de",
+    "control_mode": "relative", "chunk_size": 50, "request_interval_steps": 10,
+    "rtc_expected": true, "rtc_execution_horizon": 10, "required": true,
+    "dependencies": [{"model_id": "HuggingFaceTB/SmolVLM2-500M-Video-Instruct", "revision": "7b375e1b73b11138ff12fe22c8f2822d8fe03467"}],
+    "rename_map": {"observation.images.image": "observation.images.camera1", "observation.images.image2": "observation.images.camera2"}
+  }],
+  "runtimes": ["sync_hold"],
+  "delay_profiles": [{"key": "fixed_0000", "kind": "fixed", "milliseconds": 0}],
+  "compact_matrix": {"episodes_per_task": 2, "paired": false, "reuse_delay_trace_across_runtimes": true},
+  "evidence_boundary": {"holdout_eligible": false, "required_sync_successes": "2/2", "formal_release_condition": "All three suites must pass 2/2 before any formal holdout is read or run."}
+}

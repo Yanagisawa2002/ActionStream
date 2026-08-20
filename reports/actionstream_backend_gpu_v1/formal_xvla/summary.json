@@ -21,6 +21,13 @@
   },
   "paired_effect_count": 76,
   "schema_version": 1,
+  "secondary_contrast": {
+    "estimate_runtime": "actionstream_backend_aligned",
+    "primary_reference_unchanged": "lerobot_latest_only",
+    "reference_runtime": "lerobot_weighted_average",
+    "status": "secondary_post_holdout_analysis_of_frozen_predeclared_cells"
+  },
+  "secondary_paired_effect_count": 10,
   "telemetry_boundary": {
     "disconnect_recovery": "Backend-only canary, excluded from official-baseline paired effects.",
     "gpu_memory": "torch.cuda.max_memory_allocated, not total nvidia-smi process residency.",

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+import multiprocessing
 import threading
 import time
 from types import SimpleNamespace
@@ -358,3 +360,114 @@ def test_repeated_failures_mark_engine_failed_and_signal_rollout_shutdown() -> N
         assert engine.get_action(None) is None
     finally:
         engine.stop()
+
+
+def _process_config(telemetry_path, *, timeout_s: float = 0.15):
+    return ActionStreamInferenceConfig(
+        inference_timeout_s=timeout_s,
+        retry_backoff_s=0.0,
+        max_consecutive_failures=3,
+        join_timeout_s=2.0,
+        transport_mode="process",
+        process_transport_factory=(
+            "actionstream.transport_stress_fixture:create_transport"
+        ),
+        process_transport_start_method="spawn",
+        process_transport_startup_timeout_s=10.0,
+        process_transport_terminate_timeout_s=1.0,
+        telemetry_jsonl_path=str(telemetry_path),
+    )
+
+
+def _assert_no_transport_children() -> None:
+    assert all(
+        child.name != "ActionStreamTransport"
+        for child in multiprocessing.active_children()
+    )
+
+
+def test_process_deadline_kills_hung_transport_and_recovers_with_new_observation(
+    tmp_path,
+) -> None:
+    telemetry_path = tmp_path / "deadline.jsonl"
+    engine = _engine(
+        lambda _obs, _task: torch.empty(0),
+        config=_process_config(telemetry_path),
+    )
+    engine.reset()
+    engine.start()
+    engine.resume()
+    try:
+        engine.notify_observation({"mode": "hang", "value": 1})
+        _wait_for(lambda: engine.telemetry.transport_process_restarts == 1, timeout=5)
+        engine.notify_observation({"mode": "ok", "value": 7})
+        _wait_for(lambda: engine.telemetry.inference_timeouts == 1, timeout=5)
+        _wait_for(lambda: engine.telemetry.chunks_accepted == 1, timeout=5)
+        torch.testing.assert_close(engine.get_action(None), torch.tensor([7.0, 7.0]))
+        telemetry = engine.telemetry
+        assert telemetry.deadline_enforced is True
+        assert telemetry.transport_process_restarts == 2
+        assert telemetry.recoveries == 1
+    finally:
+        engine.stop()
+
+    events = [
+        json.loads(line)
+        for line in telemetry_path.read_text(encoding="utf-8").splitlines()
+    ]
+    assert {event["event"] for event in events} >= {
+        "engine_started",
+        "inference_timeout",
+        "inference_completed",
+        "engine_stopped",
+    }
+    assert all(event["schema_version"] == 1 for event in events)
+    _assert_no_transport_children()
+
+
+def test_process_reset_preempts_repeated_hung_calls_without_orphans(tmp_path) -> None:
+    engine = _engine(
+        lambda _obs, _task: torch.empty(0),
+        config=_process_config(tmp_path / "reset.jsonl", timeout_s=5.0),
+    )
+    engine.reset()
+    engine.start()
+    engine.resume()
+    try:
+        for cycle in range(3):
+            engine.notify_observation({"mode": "hang", "value": cycle})
+            expected_restarts = cycle + 1
+            _wait_for(
+                lambda: engine.telemetry.transport_process_restarts
+                >= expected_restarts,
+                timeout=5,
+            )
+            started = time.monotonic()
+            engine.reset()
+            assert time.monotonic() - started < 1.0
+            engine.resume()
+
+        engine.notify_observation({"mode": "ok", "value": 9})
+        _wait_for(lambda: engine.telemetry.chunks_accepted == 1, timeout=5)
+        torch.testing.assert_close(engine.get_action(None), torch.tensor([9.0, 9.0]))
+        assert engine.telemetry.transport_cancellations >= 3
+    finally:
+        engine.stop()
+    _assert_no_transport_children()
+
+
+def test_process_stop_preempts_hung_call_with_bounded_join(tmp_path) -> None:
+    engine = _engine(
+        lambda _obs, _task: torch.empty(0),
+        config=_process_config(tmp_path / "stop.jsonl", timeout_s=30.0),
+    )
+    engine.reset()
+    engine.start()
+    engine.resume()
+    engine.notify_observation({"mode": "hang"})
+    _wait_for(lambda: engine.telemetry.transport_process_restarts == 1, timeout=5)
+    started = time.monotonic()
+    engine.stop()
+    assert time.monotonic() - started < 1.0
+    assert not engine.failed
+    _assert_no_transport_children()

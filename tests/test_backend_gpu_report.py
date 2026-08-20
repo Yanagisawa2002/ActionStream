@@ -4,6 +4,7 @@ from actionstream.backend_gpu_report import (
     build_failure_taxonomy,
     build_main_table,
     build_paired_effects,
+    build_secondary_paired_effects,
     evaluate_gates,
 )
 
@@ -60,7 +61,9 @@ def test_main_table_preserves_unavailable_upstream_queue_age() -> None:
 
     table = build_main_table(rows)
     upstream = next(row for row in table if row["runtime"] == "lerobot_latest_only")
-    guarded = next(row for row in table if row["runtime"] == "actionstream_backend_guarded")
+    guarded = next(
+        row for row in table if row["runtime"] == "actionstream_backend_guarded"
+    )
 
     assert upstream["queue_age_p50_steps_median"] is None
     assert upstream["fallback_activations_sum"] is None
@@ -78,10 +81,32 @@ def test_paired_effects_use_latest_only_as_reference() -> None:
     effects = build_paired_effects(rows)
 
     assert len(effects) == 2
-    step_effect = next(item for item in effects if item["metric"] == "environment_steps")
+    step_effect = next(
+        item for item in effects if item["metric"] == "environment_steps"
+    )
     assert step_effect["reference_runtime"] == "lerobot_latest_only"
     assert step_effect["estimate_runtime"] == "actionstream_backend_guarded"
     assert step_effect["paired_mean_difference"] == -10.0
+
+
+def test_secondary_paired_effects_keep_official_async_separate() -> None:
+    rows = [
+        _row("lerobot_weighted_average", success=False, steps=200),
+        _row("actionstream_backend_aligned", success=True, steps=150),
+        _row("lerobot_latest_only", success=True, steps=140),
+    ]
+
+    effects = build_secondary_paired_effects(rows)
+
+    assert len(effects) == 2
+    success_effect = next(item for item in effects if item["metric"] == "success")
+    step_effect = next(
+        item for item in effects if item["metric"] == "environment_steps"
+    )
+    assert success_effect["reference_runtime"] == "lerobot_weighted_average"
+    assert success_effect["estimate_runtime"] == "actionstream_backend_aligned"
+    assert success_effect["paired_mean_difference"] == 1.0
+    assert step_effect["paired_mean_difference"] == -50.0
 
 
 def test_failure_taxonomy_does_not_turn_missing_telemetry_into_zero_claims() -> None:
@@ -106,7 +131,9 @@ def test_xvla_canary_gate_requires_all_three_sync_suites_and_recovery() -> None:
         rows.append(sync)
         for runtime in ("actionstream_backend_aligned", "actionstream_backend_guarded"):
             disconnect = _row(runtime, suite=suite)
-            disconnect["experiment_id"] = f"actionstream_backend_gpu_xvla_canary_{suite}_v1"
+            disconnect["experiment_id"] = (
+                f"actionstream_backend_gpu_xvla_canary_{suite}_v1"
+            )
             disconnect["delay_profile"] = "disconnect_recovery_canary"
             disconnect["status"] = "completed"
             disconnect["disconnects"] = 2

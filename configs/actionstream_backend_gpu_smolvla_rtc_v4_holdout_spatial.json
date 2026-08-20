@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "smolvla_protocol_version": 4,
+  "experiment_id": "actionstream_backend_gpu_smolvla_rtc_v4_holdout_spatial",
+  "protocol_status": "frozen_holdout",
+  "frozen_utc": "2026-08-20T21:30:05Z",
+  "task_family": "spatial",
+  "candidate": {
+    "base_commit": "834366c9de1cb5e300182378311314e77eca2bed",
+    "current_baselines_sha256": "47f3e846e99afe54c538d00e5579aeb7c3e6fd4eea4024ecc068c6bf4dd5f4e4",
+    "orchestrator_sha256": "dbaa0cada56527f6ef53cf2b863b31663aa240fb1f8baee2d1e0c963cd28ace4",
+    "report_sha256": "7ad52c25ba646e0fdd72ec799c8a5de3eea0c455af484926efef6c53d6e2e11c"
+  },
+  "source": {"repository_url": "https://github.com/huggingface/lerobot.git", "commit": "6adf51511b7625090eade8d82d9f61a1846ebe56", "source_version": "0.6.2"},
+  "environment": {"type": "libero", "suite": "libero_spatial", "task_ids": [0], "episode_length": 300, "control_frequency_hz": 20.0, "initial_state_indices": [31, 32, 33, 34, 35], "base_seed": 2026092100},
+  "models": [{
+    "key": "smolvla", "model_id": "lerobot/smolvla_libero", "revision": "31d453f7edd78c839a8bbc39744a292686daf0de", "control_mode": "relative", "chunk_size": 50, "request_interval_steps": 10, "rtc_expected": true, "rtc_execution_horizon": 10, "required": true,
+    "dependencies": [{"model_id": "HuggingFaceTB/SmolVLM2-500M-Video-Instruct", "revision": "7b375e1b73b11138ff12fe22c8f2822d8fe03467"}],
+    "rename_map": {"observation.images.image": "observation.images.camera1", "observation.images.image2": "observation.images.camera2"}
+  }],
+  "runtimes": ["sync_hold", "lerobot_latest_only", "lerobot_rtc"],
+  "delay_profiles": [
+    {"key": "fixed_0000", "kind": "fixed", "milliseconds": 0},
+    {"key": "fixed_0250", "kind": "fixed", "milliseconds": 250},
+    {"key": "fixed_0950", "kind": "fixed", "milliseconds": 950},
+    {"key": "jitter_0600_pm0400_smol_v4", "kind": "seeded_uniform", "center_milliseconds": 600, "half_width_milliseconds": 400, "seed": 2026092001, "trace_length": 4096},
+    {"key": "burst_0250_to2000_smol_v4", "kind": "seeded_burst", "base_center_milliseconds": 250, "base_half_width_milliseconds": 100, "burst_probability": 0.15, "burst_min_milliseconds": 1600, "burst_max_milliseconds": 2200, "seed": 2026092002, "trace_length": 4096}
+  ],
+  "measurement_v2": {
+    "fresh_process_per_runtime": true, "nvidia_smi_interval_seconds": 0.2,
+    "worker_warmup": {"task_id": 0, "initial_state_index": 26, "seed": 2026090002, "inference_calls": 2},
+    "startup_latency_definition": "wall time of the first inference submitted through the actual scored runtime execution context",
+    "steady_state_definition": "all scored inference calls after two non-scored calls in that same worker or synchronous execution context",
+    "vram_definition": "nvidia-smi process residency sampled in a fresh runtime process; torch allocated peak retained as a separate field",
+    "gpu_utilization_definition": "nvidia-smi device utilization samples with process PID residency provenance",
+    "request_rate_definition": "scored inference requests started divided by scored episode wall time"
+  },
+  "compact_matrix": {"episodes_per_task": 5, "paired": true, "reuse_delay_trace_across_runtimes": true},
+  "evidence_boundary": {"reset_identity": "suite + task_id + initial_state_index + seed", "worker_warmup_states": [26], "development_states": [27, 28], "canary_states": [29, 30], "holdout_states": [31, 32, 33, 34, 35], "seeded_network_traces_disjoint_from_all_prior_protocols": true, "post_holdout_tuning_forbidden": true},
+  "decision_rule": {"primary_contrast": "lerobot_rtc minus lerobot_latest_only", "secondary_contrast": "lerobot_rtc minus sync_hold", "no_universal_superiority_claim": true}
+}

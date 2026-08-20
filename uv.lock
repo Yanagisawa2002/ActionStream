@@ -10,6 +10,12 @@ resolution-markers = [
     "(platform_machine != 'arm64' and sys_platform == 'darwin') or (sys_platform != 'darwin' and sys_platform != 'linux' and sys_platform != 'win32')",
 ]
 
+[manifest]
+members = [
+    "actionstream",
+    "lerobot-policy-actionstream",
+]
+
 [[package]]
 name = "absl-py"
 version = "2.5.0"
@@ -21,10 +27,14 @@ wheels = [
 
 [[package]]
 name = "actionstream"
-version = "1.1.0rc1"
+version = "1.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "lerobot", extra = ["async", "evaluation", "libero", "xvla"] },
+    { name = "torch", version = "2.11.0", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform != 'linux'" },
+    { name = "torch", version = "2.11.0+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "sys_platform == 'linux'" },
+    { name = "torchvision", version = "0.26.0", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform != 'linux'" },
+    { name = "torchvision", version = "0.26.0+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "sys_platform == 'linux'" },
 ]
 
 [package.dev-dependencies]
@@ -35,7 +45,13 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "lerobot", extras = ["xvla", "libero", "evaluation", "async"], git = "https://github.com/huggingface/lerobot.git?rev=6adf51511b7625090eade8d82d9f61a1846ebe56" }]
+requires-dist = [
+    { name = "lerobot", extras = ["xvla", "libero", "evaluation", "async"], url = "https://github.com/Yanagisawa2002/lerobot/archive/73e1584473028a2d53ecfc856f5290db84507f90.tar.gz" },
+    { name = "torch", marker = "sys_platform != 'linux'", specifier = ">=2.7,<2.12.0" },
+    { name = "torch", marker = "sys_platform == 'linux'", specifier = ">=2.7,<2.12.0", index = "https://download.pytorch.org/whl/cu128" },
+    { name = "torchvision", marker = "sys_platform != 'linux'", specifier = ">=0.22,<0.27.0" },
+    { name = "torchvision", marker = "sys_platform == 'linux'", specifier = ">=0.22,<0.27.0", index = "https://download.pytorch.org/whl/cu128" },
+]
 
 [package.metadata.requires-dev]
 dev = [
@@ -891,7 +907,7 @@ wheels = [
 [[package]]
 name = "lerobot"
 version = "0.6.2"
-source = { git = "https://github.com/huggingface/lerobot.git?rev=6adf51511b7625090eade8d82d9f61a1846ebe56#6adf51511b7625090eade8d82d9f61a1846ebe56" }
+source = { url = "https://github.com/Yanagisawa2002/lerobot/archive/73e1584473028a2d53ecfc856f5290db84507f90.tar.gz" }
 dependencies = [
     { name = "cmake" },
     { name = "draccus" },
@@ -912,6 +928,7 @@ dependencies = [
     { name = "torchvision", version = "0.26.0+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "sys_platform == 'linux'" },
     { name = "tqdm" },
 ]
+sdist = { hash = "sha256:941e0f643d6d201a42b80221ba660b459f8a269e81dcc59e77c42f9c23cce923" }
 
 [package.optional-dependencies]
 async = [
@@ -937,6 +954,244 @@ libero = [
 xvla = [
     { name = "transformers" },
 ]
+
+[package.metadata]
+requires-dist = [
+    { name = "accelerate", marker = "extra == 'accelerate-dep'", specifier = ">=1.14.0,<2.0.0" },
+    { name = "av", marker = "extra == 'av-dep'", specifier = ">=15.0.0,<16.0.0" },
+    { name = "cmake", specifier = ">=3.29.0.1,<4.2.0" },
+    { name = "cmeel-tinyxml2", marker = "extra == 'placo-dep'", specifier = "<11" },
+    { name = "cmeel-urdfdom", marker = "extra == 'placo-dep'", specifier = ">=4,<5" },
+    { name = "contourpy", marker = "extra == 'matplotlib-dep'", specifier = ">=1.3.0,<2.0.0" },
+    { name = "datasets", marker = "extra == 'dataset'", specifier = ">=4.8.0,<5.0.0" },
+    { name = "debugpy", marker = "extra == 'dev'", specifier = ">=1.8.1,<1.9.0" },
+    { name = "decord", marker = "(platform_machine == 'AMD64' and extra == 'groot') or (platform_machine == 'x86_64' and extra == 'groot')", specifier = ">=0.6.0,<1.0.0" },
+    { name = "deepdiff", marker = "extra == 'deepdiff-dep'", specifier = ">=7.0.1,<9.0.0" },
+    { name = "diffusers", marker = "extra == 'diffusers-dep'", specifier = ">=0.38.0,<0.40.0" },
+    { name = "dm-tree", marker = "extra == 'groot'", specifier = ">=0.1.8,<1.0.0" },
+    { name = "draccus", specifier = ">=0.11.6,<0.12.0" },
+    { name = "dynamixel-sdk", marker = "extra == 'dynamixel'", specifier = ">=3.7.31,<3.9.0" },
+    { name = "einops", specifier = ">=0.8.0,<0.9.0" },
+    { name = "faker", marker = "extra == 'sarm'", specifier = ">=33.0.0,<35.0.0" },
+    { name = "fastapi", marker = "extra == 'phone'", specifier = "<1.0" },
+    { name = "feetech-servo-sdk", marker = "extra == 'feetech'", specifier = ">=1.0.0,<2.0.0" },
+    { name = "foxglove-sdk", marker = "extra == 'viz'", specifier = ">=0.25.1,<0.26.0" },
+    { name = "grpcio", marker = "extra == 'grpcio-dep'", specifier = ">=1.73.1,<2.0.0" },
+    { name = "grpcio", marker = "extra == 'reachy2'", specifier = "<=1.73.1" },
+    { name = "grpcio-tools", marker = "extra == 'dev'", specifier = ">=1.73.1,<2.0.0" },
+    { name = "gym-aloha", marker = "extra == 'aloha'", specifier = ">=0.1.4,<0.2.0" },
+    { name = "gym-hil", marker = "extra == 'hilserl'", specifier = ">=0.1.14,<0.2.0" },
+    { name = "gym-pusht", marker = "extra == 'pusht'", specifier = ">=0.1.5,<0.2.0" },
+    { name = "gymnasium", specifier = ">=1.1.1,<2.0.0" },
+    { name = "hebi-py", marker = "extra == 'phone'", specifier = ">=2.8.0,<2.12.0" },
+    { name = "hf-libero", marker = "sys_platform == 'linux' and extra == 'libero'", specifier = ">=0.1.4,<0.2.0" },
+    { name = "hidapi", marker = "extra == 'gamepad'", specifier = ">=0.14.0,<0.15.0" },
+    { name = "huggingface-hub", specifier = ">=1.6.0,<2.0.0" },
+    { name = "ipykernel", marker = "extra == 'notebook'", specifier = ">=6.0.0,<7.0.0" },
+    { name = "jsonlines", marker = "extra == 'dataset'", specifier = ">=4.0.0,<5.0.0" },
+    { name = "jupyter", marker = "extra == 'notebook'", specifier = ">=1.0.0,<2.0.0" },
+    { name = "lerobot", extras = ["accelerate-dep"], marker = "extra == 'lingbot-va'" },
+    { name = "lerobot", extras = ["accelerate-dep"], marker = "extra == 'smolvla'" },
+    { name = "lerobot", extras = ["accelerate-dep"], marker = "extra == 'training'" },
+    { name = "lerobot", extras = ["aloha"], marker = "extra == 'all'" },
+    { name = "lerobot", extras = ["async"], marker = "extra == 'all'" },
+    { name = "lerobot", extras = ["av-dep"], marker = "extra == 'dataset'" },
+    { name = "lerobot", extras = ["av-dep"], marker = "extra == 'evaluation'" },
+    { name = "lerobot", extras = ["can-dep"], marker = "extra == 'damiao'" },
+    { name = "lerobot", extras = ["can-dep"], marker = "extra == 'robstride'" },
+    { name = "lerobot", extras = ["damiao"], marker = "extra == 'all'" },
+    { name = "lerobot", extras = ["damiao"], marker = "extra == 'openarms'" },
+    { name = "lerobot", extras = ["dataset"], marker = "extra == 'all'" },
+    { name = "lerobot", extras = ["dataset"], marker = "extra == 'aloha'" },
+    { name = "lerobot", extras = ["dataset"], marker = "extra == 'annotations'" },
+    { name = "lerobot", extras = ["dataset"], marker = "extra == 'core-scripts'" },
+    { name = "lerobot", extras = ["dataset"], marker = "extra == 'dataset-viz'" },
+    { name = "lerobot", extras = ["dataset"], marker = "extra == 'groot'" },
+    { name = "lerobot", extras = ["dataset"], marker = "extra == 'hilserl'" },
+    { name = "lerobot", extras = ["dataset"], marker = "extra == 'libero'" },
+    { name = "lerobot", extras = ["dataset"], marker = "extra == 'metaworld'" },
+    { name = "lerobot", extras = ["dataset"], marker = "extra == 'pusht'" },
+    { name = "lerobot", extras = ["dataset"], marker = "extra == 'training'" },
+    { name = "lerobot", extras = ["deepdiff-dep"], marker = "extra == 'dynamixel'" },
+    { name = "lerobot", extras = ["deepdiff-dep"], marker = "extra == 'feetech'" },
+    { name = "lerobot", extras = ["deepdiff-dep"], marker = "extra == 'hardware'" },
+    { name = "lerobot", extras = ["dev"], marker = "extra == 'all'" },
+    { name = "lerobot", extras = ["diffusers-dep"], marker = "extra == 'diffusion'" },
+    { name = "lerobot", extras = ["diffusers-dep"], marker = "extra == 'fastwam'" },
+    { name = "lerobot", extras = ["diffusers-dep"], marker = "extra == 'groot'" },
+    { name = "lerobot", extras = ["diffusers-dep"], marker = "extra == 'lingbot-va'" },
+    { name = "lerobot", extras = ["diffusers-dep"], marker = "extra == 'multi-task-dit'" },
+    { name = "lerobot", extras = ["diffusers-dep"], marker = "extra == 'vla-jepa'" },
+    { name = "lerobot", extras = ["diffusion"], marker = "extra == 'all'" },
+    { name = "lerobot", extras = ["dynamixel"], marker = "extra == 'all'" },
+    { name = "lerobot", extras = ["evo1"], marker = "extra == 'all'" },
+    { name = "lerobot", extras = ["fastwam"], marker = "extra == 'all'" },
+    { name = "lerobot", extras = ["feetech"], marker = "extra == 'all'" },
+    { name = "lerobot", extras = ["feetech"], marker = "extra == 'hopejr'" },
+    { name = "lerobot", extras = ["feetech"], marker = "extra == 'lekiwi'" },
+    { name = "lerobot", extras = ["gamepad"], marker = "extra == 'all'" },
+    { name = "lerobot", extras = ["groot"], marker = "extra == 'all'" },
+    { name = "lerobot", extras = ["grpcio-dep"], marker = "extra == 'async'" },
+    { name = "lerobot", extras = ["grpcio-dep"], marker = "extra == 'dev'" },
+    { name = "lerobot", extras = ["grpcio-dep"], marker = "extra == 'hilserl'" },
+    { name = "lerobot", extras = ["hardware"], marker = "extra == 'all'" },
+    { name = "lerobot", extras = ["hardware"], marker = "extra == 'core-scripts'" },
+    { name = "lerobot", extras = ["hilserl"], marker = "extra == 'all'" },
+    { name = "lerobot", extras = ["hopejr"], marker = "extra == 'all'" },
+    { name = "lerobot", extras = ["intelrealsense"], marker = "extra == 'all'" },
+    { name = "lerobot", extras = ["kinematics"], marker = "extra == 'all'" },
+    { name = "lerobot", extras = ["lekiwi"], marker = "extra == 'all'" },
+    { name = "lerobot", extras = ["libero"], marker = "sys_platform == 'linux' and extra == 'all'" },
+    { name = "lerobot", extras = ["lingbot-va"], marker = "extra == 'all'" },
+    { name = "lerobot", extras = ["matplotlib-dep"], marker = "extra == 'async'" },
+    { name = "lerobot", extras = ["matplotlib-dep"], marker = "extra == 'sarm'" },
+    { name = "lerobot", extras = ["matplotlib-dep"], marker = "extra == 'unitree-g1'" },
+    { name = "lerobot", extras = ["metaworld"], marker = "extra == 'all'" },
+    { name = "lerobot", extras = ["molmoact2"], marker = "extra == 'all'" },
+    { name = "lerobot", extras = ["motorbridge-dep"], marker = "extra == 'rebot'" },
+    { name = "lerobot", extras = ["motorbridge-smart-servo-dep"], marker = "extra == 'rebot'" },
+    { name = "lerobot", extras = ["multi-task-dit"], marker = "extra == 'all'" },
+    { name = "lerobot", extras = ["notebook"], marker = "extra == 'dev'" },
+    { name = "lerobot", extras = ["openarms"], marker = "extra == 'all'" },
+    { name = "lerobot", extras = ["peft"], marker = "extra == 'all'" },
+    { name = "lerobot", extras = ["peft-dep"], marker = "extra == 'groot'" },
+    { name = "lerobot", extras = ["peft-dep"], marker = "extra == 'molmoact2'" },
+    { name = "lerobot", extras = ["peft-dep"], marker = "extra == 'peft'" },
+    { name = "lerobot", extras = ["peft-dep"], marker = "extra == 'robometer'" },
+    { name = "lerobot", extras = ["peft-dep"], marker = "extra == 'wallx'" },
+    { name = "lerobot", extras = ["phone"], marker = "extra == 'all'" },
+    { name = "lerobot", extras = ["pi"], marker = "extra == 'all'" },
+    { name = "lerobot", extras = ["placo-dep"], marker = "extra == 'hilserl'" },
+    { name = "lerobot", extras = ["placo-dep"], marker = "extra == 'kinematics'" },
+    { name = "lerobot", extras = ["pusht"], marker = "extra == 'all'" },
+    { name = "lerobot", extras = ["pygame-dep"], marker = "extra == 'gamepad'" },
+    { name = "lerobot", extras = ["pygame-dep"], marker = "extra == 'hopejr'" },
+    { name = "lerobot", extras = ["pygame-dep"], marker = "extra == 'unitree-g1'" },
+    { name = "lerobot", extras = ["pynput-dep"], marker = "extra == 'hardware'" },
+    { name = "lerobot", extras = ["pyserial-dep"], marker = "extra == 'dynamixel'" },
+    { name = "lerobot", extras = ["pyserial-dep"], marker = "extra == 'feetech'" },
+    { name = "lerobot", extras = ["pyserial-dep"], marker = "extra == 'hardware'" },
+    { name = "lerobot", extras = ["pyserial-dep"], marker = "extra == 'unitree-g1'" },
+    { name = "lerobot", extras = ["pyzmq-dep"], marker = "extra == 'lekiwi'" },
+    { name = "lerobot", extras = ["pyzmq-dep"], marker = "extra == 'unitree-g1'" },
+    { name = "lerobot", extras = ["qwen-vl-utils-dep"], marker = "extra == 'eo1'" },
+    { name = "lerobot", extras = ["qwen-vl-utils-dep"], marker = "extra == 'robometer'" },
+    { name = "lerobot", extras = ["qwen-vl-utils-dep"], marker = "extra == 'sarm'" },
+    { name = "lerobot", extras = ["qwen-vl-utils-dep"], marker = "extra == 'vla-jepa'" },
+    { name = "lerobot", extras = ["qwen-vl-utils-dep"], marker = "extra == 'wallx'" },
+    { name = "lerobot", extras = ["reachy2"], marker = "extra == 'all'" },
+    { name = "lerobot", extras = ["rebot"], marker = "extra == 'all'" },
+    { name = "lerobot", extras = ["robometer"], marker = "extra == 'all'" },
+    { name = "lerobot", extras = ["robstride"], marker = "extra == 'all'" },
+    { name = "lerobot", extras = ["sarm"], marker = "extra == 'all'" },
+    { name = "lerobot", extras = ["scipy-dep"], marker = "extra == 'aloha'" },
+    { name = "lerobot", extras = ["scipy-dep"], marker = "extra == 'libero'" },
+    { name = "lerobot", extras = ["scipy-dep"], marker = "extra == 'metaworld'" },
+    { name = "lerobot", extras = ["scipy-dep"], marker = "extra == 'molmoact2'" },
+    { name = "lerobot", extras = ["scipy-dep"], marker = "extra == 'phone'" },
+    { name = "lerobot", extras = ["scipy-dep"], marker = "extra == 'pi'" },
+    { name = "lerobot", extras = ["scipy-dep"], marker = "extra == 'wallx'" },
+    { name = "lerobot", extras = ["smolvla"], marker = "extra == 'all'" },
+    { name = "lerobot", extras = ["test"], marker = "extra == 'all'" },
+    { name = "lerobot", extras = ["timm-dep"], marker = "extra == 'groot'" },
+    { name = "lerobot", extras = ["topreward"], marker = "extra == 'all'" },
+    { name = "lerobot", extras = ["training"], marker = "extra == 'all'" },
+    { name = "lerobot", extras = ["transformers-dep"], marker = "extra == 'annotations'" },
+    { name = "lerobot", extras = ["transformers-dep"], marker = "extra == 'eo1'" },
+    { name = "lerobot", extras = ["transformers-dep"], marker = "extra == 'evo1'" },
+    { name = "lerobot", extras = ["transformers-dep"], marker = "extra == 'fastwam'" },
+    { name = "lerobot", extras = ["transformers-dep"], marker = "extra == 'groot'" },
+    { name = "lerobot", extras = ["transformers-dep"], marker = "extra == 'hilserl'" },
+    { name = "lerobot", extras = ["transformers-dep"], marker = "extra == 'libero'" },
+    { name = "lerobot", extras = ["transformers-dep"], marker = "extra == 'lingbot-va'" },
+    { name = "lerobot", extras = ["transformers-dep"], marker = "extra == 'molmoact2'" },
+    { name = "lerobot", extras = ["transformers-dep"], marker = "extra == 'multi-task-dit'" },
+    { name = "lerobot", extras = ["transformers-dep"], marker = "extra == 'peft'" },
+    { name = "lerobot", extras = ["transformers-dep"], marker = "extra == 'pi'" },
+    { name = "lerobot", extras = ["transformers-dep"], marker = "extra == 'robometer'" },
+    { name = "lerobot", extras = ["transformers-dep"], marker = "extra == 'sarm'" },
+    { name = "lerobot", extras = ["transformers-dep"], marker = "extra == 'smolvla'" },
+    { name = "lerobot", extras = ["transformers-dep"], marker = "extra == 'topreward'" },
+    { name = "lerobot", extras = ["transformers-dep"], marker = "extra == 'vla-jepa'" },
+    { name = "lerobot", extras = ["transformers-dep"], marker = "extra == 'wallx'" },
+    { name = "lerobot", extras = ["transformers-dep"], marker = "extra == 'xvla'" },
+    { name = "lerobot", extras = ["video-benchmark"], marker = "extra == 'all'" },
+    { name = "lerobot", extras = ["viz"], marker = "extra == 'all'" },
+    { name = "lerobot", extras = ["viz"], marker = "extra == 'core-scripts'" },
+    { name = "lerobot", extras = ["viz"], marker = "extra == 'dataset-viz'" },
+    { name = "lerobot", extras = ["vla-jepa"], marker = "extra == 'all'" },
+    { name = "lerobot", extras = ["wallx"], marker = "extra == 'all'" },
+    { name = "lerobot", extras = ["xvla"], marker = "extra == 'all'" },
+    { name = "matplotlib", marker = "extra == 'matplotlib-dep'", specifier = ">=3.10.3,<4.0.0" },
+    { name = "meshcat", marker = "extra == 'unitree-g1'", specifier = ">=0.3.0,<0.4.0" },
+    { name = "metaworld", marker = "extra == 'metaworld'", specifier = "==3.0.0" },
+    { name = "mock-serial", marker = "sys_platform != 'win32' and extra == 'test'", specifier = ">=0.0.1,<0.1.0" },
+    { name = "motorbridge", marker = "extra == 'motorbridge-dep'", specifier = ">=0.3.2,<0.4.0" },
+    { name = "motorbridge-smart-servo", marker = "extra == 'motorbridge-smart-servo-dep'", specifier = ">=0.0.4,<0.1.0" },
+    { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.19.1" },
+    { name = "num2words", marker = "extra == 'smolvla'", specifier = ">=0.5.14,<0.6.0" },
+    { name = "numpy", specifier = ">=2.0.0,<2.3.0" },
+    { name = "onnx", marker = "extra == 'unitree-g1'", specifier = ">=1.16.0,<2.0.0" },
+    { name = "onnxruntime", marker = "extra == 'unitree-g1'", specifier = ">=1.16.0,<2.0.0" },
+    { name = "openai", marker = "extra == 'annotations'", specifier = ">=1.40,<2.0" },
+    { name = "opencv-python-headless", specifier = ">=4.9.0,<4.14.0" },
+    { name = "packaging", specifier = ">=24.2,<26.0" },
+    { name = "pandas", marker = "extra == 'dataset'", specifier = ">=2.0.0,<3.0.0" },
+    { name = "pandas", marker = "extra == 'video-benchmark'", specifier = ">=2.2.2,<2.4.0" },
+    { name = "peft", marker = "extra == 'peft-dep'", specifier = ">=0.18.0,<1.0.0" },
+    { name = "pillow", specifier = ">=10.0.0,<13.0.0" },
+    { name = "placo", marker = "extra == 'placo-dep'", specifier = ">=0.9.6,<0.9.16" },
+    { name = "pre-commit", marker = "extra == 'dev'", specifier = ">=3.7.0,<5.0.0" },
+    { name = "protobuf", marker = "extra == 'grpcio-dep'", specifier = ">=6.31.1,<8.0.0" },
+    { name = "protobuf", marker = "extra == 'reachy2'", specifier = "<=6.32.0" },
+    { name = "pyarrow", marker = "extra == 'dataset'", specifier = ">=21.0.0,<30.0.0" },
+    { name = "pydantic", marker = "extra == 'sarm'", specifier = ">=2.0.0,<3.0.0" },
+    { name = "pygame", marker = "extra == 'pygame-dep'", specifier = ">=2.5.1,<2.7.0" },
+    { name = "pymunk", marker = "extra == 'pusht'", specifier = ">=6.6.0,<7.0.0" },
+    { name = "pynput", marker = "extra == 'pynput-dep'", specifier = ">=1.7.8,<1.9.0" },
+    { name = "pyrealsense2", marker = "sys_platform != 'darwin' and extra == 'intelrealsense'", specifier = ">=2.55.1.6486,<2.57.0" },
+    { name = "pyrealsense2-macosx", marker = "sys_platform == 'darwin' and extra == 'intelrealsense'", specifier = ">=2.54,<2.57.0" },
+    { name = "pyserial", marker = "extra == 'pyserial-dep'", specifier = ">=3.5,<4.0" },
+    { name = "pytest", marker = "extra == 'test'", specifier = ">=8.1.0,<10.0.0" },
+    { name = "pytest-cov", marker = "extra == 'test'", specifier = ">=5.0.0,<8.0.0" },
+    { name = "pytest-timeout", marker = "extra == 'test'", specifier = ">=2.4.0,<3.0.0" },
+    { name = "python-can", marker = "extra == 'can-dep'", specifier = ">=4.2.0,<5.0.0" },
+    { name = "pyzmq", marker = "extra == 'pyzmq-dep'", specifier = ">=26.2.1,<28.0.0" },
+    { name = "qwen-vl-utils", marker = "extra == 'qwen-vl-utils-dep'", specifier = ">=0.0.11,<0.1.0" },
+    { name = "reachy2-sdk", marker = "extra == 'reachy2'", specifier = ">=1.0.15,<1.1.0" },
+    { name = "requests", specifier = ">=2.32.0,<3.0.0" },
+    { name = "rerun-sdk", marker = "extra == 'viz'", specifier = ">=0.24.0,<0.34.0" },
+    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.14.1" },
+    { name = "safetensors", specifier = ">=0.4.3,<1.0.0" },
+    { name = "scikit-image", marker = "extra == 'video-benchmark'", specifier = ">=0.23.2,<0.26.0" },
+    { name = "scipy", marker = "extra == 'all'", specifier = ">=1.14.0,<2.0.0" },
+    { name = "scipy", marker = "extra == 'scipy-dep'", specifier = ">=1.14.0,<2.0.0" },
+    { name = "setuptools", specifier = ">=71.0.0,<82.0.0" },
+    { name = "teleop", marker = "extra == 'phone'", specifier = ">=0.1.0,<0.2.0" },
+    { name = "termcolor", specifier = ">=2.4.0,<4.0.0" },
+    { name = "timm", marker = "extra == 'timm-dep'", specifier = ">=1.0.0,<1.1.0" },
+    { name = "torch", specifier = ">=2.7,<2.12.0" },
+    { name = "torchcodec", marker = "(platform_machine == 'arm64' and sys_platform == 'darwin' and extra == 'dataset') or (platform_machine == 'AMD64' and sys_platform == 'linux' and extra == 'dataset') or (platform_machine == 'x86_64' and sys_platform == 'linux' and extra == 'dataset')", specifier = ">=0.3.0,<0.12.0" },
+    { name = "torchcodec", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux' and extra == 'dataset') or (platform_machine == 'arm64' and sys_platform == 'linux' and extra == 'dataset')", specifier = ">=0.11.0,<0.12.0" },
+    { name = "torchcodec", marker = "sys_platform == 'win32' and extra == 'dataset'", specifier = ">=0.7.0,<0.12.0" },
+    { name = "torchdiffeq", marker = "extra == 'wallx'", specifier = ">=0.2.4,<0.3.0" },
+    { name = "torchvision", specifier = ">=0.22.0,<0.27.0" },
+    { name = "tqdm", specifier = ">=4.66.0,<5.0.0" },
+    { name = "transformers", marker = "extra == 'transformers-dep'", specifier = ">=5.4.0,<5.6.0" },
+    { name = "wandb", marker = "extra == 'training'", specifier = ">=0.24.0,<0.28.0" },
+]
+provides-extras = ["dataset", "training", "hardware", "viz", "core-scripts", "evaluation", "dataset-viz", "av-dep", "pygame-dep", "placo-dep", "transformers-dep", "grpcio-dep", "accelerate-dep", "can-dep", "peft-dep", "scipy-dep", "diffusers-dep", "qwen-vl-utils-dep", "matplotlib-dep", "pyserial-dep", "deepdiff-dep", "pynput-dep", "pyzmq-dep", "motorbridge-dep", "motorbridge-smart-servo-dep", "timm-dep", "feetech", "dynamixel", "damiao", "robstride", "openarms", "gamepad", "hopejr", "lekiwi", "unitree-g1", "reachy2", "rebot", "kinematics", "intelrealsense", "phone", "diffusion", "wallx", "pi", "molmoact2", "smolvla", "multi-task-dit", "groot", "sarm", "robometer", "topreward", "xvla", "eo1", "fastwam", "evo1", "hilserl", "vla-jepa", "lingbot-va", "async", "peft", "annotations", "dev", "notebook", "test", "video-benchmark", "aloha", "pusht", "libero", "metaworld", "all"]
+
+[[package]]
+name = "lerobot-policy-actionstream"
+version = "0.2.0"
+source = { editable = "integrations/lerobot" }
+dependencies = [
+    { name = "actionstream" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "actionstream", editable = "." }]
 
 [[package]]
 name = "llvmlite"

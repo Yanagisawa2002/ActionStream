@@ -1,0 +1,157 @@
+{
+  "children": [
+    {
+      "command": [
+        "/root/autodl-tmp/venvs/actionstream/bin/python",
+        "-m",
+        "actionstream.current_baselines",
+        "--protocol",
+        "/root/autodl-tmp/actionstream-smolvla-v4-cbad99d/configs/actionstream_backend_gpu_smolvla_rtc_v4_canary_object.json",
+        "--lerobot-root",
+        "/root/autodl-tmp/external/lerobot-current",
+        "--output-dir",
+        "/root/autodl-tmp/results/actionstream_backend_gpu_smolvla_rtc_v4_canary/cells/object/sync_hold",
+        "--models",
+        "smolvla",
+        "--runtimes",
+        "sync_hold",
+        "--capture"
+      ],
+      "family": "object",
+      "fresh_process": true,
+      "log_path": "/root/autodl-tmp/results/actionstream_backend_gpu_smolvla_rtc_v4_canary/cells/object/sync_hold/subprocess.log",
+      "log_sha256": "933bb941ab6fb17aac97bcbe3f383eb19216cee556ee97e39237b982376f01b1",
+      "phase": "canary",
+      "pid": 232512,
+      "post_gpu": {
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "0, NVIDIA GeForce RTX 5090, GPU-377e40b0-f577-8e15-578d-a56e5fd1eaa1, 3, 2, 32607"
+      },
+      "pre_gpu": {
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "0, NVIDIA GeForce RTX 5090, GPU-377e40b0-f577-8e15-578d-a56e5fd1eaa1, 0, 2, 32607"
+      },
+      "returncode": 0,
+      "runtime": "sync_hold",
+      "schema_version": 1,
+      "started_utc_unix_ns": 1787261699847933798,
+      "wall_clock_seconds": 36.565886029973626
+    },
+    {
+      "command": [
+        "/root/autodl-tmp/venvs/actionstream/bin/python",
+        "-m",
+        "actionstream.current_baselines",
+        "--protocol",
+        "/root/autodl-tmp/actionstream-smolvla-v4-cbad99d/configs/actionstream_backend_gpu_smolvla_rtc_v4_canary_spatial.json",
+        "--lerobot-root",
+        "/root/autodl-tmp/external/lerobot-current",
+        "--output-dir",
+        "/root/autodl-tmp/results/actionstream_backend_gpu_smolvla_rtc_v4_canary/cells/spatial/sync_hold",
+        "--models",
+        "smolvla",
+        "--runtimes",
+        "sync_hold",
+        "--capture"
+      ],
+      "family": "spatial",
+      "fresh_process": true,
+      "log_path": "/root/autodl-tmp/results/actionstream_backend_gpu_smolvla_rtc_v4_canary/cells/spatial/sync_hold/subprocess.log",
+      "log_sha256": "1e4f8100e7f24b67ab7c2c3c90a787da6384db23fdff2679fc05a809b0f03060",
+      "phase": "canary",
+      "pid": 233885,
+      "post_gpu": {
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "0, NVIDIA GeForce RTX 5090, GPU-377e40b0-f577-8e15-578d-a56e5fd1eaa1, 3, 2, 32607"
+      },
+      "pre_gpu": {
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "0, NVIDIA GeForce RTX 5090, GPU-377e40b0-f577-8e15-578d-a56e5fd1eaa1, 0, 2, 32607"
+      },
+      "returncode": 0,
+      "runtime": "sync_hold",
+      "schema_version": 1,
+      "started_utc_unix_ns": 1787261736489360857,
+      "wall_clock_seconds": 48.28167078900151
+    },
+    {
+      "command": [
+        "/root/autodl-tmp/venvs/actionstream/bin/python",
+        "-m",
+        "actionstream.current_baselines",
+        "--protocol",
+        "/root/autodl-tmp/actionstream-smolvla-v4-cbad99d/configs/actionstream_backend_gpu_smolvla_rtc_v4_canary_goal.json",
+        "--lerobot-root",
+        "/root/autodl-tmp/external/lerobot-current",
+        "--output-dir",
+        "/root/autodl-tmp/results/actionstream_backend_gpu_smolvla_rtc_v4_canary/cells/goal/sync_hold",
+        "--models",
+        "smolvla",
+        "--runtimes",
+        "sync_hold",
+        "--capture"
+      ],
+      "family": "goal",
+      "fresh_process": true,
+      "log_path": "/root/autodl-tmp/results/actionstream_backend_gpu_smolvla_rtc_v4_canary/cells/goal/sync_hold/subprocess.log",
+      "log_sha256": "701fd6b3f49028ca73324d7e1c1fbc68139cf1a506d39f848ac6f0b867017295",
+      "phase": "canary",
+      "pid": 235551,
+      "post_gpu": {
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "0, NVIDIA GeForce RTX 5090, GPU-377e40b0-f577-8e15-578d-a56e5fd1eaa1, 3, 2, 32607"
+      },
+      "pre_gpu": {
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "0, NVIDIA GeForce RTX 5090, GPU-377e40b0-f577-8e15-578d-a56e5fd1eaa1, 3, 2, 32607"
+      },
+      "returncode": 0,
+      "runtime": "sync_hold",
+      "schema_version": 1,
+      "started_utc_unix_ns": 1787261784819423782,
+      "wall_clock_seconds": 47.67024313705042
+    }
+  ],
+  "episodes_path": "/root/autodl-tmp/results/actionstream_backend_gpu_smolvla_rtc_v4_canary/episodes.jsonl",
+  "episodes_sha256": "2fba9ffddbf6128d34a4f409659486a973bb71f1caee847294c8d5d7ebf395ad",
+  "families": [
+    "object",
+    "spatial",
+    "goal"
+  ],
+  "fresh_process_count": 3,
+  "fresh_process_pids": [
+    232512,
+    233885,
+    235551
+  ],
+  "phase": "canary",
+  "protocols": [
+    {
+      "path": "/root/autodl-tmp/actionstream-smolvla-v4-cbad99d/configs/actionstream_backend_gpu_smolvla_rtc_v4_canary_object.json",
+      "sha256": "4f996cbb0b08019bf716a67d59ed5d9c831612fb31978b31b66b914a54474a89"
+    },
+    {
+      "path": "/root/autodl-tmp/actionstream-smolvla-v4-cbad99d/configs/actionstream_backend_gpu_smolvla_rtc_v4_canary_spatial.json",
+      "sha256": "628906bf60c80ee9fbd580d7b5f2e65aed74caedc408c603abf3a261e7db81b2"
+    },
+    {
+      "path": "/root/autodl-tmp/actionstream-smolvla-v4-cbad99d/configs/actionstream_backend_gpu_smolvla_rtc_v4_canary_goal.json",
+      "sha256": "01a691577a85c447ab9ea10e70c019d272690c06cd668fea3aa89e5d63d8f38e"
+    }
+  ],
+  "record_count": 6,
+  "runtimes": [
+    "sync_hold"
+  ],
+  "schema_version": 1,
+  "source_commit": "834366c9de1cb5e300182378311314e77eca2bed",
+  "status": "completed",
+  "wall_clock_seconds": 132.69707824592479
+}

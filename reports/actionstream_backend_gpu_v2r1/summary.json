@@ -1,0 +1,36 @@
+{
+  "canary_receipt_sha256": "a65eaaaa0771cc7d6342b2c95ce42fa947c3eeea7d71ed8af55362ee5c0d9668",
+  "fixed_950_primary_effect": {
+    "candidate": "actionstream_backend_aligned",
+    "contrast": "primary",
+    "environment_steps_difference": 62.888888888888886,
+    "paired_n": 9,
+    "profile": "fixed_0950",
+    "reference": "lerobot_latest_only",
+    "steps_ci95_high": 122.44444444444444,
+    "steps_ci95_low": 5.111111111111111,
+    "success_ci95_high": -0.1111111111111111,
+    "success_ci95_low": -0.7777777777777778,
+    "success_difference": -0.4444444444444444
+  },
+  "gates": {
+    "actual_worker_warmup": true,
+    "canary_record_count": true,
+    "canary_sync_zero_delay": true,
+    "fresh_runtime_processes": true,
+    "holdout_record_count": true,
+    "nvidia_smi_residency": true,
+    "standard_telemetry": true,
+    "three_task_families": true,
+    "true_request_rate": true
+  },
+  "holdout_receipt_sha256": "0f899e9c5c95f8937a1bb2f8b70ebf14bb6d2cd25fda1a5fd02f154cc2d0ef21",
+  "schema_version": 2,
+  "status": "PASS",
+  "telemetry": {
+    "invalid_files_or_events": 0,
+    "telemetry_events": 40070,
+    "telemetry_files": 90
+  },
+  "verdict": "LIMITED_OPERATING_ENVELOPE"
+}

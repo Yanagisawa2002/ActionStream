@@ -28,7 +28,11 @@ EXPECTED_ACTION_STEPS = 30
 EXPECTED_MODEL_ACTION_DIM = 20
 EXPECTED_ENV_ACTION_DIM = 7
 EXPECTED_LEROBOT_VERSION = "0.6.2"
-EXPECTED_LEROBOT_COMMIT = "6adf51511b7625090eade8d82d9f61a1846ebe56"
+EXPECTED_LEROBOT_COMMIT = "73e1584473028a2d53ecfc856f5290db84507f90"
+EXPECTED_LEROBOT_URL = (
+    "https://github.com/Yanagisawa2002/lerobot/archive/"
+    f"{EXPECTED_LEROBOT_COMMIT}.tar.gz"
+)
 
 
 def _verify_lerobot_install() -> dict[str, str]:
@@ -37,17 +41,22 @@ def _verify_lerobot_install() -> dict[str, str]:
     if direct_url_text is None:
         raise RuntimeError("Pinned LeRobot install is missing direct_url.json provenance")
     direct_url = json.loads(direct_url_text)
+    url = str(direct_url.get("url", ""))
     commit = direct_url.get("vcs_info", {}).get("commit_id")
+    if commit is None and url == EXPECTED_LEROBOT_URL:
+        commit = EXPECTED_LEROBOT_COMMIT
     if distribution.version != EXPECTED_LEROBOT_VERSION:
         raise RuntimeError(
             f"Expected LeRobot {EXPECTED_LEROBOT_VERSION}, got {distribution.version}"
         )
     if commit != EXPECTED_LEROBOT_COMMIT:
         raise RuntimeError(f"Expected LeRobot commit {EXPECTED_LEROBOT_COMMIT}, got {commit!r}")
+    if url != EXPECTED_LEROBOT_URL:
+        raise RuntimeError(f"Expected LeRobot URL {EXPECTED_LEROBOT_URL}, got {url!r}")
     return {
         "version": distribution.version,
         "commit": commit,
-        "url": str(direct_url.get("url", "")),
+        "url": url,
     }
 
 

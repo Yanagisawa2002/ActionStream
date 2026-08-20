@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "status": "fail_outside_current_ci_selection",
+  "command": "uv run pytest -q",
+  "collected": 326,
+  "passed": 321,
+  "skipped": 2,
+  "failed": 3,
+  "collection_import_fix": "pyproject.toml now adds the repository root to pytest pythonpath",
+  "failures": [
+    {
+      "test": "tests/test_m6_report.py::test_source_crosswalk_has_every_frozen_pinned_reference",
+      "reason": "outputs/m6_g0/upstream/pinned_upstream.json is absent from the checkout"
+    },
+    {
+      "test": "tests/test_m6_report.py::test_artifact_manifest_hashes_every_m6_file",
+      "reason": "five ignored M6 raw evidence files named by the frozen manifest are absent from the checkout"
+    },
+    {
+      "test": "tests/test_m8_linux_runner.py::test_support_extracts_exact_frozen_baseline_inventory",
+      "reason": "outputs/m8_g0/baseline_gate/candidate_0/matrix.json is absent; the assertion then also decodes localized Windows stderr as UTF-8 and masks the underlying missing fixture"
+    }
+  ],
+  "current_ci_quality_core": {
+    "status": "pass",
+    "tests_passed": 79,
+    "ruff_check": "pass",
+    "ruff_format_check": "pass"
+  },
+  "extended_local_quality_core": {
+    "status": "pass",
+    "tests_passed": 81,
+    "includes": "tests/test_backend_gpu_v2_archive.py"
+  }
+}

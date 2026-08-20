@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
-  "prepared_version": "1.1.0rc1",
-  "prepared_date": "2026-08-18",
+  "prepared_version": "1.1.0",
+  "prepared_date": "2026-08-20",
   "source": {
-    "development_commit": "763cdeeed0168e38b7d95f0fd77bc4d5dbe9499d",
-    "preserved_remote_ref": "origin/codex/actionstream/async-rtc-isaac",
+    "development_commit": "2b24bc70cdb8ebc3378418a409948a6a329a0805",
+    "preserved_remote_ref": "origin/codex/actionstream/release-backend-arena",
     "raw_outputs_git_tree_oid": "aa2a0bc4c5f8464e5e00fa09339e3d4e8d33777f",
     "note": "The public snapshot removes raw outputs from its final tree. The content-addressed source tree remains on the preserved private evidence branch."
   },
@@ -25,14 +25,16 @@
     "^outputs/(xvla_isaac_visual_canary_v1|xvla_isaac_official_render_bridge_v1_retry1|xvla_isaac_input_counterfactual_v1)/"
   ],
   "legal": {
-    "status": "BLOCKED_OWNER_DECISION",
-    "missing_file": "LICENSE",
-    "recommended_candidate": "Apache-2.0",
-    "reason": "LeRobot is Apache-2.0 and this repository contains an upstream-oriented integration, but only the repository owner can authorize the first-party license."
+    "status": "LICENSED",
+    "spdx": "Apache-2.0",
+    "file": "LICENSE",
+    "third_party_notice": "THIRD_PARTY_NOTICES.md"
   },
   "external_actions": {
     "repository_visibility": "PRIVATE",
     "merge_status": "PREPARED_NOT_MERGED",
-    "upstream_pr_status": "PATCH_PREPARED_NOT_SUBMITTED"
+    "upstream_pr_status": "PR_4466_READY_FOR_REVIEW_MAINTAINER_CI_APPROVAL_REQUIRED",
+    "upstream_pr_head": "73e1584473028a2d53ecfc856f5290db84507f90",
+    "upstream_pr_base": "d451fe4f1f1b00a812f95aa9534389b5e42ab155"
   }
 }

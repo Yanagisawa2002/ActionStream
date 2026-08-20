@@ -48,6 +48,15 @@ by +5.67 (`[-21.13, 27.00]`). At fixed 950 ms, aligned success changed by
 (`[3.40, 84.33]`). Guarded was still worse: -0.4000 success
 (`[-0.6667, -0.1333]`) and +66.53 steps (`[23.87, 111.40]`).
 
+As a separately labeled secondary contrast against official weighted-average
+Async, aligned improved the frozen jitter cell from 8/15 to 14/15 success
+(+0.4000, 95% CI `[0.1333, 0.6667]`) and reduced mean completion steps from
+207.20 to 144.87 (-62.33 steps, `[-105.20, -21.53]`). At fixed 250 ms it
+improved 9/15 to 13/15 and reduced mean steps from 194.60 to 149.00. This
+secondary analysis uses unchanged predeclared cells and pairing invariants; it
+does not replace latest-only as the primary reference or support a universal
+superiority claim.
+
 Sync-hold achieved 14/15 at every network profile and 130.13 mean environment
 steps because the simulator waits for inference and transport. It is a useful
 behavioral upper bound, not a real-time deployment result.
@@ -65,9 +74,11 @@ behavioral upper bound, not a real-time deployment result.
 - The disconnect/recovery check is a backend-only canary and is excluded from
   fair paired effects against official baselines.
 
-SmolVLA RTC completed a 9/9 plumbing canary and the upstream RTC capability was
-verified, but SmolVLA failed the frozen zero-delay sync gate. No formal SmolVLA
-or RTC holdout result is claimed.
+SmolVLA RTC plumbing and learned motion were verified, but the new frozen sync
+gates did not pass across all three suites. v2 passed Object and Spatial 2/2
+but Goal only 1/2; v3 passed Spatial and Goal 2/2 but Object only 1/2. Formal
+holdout and official RTC therefore both have 0 records, and no paired RTC
+effect exists. This is a protocol-enforced NO-GO, not a negative RTC effect.
 
 ## Native learned-policy Isaac development evidence
 
@@ -89,8 +100,10 @@ adapter is structural integration only and is not labeled as an Arena result.
 ## Evidence
 
 - [`formal_xvla/report.md`](formal_xvla/report.md): full main table and paired effects.
+- [`formal_xvla/secondary_paired_effects.csv`](formal_xvla/secondary_paired_effects.csv): aligned versus official Async secondary contrast.
 - [`formal_xvla/latency_success_operating_points.png`](formal_xvla/latency_success_operating_points.png): sampled operating points, not a continuous curve.
 - [`formal_xvla/failure_taxonomy.csv`](formal_xvla/failure_taxonomy.csv): failure classes.
+- [`smolvla_rtc_gate_v2_v3/report.md`](smolvla_rtc_gate_v2_v3/report.md): frozen SmolVLA sync-gate NO-GO and formal-RTC boundary.
 - [`native_dev_summary.json`](native_dev_summary.json): native development gates.
 - [`qualitative/`](qualitative/): inspected paired contact sheets and native task contact sheets.
 - [`local_transfer_receipt.json`](local_transfer_receipt.json): local/remote archive hashes and evidence boundary.

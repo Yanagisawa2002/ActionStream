@@ -1,0 +1,11 @@
+ci95_high,ci95_low,delay_profile,estimate_mean,estimate_runtime,metric,model,paired_episode_count,paired_mean_difference,paired_relative_difference_percent,reference_mean,reference_runtime,split
+0.5333333333333333,0.0,burst_0250_to2000_holdout,0.8666666666666667,actionstream_backend_aligned,success,xvla,15,0.26666666666666666,,0.6,lerobot_weighted_average,holdout
+19.533333333333335,-66.73333333333333,burst_0250_to2000_holdout,186.06666666666666,actionstream_backend_aligned,environment_steps,xvla,15,-22.733333333333334,1.1399632548162248,208.8,lerobot_weighted_average,holdout
+0.4,-0.13333333333333333,fixed_0000,0.8,actionstream_backend_aligned,success,xvla,15,0.13333333333333333,,0.6666666666666666,lerobot_weighted_average,holdout
+38.66833333333331,-50.401666666666664,fixed_0000,184.93333333333334,actionstream_backend_aligned,environment_steps,xvla,15,-4.066666666666666,12.22253298714545,189.0,lerobot_weighted_average,holdout
+0.5333333333333333,0.0,fixed_0250,0.8666666666666667,actionstream_backend_aligned,success,xvla,15,0.26666666666666666,,0.6,lerobot_weighted_average,holdout
+-1.2,-92.60166666666666,fixed_0250,149.0,actionstream_backend_aligned,environment_steps,xvla,15,-45.6,-12.020691815496981,194.6,lerobot_weighted_average,holdout
+0.26666666666666666,-0.4,fixed_0950,0.6666666666666666,actionstream_backend_aligned,success,xvla,15,-0.06666666666666667,,0.7333333333333333,lerobot_weighted_average,holdout
+75.53333333333333,-32.87,fixed_0950,206.8,actionstream_backend_aligned,environment_steps,xvla,15,19.8,29.20591741291029,187.0,lerobot_weighted_average,holdout
+0.6666666666666666,0.13333333333333333,jitter_0600_pm0400_holdout,0.9333333333333333,actionstream_backend_aligned,success,xvla,15,0.4,,0.5333333333333333,lerobot_weighted_average,holdout
+-21.53166666666669,-105.20166666666667,jitter_0600_pm0400_holdout,144.86666666666667,actionstream_backend_aligned,environment_steps,xvla,15,-62.333333333333336,-19.94802774234035,207.2,lerobot_weighted_average,holdout

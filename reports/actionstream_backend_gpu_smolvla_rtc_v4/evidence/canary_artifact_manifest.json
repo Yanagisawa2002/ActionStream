@@ -1,0 +1,31 @@
+{
+  "artifacts": {
+    "cells/goal/sync_hold/episodes.jsonl": "e03cbfe43667d4a19148eea3e51fa74feace6ec645be8752d978522d9f67a1d8",
+    "cells/goal/sync_hold/run_receipt.json": "90c4aef7dbc9372189ee970306fa89590c58675b7c5bed67123db326f0e41293",
+    "cells/goal/sync_hold/subprocess.log": "701fd6b3f49028ca73324d7e1c1fbc68139cf1a506d39f848ac6f0b867017295",
+    "cells/goal/sync_hold/subprocess_receipt.json": "157956afdd1f9afa097024793ea2fc7d86653264a0fa2c6f5f8951d5856b543b",
+    "cells/goal/sync_hold/system_telemetry.jsonl": "550954a7fd4adc61412e0289ea4e7b1447b0eebf5e3bb4a61ef5e6650fee4495",
+    "cells/goal/sync_hold/traces/smolvla__sync_hold__fixed_0000__task5__ep0.json": "99cc1b22fe92ea34251055af61220c4852d47e578bb74ba835118ec6eab59504",
+    "cells/goal/sync_hold/traces/smolvla__sync_hold__fixed_0000__task5__ep1.json": "f1ecbfe50b69942ed81e6e69629d8764b5bf6c3c2ea5ae2c1aeadf06442bb9b8",
+    "cells/goal/sync_hold/videos/smolvla__sync_hold__fixed_0000__task5__ep0.mp4": "ad62e2951ddcc8573712fef56c50fa27f16ced75cfbcea4f1cd10a6eb630a036",
+    "cells/object/sync_hold/episodes.jsonl": "2b7265b0030e2d26cdae5778e2ce228df5a13c02f8d82e88e03b0811e42ed075",
+    "cells/object/sync_hold/run_receipt.json": "a98ea85faf6727ea3973c22aae7e288dc0ecc483cdf0fc68c672aeb4cdf8dbcd",
+    "cells/object/sync_hold/subprocess.log": "933bb941ab6fb17aac97bcbe3f383eb19216cee556ee97e39237b982376f01b1",
+    "cells/object/sync_hold/subprocess_receipt.json": "bd8bfa0525971907e0a37115a0bbfeb13ec12cc792c9c6f6e51f91b274b15a76",
+    "cells/object/sync_hold/system_telemetry.jsonl": "e40c85936006e29b9f65653ee81a698312d6cf54c6e546eb60adc0dd5b730f8f",
+    "cells/object/sync_hold/traces/smolvla__sync_hold__fixed_0000__task3__ep0.json": "b94086273451b05787c161f442e611d7d5f052030ca9798fd63ef5b2e205b059",
+    "cells/object/sync_hold/traces/smolvla__sync_hold__fixed_0000__task3__ep1.json": "b4c197402522cf50f3fc07fc1fdcf133d2fd2347b8f9e1df42c306ba562070c2",
+    "cells/object/sync_hold/videos/smolvla__sync_hold__fixed_0000__task3__ep0.mp4": "37fc27b3aae1c5c60052c22f0ddd3a0c112d9b5c1ed982b10558b9a2407d84cf",
+    "cells/spatial/sync_hold/episodes.jsonl": "2ab7ca48d2f7144eb5eef4698946d0334e7a6fa95f9f5ff4afe2aaa4410ec2b0",
+    "cells/spatial/sync_hold/run_receipt.json": "bb18aa3ac95f578b37cf07a1819831254c41c101dd9457bae4d2d0189488c700",
+    "cells/spatial/sync_hold/subprocess.log": "1e4f8100e7f24b67ab7c2c3c90a787da6384db23fdff2679fc05a809b0f03060",
+    "cells/spatial/sync_hold/subprocess_receipt.json": "9a0764e89a20604c98f7e5e8b5bd1ee5b54b7e22a7c1dbf96d6483f2f1a3d43e",
+    "cells/spatial/sync_hold/system_telemetry.jsonl": "566cb98423fb34ce5ca3d8c83a5331c65322471a75ade7cd34c5a5bd5ecd3556",
+    "cells/spatial/sync_hold/traces/smolvla__sync_hold__fixed_0000__task0__ep0.json": "1045f8c9738df33958d92ba53632890bef8a17aa15641c83a0454e31155e532e",
+    "cells/spatial/sync_hold/traces/smolvla__sync_hold__fixed_0000__task0__ep1.json": "62bf94d9580b88447ff7efeb679dda4762f77fd59e3490ff34d61f4e6b462b3e",
+    "cells/spatial/sync_hold/videos/smolvla__sync_hold__fixed_0000__task0__ep0.mp4": "1ce1a9d79674ede7f05199b7eb02e31e6652d9763c36dff76c4fca0ce86e8260",
+    "episodes.jsonl": "2fba9ffddbf6128d34a4f409659486a973bb71f1caee847294c8d5d7ebf395ad",
+    "orchestrator_receipt.json": "79fb57ed0af341d1315fa733407c707e32a427702539f9b60218d78cdc9877be"
+  },
+  "schema_version": 1
+}

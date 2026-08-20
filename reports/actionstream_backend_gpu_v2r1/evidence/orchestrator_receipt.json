@@ -1,0 +1,626 @@
+{
+  "children": [
+    {
+      "command": [
+        "/root/autodl-tmp/venvs/actionstream/bin/python",
+        "-m",
+        "actionstream.current_baselines",
+        "--protocol",
+        "/root/autodl-tmp/actionstream-backend-gpu-v2r1-c8419d6/configs/actionstream_backend_gpu_v2r1_canary_object.json",
+        "--lerobot-root",
+        "/root/autodl-tmp/external/lerobot-current",
+        "--output-dir",
+        "/root/autodl-tmp/results/actionstream_backend_gpu_v2r1_canary/cells/object/sync_hold",
+        "--models",
+        "xvla",
+        "--runtimes",
+        "sync_hold",
+        "--capture"
+      ],
+      "family": "object",
+      "fresh_process": true,
+      "log_path": "/root/autodl-tmp/results/actionstream_backend_gpu_v2r1_canary/cells/object/sync_hold/subprocess.log",
+      "log_sha256": "59b59ebb62b57236fa26ce8408c3b036db33ff5091d9d6f7b124a56a744f5c9b",
+      "pid": 27884,
+      "post_gpu": {
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "0, NVIDIA GeForce RTX 5090, GPU-377e40b0-f577-8e15-578d-a56e5fd1eaa1, 8, 2, 32607"
+      },
+      "pre_gpu": {
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "0, NVIDIA GeForce RTX 5090, GPU-377e40b0-f577-8e15-578d-a56e5fd1eaa1, 0, 2, 32607"
+      },
+      "returncode": 0,
+      "runtime": "sync_hold",
+      "schema_version": 1,
+      "started_utc_unix_ns": 1787253781312096351,
+      "wall_clock_seconds": 113.19225996290334
+    },
+    {
+      "command": [
+        "/root/autodl-tmp/venvs/actionstream/bin/python",
+        "-m",
+        "actionstream.current_baselines",
+        "--protocol",
+        "/root/autodl-tmp/actionstream-backend-gpu-v2r1-c8419d6/configs/actionstream_backend_gpu_v2r1_canary_object.json",
+        "--lerobot-root",
+        "/root/autodl-tmp/external/lerobot-current",
+        "--output-dir",
+        "/root/autodl-tmp/results/actionstream_backend_gpu_v2r1_canary/cells/object/lerobot_weighted_average",
+        "--models",
+        "xvla",
+        "--runtimes",
+        "lerobot_weighted_average",
+        "--capture"
+      ],
+      "family": "object",
+      "fresh_process": true,
+      "log_path": "/root/autodl-tmp/results/actionstream_backend_gpu_v2r1_canary/cells/object/lerobot_weighted_average/subprocess.log",
+      "log_sha256": "e6604fce3a02f43b8dc8d9d22bab1fbf01c0a03ffdeddf7dd13aac8595e90795",
+      "pid": 31465,
+      "post_gpu": {
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "0, NVIDIA GeForce RTX 5090, GPU-377e40b0-f577-8e15-578d-a56e5fd1eaa1, 8, 2, 32607"
+      },
+      "pre_gpu": {
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "0, NVIDIA GeForce RTX 5090, GPU-377e40b0-f577-8e15-578d-a56e5fd1eaa1, 0, 2, 32607"
+      },
+      "returncode": 0,
+      "runtime": "lerobot_weighted_average",
+      "schema_version": 1,
+      "started_utc_unix_ns": 1787253894506830605,
+      "wall_clock_seconds": 199.57156656100415
+    },
+    {
+      "command": [
+        "/root/autodl-tmp/venvs/actionstream/bin/python",
+        "-m",
+        "actionstream.current_baselines",
+        "--protocol",
+        "/root/autodl-tmp/actionstream-backend-gpu-v2r1-c8419d6/configs/actionstream_backend_gpu_v2r1_canary_object.json",
+        "--lerobot-root",
+        "/root/autodl-tmp/external/lerobot-current",
+        "--output-dir",
+        "/root/autodl-tmp/results/actionstream_backend_gpu_v2r1_canary/cells/object/lerobot_latest_only",
+        "--models",
+        "xvla",
+        "--runtimes",
+        "lerobot_latest_only",
+        "--capture"
+      ],
+      "family": "object",
+      "fresh_process": true,
+      "log_path": "/root/autodl-tmp/results/actionstream_backend_gpu_v2r1_canary/cells/object/lerobot_latest_only/subprocess.log",
+      "log_sha256": "7a32ba4db105a5f7b63ff091dcdb9df37122206176260e484ecd09def4ce0afe",
+      "pid": 36943,
+      "post_gpu": {
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "0, NVIDIA GeForce RTX 5090, GPU-377e40b0-f577-8e15-578d-a56e5fd1eaa1, 8, 2, 32607"
+      },
+      "pre_gpu": {
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "0, NVIDIA GeForce RTX 5090, GPU-377e40b0-f577-8e15-578d-a56e5fd1eaa1, 0, 2, 32607"
+      },
+      "returncode": 0,
+      "runtime": "lerobot_latest_only",
+      "schema_version": 1,
+      "started_utc_unix_ns": 1787254094079196701,
+      "wall_clock_seconds": 136.89692489383742
+    },
+    {
+      "command": [
+        "/root/autodl-tmp/venvs/actionstream/bin/python",
+        "-m",
+        "actionstream.current_baselines",
+        "--protocol",
+        "/root/autodl-tmp/actionstream-backend-gpu-v2r1-c8419d6/configs/actionstream_backend_gpu_v2r1_canary_object.json",
+        "--lerobot-root",
+        "/root/autodl-tmp/external/lerobot-current",
+        "--output-dir",
+        "/root/autodl-tmp/results/actionstream_backend_gpu_v2r1_canary/cells/object/actionstream_backend_aligned",
+        "--models",
+        "xvla",
+        "--runtimes",
+        "actionstream_backend_aligned",
+        "--capture"
+      ],
+      "family": "object",
+      "fresh_process": true,
+      "log_path": "/root/autodl-tmp/results/actionstream_backend_gpu_v2r1_canary/cells/object/actionstream_backend_aligned/subprocess.log",
+      "log_sha256": "2f0b5149f1a176c5200e576c1e910071f5d6f39ec8936c87f9cf682dbb636307",
+      "pid": 41143,
+      "post_gpu": {
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "0, NVIDIA GeForce RTX 5090, GPU-377e40b0-f577-8e15-578d-a56e5fd1eaa1, 8, 2, 32607"
+      },
+      "pre_gpu": {
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "0, NVIDIA GeForce RTX 5090, GPU-377e40b0-f577-8e15-578d-a56e5fd1eaa1, 0, 2, 32607"
+      },
+      "returncode": 0,
+      "runtime": "actionstream_backend_aligned",
+      "schema_version": 1,
+      "started_utc_unix_ns": 1787254230978337542,
+      "wall_clock_seconds": 160.1170333470218
+    },
+    {
+      "command": [
+        "/root/autodl-tmp/venvs/actionstream/bin/python",
+        "-m",
+        "actionstream.current_baselines",
+        "--protocol",
+        "/root/autodl-tmp/actionstream-backend-gpu-v2r1-c8419d6/configs/actionstream_backend_gpu_v2r1_canary_object.json",
+        "--lerobot-root",
+        "/root/autodl-tmp/external/lerobot-current",
+        "--output-dir",
+        "/root/autodl-tmp/results/actionstream_backend_gpu_v2r1_canary/cells/object/actionstream_backend_guarded",
+        "--models",
+        "xvla",
+        "--runtimes",
+        "actionstream_backend_guarded",
+        "--capture"
+      ],
+      "family": "object",
+      "fresh_process": true,
+      "log_path": "/root/autodl-tmp/results/actionstream_backend_gpu_v2r1_canary/cells/object/actionstream_backend_guarded/subprocess.log",
+      "log_sha256": "2edf9988d5da487c5060a6b2f9a8d20db98d1dfbaaa7da6ae8b979497730491a",
+      "pid": 45807,
+      "post_gpu": {
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "0, NVIDIA GeForce RTX 5090, GPU-377e40b0-f577-8e15-578d-a56e5fd1eaa1, 8, 2, 32607"
+      },
+      "pre_gpu": {
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "0, NVIDIA GeForce RTX 5090, GPU-377e40b0-f577-8e15-578d-a56e5fd1eaa1, 8, 2, 32607"
+      },
+      "returncode": 0,
+      "runtime": "actionstream_backend_guarded",
+      "schema_version": 1,
+      "started_utc_unix_ns": 1787254391097790989,
+      "wall_clock_seconds": 151.30101498402655
+    },
+    {
+      "command": [
+        "/root/autodl-tmp/venvs/actionstream/bin/python",
+        "-m",
+        "actionstream.current_baselines",
+        "--protocol",
+        "/root/autodl-tmp/actionstream-backend-gpu-v2r1-c8419d6/configs/actionstream_backend_gpu_v2r1_canary_spatial.json",
+        "--lerobot-root",
+        "/root/autodl-tmp/external/lerobot-current",
+        "--output-dir",
+        "/root/autodl-tmp/results/actionstream_backend_gpu_v2r1_canary/cells/spatial/sync_hold",
+        "--models",
+        "xvla",
+        "--runtimes",
+        "sync_hold",
+        "--capture"
+      ],
+      "family": "spatial",
+      "fresh_process": true,
+      "log_path": "/root/autodl-tmp/results/actionstream_backend_gpu_v2r1_canary/cells/spatial/sync_hold/subprocess.log",
+      "log_sha256": "c1494a5442ed97a238f0dcbb4f5374742fcaba18b08f5a0b174c7eb847cb4c89",
+      "pid": 50309,
+      "post_gpu": {
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "0, NVIDIA GeForce RTX 5090, GPU-377e40b0-f577-8e15-578d-a56e5fd1eaa1, 8, 2, 32607"
+      },
+      "pre_gpu": {
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "0, NVIDIA GeForce RTX 5090, GPU-377e40b0-f577-8e15-578d-a56e5fd1eaa1, 8, 2, 32607"
+      },
+      "returncode": 0,
+      "runtime": "sync_hold",
+      "schema_version": 1,
+      "started_utc_unix_ns": 1787254542401422908,
+      "wall_clock_seconds": 110.46166508109309
+    },
+    {
+      "command": [
+        "/root/autodl-tmp/venvs/actionstream/bin/python",
+        "-m",
+        "actionstream.current_baselines",
+        "--protocol",
+        "/root/autodl-tmp/actionstream-backend-gpu-v2r1-c8419d6/configs/actionstream_backend_gpu_v2r1_canary_spatial.json",
+        "--lerobot-root",
+        "/root/autodl-tmp/external/lerobot-current",
+        "--output-dir",
+        "/root/autodl-tmp/results/actionstream_backend_gpu_v2r1_canary/cells/spatial/lerobot_weighted_average",
+        "--models",
+        "xvla",
+        "--runtimes",
+        "lerobot_weighted_average",
+        "--capture"
+      ],
+      "family": "spatial",
+      "fresh_process": true,
+      "log_path": "/root/autodl-tmp/results/actionstream_backend_gpu_v2r1_canary/cells/spatial/lerobot_weighted_average/subprocess.log",
+      "log_sha256": "0b679579524fdfffff780ec1dadee69bc90d43dc5ba2df3047d7df0b2bdb8cf7",
+      "pid": 53978,
+      "post_gpu": {
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "0, NVIDIA GeForce RTX 5090, GPU-377e40b0-f577-8e15-578d-a56e5fd1eaa1, 1, 2, 32607"
+      },
+      "pre_gpu": {
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "0, NVIDIA GeForce RTX 5090, GPU-377e40b0-f577-8e15-578d-a56e5fd1eaa1, 0, 2, 32607"
+      },
+      "returncode": 0,
+      "runtime": "lerobot_weighted_average",
+      "schema_version": 1,
+      "started_utc_unix_ns": 1787254652865283819,
+      "wall_clock_seconds": 155.0353868950624
+    },
+    {
+      "command": [
+        "/root/autodl-tmp/venvs/actionstream/bin/python",
+        "-m",
+        "actionstream.current_baselines",
+        "--protocol",
+        "/root/autodl-tmp/actionstream-backend-gpu-v2r1-c8419d6/configs/actionstream_backend_gpu_v2r1_canary_spatial.json",
+        "--lerobot-root",
+        "/root/autodl-tmp/external/lerobot-current",
+        "--output-dir",
+        "/root/autodl-tmp/results/actionstream_backend_gpu_v2r1_canary/cells/spatial/lerobot_latest_only",
+        "--models",
+        "xvla",
+        "--runtimes",
+        "lerobot_latest_only",
+        "--capture"
+      ],
+      "family": "spatial",
+      "fresh_process": true,
+      "log_path": "/root/autodl-tmp/results/actionstream_backend_gpu_v2r1_canary/cells/spatial/lerobot_latest_only/subprocess.log",
+      "log_sha256": "4e07b799053fc459ee84e2247cc3aab3722b3e837701223dbba06dfa7a6dc782",
+      "pid": 58687,
+      "post_gpu": {
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "0, NVIDIA GeForce RTX 5090, GPU-377e40b0-f577-8e15-578d-a56e5fd1eaa1, 8, 2, 32607"
+      },
+      "pre_gpu": {
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "0, NVIDIA GeForce RTX 5090, GPU-377e40b0-f577-8e15-578d-a56e5fd1eaa1, 1, 2, 32607"
+      },
+      "returncode": 0,
+      "runtime": "lerobot_latest_only",
+      "schema_version": 1,
+      "started_utc_unix_ns": 1787254807902902964,
+      "wall_clock_seconds": 132.31801526318304
+    },
+    {
+      "command": [
+        "/root/autodl-tmp/venvs/actionstream/bin/python",
+        "-m",
+        "actionstream.current_baselines",
+        "--protocol",
+        "/root/autodl-tmp/actionstream-backend-gpu-v2r1-c8419d6/configs/actionstream_backend_gpu_v2r1_canary_spatial.json",
+        "--lerobot-root",
+        "/root/autodl-tmp/external/lerobot-current",
+        "--output-dir",
+        "/root/autodl-tmp/results/actionstream_backend_gpu_v2r1_canary/cells/spatial/actionstream_backend_aligned",
+        "--models",
+        "xvla",
+        "--runtimes",
+        "actionstream_backend_aligned",
+        "--capture"
+      ],
+      "family": "spatial",
+      "fresh_process": true,
+      "log_path": "/root/autodl-tmp/results/actionstream_backend_gpu_v2r1_canary/cells/spatial/actionstream_backend_aligned/subprocess.log",
+      "log_sha256": "75be6015027a3d99199fdc1e796f763a7a970991f3a2827d157cb5f5e8ab6942",
+      "pid": 62993,
+      "post_gpu": {
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "0, NVIDIA GeForce RTX 5090, GPU-377e40b0-f577-8e15-578d-a56e5fd1eaa1, 8, 2, 32607"
+      },
+      "pre_gpu": {
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "0, NVIDIA GeForce RTX 5090, GPU-377e40b0-f577-8e15-578d-a56e5fd1eaa1, 8, 2, 32607"
+      },
+      "returncode": 0,
+      "runtime": "actionstream_backend_aligned",
+      "schema_version": 1,
+      "started_utc_unix_ns": 1787254940223192219,
+      "wall_clock_seconds": 145.9817458849866
+    },
+    {
+      "command": [
+        "/root/autodl-tmp/venvs/actionstream/bin/python",
+        "-m",
+        "actionstream.current_baselines",
+        "--protocol",
+        "/root/autodl-tmp/actionstream-backend-gpu-v2r1-c8419d6/configs/actionstream_backend_gpu_v2r1_canary_spatial.json",
+        "--lerobot-root",
+        "/root/autodl-tmp/external/lerobot-current",
+        "--output-dir",
+        "/root/autodl-tmp/results/actionstream_backend_gpu_v2r1_canary/cells/spatial/actionstream_backend_guarded",
+        "--models",
+        "xvla",
+        "--runtimes",
+        "actionstream_backend_guarded",
+        "--capture"
+      ],
+      "family": "spatial",
+      "fresh_process": true,
+      "log_path": "/root/autodl-tmp/results/actionstream_backend_gpu_v2r1_canary/cells/spatial/actionstream_backend_guarded/subprocess.log",
+      "log_sha256": "fe74ed51b28c8850d047db45d96531d0b958467a85222b1e46989830eb22f668",
+      "pid": 67526,
+      "post_gpu": {
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "0, NVIDIA GeForce RTX 5090, GPU-377e40b0-f577-8e15-578d-a56e5fd1eaa1, 0, 2, 32607"
+      },
+      "pre_gpu": {
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "0, NVIDIA GeForce RTX 5090, GPU-377e40b0-f577-8e15-578d-a56e5fd1eaa1, 8, 2, 32607"
+      },
+      "returncode": 0,
+      "runtime": "actionstream_backend_guarded",
+      "schema_version": 1,
+      "started_utc_unix_ns": 1787255086207336927,
+      "wall_clock_seconds": 146.17829544795677
+    },
+    {
+      "command": [
+        "/root/autodl-tmp/venvs/actionstream/bin/python",
+        "-m",
+        "actionstream.current_baselines",
+        "--protocol",
+        "/root/autodl-tmp/actionstream-backend-gpu-v2r1-c8419d6/configs/actionstream_backend_gpu_v2r1_canary_goal.json",
+        "--lerobot-root",
+        "/root/autodl-tmp/external/lerobot-current",
+        "--output-dir",
+        "/root/autodl-tmp/results/actionstream_backend_gpu_v2r1_canary/cells/goal/sync_hold",
+        "--models",
+        "xvla",
+        "--runtimes",
+        "sync_hold",
+        "--capture"
+      ],
+      "family": "goal",
+      "fresh_process": true,
+      "log_path": "/root/autodl-tmp/results/actionstream_backend_gpu_v2r1_canary/cells/goal/sync_hold/subprocess.log",
+      "log_sha256": "43280f250e6dee897cf6ab0b78d743819b0d08863dea5cc1863f0692845a7764",
+      "pid": 72059,
+      "post_gpu": {
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "0, NVIDIA GeForce RTX 5090, GPU-377e40b0-f577-8e15-578d-a56e5fd1eaa1, 8, 2, 32607"
+      },
+      "pre_gpu": {
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "0, NVIDIA GeForce RTX 5090, GPU-377e40b0-f577-8e15-578d-a56e5fd1eaa1, 8, 2, 32607"
+      },
+      "returncode": 0,
+      "runtime": "sync_hold",
+      "schema_version": 1,
+      "started_utc_unix_ns": 1787255232386496964,
+      "wall_clock_seconds": 90.36809067218564
+    },
+    {
+      "command": [
+        "/root/autodl-tmp/venvs/actionstream/bin/python",
+        "-m",
+        "actionstream.current_baselines",
+        "--protocol",
+        "/root/autodl-tmp/actionstream-backend-gpu-v2r1-c8419d6/configs/actionstream_backend_gpu_v2r1_canary_goal.json",
+        "--lerobot-root",
+        "/root/autodl-tmp/external/lerobot-current",
+        "--output-dir",
+        "/root/autodl-tmp/results/actionstream_backend_gpu_v2r1_canary/cells/goal/lerobot_weighted_average",
+        "--models",
+        "xvla",
+        "--runtimes",
+        "lerobot_weighted_average",
+        "--capture"
+      ],
+      "family": "goal",
+      "fresh_process": true,
+      "log_path": "/root/autodl-tmp/results/actionstream_backend_gpu_v2r1_canary/cells/goal/lerobot_weighted_average/subprocess.log",
+      "log_sha256": "29f422b5e802e0c836c390fc35b6bb8ddcb569d7b06e3d77c611aa31822bc894",
+      "pid": 75422,
+      "post_gpu": {
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "0, NVIDIA GeForce RTX 5090, GPU-377e40b0-f577-8e15-578d-a56e5fd1eaa1, 0, 2, 32607"
+      },
+      "pre_gpu": {
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "0, NVIDIA GeForce RTX 5090, GPU-377e40b0-f577-8e15-578d-a56e5fd1eaa1, 0, 2, 32607"
+      },
+      "returncode": 0,
+      "runtime": "lerobot_weighted_average",
+      "schema_version": 1,
+      "started_utc_unix_ns": 1787255322757540822,
+      "wall_clock_seconds": 112.44609543704428
+    },
+    {
+      "command": [
+        "/root/autodl-tmp/venvs/actionstream/bin/python",
+        "-m",
+        "actionstream.current_baselines",
+        "--protocol",
+        "/root/autodl-tmp/actionstream-backend-gpu-v2r1-c8419d6/configs/actionstream_backend_gpu_v2r1_canary_goal.json",
+        "--lerobot-root",
+        "/root/autodl-tmp/external/lerobot-current",
+        "--output-dir",
+        "/root/autodl-tmp/results/actionstream_backend_gpu_v2r1_canary/cells/goal/lerobot_latest_only",
+        "--models",
+        "xvla",
+        "--runtimes",
+        "lerobot_latest_only",
+        "--capture"
+      ],
+      "family": "goal",
+      "fresh_process": true,
+      "log_path": "/root/autodl-tmp/results/actionstream_backend_gpu_v2r1_canary/cells/goal/lerobot_latest_only/subprocess.log",
+      "log_sha256": "157b03882816492e1168d7910dc41523bc6b0abcc5368e298d07348e81031689",
+      "pid": 79369,
+      "post_gpu": {
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "0, NVIDIA GeForce RTX 5090, GPU-377e40b0-f577-8e15-578d-a56e5fd1eaa1, 8, 2, 32607"
+      },
+      "pre_gpu": {
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "0, NVIDIA GeForce RTX 5090, GPU-377e40b0-f577-8e15-578d-a56e5fd1eaa1, 8, 2, 32607"
+      },
+      "returncode": 0,
+      "runtime": "lerobot_latest_only",
+      "schema_version": 1,
+      "started_utc_unix_ns": 1787255435208917783,
+      "wall_clock_seconds": 113.42034440697171
+    },
+    {
+      "command": [
+        "/root/autodl-tmp/venvs/actionstream/bin/python",
+        "-m",
+        "actionstream.current_baselines",
+        "--protocol",
+        "/root/autodl-tmp/actionstream-backend-gpu-v2r1-c8419d6/configs/actionstream_backend_gpu_v2r1_canary_goal.json",
+        "--lerobot-root",
+        "/root/autodl-tmp/external/lerobot-current",
+        "--output-dir",
+        "/root/autodl-tmp/results/actionstream_backend_gpu_v2r1_canary/cells/goal/actionstream_backend_aligned",
+        "--models",
+        "xvla",
+        "--runtimes",
+        "actionstream_backend_aligned",
+        "--capture"
+      ],
+      "family": "goal",
+      "fresh_process": true,
+      "log_path": "/root/autodl-tmp/results/actionstream_backend_gpu_v2r1_canary/cells/goal/actionstream_backend_aligned/subprocess.log",
+      "log_sha256": "625f8fcf272884414812bea681b825cb36db8cf22fc1378dc38df4eeee22c847",
+      "pid": 83341,
+      "post_gpu": {
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "0, NVIDIA GeForce RTX 5090, GPU-377e40b0-f577-8e15-578d-a56e5fd1eaa1, 8, 2, 32607"
+      },
+      "pre_gpu": {
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "0, NVIDIA GeForce RTX 5090, GPU-377e40b0-f577-8e15-578d-a56e5fd1eaa1, 8, 2, 32607"
+      },
+      "returncode": 0,
+      "runtime": "actionstream_backend_aligned",
+      "schema_version": 1,
+      "started_utc_unix_ns": 1787255548629995198,
+      "wall_clock_seconds": 130.9965851160232
+    },
+    {
+      "command": [
+        "/root/autodl-tmp/venvs/actionstream/bin/python",
+        "-m",
+        "actionstream.current_baselines",
+        "--protocol",
+        "/root/autodl-tmp/actionstream-backend-gpu-v2r1-c8419d6/configs/actionstream_backend_gpu_v2r1_canary_goal.json",
+        "--lerobot-root",
+        "/root/autodl-tmp/external/lerobot-current",
+        "--output-dir",
+        "/root/autodl-tmp/results/actionstream_backend_gpu_v2r1_canary/cells/goal/actionstream_backend_guarded",
+        "--models",
+        "xvla",
+        "--runtimes",
+        "actionstream_backend_guarded",
+        "--capture"
+      ],
+      "family": "goal",
+      "fresh_process": true,
+      "log_path": "/root/autodl-tmp/results/actionstream_backend_gpu_v2r1_canary/cells/goal/actionstream_backend_guarded/subprocess.log",
+      "log_sha256": "5007176d794839c398e672da1f1100ae7fffcd3cab5e8cd8c3b27e9be42ef14c",
+      "pid": 87665,
+      "post_gpu": {
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "0, NVIDIA GeForce RTX 5090, GPU-377e40b0-f577-8e15-578d-a56e5fd1eaa1, 8, 2, 32607"
+      },
+      "pre_gpu": {
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "0, NVIDIA GeForce RTX 5090, GPU-377e40b0-f577-8e15-578d-a56e5fd1eaa1, 8, 2, 32607"
+      },
+      "returncode": 0,
+      "runtime": "actionstream_backend_guarded",
+      "schema_version": 1,
+      "started_utc_unix_ns": 1787255679629076814,
+      "wall_clock_seconds": 133.37558221188374
+    }
+  ],
+  "episodes_path": "/root/autodl-tmp/results/actionstream_backend_gpu_v2r1_canary/episodes.jsonl",
+  "episodes_sha256": "4b15d18e78b5a8606f7619d7cf4b11a400f33c52a1bb22d4007145acc01af591",
+  "families": [
+    "object",
+    "spatial",
+    "goal"
+  ],
+  "fresh_process_count": 15,
+  "fresh_process_pids": [
+    27884,
+    31465,
+    36943,
+    41143,
+    45807,
+    50309,
+    53978,
+    58687,
+    62993,
+    67526,
+    72059,
+    75422,
+    79369,
+    83341,
+    87665
+  ],
+  "phase": "canary",
+  "protocols": [
+    {
+      "path": "/root/autodl-tmp/actionstream-backend-gpu-v2r1-c8419d6/configs/actionstream_backend_gpu_v2r1_canary_object.json",
+      "sha256": "3fee56469264c4eb3b0dabbd6ccd4200de2fe9c69978b87ed1ee0e75ad5fb2ca"
+    },
+    {
+      "path": "/root/autodl-tmp/actionstream-backend-gpu-v2r1-c8419d6/configs/actionstream_backend_gpu_v2r1_canary_spatial.json",
+      "sha256": "6ef6fb5e6680e001b387085a69d2e7ec3e4ea8f34e057231eeeaa4c21093dcd3"
+    },
+    {
+      "path": "/root/autodl-tmp/actionstream-backend-gpu-v2r1-c8419d6/configs/actionstream_backend_gpu_v2r1_canary_goal.json",
+      "sha256": "c1ceafe2ab32f5a14405dac8a911e6ea63910177621ed267fb8630e4dcc0ca93"
+    }
+  ],
+  "record_count": 90,
+  "runtimes": [
+    "sync_hold",
+    "lerobot_weighted_average",
+    "lerobot_latest_only",
+    "actionstream_backend_aligned",
+    "actionstream_backend_guarded"
+  ],
+  "schema_version": 2,
+  "source_commit": "a00f580a0956474612b3639e5eccc3d0cf61db8b",
+  "status": "completed",
+  "wall_clock_seconds": 2031.705105283996
+}

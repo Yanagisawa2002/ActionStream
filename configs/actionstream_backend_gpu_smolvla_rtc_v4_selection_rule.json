@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "experiment_family": "actionstream_backend_gpu_smolvla_rtc_v4",
+  "protocol_status": "frozen_before_development_screen",
+  "frozen_utc": "2026-08-20T21:17:00Z",
+  "candidate": {
+    "base_commit": "834366c9de1cb5e300182378311314e77eca2bed",
+    "current_baselines_sha256": "47f3e846e99afe54c538d00e5579aeb7c3e6fd4eea4024ecc068c6bf4dd5f4e4",
+    "orchestrator_sha256": "dbaa0cada56527f6ef53cf2b863b31663aa240fb1f8baee2d1e0c963cd28ace4",
+    "report_sha256": "7ad52c25ba646e0fdd72ec799c8a5de3eea0c455af484926efef6c53d6e2e11c"
+  },
+  "reason_for_new_namespace": "v2 and v3 remain NO-GO. v4 strengthens task screening and uses reset identities that were not consumed by any prior result for the candidate suite/task pairs.",
+  "historical_boundary": {
+    "v2_gate": {"object": "2/2", "spatial": "2/2", "goal": "1/2"},
+    "v3_gate": {"object": "1/2", "spatial": "2/2", "goal": "2/2"},
+    "old_holdout_states_40_to_44_remain_sealed": true,
+    "old_results_are_not_modified_or_relabelled": true
+  },
+  "reset_identity_audit": {
+    "remote_smolvla_episode_rows_scanned": 122,
+    "candidate_pair_states_26_to_35_consumed_before_freeze": 0,
+    "warmup_state": 26,
+    "development_states": [27, 28],
+    "canary_states": [29, 30],
+    "formal_holdout_states": [31, 32, 33, 34, 35]
+  },
+  "development_candidates": {
+    "object": {
+      "suite": "libero_object",
+      "task_ids": [1, 2, 3, 4, 6, 7, 8, 9],
+      "exclusions": {"0": "failed v3 canary 1/2", "5": "failed prior compact SmolVLA matrix"}
+    },
+    "spatial": {
+      "suite": "libero_spatial",
+      "task_ids": [0],
+      "reason": "only task with 5/5 perfect multi-reset historical sync evidence; v4 still requires two new development resets"
+    },
+    "goal": {
+      "suite": "libero_goal",
+      "task_ids": [5, 7],
+      "reason": "only tasks with perfect multi-reset historical sync evidence"
+    }
+  },
+  "selection_rule": "Within each family select the numerically smallest task with 2/2 success on development states 27 and 28. If no task qualifies, stop with NO-GO. Freeze selected tasks before reading canary outcomes.",
+  "sync_gate": {
+    "states": [29, 30],
+    "runtime": "sync_hold",
+    "delay_profile": "fixed_0000",
+    "required_successes_per_family": "2/2",
+    "required_families": ["object", "spatial", "goal"]
+  },
+  "formal_holdout_if_gate_passes": {
+    "states": [31, 32, 33, 34, 35],
+    "runtimes": ["sync_hold", "lerobot_latest_only", "lerobot_rtc"],
+    "profiles": ["fixed_0000", "fixed_0250", "fixed_0950", "jitter_0600_pm0400_smol_v4", "burst_0250_to2000_smol_v4"],
+    "primary_contrast": "lerobot_rtc minus lerobot_latest_only",
+    "secondary_contrast": "lerobot_rtc minus sync_hold",
+    "paired": true,
+    "post_holdout_tuning_forbidden": true
+  },
+  "scope_exclusions": {"v6_selector": true, "isaac_lab_arena": true, "cross_model_pooling": true}
+}

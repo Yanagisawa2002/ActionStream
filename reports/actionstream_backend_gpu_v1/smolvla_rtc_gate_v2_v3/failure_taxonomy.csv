@@ -1,0 +1,3 @@
+category,failed_resets,stage,states,suite,task_id
+sync_gate_task_failure,1,v2_canary,"37,39",libero_goal,1
+sync_gate_task_failure,1,v3_canary,"45,46",libero_object,0

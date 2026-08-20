@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "release": "v1.1.0",
+  "formal_xvla": {
+    "holdout_condition_episodes": 375,
+    "total_episodes": 435,
+    "trace_count": 435,
+    "video_count": 135,
+    "verified_action_count": 75043,
+    "task_families": [
+      "libero_goal",
+      "libero_object",
+      "libero_spatial"
+    ],
+    "primary_reference": "lerobot_latest_only",
+    "secondary_reference": "lerobot_weighted_average",
+    "scored_peak_allocated_cuda_mib": 12258.9501953125
+  },
+  "secondary_jitter_contrast": {
+    "status": "secondary_post_holdout_analysis_of_frozen_predeclared_cells",
+    "official_async_success": "8/15",
+    "aligned_success": "14/15",
+    "paired_success_difference": 0.4,
+    "paired_success_difference_95pct_bootstrap_ci": [
+      0.1333,
+      0.6667
+    ],
+    "mean_step_difference": -62.33,
+    "mean_step_difference_95pct_bootstrap_ci": [
+      -105.2,
+      -21.53
+    ]
+  },
+  "primary_fixed_950_boundary": {
+    "latest_only_success": "14/15",
+    "aligned_success": "10/15",
+    "paired_success_difference": -0.2667,
+    "paired_success_difference_95pct_bootstrap_ci": [
+      -0.5333,
+      -0.0667
+    ]
+  },
+  "raw_archive_sha256": "b721f425341b74e5ab081ce59953992b3f13cc90f13064b89e3d592659fb39bc",
+  "real_robot_claim": false,
+  "arena_executed": false,
+  "smolvla_rtc": {
+    "formal_status": "NO_GO_SYNC_GATE_FORMAL_NOT_RUN",
+    "v2_sync_canary": {
+      "libero_object": "2/2",
+      "libero_spatial": "2/2",
+      "libero_goal": "1/2"
+    },
+    "v3_sync_canary": {
+      "libero_object": "1/2",
+      "libero_spatial": "2/2",
+      "libero_goal": "2/2"
+    },
+    "formal_holdout_records": 0,
+    "formal_rtc_records": 0,
+    "formal_rtc_paired_effect": null,
+    "report": "reports/actionstream_backend_gpu_v1/smolvla_rtc_gate_v2_v3/report.md",
+    "raw_archive_sha256": "8176c702c3af827937997cadd8c945d4c6a4f1b6f5464ee82f48cf9b684af340"
+  }
+}

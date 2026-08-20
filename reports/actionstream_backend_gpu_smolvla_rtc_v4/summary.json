@@ -1,0 +1,13 @@
+{
+  "canary_records": 6,
+  "development_records": 22,
+  "formal_rtc_status": "NOT_RUN_BY_FROZEN_SYNC_GATE",
+  "gates": {
+    "all_sync_success": false,
+    "record_count_6": true,
+    "three_task_families": true,
+    "two_unseen_resets_per_family": true
+  },
+  "schema_version": 1,
+  "status": "NO_GO"
+}

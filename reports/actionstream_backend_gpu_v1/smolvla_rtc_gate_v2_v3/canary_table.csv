@@ -1,0 +1,7 @@
+environment_steps,episodes,gate_pass,inference_latency_p50_seconds_median,inference_latency_p95_seconds_median,peak_cuda_memory_mib_max,stage,states,successes,suite,task_id
+"95,300",2,False,0.19566924747778103,0.2032510612567421,925.603515625,v2_canary,"37,39",1,libero_goal,1
+"137,140",2,True,0.19300154689699411,0.20601570812286807,925.603515625,v2_canary,"37,39",2,libero_object,0
+"76,82",2,True,0.17971491580829024,0.1885708165471442,925.603515625,v2_canary,"37,39",2,libero_spatial,0
+"133,130",2,True,0.20062896399758756,0.2053641106467694,925.603515625,v3_canary,"45,46",2,libero_goal,5
+"142,300",2,False,0.2002446063561365,0.20851107941125518,925.603515625,v3_canary,"45,46",1,libero_object,0
+"79,81",2,True,0.17923940473701805,0.1854349730187096,925.603515625,v3_canary,"45,46",2,libero_spatial,0

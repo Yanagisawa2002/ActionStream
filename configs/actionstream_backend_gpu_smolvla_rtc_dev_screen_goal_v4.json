@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "smolvla_protocol_version": 4,
+  "experiment_id": "actionstream_backend_gpu_smolvla_rtc_dev_screen_goal_v4",
+  "protocol_status": "development_only_task_screen",
+  "frozen_utc": "2026-08-20T21:17:00Z",
+  "task_family": "goal",
+  "candidate": {
+    "base_commit": "834366c9de1cb5e300182378311314e77eca2bed",
+    "current_baselines_sha256": "47f3e846e99afe54c538d00e5579aeb7c3e6fd4eea4024ecc068c6bf4dd5f4e4",
+    "orchestrator_sha256": "dbaa0cada56527f6ef53cf2b863b31663aa240fb1f8baee2d1e0c963cd28ace4",
+    "report_sha256": "7ad52c25ba646e0fdd72ec799c8a5de3eea0c455af484926efef6c53d6e2e11c"
+  },
+  "source": {
+    "repository_url": "https://github.com/huggingface/lerobot.git",
+    "commit": "6adf51511b7625090eade8d82d9f61a1846ebe56",
+    "source_version": "0.6.2"
+  },
+  "environment": {
+    "type": "libero",
+    "suite": "libero_goal",
+    "task_ids": [5, 7],
+    "episode_length": 300,
+    "control_frequency_hz": 20.0,
+    "initial_state_indices": [27, 28],
+    "base_seed": 2026083300
+  },
+  "models": [{
+    "key": "smolvla",
+    "model_id": "lerobot/smolvla_libero",
+    "revision": "31d453f7edd78c839a8bbc39744a292686daf0de",
+    "control_mode": "relative",
+    "chunk_size": 50,
+    "request_interval_steps": 10,
+    "rtc_expected": true,
+    "rtc_execution_horizon": 10,
+    "required": true,
+    "dependencies": [{
+      "model_id": "HuggingFaceTB/SmolVLM2-500M-Video-Instruct",
+      "revision": "7b375e1b73b11138ff12fe22c8f2822d8fe03467"
+    }],
+    "rename_map": {
+      "observation.images.image": "observation.images.camera1",
+      "observation.images.image2": "observation.images.camera2"
+    }
+  }],
+  "runtimes": ["sync_hold"],
+  "delay_profiles": [{"key": "fixed_0000", "kind": "fixed", "milliseconds": 0}],
+  "compact_matrix": {"episodes_per_task": 2, "paired": false, "reuse_delay_trace_across_runtimes": true},
+  "evidence_boundary": {
+    "headline_or_holdout_eligible": false,
+    "development_states": [27, 28],
+    "selection_rule": "Select the numerically smallest task_id with 2/2 success; if none, stop with NO-GO.",
+    "canary_and_holdout_outcomes_sealed": true
+  }
+}

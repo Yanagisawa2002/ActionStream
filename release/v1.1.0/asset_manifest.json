@@ -1,0 +1,115 @@
+{
+  "content_boundary": "All comparison footage comes from frozen same-reset result cells. Native Isaac clips are development reset-0 evidence. Goal2 remains a safety NO-GO; SmolVLA formal RTC was not run after its sync-gate NO-GO; no real-robot or Arena claim is made.",
+  "inputs": [
+    {
+      "path": "actionstream_backend_gpu_v1/xvla_holdout_goal/videos/xvla__actionstream_backend_aligned__fixed_0950__task2__ep0.mp4",
+      "role": "aligned_950",
+      "sha256": "da072d3e129fc3adb863706fe65b88d9153608d9925a013b5a260729e3c4326c"
+    },
+    {
+      "path": "actionstream_backend_gpu_v1/xvla_holdout_object/videos/xvla__actionstream_backend_aligned__burst_0250_to2000_holdout__task5__ep0.mp4",
+      "role": "aligned_burst",
+      "sha256": "0f1b3cb45f299aa220d3a791b4b8f7a99fe09680504636169226a3802440e260"
+    },
+    {
+      "path": "actionstream_backend_gpu_v1/xvla_holdout_object/videos/xvla__actionstream_backend_aligned__jitter_0600_pm0400_holdout__task5__ep0.mp4",
+      "role": "aligned_jitter",
+      "sha256": "9790902a713297196d79bc1098a6e4622bccd1f99d2b86f4819376caccef649b"
+    },
+    {
+      "path": "actionstream_backend_gpu_v1/xvla_holdout_object/videos/xvla__lerobot_weighted_average__jitter_0600_pm0400_holdout__task5__ep0.mp4",
+      "role": "async_jitter",
+      "sha256": "a46563e4ae07a2bdbe8cae406679a71e86b4ea6242e1161e2b44b9188ef06f24"
+    },
+    {
+      "path": "actionstream_backend_gpu_v1/xvla_holdout_object/videos/xvla__actionstream_backend_guarded__burst_0250_to2000_holdout__task5__ep0.mp4",
+      "role": "guarded_burst",
+      "sha256": "9ce74997df5277c90c629dc37638e34c0f4168e659cde62e6551dd692761d80a"
+    },
+    {
+      "path": "actionstream_backend_gpu_v1/xvla_holdout_goal/videos/xvla__lerobot_latest_only__fixed_0950__task2__ep0.mp4",
+      "role": "latest_950",
+      "sha256": "0a0aa99011bbd9b5a5f61de4030b363f3a5acb846b41ec49556f5102e7a88cf2"
+    },
+    {
+      "path": "actionstream_backend_gpu_v1/xvla_holdout_object/videos/xvla__lerobot_latest_only__burst_0250_to2000_holdout__task5__ep0.mp4",
+      "role": "latest_burst",
+      "sha256": "83c6aebc5137510795750c3818d7b90e00c5942f812aa227b7c0bf79bc7995df"
+    },
+    {
+      "path": "learned_isaac_dynamic_official_goal2_sync30_dev_20260820_retry2/learned_isaac_smoke.mp4",
+      "role": "native_goal",
+      "sha256": "3621553963d10d9ba824b123ff2ddd1b567a05094f7dd6c31d6a10360c5533ae"
+    },
+    {
+      "path": "learned_isaac_dynamic_official_object0_sync30_dev_20260820/learned_isaac_smoke.mp4",
+      "role": "native_object",
+      "sha256": "cc093aded1fa835829ae579c49112ca6f6bcee917cec91b732124c07b053f091"
+    },
+    {
+      "path": "learned_isaac_dynamic_official_spatial2_sync30_dev_20260820/learned_isaac_smoke.mp4",
+      "role": "native_spatial",
+      "sha256": "bb2d2526c3383300684a188aaa4249c51edc8db4fe8828da48c27ffef2289e40"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "release/v1.1.0/media/actionstream_v1_1_demo.mp4",
+      "sha256": "1b2ea7d3d8dafeba2f28ced005e7f11bfb634c06b7bcda5aa78ccc3a0b8efe40"
+    },
+    {
+      "path": "release/v1.1.0/media/actionstream_v1_1_demo_poster.png",
+      "sha256": "5dce3414fb7374a2344615b13a01d417e9e99f472d7361b6ee2349249457709e"
+    }
+  ],
+  "release": "v1.1.0",
+  "report_inputs": [
+    {
+      "path": "reports/actionstream_backend_gpu_v1/formal_xvla/report.md",
+      "sha256": "0ffbedbfe04ea8124d4640e18ff19b381694acb14fc9a1b615bceb101ece91d6"
+    },
+    {
+      "path": "reports/actionstream_backend_gpu_v1/formal_xvla/summary.json",
+      "sha256": "9b548866fbaeb3689009f6fe1a17006f2bd5b69a3dca9d431dff656806cae4f9"
+    },
+    {
+      "path": "reports/actionstream_backend_gpu_v1/formal_xvla/main_table.csv",
+      "sha256": "0216f3d5090911dd9a13b93022e1d7cf729485f73132b4c33759fe46fb3ce6ec"
+    },
+    {
+      "path": "reports/actionstream_backend_gpu_v1/formal_xvla/paired_effects.csv",
+      "sha256": "a8940b2d31b041749e143fcfa74dabd9355493fc270e6ccbdc88b617076dc438"
+    },
+    {
+      "path": "reports/actionstream_backend_gpu_v1/formal_xvla/secondary_paired_effects.csv",
+      "sha256": "5d62868571f422c834faeb544b30a6b2eaf44bfa490401b60a0e46bd7a8b04af"
+    },
+    {
+      "path": "reports/actionstream_backend_gpu_v1/formal_xvla/latency_success_operating_points.png",
+      "sha256": "db245c8aeef9b5006a26e3be0180c1d2174db6671cad3912e5e35e2b2bda0a1a"
+    },
+    {
+      "path": "reports/actionstream_backend_gpu_v1/smolvla_rtc_gate_v2_v3/report.md",
+      "sha256": "adddfc990aaaff6392b7f4aacf96650738e333ea4ce9d13e111e16ec71261749"
+    },
+    {
+      "path": "reports/actionstream_backend_gpu_v1/smolvla_rtc_gate_v2_v3/summary.json",
+      "sha256": "4749fa4df926ff3d39df9a33a2691ea72c2ec4f6d0b4b5ce7cacf0b11bc6fff5"
+    },
+    {
+      "path": "reports/actionstream_backend_gpu_v1/smolvla_rtc_gate_v2_v3/sync_gate_by_suite.png",
+      "sha256": "c1df9133ec837bea6ad48c1b7bd18038c3e83b1e479d0e02462bb5945bfd714c"
+    }
+  ],
+  "schema_version": 1,
+  "video": {
+    "codec": "h264",
+    "duration_seconds": 74.0,
+    "ffmpeg_version": "ffmpeg version 8.1.1-essentials_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers",
+    "fps": 30,
+    "frame_count": 2220,
+    "height": 720,
+    "pixel_format": "yuv420p",
+    "width": 1280
+  }
+}

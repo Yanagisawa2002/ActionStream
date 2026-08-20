@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "status": "invalidated_pre_result",
+  "invalidated_utc": "2026-08-20T19:17:17Z",
+  "registry_path": "configs/actionstream_backend_gpu_v2_registry.json",
+  "registry_sha256": "32f4d3d530ffea7c1baea4f05931e241c24bd10164351f0d98903f7d7749c626",
+  "candidate_commit": "b3da160f7fe22cc3182e5e1991c27e5cdac5e12a",
+  "failure_stage": "pre-model policy seed validation in CurrentLeRobotBackend.set_seed",
+  "failure": "environment and worker warmup seeds exceeded NumPy RandomState uint32 range",
+  "scored_episode_count": 0,
+  "model_loaded": false,
+  "gpu_inference_ran": false,
+  "results_viewed": false,
+  "gate_relaxed": false,
+  "replacement_registry": "configs/actionstream_backend_gpu_v2r1_registry.json"
+}

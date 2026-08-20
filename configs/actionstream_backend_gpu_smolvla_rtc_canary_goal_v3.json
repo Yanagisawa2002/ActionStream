@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "experiment_id": "actionstream_backend_gpu_smolvla_rtc_canary_goal_v3",
+  "protocol_status": "frozen_canary_before_execution",
+  "frozen_utc": "2026-08-21T00:23:00+08:00",
+  "candidate": {"base_commit": "6751b25adea2748b198935cdef6e1b3995b3a5c5", "current_baselines_sha256": "0e929c7ee82acfed38d06ab67a36aadbdeb22b7b1b0f34eca0f35ccd4722d0fd", "lerobot_inference_sha256": "d04549c847f7101ab78df52567a273cf1a9b707d0c219c6033237bd36cdb19d2"},
+  "source": {"repository_url": "https://github.com/huggingface/lerobot.git", "commit": "d451fe4f1f1b00a812f95aa9534389b5e42ab155", "source_version": "0.6.2"},
+  "selection": {"rule_sha256": "f927216ff8147b14439d5ec12dd7a22b26fc6690f12a2c787f0c8bd95971f034", "selected_task_id": 5, "development_metrics_sha256": "67f0c8894c553ad566e5888b6065598989d813b58e2b559b56832ecdf3ddaf93b", "development_receipt_sha256": "a228dc300ac2c2977b4b7cfbc475fb49c1069d6b22f287ce78bcd1577800504bc"},
+  "environment": {"type": "libero", "suite": "libero_goal", "task_ids": [5], "task_description": "push the plate to the front of the stove", "episode_length": 300, "control_frequency_hz": 20.0, "initial_state_indices": [45, 46], "base_seed": 2026086301},
+  "gpu_warmup": {"task_id": 5, "initial_state_index": 47, "seed": 2026086398, "inference_calls": 1},
+  "models": [{"key": "smolvla", "model_id": "lerobot/smolvla_libero", "revision": "31d453f7edd78c839a8bbc39744a292686daf0de", "control_mode": "relative", "chunk_size": 50, "request_interval_steps": 10, "rtc_expected": true, "rtc_execution_horizon": 10, "required": true, "dependencies": [{"model_id": "HuggingFaceTB/SmolVLM2-500M-Video-Instruct", "revision": "7b375e1b73b11138ff12fe22c8f2822d8fe03467"}], "rename_map": {"observation.images.image": "observation.images.camera1", "observation.images.image2": "observation.images.camera2"}}],
+  "runtimes": ["sync_hold"],
+  "delay_profiles": [{"key": "fixed_0000", "kind": "fixed", "milliseconds": 0}],
+  "compact_matrix": {"episodes_per_task": 2, "paired": false, "reuse_delay_trace_across_runtimes": true},
+  "evidence_boundary": {"holdout_eligible": false, "required_sync_successes": "2/2", "formal_release_condition": "All three v3 suites must pass 2/2 before any v3 holdout is run."}
+}

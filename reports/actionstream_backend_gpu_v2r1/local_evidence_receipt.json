@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "status": "verified_local_copy",
+  "verified_utc": "2026-08-20T21:47:14Z",
+  "archive_filename": "actionstream-backend-gpu-v2r1-smolvla-v4-evidence.tar.gz",
+  "archive_sha256": "d1ed7990ce87e9eb22668631792ede46201bbb48fcc383f1f1e0e19640944668",
+  "archive_size_bytes": 60172340,
+  "archive_git_policy": "local_only_under_ignored_artifacts_directory",
+  "video_files_probed": 171,
+  "ffprobe_failures": 0,
+  "visual_inspection": {
+    "smolvla_v4_canary": "mid and final frames inspected for all three captured task-family videos",
+    "xvla_v2r1_fixed_0950": "final frames inspected for latest-only and aligned on all three task families",
+    "content_consistent_with_metrics": true
+  }
+}

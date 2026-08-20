@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "registry_id": "actionstream_backend_gpu_v2r1_frozen_registry",
+  "frozen_utc": "2026-08-20T19:17:17Z",
+  "candidate_commit": "a00f580a0956474612b3639e5eccc3d0cf61db8b",
+  "supersedes_invalid_registry": "configs/actionstream_backend_gpu_v2_registry.json",
+  "protocols": {
+    "canary_object": {"path": "configs/actionstream_backend_gpu_v2r1_canary_object.json", "sha256": "3fee56469264c4eb3b0dabbd6ccd4200de2fe9c69978b87ed1ee0e75ad5fb2ca"},
+    "canary_spatial": {"path": "configs/actionstream_backend_gpu_v2r1_canary_spatial.json", "sha256": "6ef6fb5e6680e001b387085a69d2e7ec3e4ea8f34e057231eeeaa4c21093dcd3"},
+    "canary_goal": {"path": "configs/actionstream_backend_gpu_v2r1_canary_goal.json", "sha256": "c1ceafe2ab32f5a14405dac8a911e6ea63910177621ed267fb8630e4dcc0ca93"},
+    "holdout_object": {"path": "configs/actionstream_backend_gpu_v2r1_holdout_object.json", "sha256": "d8f55e050eaf05cecbd0aa98d3731b4e03a238dcc4af555bec8e9bf5b58ae343"},
+    "holdout_spatial": {"path": "configs/actionstream_backend_gpu_v2r1_holdout_spatial.json", "sha256": "c7486f408d274c86597997a78b051643a91bba364a83313f6c550cd67f860ee3"},
+    "holdout_goal": {"path": "configs/actionstream_backend_gpu_v2r1_holdout_goal.json", "sha256": "6d00b04a63168d94c029dc0433c20f7bf894d95b67c93a88c3af5858385b58d0"}
+  },
+  "reset_identity_audit": {
+    "scope": ["configs", "outputs", "reports"],
+    "json_or_jsonl_files_scanned_before_initial_freeze": 1961,
+    "prior_episode_identity_hits": 0,
+    "invalid_v2_scored_episode_count": 0,
+    "queried_identities": [
+      {"suite": "libero_object", "task_id": 5, "initial_state_indices": [45, 46, 47, 48, 49]},
+      {"suite": "libero_spatial", "task_id": 7, "initial_state_indices": [45, 46, 47, 48, 49]},
+      {"suite": "libero_goal", "task_id": 2, "initial_state_indices": [45, 46, 47, 48, 49]}
+    ],
+    "warmup_state": 45,
+    "canary_state": 46,
+    "holdout_states": [47, 48, 49]
+  },
+  "seed_audit": {
+    "policy_seeds_within_uint32_range": true,
+    "code_preflight_enforced": true,
+    "new_seeded_trace_count": 12,
+    "new_trace_hashes_unique": true,
+    "disjoint_from_v1_invalid_v2_and_between_canary_holdout": true,
+    "trace_sha256": [
+      "5550072fbc500a640aedaba35ac865f5ee82938517453b4a77708c83f6380715",
+      "d2c2a02e66b7d1f95c992e1018cce62b04a86449a76169a5a89f81cdb4fd68fd",
+      "29927c3036097419e8e0f224c466c646d59d010a5158e86ea30b0387510379fd",
+      "bce88f6e9df426d16ec16cc541ef2fa3f40b2e8d1173a218937306ce85d98fcf",
+      "415554cfd6ffc7c0ecdceaebd22a58088203f7cc3808e60f97cbf8d830be1899",
+      "e0ee5bafca8ad9e8bd9285350c8e591136085c6f589d949423c2992600be8f14",
+      "af7754969907f3b565976b41f367aa03e3ceab4cdea67d1d0cf24124afc2ff9c",
+      "09b6af63faacbf94004d643f60f4fd05bb295ece74de3c1cb674b48cc0b762e9",
+      "95d616f2e3fa881b19c47417b05780daf86ca11f8728947c0291470264cf5fcf",
+      "0d74679bc6cebe5ff382f0df305402e60c51c7cb7a3be8b6acc4a8bda874cdb4",
+      "1f5e2323a1b81d52cbf3c107ebb1f89c98bc72de961c66c48687f0f28420caa8",
+      "d7569250b4b93cf70a34ff4180f5e867ae21d0e9dd473ad21a67d5798d722a53"
+    ]
+  },
+  "holdout_rule": {
+    "canary_before_holdout": true,
+    "canary_gate": "all three zero-delay X-VLA sync cells succeed and every engineering/GPU provenance gate passes",
+    "holdout_configs_frozen_before_canary_results": true,
+    "post_holdout_tuning_forbidden": true,
+    "v6_selector_paused": true,
+    "arena_paused": true
+  }
+}

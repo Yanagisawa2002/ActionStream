@@ -1,0 +1,75 @@
+{
+  "canary": {
+    "artifact_references": {
+      "telemetry_jsonl_path": 36,
+      "trace_path": 90,
+      "video_path": 90
+    },
+    "errors": [],
+    "manifest": {
+      "actual_files": 293,
+      "declared_files": 293,
+      "hash_mismatches": [],
+      "manifest_sha256": "b4dcfd6b732afc20b5aa2d5a32912b48cb522d06c3d55b8f9a5018fe1b61ed59",
+      "missing_files": [],
+      "unexpected_files": [],
+      "valid": true
+    },
+    "orchestrator_receipt_sha256": "a65eaaaa0771cc7d6342b2c95ce42fa947c3eeea7d71ed8af55362ee5c0d9668",
+    "rebased_absolute_paths": {
+      "telemetry_jsonl_path": 36,
+      "trace_path": 90,
+      "video_path": 90
+    },
+    "receipt_episodes_hash_match": true,
+    "receipt_record_count_match": true,
+    "record_count": 90,
+    "root_name": "actionstream_backend_gpu_v2r1_canary",
+    "status": "pass",
+    "telemetry_events": 15772,
+    "telemetry_invalid_events": 0,
+    "unique_artifacts": {
+      "telemetry_jsonl_path": 36,
+      "trace_path": 90,
+      "video_path": 90
+    }
+  },
+  "holdout": {
+    "artifact_references": {
+      "telemetry_jsonl_path": 90,
+      "trace_path": 225,
+      "video_path": 75
+    },
+    "errors": [],
+    "manifest": {
+      "actual_files": 467,
+      "declared_files": 467,
+      "hash_mismatches": [],
+      "manifest_sha256": "efcd2c530e2d9b2fccf4747335e9c14fcedcad2a8e71cb2f1d9b22c600bda45f",
+      "missing_files": [],
+      "unexpected_files": [],
+      "valid": true
+    },
+    "orchestrator_receipt_sha256": "0f899e9c5c95f8937a1bb2f8b70ebf14bb6d2cd25fda1a5fd02f154cc2d0ef21",
+    "rebased_absolute_paths": {
+      "telemetry_jsonl_path": 90,
+      "trace_path": 225,
+      "video_path": 75
+    },
+    "receipt_episodes_hash_match": true,
+    "receipt_record_count_match": true,
+    "record_count": 225,
+    "root_name": "actionstream_backend_gpu_v2r1_holdout",
+    "status": "pass",
+    "telemetry_events": 40070,
+    "telemetry_invalid_events": 0,
+    "unique_artifacts": {
+      "telemetry_jsonl_path": 90,
+      "trace_path": 225,
+      "video_path": 75
+    }
+  },
+  "path_policy": "Original absolute paths are preserved; basename-anchored suffixes are resolved inside each supplied evidence root.",
+  "schema_version": 1,
+  "status": "pass"
+}

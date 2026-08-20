@@ -1,0 +1,16 @@
+task_family,runtime,pid,model_load_wall_seconds,nvidia_smi_samples,nvidia_smi_errors,resident_samples,process_vram_mib_max,gpu_utilization_percent_p50,gpu_utilization_percent_p95,gpu_utilization_percent_max
+goal,actionstream_backend_aligned,207083,15.560057091992348,1387,0,822,4767.0,0.0,62.950000000000045,67.0
+goal,actionstream_backend_guarded,216642,15.385611171135679,1417,0,851,4767.0,0.0,61.0,66.0
+goal,lerobot_latest_only,198421,15.379463703138754,1168,0,609,4767.0,12.0,63.0,66.0
+goal,lerobot_weighted_average,189833,15.60803953697905,1152,0,595,4767.0,13.0,63.0,65.0
+goal,sync_hold,183236,15.447492965962738,757,0,518,4767.0,0.0,39.0,53.0
+object,actionstream_backend_aligned,118315,15.300903152907267,1434,0,859,4782.0,0.0,66.0,73.0
+object,actionstream_backend_guarded,127553,15.35745929996483,1460,0,889,4782.0,0.0,62.0,73.0
+object,lerobot_latest_only,109457,15.702931069070473,1341,0,776,4782.0,9.5,63.0,69.0
+object,lerobot_weighted_average,99294,15.548127528978512,1663,0,1101,4782.0,20.0,58.0,71.0
+object,sync_hold,92209,15.505405821138993,1006,0,756,4782.0,0.0,31.0,56.0
+spatial,actionstream_backend_aligned,163473,15.617437830893323,1417,0,831,4844.0,0.0,65.0,67.0
+spatial,actionstream_backend_guarded,172961,15.44822500506416,1607,0,1026,4846.0,0.0,64.0,68.0
+spatial,lerobot_latest_only,154338,15.753445471869782,1330,0,755,4844.0,18.0,63.0,67.0
+spatial,lerobot_weighted_average,144483,15.270385181065649,1507,0,937,4844.0,27.0,63.200000000000045,68.0
+spatial,sync_hold,136898,15.57072654995136,1045,0,760,4844.0,0.0,37.0,57.0

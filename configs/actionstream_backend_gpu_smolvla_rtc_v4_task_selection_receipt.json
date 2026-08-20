@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "experiment_family": "actionstream_backend_gpu_smolvla_rtc_v4",
+  "status": "development_screen_passed_tasks_frozen",
+  "frozen_utc": "2026-08-20T21:30:05Z",
+  "selection_rule": "Within each family select the numerically smallest task with 2/2 success on development states 27 and 28. If no task qualifies, stop with NO-GO.",
+  "development_run": {
+    "output_namespace": "actionstream_backend_gpu_smolvla_rtc_v4r1_dev",
+    "episodes_sha256": "0383ff7107e16d6af772e821caca28c5b94a072b8bb17e4d787a8d771f00d837",
+    "record_count": 22,
+    "fresh_process_count": 3,
+    "protocol_sha256": {
+      "object": "d214baeac24dc3224ad0daa11f3826fdc853a00004bd88ce7aa6ce94193e6b572",
+      "spatial": "be6b86b38f3d1162bde730caa8cfdc2711c69ccbce102d8e7fd99fccef5d573ae",
+      "goal": "2ccc2c5f66d4ba69ce7471f2aa03afeef66f847c8765af2bff05070d209bcb462"
+    },
+    "startup_retry_boundary": {
+      "invalid_namespace": "actionstream_backend_gpu_smolvla_rtc_v4_dev",
+      "scored_records": 0,
+      "reason": "Hugging Face metadata request disconnected before the first episode; v4r1 reused the unchanged protocol with the complete pinned cache in offline mode."
+    }
+  },
+  "development_outcomes": {
+    "object": {"1": "1/2", "2": "1/2", "3": "2/2", "4": "0/2", "6": "1/2", "7": "2/2", "8": "2/2", "9": "2/2"},
+    "spatial": {"0": "2/2"},
+    "goal": {"5": "2/2", "7": "2/2"}
+  },
+  "selected_tasks": {
+    "object": {"suite": "libero_object", "task_id": 3},
+    "spatial": {"suite": "libero_spatial", "task_id": 0},
+    "goal": {"suite": "libero_goal", "task_id": 5}
+  },
+  "sealed_before_canary": true,
+  "post_selection_task_substitution_forbidden": true
+}

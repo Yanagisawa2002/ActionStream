@@ -1,15 +1,70 @@
-From 2ef359d96755b29b6da6eadc2e479d9a51c1689d Mon Sep 17 00:00:00 2001
+From 73e1584473028a2d53ecfc856f5290db84507f90 Mon Sep 17 00:00:00 2001
 From: Yanagisawa <cgliusjtu@gmail.com>
 Date: Tue, 18 Aug 2026 00:45:37 +0800
 Subject: [PATCH] feat(rollout): allow third-party inference engines
 
 ---
+ docs/source/inference.mdx                 |  43 ++++++++
  src/lerobot/rollout/__init__.py           |   2 +
  src/lerobot/rollout/inference/__init__.py |   2 +
- src/lerobot/rollout/inference/factory.py  | 122 +++++++++++++++++-----
- tests/test_rollout.py                     |  50 +++++++++
- 4 files changed, 149 insertions(+), 27 deletions(-)
+ src/lerobot/rollout/inference/factory.py  | 127 +++++++++++++++++-----
+ tests/test_rollout.py                     |  81 ++++++++++++++
+ 5 files changed, 225 insertions(+), 30 deletions(-)
 
+diff --git a/docs/source/inference.mdx b/docs/source/inference.mdx
+index b729424..98b0616 100644
+--- a/docs/source/inference.mdx
++++ b/docs/source/inference.mdx
+@@ -239,6 +239,49 @@ lerobot-rollout \
+ 
+ See the [Real-Time Chunking](./rtc) guide for details on tuning RTC parameters.
+ 
++### Third-party inference backends
++
++Installed LeRobot plugins can add an inference backend without modifying the
++factory. Define a named config and register a builder when the plugin module is
++imported:
++
++```python
++from dataclasses import dataclass
++
++from lerobot.rollout import (
++    InferenceEngineConfig,
++    register_inference_engine,
++)
++
++
++@InferenceEngineConfig.register_subclass("my_backend")
++@dataclass
++class MyBackendConfig(InferenceEngineConfig):
++    queue_size: int = 30
++
++
++@register_inference_engine(MyBackendConfig)
++def build_my_backend(config: MyBackendConfig, **context):
++    return MyInferenceEngine(
++        config=config,
++        policy=context["policy"],
++        preprocessor=context["preprocessor"],
++        postprocessor=context["postprocessor"],
++        robot_wrapper=context["robot_wrapper"],
++        shutdown_event=context["shutdown_event"],
++    )
++```
++
++Package the module under one of the names discovered by
++`register_third_party_plugins` (for example, `lerobot_policy_my_backend`). The
++plugin is imported before CLI parsing, so its config is available as
++`--inference.type=my_backend`.
++
++Registration uses the exact config type and rejects duplicates. A plugin
++cannot silently replace `sync`, `rtc`, or another installed backend. Builders
++receive the rollout construction context as keyword arguments; use only the
++fields the backend needs.
++
+ ---
+ 
+ ## Interactive Sessions
 diff --git a/src/lerobot/rollout/__init__.py b/src/lerobot/rollout/__init__.py
 index 19db55b..0c06080 100644
 --- a/src/lerobot/rollout/__init__.py
@@ -47,10 +102,21 @@ index 81a1717..4b766cf 100644
 +    "register_inference_engine",
  ]
 diff --git a/src/lerobot/rollout/inference/factory.py b/src/lerobot/rollout/inference/factory.py
-index e600bed..f8e6491 100644
+index e600bed..a4b650e 100644
 --- a/src/lerobot/rollout/inference/factory.py
 +++ b/src/lerobot/rollout/inference/factory.py
-@@ -23,6 +23,7 @@ from __future__ import annotations
+@@ -14,15 +14,15 @@
+ 
+ """Inference engine configs and factory.
+ 
+-Selection is explicit via ``--inference.type=sync|rtc``.  Adding a new
+-backend requires registering its config subclass and dispatching it in
+-:func:`create_inference_engine`.
++Selection is explicit via ``--inference.type=<name>``. Built-in and third-party
++backends register a config subclass and an inference-engine builder.
+ """
+ 
+ from __future__ import annotations
  
  import abc
  import logging
@@ -58,7 +124,7 @@ index e600bed..f8e6491 100644
  from dataclasses import dataclass, field
  from threading import Event
  
-@@ -74,6 +75,79 @@ class RTCInferenceConfig(InferenceEngineConfig):
+@@ -74,6 +74,79 @@ class RTCInferenceConfig(InferenceEngineConfig):
      queue_threshold: int = 30
  
  
@@ -138,7 +204,7 @@ index e600bed..f8e6491 100644
  # ---------------------------------------------------------------------------
  # Factory
  # ---------------------------------------------------------------------------
-@@ -98,31 +172,25 @@ def create_inference_engine(
+@@ -98,31 +171,25 @@ def create_inference_engine(
  ) -> InferenceEngine:
      """Instantiate the appropriate inference engine from a config object."""
      logger.info("Creating inference engine: %s", config.type)
@@ -192,10 +258,10 @@ index e600bed..f8e6491 100644
 +        shutdown_event=shutdown_event,
 +    )
 diff --git a/tests/test_rollout.py b/tests/test_rollout.py
-index bc56fbe..c557446 100644
+index bc56fbe..29d0140 100644
 --- a/tests/test_rollout.py
 +++ b/tests/test_rollout.py
-@@ -381,6 +381,56 @@ def test_create_inference_engine_sync():
+@@ -381,6 +381,87 @@ def test_create_inference_engine_sync():
      assert isinstance(engine, SyncInferenceEngine)
  
  
@@ -249,6 +315,39 @@ index bc56fbe..c557446 100644
 +        register_inference_engine(TestDuplicateConfig)(lambda **_kwargs: object())
 +
 +
++def test_inference_engine_builder_rejects_invalid_config_type():
++    from lerobot.rollout import register_inference_engine
++
++    with pytest.raises(TypeError, match="must inherit InferenceEngineConfig"):
++        register_inference_engine(object)  # type: ignore[arg-type]
++
++
++def test_create_inference_engine_reports_unregistered_config():
++    from lerobot.rollout import InferenceEngineConfig, create_inference_engine
++
++    @InferenceEngineConfig.register_subclass("test_unregistered")
++    @dataclasses.dataclass
++    class TestUnregisteredConfig(InferenceEngineConfig):
++        pass
++
++    with pytest.raises(ValueError, match="No inference engine registered"):
++        create_inference_engine(
++            TestUnregisteredConfig(),
++            policy=MagicMock(),
++            preprocessor=MagicMock(),
++            postprocessor=MagicMock(),
++            robot_wrapper=MagicMock(robot_type="mock"),
++            hw_features={},
++            dataset_features={},
++            ordered_action_keys=["k"],
++            task="test",
++            fps=30.0,
++            device="cpu",
++        )
++
++
  # ---------------------------------------------------------------------------
  # Pure functions
  # ---------------------------------------------------------------------------
+-- 
+2.53.0.windows.2

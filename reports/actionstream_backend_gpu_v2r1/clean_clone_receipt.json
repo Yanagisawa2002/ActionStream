@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "status": "pass",
+  "verified_utc": "2026-08-20T22:00:51Z",
+  "source_commit": "583c2fa5043c46c5ce5cbd1ba04a90bf2f4dfcda",
+  "install_command": "uv sync --locked --all-packages",
+  "install_exit_code": 0,
+  "uv_lock_sha256": "e50b1ae55cffd1d29d0b07af88a08f1458d14082512a16a5be50ba625e82a1c7",
+  "pyproject_sha256": "45a5af537fba86c166ea2ba47e42dfb15a144907af0d9b237aab2b63e894b6c5",
+  "installed_root_package": "actionstream==1.1.0",
+  "installed_plugin": "lerobot-policy-actionstream==0.2.0",
+  "installed_lerobot": "lerobot==0.6.2 from pinned archive commit 73e1584473028a2d53ecfc856f5290db84507f90",
+  "subprocess_test_command": "uv run pytest -q tests/test_clean_install.py tests/test_lerobot_inference.py tests/test_backend_gpu_v2_archive.py",
+  "subprocess_test_result": "15 passed",
+  "real_cli_command": "uv run lerobot-rollout --help",
+  "real_cli_evidence": "--inference.type {sync,rtc,actionstream}",
+  "working_tree_after_test": "clean"
+}
