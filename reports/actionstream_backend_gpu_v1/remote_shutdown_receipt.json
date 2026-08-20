@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "remote_hostname": "autodl-container-cc6a41b03a-fcb223c1",
+  "authorization": "explicit_user_authorization_after_completion",
+  "preflight": {
+    "screen_sessions": 0,
+    "relevant_processes": 0,
+    "gpu_utilization_percent": 0,
+    "gpu_memory_used_mib": 2,
+    "gpu_memory_total_mib": 32607,
+    "data_volume_available_gib": 118,
+    "raw_archive_sha256": "b721f425341b74e5ab081ce59953992b3f13cc90f13064b89e3d592659fb39bc",
+    "selected_archive_sha256": "7a0121bf6e694b413291dae6042a992afc60a0aaa4ddcbc0d50783874715ce27",
+    "pushed_git_commit": "1be877cd22c6fee4d1f0c4ab699c9105523aeb0c"
+  },
+  "shutdown": {
+    "remote_receipt_path": "/root/autodl-tmp/actionstream_shutdown_invocation_20260820.txt",
+    "sync_completed": true,
+    "command": "/usr/bin/shutdown",
+    "invoked_at": "2026-08-20T21:04:02+08:00",
+    "session_observation": "remote host closed the SSH connection"
+  },
+  "bounded_connectivity_check": {
+    "attempt_count": 1,
+    "observed_at": "2026-08-20T21:04:19.5330188+08:00",
+    "connect_timeout_seconds": 10,
+    "exit_code": 1,
+    "observation": "Connection refused",
+    "device_state_interpretation": "observed offline after the authorized shutdown invocation"
+  },
+  "instance_or_disk_release_performed": false
+}

@@ -94,6 +94,7 @@ adapter is structural integration only and is not labeled as an Arena result.
 - [`native_dev_summary.json`](native_dev_summary.json): native development gates.
 - [`qualitative/`](qualitative/): inspected paired contact sheets and native task contact sheets.
 - [`local_transfer_receipt.json`](local_transfer_receipt.json): local/remote archive hashes and evidence boundary.
+- [`remote_shutdown_receipt.json`](remote_shutdown_receipt.json): authorized shutdown invocation and bounded offline check.
 
 The 166 MiB raw replay/video archive and the selected video bundle are retained
 locally and remotely with matching SHA-256 hashes and are intentionally excluded
