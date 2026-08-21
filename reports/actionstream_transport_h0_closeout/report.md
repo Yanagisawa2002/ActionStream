@@ -68,7 +68,7 @@ Two earlier receipt validators also failed closed after the completed serialized
 - The local Windows full suite has one environment-only failure because that local venv does not expose `lerobot-rollout`; all other local tests passed. This is not represented as a clean-install pass.
 - The H0 video was fully decoded with `ffmpeg`; its 127 frames, dimensions, FPS, and content were checked locally.
 
-The dependency binding used the already cloned checkout with `--no-deps`; it did not change candidate source bytes or rerun the GPU canary. The binding log SHA-256 is `66b5353e53952de15a6701b304eb482546d0c8d255c10c9aa78bc4917548bab9`.
+The dependency binding used the already cloned checkout with `--no-deps`; it did not change candidate source bytes or rerun the GPU canary. The binding log SHA-256 is `66b5353e53952de15a6701b304eb482546d0c8d255c10c9aa78bc4917548bab9`; the final full-suite log SHA-256 is `0dea090b8d856314f74469cc71ba52685453a788dc239cb9e90b569fe0dbc50d` and ends with `FULL_SUITE_EXIT=0`.
 
 ## Provenance
 
@@ -80,6 +80,7 @@ The dependency binding used the already cloned checkout with `--no-deps`; it did
 - H0 video SHA-256: `cf9f2401d30fb763df8a0ba90ef6c6487735af8a0d8bcedb4fafcb6f1fb7f0a3`.
 - Raw local/remote closeout archive SHA-256: `c8742250c1248b8e1793060fd677a72dab79a8e59191f723d1cc4bd422cea7ae`.
 - Post-archive dependency-binding log SHA-256: `66b5353e53952de15a6701b304eb482546d0c8d255c10c9aa78bc4917548bab9`.
+- Final remote full-suite log SHA-256: `0dea090b8d856314f74469cc71ba52685453a788dc239cb9e90b569fe0dbc50d`.
 - Tracked qualitative image SHA-256: `c49ae8301716b55e728a543484dc4f47a45bd8a1d22943d8779d2a493d523af8`.
 
 The raw archive and video remain outside ordinary Git. See `evidence_manifest.json` for paths and hashes.

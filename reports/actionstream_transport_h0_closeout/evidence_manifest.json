@@ -13,6 +13,13 @@
     "sha256": "66b5353e53952de15a6701b304eb482546d0c8d255c10c9aa78bc4917548bab9",
     "tracked_in_git": false
   },
+  "final_remote_full_suite_log": {
+    "local_path": "artifacts/transport_h0_h1_closeout_20260821/logs/transport_h0_full_suite_final_20260821.log",
+    "remote_path": "/root/autodl-tmp/actionstream-transport-h1-f29a00a/logs/transport_h0_full_suite_final_20260821.log",
+    "sha256": "0dea090b8d856314f74469cc71ba52685453a788dc239cb9e90b569fe0dbc50d",
+    "exit_code": 0,
+    "tracked_in_git": false
+  },
   "h0": {
     "episodes": {
       "path": "outputs/transport_h0_exact_lerobot_canary_20260821/episodes.jsonl",

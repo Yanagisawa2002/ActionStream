@@ -70,6 +70,7 @@
     "telemetry_sha256": "240db4790b72501d58d2908d076ea1e80cca9046783607f80036a5c534cc3a0a",
     "video_sha256": "cf9f2401d30fb763df8a0ba90ef6c6487735af8a0d8bcedb4fafcb6f1fb7f0a3",
     "raw_archive_sha256": "c8742250c1248b8e1793060fd677a72dab79a8e59191f723d1cc4bd422cea7ae",
-    "dependency_bind_log_sha256": "66b5353e53952de15a6701b304eb482546d0c8d255c10c9aa78bc4917548bab9"
+    "dependency_bind_log_sha256": "66b5353e53952de15a6701b304eb482546d0c8d255c10c9aa78bc4917548bab9",
+    "remote_full_suite_log_sha256": "0dea090b8d856314f74469cc71ba52685453a788dc239cb9e90b569fe0dbc50d"
   }
 }
