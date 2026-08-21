@@ -1,0 +1,118 @@
+{
+  "schema_version": 1,
+  "benchmark_version": 3,
+  "experiment_id": "actionstream_transport_h1_final_object_20260821",
+  "protocol_status": "frozen_holdout",
+  "frozen_utc": "2026-08-21T11:30:00Z",
+  "hypothesis_id": "transport_h1_final_serialized_delivery",
+  "task_family": "object",
+  "candidate": {
+    "base_commit": "1268bcc5237422ae80bbb88b57e5efc155a8936b",
+    "current_baselines_sha256": "fffe07cd2e8a59a41264dc610ea66d7caa1ea3e89716b1d43e937dc9668ed858",
+    "lerobot_inference_sha256": "59731a4f63760ec7249109a21e54082440f1b1f2a6cb49519e3720c52d35d71f",
+    "gpu_measurement_sha256": "73ef342a0f2da5f7f69394c347c5d4e2432a7dde47460ded1de712102aa7f6a0",
+    "orchestrator_sha256": "e2afdb5f77acc74f724ba739e2b55d17a809a2184a2a57b2a9fbc12e8eff5d91"
+  },
+  "source": {
+    "repository_url": "https://github.com/Yanagisawa2002/lerobot.git",
+    "commit": "73e1584473028a2d53ecfc856f5290db84507f90",
+    "source_version": "0.6.2"
+  },
+  "models": [
+    {
+      "key": "xvla",
+      "model_id": "lerobot/xvla-libero",
+      "revision": "12e8783e996944f5c97e490d37d4c145484ed70a",
+      "control_mode": "absolute",
+      "chunk_size": 30,
+      "request_interval_steps": 10,
+      "rtc_expected": false,
+      "required": true,
+      "rename_map": {}
+    }
+  ],
+  "runtimes": [
+    "actionstream_backend_aligned",
+    "actionstream_backend_pipelined_aligned",
+    "lerobot_latest_only"
+  ],
+  "runtime_execution_order": [
+    "actionstream_backend_aligned",
+    "actionstream_backend_pipelined_aligned",
+    "lerobot_latest_only"
+  ],
+  "environment": {
+    "type": "libero",
+    "suite": "libero_object",
+    "task_ids": [5],
+    "task_description": "pick up the tomato sauce and place it in the basket",
+    "episode_length": 300,
+    "control_frequency_hz": 20.0,
+    "initial_state_indices": [25, 26, 27, 28, 29],
+    "base_seed": 2026082725
+  },
+  "delay_profiles": [
+    {
+      "key": "fixed_0950_transport_h1_final",
+      "kind": "fixed",
+      "milliseconds": 950
+    }
+  ],
+  "actionstream_backend": {
+    "common": {
+      "inference_timeout_s": 5.0,
+      "bounded_hold_steps": 2,
+      "retry_backoff_s": 0.05,
+      "max_consecutive_failures": 10,
+      "join_timeout_s": 10.0
+    },
+    "actionstream_backend_aligned": {
+      "latest_only_fallback": false,
+      "delivery_scheduler_enabled": false
+    },
+    "actionstream_backend_pipelined_aligned": {
+      "latest_only_fallback": false,
+      "delivery_scheduler_enabled": true
+    }
+  },
+  "measurement_v2": {
+    "fresh_process_per_runtime": true,
+    "nvidia_smi_interval_seconds": 0.2,
+    "worker_warmup": {
+      "task_id": 5,
+      "initial_state_index": 46,
+      "seed": 2026082746,
+      "inference_calls": 2
+    },
+    "startup_latency_definition": "first inference submitted through the actual runtime execution context",
+    "steady_state_definition": "scored calls after two non-scored calls in the same runtime process",
+    "request_rate_definition": "scored inference requests started divided by scored episode wall time",
+    "gpu_residency_definition": "nvidia-smi process residency sampled during steady-state episodes"
+  },
+  "compact_matrix": {
+    "episodes_per_task": 5,
+    "paired": true,
+    "reuse_delay_trace_across_runtimes": true
+  },
+  "evidence_boundary": {
+    "episodes_per_runtime_family": 5,
+    "scored_states": [25, 26, 27, 28, 29],
+    "scored_states_absent_from_prior_exact_task_records": true,
+    "fixed_950_has_no_trace_entropy_and_is_shared_by_definition": true,
+    "selector_policy_checkpoint_fallback_and_alignment_unchanged": true,
+    "post_result_tuning_or_task_substitution_forbidden": true
+  },
+  "decision_rule": {
+    "primary_contrast": "pipelined_aligned_minus_serialized_aligned",
+    "secondary_reference": "lerobot_latest_only",
+    "minimum_aggregate_request_rate_ratio": 4.0,
+    "minimum_aggregate_depletion_reduction_fraction": 0.8,
+    "maximum_pipelined_aggregate_depletion_fraction": 0.05,
+    "minimum_task_families_with_lower_depletion": 3,
+    "maximum_out_of_order_rejections": 0,
+    "maximum_fallback_activations": 0,
+    "pipelined_success_must_not_be_below_serialized": true,
+    "maximum_pipelined_success_deficit_vs_latest": 1,
+    "no_universal_superiority_claim": true
+  }
+}

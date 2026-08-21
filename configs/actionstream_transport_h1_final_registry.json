@@ -1,0 +1,118 @@
+{
+  "schema_version": 1,
+  "registry_id": "actionstream_transport_h1_final_frozen_registry_20260821",
+  "protocol_status": "frozen_before_formal_result",
+  "frozen_utc": "2026-08-21T11:30:00Z",
+  "hypothesis_id": "transport_h1_final_serialized_delivery",
+  "hypothesis": "At fixed 950 ms, moving only response delivery out of the single inference worker will restore request supply and reduce aggregate queue depletion by at least 80% across three learned-policy task families without lowering aggregate success versus the serialized aligned runtime.",
+  "candidate": {
+    "base_commit": "1268bcc5237422ae80bbb88b57e5efc155a8936b",
+    "current_baselines_sha256": "fffe07cd2e8a59a41264dc610ea66d7caa1ea3e89716b1d43e937dc9668ed858",
+    "lerobot_inference_sha256": "59731a4f63760ec7249109a21e54082440f1b1f2a6cb49519e3720c52d35d71f",
+    "gpu_measurement_sha256": "73ef342a0f2da5f7f69394c347c5d4e2432a7dde47460ded1de712102aa7f6a0",
+    "orchestrator_sha256": "e2afdb5f77acc74f724ba739e2b55d17a809a2184a2a57b2a9fbc12e8eff5d91"
+  },
+  "protocols": {
+    "object": {
+      "path": "configs/actionstream_transport_h1_final_object.json",
+      "sha256": "1a22297167f7692d9b0bf190c76177adcee6c30ac3146ca66093adc1e9abdd5f"
+    },
+    "spatial": {
+      "path": "configs/actionstream_transport_h1_final_spatial.json",
+      "sha256": "bd179d4f67a636cf5ee03cb6800825d0dc3ea3ca2f9dc72bed7acb4a946b6836"
+    },
+    "goal": {
+      "path": "configs/actionstream_transport_h1_final_goal.json",
+      "sha256": "b711d9ea4f2250c9e862d685afd926b0d55128840e5d52bc6b0d631cb928f6b6"
+    }
+  },
+  "prerequisite_evidence": {
+    "fixture_verdict": "PASS",
+    "single_gpu_canary_status": "PASS_WITH_CANARY_SCOPE",
+    "tracked_summary_path": "reports/actionstream_transport_h1/summary.json",
+    "tracked_summary_sha256": "6294cd6e4819d003eab76558981ebbaed9a59eb6d7c507888e79f16dc55970df",
+    "single_gpu_canary_request_rate_ratio": 9.30951371256579,
+    "single_gpu_canary_depletion_reduction_fraction": 1.0,
+    "single_gpu_canary_success_scope": "one state; descriptive only"
+  },
+  "formal_matrix": {
+    "gpu_session_budget": 1,
+    "task_families": [
+      {
+        "family": "object",
+        "suite": "libero_object",
+        "task_id": 5,
+        "initial_state_indices": [25, 26, 27, 28, 29]
+      },
+      {
+        "family": "spatial",
+        "suite": "libero_spatial",
+        "task_id": 7,
+        "initial_state_indices": [25, 26, 27, 28, 29]
+      },
+      {
+        "family": "goal",
+        "suite": "libero_goal",
+        "task_id": 2,
+        "initial_state_indices": [25, 26, 27, 28, 29]
+      }
+    ],
+    "runtimes": [
+      "actionstream_backend_aligned",
+      "actionstream_backend_pipelined_aligned",
+      "lerobot_latest_only"
+    ],
+    "delay_profile": "fixed_0950_transport_h1_final",
+    "paired_identities": 15,
+    "scored_episodes": 45,
+    "fresh_runtime_family_processes": 9,
+    "capture_all_episodes": true,
+    "balanced_runtime_execution_order": true
+  },
+  "identity_audit": {
+    "reset_identity": "suite + task_id + initial_state_index + policy seed",
+    "scored_states": [25, 26, 27, 28, 29],
+    "prior_exact_task_scored_states": {
+      "libero_object_task5": [37, 39, 40, 41, 42, 43, 44, 46, 47, 48, 49],
+      "libero_spatial_task7": [37, 40, 41, 42, 43, 44, 46, 47, 48, 49],
+      "libero_goal_task2": [37, 40, 41, 42, 43, 44, 46, 47, 48, 49]
+    },
+    "scored_states_disjoint_from_prior_exact_task_records": true,
+    "base_seeds_absent_from_prior_protocols_and_evidence": true,
+    "fixed_950_has_no_stochastic_trace_identity": true
+  },
+  "analysis_plan": {
+    "bootstrap_resamples": 10000,
+    "bootstrap_seed": 2026082195,
+    "paired_unit": "suite + task_id + initial_state_index + policy seed",
+    "success_effect": "paired mean candidate success minus reference success",
+    "step_effect": "paired mean candidate steps minus reference steps; failures retain the frozen 300-step cap",
+    "depletion_effect": "aggregate depletion safe-hold pulls divided by aggregate environment steps",
+    "request_rate_effect": "median episode request rate ratio",
+    "family_breakdown_required": true,
+    "gpu_vram_latency_queue_and_video_provenance_required": true
+  },
+  "decision_gates": {
+    "minimum_aggregate_request_rate_ratio": 4.0,
+    "minimum_aggregate_depletion_reduction_fraction": 0.8,
+    "maximum_pipelined_aggregate_depletion_fraction": 0.05,
+    "minimum_task_families_with_lower_depletion": 3,
+    "maximum_out_of_order_rejections": 0,
+    "maximum_fallback_activations": 0,
+    "pipelined_success_count_must_be_at_least_serialized": true,
+    "maximum_pipelined_success_count_deficit_vs_latest": 1,
+    "go": "all mechanism and success gates pass",
+    "partial": "all mechanism gates pass but one or both success gates fail",
+    "no_go": "any mechanism gate fails"
+  },
+  "single_hypothesis_guard": {
+    "candidate_runtime_bytes_unchanged_after_single_gpu_canary": true,
+    "selector_changes_forbidden": true,
+    "fallback_changes_forbidden": true,
+    "task_or_checkpoint_substitution_forbidden": true,
+    "async_rtc_jitter_burst_and_outage_cells_forbidden": true,
+    "post_result_threshold_changes_forbidden": true,
+    "formal_result_absent_at_freeze": true
+  },
+  "claim_boundary": "A passing holdout supports a three-family learned-policy fixed-950-ms transport scheduling result. It does not support jitter, burst, outage, RTC, real remote RPC, real-robot safety, or universal runtime superiority."
+}

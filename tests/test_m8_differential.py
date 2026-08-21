@@ -99,8 +99,12 @@ def test_actual_cpp_probe_has_exact_common_domain_and_fixed_generation_guard(
     assert report["common_domain_behavioral_equivalence"] is True
     assert report["common_mismatches"] == []
     assert report["missing_expected_trace_difference_codes"] == []
-    assert report["unintended_discrepancies"] == []
-    assert report["unresolved_unintended_discrepancies"] == []
+    assert report["unintended_discrepancies"] == [
+        "working_m4_runtime_differs_from_accepted_m4"
+    ]
+    assert report["unresolved_unintended_discrepancies"] == [
+        "working_m4_runtime_differs_from_accepted_m4"
+    ]
     assert report["unintended_discrepancies_found"] == [
         "generation_advance_retained_executable_old_generation_queue"
     ]
@@ -118,7 +122,11 @@ def test_actual_cpp_probe_has_exact_common_domain_and_fixed_generation_guard(
         "stale_observation_rejection_event_id": "x067",
     }
     assert history[0]["status"] == "resolved"
-    assert report["headline_evaluation_unblocked"] is True
+    assert report["headline_evaluation_unblocked"] is False
+    assert report["canonical_m4"]["runtime"]["working_tree_byte_identical"] is False
+    assert "not an exact canonical M4 replay" in report["canonical_m4"][
+        "adapter_statement"
+    ]
     assert report["migration_corrections"] == {
         "observation_generation_orders_invalidation_before_command": True,
         "generation_advanced_event_emitted": True,

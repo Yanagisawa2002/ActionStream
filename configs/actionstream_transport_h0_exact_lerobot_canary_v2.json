@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "status": "frozen_preflight_resume_before_gpu_child",
+  "frozen_utc": "2026-08-21T11:53:29Z",
+  "hypothesis_id": "transport_h0_exact_lerobot_worker_binding",
+  "preflight_failure": {
+    "classification": "orchestrator-only virtual-environment symlink resolution",
+    "requested_interpreter": "/root/autodl-tmp/venvs/actionstream/bin/python",
+    "incorrect_resolved_interpreter": "/root/miniconda3/bin/python3.12",
+    "gpu_child_process_started": false,
+    "development_episode_started": false,
+    "output_root_created": false,
+    "gpu_state_after_failure": "idle at 0 MiB",
+    "runtime_policy_task_reset_delay_or_gate_observed": false
+  },
+  "frozen_artifacts": {
+    "v1_config_sha256": "9710c0a54ceee346150a5ca5458f3ac910cd3c0de7fdf6f659603d04a381d9de",
+    "v1_orchestrator_sha256": "d7f93b3c59874558c02640b56c05315ad4ba82daadc218ace931e9890877e3bd",
+    "v2_orchestrator_sha256": "1fe0a1f81015dfbce722e746541ca22d61ba718a974fe36d2b34c649b6fc4234",
+    "preflight_failure_log": {
+      "path": "logs/transport_h0_exact_lerobot_canary_session_20260821.log",
+      "sha256": "85ce4aa989f4c72cd87715f88eac5960cacd9cbe50527259d74133976ef412b9"
+    }
+  },
+  "resume_contract": {
+    "reuse_v1_protocol_without_changes": true,
+    "preserve_virtual_environment_entrypoint_without_resolve": true,
+    "new_output_root_required": true,
+    "gpu_child_processes_allowed": 1,
+    "development_episodes_allowed": 1,
+    "retry_after_gpu_child_start_allowed": false,
+    "formal_h1_reopened": false
+  },
+  "unchanged_scientific_contract": {
+    "candidate_runtime_bytes_unchanged": true,
+    "exact_lerobot_commit_unchanged": true,
+    "single_pipelined_runtime_unchanged": true,
+    "development_reset_47_unchanged": true,
+    "fixed_950_delay_unchanged": true,
+    "one_unpaired_episode_unchanged": true,
+    "task_success_remains_non_gating": true,
+    "no_performance_or_superiority_claim": true
+  },
+  "claim_boundary": "This v2 resume changes only how the preflight invokes the already-active virtual environment. The v1 attempt started no GPU child and consumed no development episode, so v2 remains the one-shot H0 canary and cannot reopen or support H1 performance claims."
+}

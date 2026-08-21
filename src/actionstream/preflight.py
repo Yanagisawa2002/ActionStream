@@ -9,10 +9,13 @@ import json
 import os
 import platform
 import shutil
+import subprocess
 import sys
 import time
 from pathlib import Path
 from typing import Any
+from urllib.parse import unquote, urlparse
+from urllib.request import url2pathname
 
 import numpy as np
 import torch
@@ -41,10 +44,51 @@ def _verify_lerobot_install() -> dict[str, str]:
     if direct_url_text is None:
         raise RuntimeError("Pinned LeRobot install is missing direct_url.json provenance")
     direct_url = json.loads(direct_url_text)
-    url = str(direct_url.get("url", ""))
+    install_url = str(direct_url.get("url", ""))
+    url = install_url
     commit = direct_url.get("vcs_info", {}).get("commit_id")
     if commit is None and url == EXPECTED_LEROBOT_URL:
         commit = EXPECTED_LEROBOT_COMMIT
+    editable = direct_url.get("dir_info", {}).get("editable") is True
+    if commit is None and editable:
+        parsed = urlparse(install_url)
+        if parsed.scheme != "file":
+            raise RuntimeError(
+                "Editable LeRobot provenance must use a local file URL, got "
+                f"{install_url!r}"
+            )
+        checkout = Path(url2pathname(unquote(parsed.path))).resolve()
+        head = subprocess.run(
+            ["git", "-C", str(checkout), "rev-parse", "HEAD"],
+            check=False,
+            capture_output=True,
+            encoding="utf-8",
+            errors="replace",
+            text=True,
+        )
+        tracked_status = subprocess.run(
+            [
+                "git",
+                "-C",
+                str(checkout),
+                "status",
+                "--porcelain",
+                "--untracked-files=no",
+            ],
+            check=False,
+            capture_output=True,
+            encoding="utf-8",
+            errors="replace",
+            text=True,
+        )
+        if head.returncode != 0 or tracked_status.returncode != 0:
+            raise RuntimeError(
+                f"Editable LeRobot checkout is not a readable Git worktree: {checkout}"
+            )
+        if tracked_status.stdout.strip():
+            raise RuntimeError("Editable LeRobot checkout has tracked modifications")
+        commit = head.stdout.strip()
+        url = EXPECTED_LEROBOT_URL
     if distribution.version != EXPECTED_LEROBOT_VERSION:
         raise RuntimeError(
             f"Expected LeRobot {EXPECTED_LEROBOT_VERSION}, got {distribution.version}"
@@ -57,6 +101,8 @@ def _verify_lerobot_install() -> dict[str, str]:
         "version": distribution.version,
         "commit": commit,
         "url": url,
+        "install_url": install_url,
+        "install_mode": "editable_git" if editable else "locked_archive",
     }
 
 

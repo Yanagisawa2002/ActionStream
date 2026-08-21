@@ -66,12 +66,14 @@ RUNTIMES = (
     "lerobot_latest_only",
     "actionstream_aligned",
     "actionstream_backend_aligned",
+    "actionstream_backend_pipelined_aligned",
     "actionstream_backend_guarded",
     "actionstream_adaptive",
     "lerobot_rtc",
 )
 ACTIONSTREAM_BACKEND_RUNTIMES = {
     "actionstream_backend_aligned",
+    "actionstream_backend_pipelined_aligned",
     "actionstream_backend_guarded",
 }
 OFFICIAL_ASYNC_AGGREGATES = {
@@ -1946,6 +1948,7 @@ def _actionstream_backend_config(
         "max_consecutive_failures",
         "join_timeout_s",
         "latest_only_fallback",
+        "delivery_scheduler_enabled",
     }
     unknown = set(common) - allowed
     if unknown:
@@ -1960,6 +1963,16 @@ def _actionstream_backend_config(
             f"{runtime} must freeze latest_only_fallback={expected_fallback}"
         )
     common["latest_only_fallback"] = actual_fallback
+    expected_scheduler = runtime == "actionstream_backend_pipelined_aligned"
+    actual_scheduler = bool(
+        common.get("delivery_scheduler_enabled", expected_scheduler)
+    )
+    if actual_scheduler is not expected_scheduler:
+        raise ValueError(
+            f"{runtime} must freeze "
+            f"delivery_scheduler_enabled={expected_scheduler}"
+        )
+    common["delivery_scheduler_enabled"] = actual_scheduler
     return ActionStreamInferenceConfig(**common)
 
 
@@ -2064,8 +2077,10 @@ def run_actionstream_backend_episode(
         raise ValueError(f"Negative disconnect ordinal in {profile.key}")
 
     inference_events: list[dict[str, Any]] = []
+    inference_events_by_ordinal: dict[int, dict[str, Any]] = {}
     inference_event_lock = threading.Lock()
     inference_ordinal = 0
+    scheduled_delivery = engine_config.delivery_scheduler_enabled
 
     def infer_chunk(
         frozen_observation: Mapping[str, Any],
@@ -2080,8 +2095,7 @@ def run_actionstream_backend_episode(
         phase = "worker_warmup" if warmup_phase else "steady_state"
         if not warmup_phase and ordinal in disconnect_ordinals:
             with inference_event_lock:
-                inference_events.append(
-                    {
+                event = {
                         "ordinal": ordinal,
                         "phase": phase,
                         "status": "injected_disconnect",
@@ -2090,7 +2104,8 @@ def run_actionstream_backend_episode(
                         "injected_delivery_delay_seconds": 0.0,
                         "delivery_timestamp": request_timestamp,
                     }
-                )
+                inference_events.append(event)
+                inference_events_by_ordinal[ordinal] = event
             raise ConnectionError(
                 f"Frozen transport disconnect at inference ordinal {ordinal}"
             )
@@ -2103,25 +2118,59 @@ def run_actionstream_backend_episode(
             print(f"[backend-debug] inference {ordinal} model complete", flush=True)
         model_finished = time.monotonic()
         injected_delay = 0.0 if warmup_phase else profile.seconds_at(ordinal)
-        if injected_delay:
+        if injected_delay and not scheduled_delivery:
             time.sleep(injected_delay)
-        delivery_timestamp = time.monotonic()
+        delivery_timestamp = (
+            None if scheduled_delivery else time.monotonic()
+        )
         with inference_event_lock:
-            inference_events.append(
-                {
+            event = {
                     "ordinal": ordinal,
                     "phase": phase,
-                    "status": "completed",
+                    "status": (
+                        "computed_pending_delivery"
+                        if scheduled_delivery
+                        else "completed"
+                    ),
                     "request_timestamp": request_timestamp,
                     "model_finished_timestamp": model_finished,
                     "delivery_timestamp": delivery_timestamp,
+                    "scheduled_delivery_timestamp": (
+                        model_finished + injected_delay
+                        if scheduled_delivery
+                        else delivery_timestamp
+                    ),
                     "model_inference_latency_seconds": output.model_latency_seconds,
                     "injected_delivery_delay_seconds": injected_delay,
+                    "delivery_scheduler_enabled": scheduled_delivery,
                     "raw_shape": list(output.raw_shape),
                     "raw_dtype": output.raw_dtype,
                 }
-            )
+            inference_events.append(event)
+            inference_events_by_ordinal[ordinal] = event
         return torch.from_numpy(output.actions)
+
+    def observe_delivery(update: Mapping[str, Any]) -> None:
+        ordinal = int(update["request_ordinal"])
+        with inference_event_lock:
+            event = inference_events_by_ordinal.get(ordinal)
+            if event is None:
+                raise RuntimeError(
+                    f"Missing inference event for scheduled response {ordinal}"
+                )
+            status = str(update["status"])
+            event["delivery_status"] = status
+            event["scheduled_delivery_timestamp"] = float(
+                update["scheduled_delivery_timestamp"]
+            )
+            if update.get("delivery_timestamp") is not None:
+                event["delivery_timestamp"] = float(update["delivery_timestamp"])
+            if update.get("current_step") is not None:
+                event["delivery_current_step"] = int(update["current_step"])
+            if status == "delivered":
+                event["status"] = "completed"
+            elif status.startswith("rejected_") or status == "cancelled_stop":
+                event["status"] = status
 
     telemetry_jsonl_path = (
         trace_path.with_suffix(".telemetry.jsonl")
@@ -2147,6 +2196,16 @@ def run_actionstream_backend_episode(
         config=effective_engine_config,
         infer_chunk=infer_chunk,
         reset_provider=lambda: None,
+        delivery_delay_provider=(
+            (
+                lambda ordinal: (
+                    0.0 if warmup_phase else profile.seconds_at(ordinal)
+                )
+            )
+            if scheduled_delivery
+            else None
+        ),
+        delivery_observer=observe_delivery if scheduled_delivery else None,
     )
     if torch.cuda.is_available():
         torch.cuda.reset_peak_memory_stats()
@@ -2413,6 +2472,12 @@ def run_actionstream_backend_episode(
             "observations_superseded": telemetry.observations_superseded,
             "inference_timeouts": telemetry.inference_timeouts,
             "inference_errors": telemetry.inference_errors,
+            "responses_scheduled": telemetry.responses_scheduled,
+            "responses_delivered": telemetry.responses_delivered,
+            "responses_rejected_out_of_order": (
+                telemetry.responses_rejected_out_of_order
+            ),
+            "pending_responses": telemetry.pending_responses,
             "disconnects": telemetry.disconnects,
             "recoveries": telemetry.recoveries,
             "chunks_accepted": telemetry.chunks_accepted,
@@ -2447,6 +2512,9 @@ def run_actionstream_backend_episode(
                 "max_consecutive_failures": engine_config.max_consecutive_failures,
                 "join_timeout_s": engine_config.join_timeout_s,
                 "latest_only_fallback": engine_config.latest_only_fallback,
+                "delivery_scheduler_enabled": (
+                    engine_config.delivery_scheduler_enabled
+                ),
             },
             "trace_path": str(trace_path),
             "trace_sha256": _sha256_file(trace_path),

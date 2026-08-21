@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "experiment_id": "actionstream_transport_h1_20260821",
+  "protocol_status": "frozen_before_formal_result",
+  "frozen_utc": "2026-08-21T10:05:00Z",
+  "hypothesis_id": "transport_h1_serialized_delivery",
+  "hypothesis": "At the fixed-950-ms operating point, most queue depletion in the formal ActionStream backend is caused by injecting response delivery delay inside its single inference worker. Moving only that delay to a cancellable response-delivery scheduler will restore request supply and remove at least 90% of depletion pulls.",
+  "candidate": {
+    "commit": "1268bcc5237422ae80bbb88b57e5efc155a8936b",
+    "lerobot_inference_sha256": "59731a4f63760ec7249109a21e54082440f1b1f2a6cb49519e3720c52d35d71f",
+    "current_baselines_sha256": "fffe07cd2e8a59a41264dc610ea66d7caa1ea3e89716b1d43e937dc9668ed858",
+    "transport_h1_sha256": "92073796e1c094b6de185ec019a16436eaeb55416b02469e10eae6436c6ed229"
+  },
+  "shared_contract": {
+    "control_frequency_hz": 20.0,
+    "chunk_size": 30,
+    "compute_latency_milliseconds": 150.0,
+    "delivery_delay_milliseconds": 950.0,
+    "scored_control_steps": 120,
+    "repetitions": 3,
+    "bounded_hold_steps": 2,
+    "latest_only_fallback": false,
+    "mailbox": "single-slot latest observation",
+    "alignment": "drop elapsed prefix at actual response delivery",
+    "policy_compute_workers": 1,
+    "action_shape": [30, 1]
+  },
+  "variants": {
+    "serialized": {
+      "delivery_scheduler_enabled": false
+    },
+    "pipelined": {
+      "delivery_scheduler_enabled": true
+    }
+  },
+  "decision_gates": {
+    "minimum_request_rate_ratio": 4.0,
+    "minimum_depletion_reduction_fraction": 0.9,
+    "maximum_pipelined_depletion_fraction": 0.02,
+    "maximum_out_of_order_rejections": 0,
+    "maximum_fallback_activations": 0
+  },
+  "single_hypothesis_guard": {
+    "selector_changes_forbidden": true,
+    "fallback_changes_forbidden": true,
+    "policy_or_task_changes_forbidden": true,
+    "delay_or_chunk_changes_between_variants_forbidden": true,
+    "post_result_threshold_changes_forbidden": true,
+    "formal_result_absent_at_freeze": true
+  },
+  "conditional_gpu_canary": {
+    "run_only_if_fixture_verdict": "PASS",
+    "maximum_gpu_sessions": 1,
+    "model": {
+      "key": "xvla",
+      "model_id": "lerobot/xvla-libero",
+      "revision": "12e8783e996944f5c97e490d37d4c145484ed70a",
+      "chunk_size": 30
+    },
+    "environment": {
+      "suite": "libero_object",
+      "task_id": 5,
+      "initial_state_index": 50,
+      "seed": 2026082150,
+      "disjoint_from_prior_v2r1_states": [45, 46, 47, 48, 49]
+    },
+    "delay_profile": {
+      "key": "fixed_0950_transport_h1",
+      "kind": "fixed",
+      "milliseconds": 950
+    },
+    "paired_runtimes": [
+      "actionstream_backend_aligned",
+      "actionstream_backend_pipelined_aligned"
+    ],
+    "primary_readout": "request supply and queue depletion under real X-VLA CUDA inference",
+    "success_scope": "single-episode policy success is descriptive canary evidence, not an efficacy claim"
+  },
+  "claim_boundary": "The fixture isolates scheduling mechanics. A conditional one-state GPU canary may verify CUDA integration, but neither result is a multi-task policy comparison, production remote-service soak, or real-robot safety result."
+}

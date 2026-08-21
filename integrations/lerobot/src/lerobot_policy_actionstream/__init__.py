@@ -36,6 +36,7 @@ class ActionStreamRolloutInferenceConfig(InferenceEngineConfig):
     process_transport_start_method: str = "spawn"
     process_transport_startup_timeout_s: float = 30.0
     process_transport_terminate_timeout_s: float = 1.0
+    delivery_scheduler_enabled: bool = False
     telemetry_jsonl_path: str | None = None
 
     def runtime_config(self) -> ActionStreamInferenceConfig:
@@ -51,6 +52,7 @@ class ActionStreamRolloutInferenceConfig(InferenceEngineConfig):
             process_transport_start_method=self.process_transport_start_method,
             process_transport_startup_timeout_s=self.process_transport_startup_timeout_s,
             process_transport_terminate_timeout_s=self.process_transport_terminate_timeout_s,
+            delivery_scheduler_enabled=self.delivery_scheduler_enabled,
             telemetry_jsonl_path=self.telemetry_jsonl_path,
         )
 

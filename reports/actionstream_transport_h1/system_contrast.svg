@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="520" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc">
+  <title id="title">Transport H1 X-VLA GPU canary system contrast</title>
+  <desc id="desc">Three paired bar charts compare serialized and pipelined response delivery at fixed 950 milliseconds.</desc>
+  <rect width="1200" height="520" fill="#f7f9fb"/>
+  <text x="40" y="48" font-family="Arial, sans-serif" font-size="26" font-weight="700" fill="#16202a">X-VLA GPU canary · fixed 950 ms · same task/reset/checkpoint</text>
+  <text x="40" y="78" font-family="Arial, sans-serif" font-size="16" fill="#52606d">Single paired canary (no confidence interval). Gray = serialized aligned; teal = pipelined aligned.</text>
+
+  <g transform="translate(35 105)">
+    <rect width="360" height="355" rx="12" fill="#ffffff" stroke="#d8dee4"/>
+    <text x="20" y="35" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#24313d">Request supply</text>
+    <line x1="45" y1="300" x2="325" y2="300" stroke="#aeb8c2"/>
+    <rect x="88" y="274" width="72" height="26" fill="#7b8794"/>
+    <rect x="215" y="58" width="72" height="242" fill="#119c8b"/>
+    <text x="124" y="265" text-anchor="middle" font-family="Arial, sans-serif" font-size="17" font-weight="700">0.900</text>
+    <text x="251" y="49" text-anchor="middle" font-family="Arial, sans-serif" font-size="17" font-weight="700">8.383</text>
+    <text x="124" y="327" text-anchor="middle" font-family="Arial, sans-serif" font-size="14">serialized</text>
+    <text x="251" y="327" text-anchor="middle" font-family="Arial, sans-serif" font-size="14">pipelined</text>
+    <text x="180" y="348" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#0b7569">9.31x requests/s</text>
+  </g>
+
+  <g transform="translate(420 105)">
+    <rect width="360" height="355" rx="12" fill="#ffffff" stroke="#d8dee4"/>
+    <text x="20" y="35" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#24313d">Queue depletion pulls</text>
+    <line x1="45" y1="300" x2="325" y2="300" stroke="#aeb8c2"/>
+    <rect x="88" y="58" width="72" height="242" fill="#7b8794"/>
+    <rect x="215" y="298" width="72" height="2" fill="#119c8b"/>
+    <text x="124" y="49" text-anchor="middle" font-family="Arial, sans-serif" font-size="17" font-weight="700">74</text>
+    <text x="251" y="289" text-anchor="middle" font-family="Arial, sans-serif" font-size="17" font-weight="700">0</text>
+    <text x="124" y="327" text-anchor="middle" font-family="Arial, sans-serif" font-size="14">serialized</text>
+    <text x="251" y="327" text-anchor="middle" font-family="Arial, sans-serif" font-size="14">pipelined</text>
+    <text x="180" y="348" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#0b7569">100% removed</text>
+  </g>
+
+  <g transform="translate(805 105)">
+    <rect width="360" height="355" rx="12" fill="#ffffff" stroke="#d8dee4"/>
+    <text x="20" y="35" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#24313d">Successful completion</text>
+    <line x1="45" y1="300" x2="325" y2="300" stroke="#aeb8c2"/>
+    <rect x="88" y="58" width="72" height="242" fill="#7b8794"/>
+    <rect x="215" y="110" width="72" height="190" fill="#119c8b"/>
+    <text x="124" y="49" text-anchor="middle" font-family="Arial, sans-serif" font-size="17" font-weight="700">167 steps</text>
+    <text x="251" y="101" text-anchor="middle" font-family="Arial, sans-serif" font-size="17" font-weight="700">131 steps</text>
+    <text x="124" y="327" text-anchor="middle" font-family="Arial, sans-serif" font-size="14">serialized</text>
+    <text x="251" y="327" text-anchor="middle" font-family="Arial, sans-serif" font-size="14">pipelined</text>
+    <text x="180" y="348" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#0b7569">21.6% fewer steps</text>
+  </g>
+
+  <text x="600" y="500" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#66727d">Both runs succeeded · steady process VRAM max 4754 MiB · fallback 0 · out-of-order rejection 0</text>
+</svg>

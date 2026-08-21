@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "status": "frozen_structural_resume_v2_before_paired_result",
+  "frozen_utc": "2026-08-21T11:39:40Z",
+  "hypothesis_id": "transport_h1_final_serialized_delivery",
+  "original_registry_path": "configs/actionstream_transport_h1_final_registry.json",
+  "original_registry_sha256": "6f748939a24a766a19fa8f77294051f0147e29834797fbbda4d3a4369febaa58",
+  "structural_failure_v2": {
+    "classification": "resume-only receipt-validator scope mismatch",
+    "expected_by_resume_v1": "system_gpu repeated on every episode row",
+    "actual_current_baselines_field": "system_gpu is recorded once on the per-process run receipt",
+    "new_gpu_child_process_started": false,
+    "new_scored_episode_started": false,
+    "paired_contrast_available_before_fix": false,
+    "gpu_state_after_failure": "idle with no resident benchmark process",
+    "runtime_policy_task_reset_threshold_or_fallback_failure": false
+  },
+  "frozen_artifacts": {
+    "resume_v1_config_sha256": "89d7ae18f8fe97cc7378e7ce8ebd00d8eff3b7d61b9fef6cb03601b0fa00b1d6",
+    "resume_v1_orchestrator_sha256": "6d910077c5c64e98b6c18587b1c65976a3b68fca08c9b78e301e4c35ceccaf70",
+    "resume_v2_orchestrator_sha256": "d36f295ed07831ce34ad18167aa288ba59adf747bb2d10b887311fff7aa7bf1e",
+    "first_process_log": {
+      "path": "logs/transport_h1_final_gpu_session_20260821.log",
+      "sha256": "dc9edbb957eef22247b0cb86986713c0a413c14abd5e77c2314a51e17c0000c3"
+    },
+    "validator_only_log": {
+      "path": "logs/transport_h1_final_resume_session_20260821.log",
+      "sha256": "6be2619df940b6780992e83983877ab311526cd9fc0944926d22937ad9d04771"
+    },
+    "reused_run_receipt_sha256": "185b8cedc652e3e44c60422bbd2bfd557746ac9824b393a623be0b6d29ae8934",
+    "reused_episodes_sha256": "69c3c420f74f529b61c3b78c025ec99dd7d062599624da7b9b56c0c71a037468"
+  },
+  "resume_contract": {
+    "gpu_instance_power_cycles_for_holdout": 1,
+    "process_sessions_reported_after_completion": 3,
+    "gpu_process_sessions_with_cuda_work_after_completion": 2,
+    "validator_only_process_sessions": 1,
+    "completed_cell_to_reuse": {
+      "family": "object",
+      "runtime": "actionstream_backend_aligned",
+      "record_count": 5
+    },
+    "remaining_cells": 8,
+    "duplicated_scored_episodes_allowed": 0,
+    "unexpected_preexisting_cell_is_fatal": true,
+    "failed_new_cell_is_fatal_without_retry": true,
+    "reuse_requires_exact_receipt_and_episode_hashes": true
+  },
+  "unchanged_scientific_contract": {
+    "candidate_runtime_bytes_unchanged": true,
+    "three_task_families_unchanged": true,
+    "scored_states_25_through_29_unchanged": true,
+    "fixed_950_profile_unchanged": true,
+    "three_runtimes_and_balanced_order_unchanged": true,
+    "decision_thresholds_unchanged": true,
+    "no_selector_or_fallback_change": true,
+    "no_result_based_tuning": true
+  },
+  "schema_correction": {
+    "gpu_measurement_source": "run_receipt.system_gpu",
+    "steady_state_residency_source": "run_receipt.system_gpu.phases.steady_state",
+    "episode_measurement_source": "episodes.jsonl worker_warmup and inference_requests_per_second",
+    "artifact_cardinality": "five JSON traces, five telemetry JSONL files, and one representative MP4 per cell"
+  },
+  "claim_boundary": "The second structural resume corrects only a fail-closed validator against the observed frozen output schema. It neither changes nor reruns the completed cell and it does not modify the candidate, thresholds, tasks, resets, delay, or decision gates."
+}

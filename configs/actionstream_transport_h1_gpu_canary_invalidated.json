@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "status": "invalidated_pre_gpu_result",
+  "invalidated_utc": "2026-08-21T10:12:00Z",
+  "source_protocol": "configs/actionstream_transport_h1.json",
+  "source_protocol_sha256": "f5c456a096b0d057782f0ac316b2452fe62878d3a097aa9bfe20704b100d788cc",
+  "invalidated_scope": "conditional_gpu_canary reset only; the completed transport H1 fixture remains valid",
+  "reason": "The predeclared LIBERO object initial_state_index 50 is structurally invalid. The official task asset contains exactly 50 reset states with legal indices 0 through 49.",
+  "gpu_sessions_started": 0,
+  "gpu_episodes_started": 0,
+  "policy_results_observed_before_invalidation": false,
+  "replacement_rule": "Select a legal task-5 reset identity absent from every prior X-VLA task-5 scored or warmup identity before starting CUDA inference.",
+  "replacement_initial_state_index": 39,
+  "prior_xvla_task5_state_indices": [36, 37, 38, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49]
+}

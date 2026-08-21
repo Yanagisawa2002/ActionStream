@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import logging
 import math
+import heapq
 import threading
 import time
 import traceback
@@ -56,6 +57,7 @@ class ActionStreamInferenceConfig:
     process_transport_start_method: str = "spawn"
     process_transport_startup_timeout_s: float = 30.0
     process_transport_terminate_timeout_s: float = 1.0
+    delivery_scheduler_enabled: bool = False
     telemetry_jsonl_path: str | None = None
 
     def __post_init__(self) -> None:
@@ -88,6 +90,8 @@ class ActionStreamInferenceConfig:
             self.process_transport_terminate_timeout_s <= 0
         ):
             raise ValueError("process_transport_terminate_timeout_s must be positive")
+        if not isinstance(self.delivery_scheduler_enabled, bool):
+            raise TypeError("delivery_scheduler_enabled must be bool")
 
 
 @dataclass(frozen=True)
@@ -100,6 +104,9 @@ class ActionStreamTelemetry:
     inference_completed: int
     inference_timeouts: int
     inference_errors: int
+    responses_scheduled: int
+    responses_delivered: int
+    responses_rejected_out_of_order: int
     disconnects: int
     recoveries: int
     consecutive_failures: int
@@ -113,6 +120,7 @@ class ActionStreamTelemetry:
     fallback_activations: int
     fallback_chunks_accepted: int
     queue_depth: int
+    pending_responses: int
     queue_age_steps: int | None
     latest_inference_latency_ms: float | None
     max_inference_latency_ms: float | None
@@ -122,6 +130,7 @@ class ActionStreamTelemetry:
     transport_cancellations: int
     transport_startup_latency_ms: float | None
     transport_request_latency_ms: float | None
+    delivery_scheduler_enabled: bool
     telemetry_write_errors: int
     failed: bool
 
@@ -143,8 +152,21 @@ class _QueuedAction:
     task: str
 
 
+@dataclass(frozen=True)
+class _PendingDelivery:
+    epoch: int
+    request_ordinal: int
+    source_step: int
+    task: str
+    actions: torch.Tensor
+    model_completed_timestamp: float
+    scheduled_delivery_timestamp: float
+
+
 InferChunk = Callable[[Mapping[str, Any], str], torch.Tensor]
 ResetProvider = Callable[[], None]
+DeliveryDelayProvider = Callable[[int], float]
+DeliveryObserver = Callable[[Mapping[str, Any]], None]
 
 
 class ActionStreamInferenceEngine(InferenceEngine):
@@ -182,6 +204,8 @@ class ActionStreamInferenceEngine(InferenceEngine):
         infer_chunk: InferChunk | None = None,
         reset_provider: ResetProvider | None = None,
         transport: InferenceTransport | None = None,
+        delivery_delay_provider: DeliveryDelayProvider | None = None,
+        delivery_observer: DeliveryObserver | None = None,
     ) -> None:
         super().__init__(task=task)
         self._policy = policy
@@ -194,6 +218,15 @@ class ActionStreamInferenceEngine(InferenceEngine):
         self._global_shutdown_event = shutdown_event
         self._infer_chunk_override = infer_chunk
         self._reset_provider_override = reset_provider
+        self._delivery_delay_provider = delivery_delay_provider
+        self._delivery_observer = delivery_observer
+
+        if not self._config.delivery_scheduler_enabled and (
+            delivery_delay_provider is not None or delivery_observer is not None
+        ):
+            raise ValueError(
+                "delivery callbacks require delivery_scheduler_enabled=True"
+            )
 
         if (
             transport is None
@@ -228,11 +261,17 @@ class ActionStreamInferenceEngine(InferenceEngine):
         self._active = threading.Event()
         self._started = False
         self._worker: threading.Thread | None = None
+        self._delivery_worker: threading.Thread | None = None
 
         self._epoch = 0
         self._current_step = -1
+        self._next_request_ordinal = 0
         self._latest_observation: _ObservationEnvelope | None = None
         self._provider_reset_pending = True
+        self._pending_deliveries: list[
+            tuple[float, int, _PendingDelivery]
+        ] = []
+        self._latest_delivered_source_step = -1
         self._queue: deque[_QueuedAction] = deque()
         self._last_action: _QueuedAction | None = None
         self._hold_steps_used = 0
@@ -274,6 +313,13 @@ class ActionStreamInferenceEngine(InferenceEngine):
             self._fatal_error.clear()
             self._failure_traceback = None
             self._started = True
+            if self._config.delivery_scheduler_enabled:
+                self._delivery_worker = threading.Thread(
+                    target=self._delivery_loop,
+                    daemon=True,
+                    name="ActionStreamDelivery",
+                )
+                self._delivery_worker.start()
             self._worker = threading.Thread(
                 target=self._worker_loop,
                 daemon=True,
@@ -294,17 +340,29 @@ class ActionStreamInferenceEngine(InferenceEngine):
             self._active.clear()
             self._latest_observation = None
             worker = self._worker
+            delivery_worker = self._delivery_worker
+            cancelled_deliveries = [item[2] for item in self._pending_deliveries]
+            self._pending_deliveries.clear()
             self._condition.notify_all()
+        for pending in cancelled_deliveries:
+            self._notify_delivery_observer(pending, status="cancelled_stop")
         cancelled = self._transport.cancel()
         if cancelled:
             self._emit("transport_cancelled", reason="stop")
         if worker is not None and worker.is_alive():
             worker.join(timeout=self._config.join_timeout_s)
+        if delivery_worker is not None and delivery_worker.is_alive():
+            delivery_worker.join(timeout=self._config.join_timeout_s)
         with self._condition:
-            still_alive = bool(worker is not None and worker.is_alive())
+            worker_alive = bool(worker is not None and worker.is_alive())
+            delivery_worker_alive = bool(
+                delivery_worker is not None and delivery_worker.is_alive()
+            )
+            still_alive = worker_alive or delivery_worker_alive
             if not still_alive:
                 self._started = False
                 self._worker = None
+                self._delivery_worker = None
         if still_alive:
             self._mark_fatal(
                 RuntimeError(
@@ -312,10 +370,18 @@ class ActionStreamInferenceEngine(InferenceEngine):
                     f"{self._config.join_timeout_s:.3f}s"
                 )
             )
-            self._emit("engine_stop_failed", worker_alive=True)
+            self._emit(
+                "engine_stop_failed",
+                worker_alive=worker_alive,
+                delivery_worker_alive=delivery_worker_alive,
+            )
         else:
             self._transport.close()
-            self._emit("engine_stopped", worker_alive=False)
+            self._emit(
+                "engine_stopped",
+                worker_alive=False,
+                delivery_worker_alive=False,
+            )
 
     def pause(self) -> None:
         self._active.clear()
@@ -338,16 +404,23 @@ class ActionStreamInferenceEngine(InferenceEngine):
             self._epoch += 1
             epoch = self._epoch
             self._current_step = -1
+            self._next_request_ordinal = 0
             self._latest_observation = None
             self._provider_reset_pending = True
             self._connected = True
             self._reset_metrics_locked()
+            cancelled_deliveries = [item[2] for item in self._pending_deliveries]
+            self._pending_deliveries.clear()
+            self._metrics["chunks_rejected_reset"] += len(cancelled_deliveries)
+            self._latest_delivered_source_step = -1
             with self._queue_lock:
                 self._queue.clear()
                 self._last_action = None
                 self._hold_steps_used = 0
                 self._starved_pulls = 0
             self._condition.notify_all()
+        for pending in cancelled_deliveries:
+            self._notify_delivery_observer(pending, status="rejected_reset")
         cancelled = self._transport.reset()
         self._discard_task_change()
         self._emit("engine_reset", epoch=epoch, transport_cancelled=cancelled)
@@ -432,6 +505,11 @@ class ActionStreamInferenceEngine(InferenceEngine):
                 inference_completed=int(self._metrics["inference_completed"]),
                 inference_timeouts=int(self._metrics["inference_timeouts"]),
                 inference_errors=int(self._metrics["inference_errors"]),
+                responses_scheduled=int(self._metrics["responses_scheduled"]),
+                responses_delivered=int(self._metrics["responses_delivered"]),
+                responses_rejected_out_of_order=int(
+                    self._metrics["responses_rejected_out_of_order"]
+                ),
                 disconnects=int(self._metrics["disconnects"]),
                 recoveries=int(self._metrics["recoveries"]),
                 consecutive_failures=int(self._metrics["consecutive_failures"]),
@@ -445,6 +523,7 @@ class ActionStreamInferenceEngine(InferenceEngine):
                 fallback_activations=int(self._metrics["fallback_activations"]),
                 fallback_chunks_accepted=int(self._metrics["fallback_chunks_accepted"]),
                 queue_depth=len(self._queue),
+                pending_responses=len(self._pending_deliveries),
                 queue_age_steps=queue_age,
                 latest_inference_latency_ms=(
                     None if latest_latency is None else float(latest_latency)
@@ -466,6 +545,7 @@ class ActionStreamInferenceEngine(InferenceEngine):
                     if self._transport.latest_request_latency_s is None
                     else self._transport.latest_request_latency_s * 1000.0
                 ),
+                delivery_scheduler_enabled=self._config.delivery_scheduler_enabled,
                 telemetry_write_errors=int(self._metrics["telemetry_write_errors"]),
                 failed=self._fatal_error.is_set(),
             )
@@ -493,11 +573,14 @@ class ActionStreamInferenceEngine(InferenceEngine):
                     reset_provider = self._provider_reset_pending
                     self._provider_reset_pending = False
                     self._metrics["inference_started"] += 1
+                    request_ordinal = self._next_request_ordinal
+                    self._next_request_ordinal += 1
 
                 self._emit(
                     "inference_started",
                     epoch=envelope.epoch,
                     source_step=envelope.step,
+                    request_ordinal=request_ordinal,
                     deadline_s=self._config.inference_timeout_s,
                 )
 
@@ -577,19 +660,174 @@ class ActionStreamInferenceEngine(InferenceEngine):
                     "inference_completed",
                     epoch=envelope.epoch,
                     source_step=envelope.step,
+                    request_ordinal=request_ordinal,
                     current_step=current_step,
                     latency_ms=latency_s * 1000.0,
                     recovered=recovered,
                 )
 
-                self._merge_chunk(
-                    actions,
-                    source_step=envelope.step,
+                if self._config.delivery_scheduler_enabled:
+                    self._schedule_delivery(
+                        actions,
+                        epoch=envelope.epoch,
+                        request_ordinal=request_ordinal,
+                        source_step=envelope.step,
+                        task=task,
+                    )
+                else:
+                    self._merge_chunk(
+                        actions,
+                        source_step=envelope.step,
+                        current_step=current_step,
+                        task=task,
+                    )
+        except BaseException as exc:
+            self._mark_fatal(exc)
+
+    def _schedule_delivery(
+        self,
+        actions: torch.Tensor,
+        *,
+        epoch: int,
+        request_ordinal: int,
+        source_step: int,
+        task: str,
+    ) -> None:
+        delay_s = (
+            0.0
+            if self._delivery_delay_provider is None
+            else float(self._delivery_delay_provider(request_ordinal))
+        )
+        if not math.isfinite(delay_s) or delay_s < 0:
+            raise ValueError(
+                "delivery delay provider must return a finite non-negative value"
+            )
+        completed = time.monotonic()
+        pending = _PendingDelivery(
+            epoch=epoch,
+            request_ordinal=request_ordinal,
+            source_step=source_step,
+            task=task,
+            actions=actions,
+            model_completed_timestamp=completed,
+            scheduled_delivery_timestamp=completed + delay_s,
+        )
+        with self._condition:
+            if epoch != self._epoch or self._shutdown.is_set():
+                self._metrics["chunks_rejected_reset"] += 1
+                rejected = True
+            else:
+                heapq.heappush(
+                    self._pending_deliveries,
+                    (
+                        pending.scheduled_delivery_timestamp,
+                        pending.request_ordinal,
+                        pending,
+                    ),
+                )
+                self._metrics["responses_scheduled"] += 1
+                self._condition.notify_all()
+                rejected = False
+        if rejected:
+            self._notify_delivery_observer(pending, status="rejected_reset")
+            return
+        self._emit(
+            "response_scheduled",
+            epoch=epoch,
+            request_ordinal=request_ordinal,
+            source_step=source_step,
+            delivery_delay_ms=delay_s * 1000.0,
+        )
+        self._notify_delivery_observer(pending, status="scheduled")
+
+    def _delivery_loop(self) -> None:
+        try:
+            while not self._shutdown.is_set():
+                with self._condition:
+                    while not self._shutdown.is_set():
+                        if not self._pending_deliveries:
+                            self._condition.wait()
+                            continue
+                        ready_at, _, pending = self._pending_deliveries[0]
+                        remaining = ready_at - time.monotonic()
+                        if remaining > 0:
+                            self._condition.wait(timeout=remaining)
+                            continue
+                        heapq.heappop(self._pending_deliveries)
+                        if pending.epoch != self._epoch:
+                            self._metrics["chunks_rejected_reset"] += 1
+                            status = "rejected_reset"
+                            current_step = self._current_step
+                        elif (
+                            pending.source_step
+                            <= self._latest_delivered_source_step
+                        ):
+                            self._metrics["responses_rejected_out_of_order"] += 1
+                            self._metrics["chunks_rejected_stale"] += 1
+                            self._metrics["stale_actions_discarded"] += len(
+                                pending.actions
+                            )
+                            status = "rejected_out_of_order"
+                            current_step = self._current_step
+                        else:
+                            self._latest_delivered_source_step = pending.source_step
+                            self._metrics["responses_delivered"] += 1
+                            status = "delivered"
+                            current_step = self._current_step
+                        break
+                    else:  # pragma: no cover - loop exits through shutdown guard
+                        return
+                    if self._shutdown.is_set():
+                        return
+
+                delivered_at = time.monotonic()
+                if status == "delivered":
+                    self._merge_chunk(
+                        pending.actions,
+                        source_step=pending.source_step,
+                        current_step=current_step,
+                        task=pending.task,
+                    )
+                else:
+                    self._emit(
+                        f"response_{status}",
+                        epoch=pending.epoch,
+                        request_ordinal=pending.request_ordinal,
+                        source_step=pending.source_step,
+                    )
+                self._notify_delivery_observer(
+                    pending,
+                    status=status,
+                    delivery_timestamp=delivered_at,
                     current_step=current_step,
-                    task=task,
                 )
         except BaseException as exc:
             self._mark_fatal(exc)
+
+    def _notify_delivery_observer(
+        self,
+        pending: _PendingDelivery,
+        *,
+        status: str,
+        delivery_timestamp: float | None = None,
+        current_step: int | None = None,
+    ) -> None:
+        if self._delivery_observer is None:
+            return
+        self._delivery_observer(
+            {
+                "status": status,
+                "epoch": pending.epoch,
+                "request_ordinal": pending.request_ordinal,
+                "source_step": pending.source_step,
+                "model_completed_timestamp": pending.model_completed_timestamp,
+                "scheduled_delivery_timestamp": (
+                    pending.scheduled_delivery_timestamp
+                ),
+                "delivery_timestamp": delivery_timestamp,
+                "current_step": current_step,
+            }
+        )
 
     def _retry_failed_observation(self, envelope: _ObservationEnvelope) -> None:
         """Retry a failed request unless a newer observation already won.
@@ -796,6 +1034,9 @@ class ActionStreamInferenceEngine(InferenceEngine):
             "inference_completed": 0,
             "inference_timeouts": 0,
             "inference_errors": 0,
+            "responses_scheduled": 0,
+            "responses_delivered": 0,
+            "responses_rejected_out_of_order": 0,
             "disconnects": 0,
             "recoveries": 0,
             "consecutive_failures": 0,

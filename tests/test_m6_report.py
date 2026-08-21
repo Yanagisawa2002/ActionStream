@@ -16,6 +16,18 @@ from actionstream.m6_report import (
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "outputs" / "m6_g0"
 REPORT = OUTPUT / "report"
+PROTOCOL = ROOT / "configs" / "m6_g0.json"
+
+# The complete frozen archive is intentionally not part of a clean source
+# checkout.  These five raw/provenance payloads remain named and hashed by the
+# self-hashed artifact manifest, while the curated report inputs stay tracked.
+EXTERNAL_RAW_ARTIFACTS = {
+    "metrics/trace_summaries.jsonl",
+    "scenario/trace_contracts.jsonl",
+    "traces/action_records.jsonl",
+    "traces/result_records.jsonl",
+    "upstream/pinned_upstream.json",
+}
 
 
 def _json(path: Path) -> dict:
@@ -37,7 +49,8 @@ def test_checked_in_m6_report_is_complete_and_scope_honest() -> None:
 
 def test_source_crosswalk_has_every_frozen_pinned_reference() -> None:
     source = _json(REPORT / "source_references.json")
-    upstream = _json(OUTPUT / "upstream" / "pinned_upstream.json")
+    protocol = _json(PROTOCOL)
+    upstream_commit = protocol["upstream"]["commit"]
     rendered_sources = "\n".join(
         path.read_text(encoding="utf-8")
         for path in (
@@ -46,10 +59,10 @@ def test_source_crosswalk_has_every_frozen_pinned_reference() -> None:
             REPORT / "m6_g0_report.md",
         )
     )
-    assert source["upstream_commit"] == upstream["commit"]
+    assert source["upstream_commit"] == upstream_commit
     assert set(source["references"]) == set(SOURCE_REFERENCE_SPECS)
     for reference in source["references"].values():
-        assert upstream["commit"] in reference["permalink"]
+        assert upstream_commit in reference["permalink"]
         assert reference["symbol"] in rendered_sources
         assert reference["start_line"] <= reference["end_line"]
 
@@ -119,7 +132,7 @@ def test_representative_timeline_contains_full_queue_transition_contract() -> No
         assert required <= set(runtime["queue_transitions"][0])
 
 
-def test_artifact_manifest_hashes_every_m6_file() -> None:
+def test_artifact_manifest_hashes_checkout_and_declares_external_raw_files() -> None:
     manifest = _json(OUTPUT / "artifact_manifest.json")
     core = {
         key: value
@@ -132,6 +145,10 @@ def test_artifact_manifest_hashes_every_m6_file() -> None:
         for path in OUTPUT.rglob("*")
         if path.is_file() and path.name != "artifact_manifest.json"
     }
-    assert set(manifest["artifacts"]) == set(paths)
+    declared = set(manifest["artifacts"])
+    present = set(paths)
+    assert EXTERNAL_RAW_ARTIFACTS <= declared
+    assert present <= declared
+    assert declared - present <= EXTERNAL_RAW_ARTIFACTS
     for relative, path in paths.items():
         assert manifest["artifacts"][relative] == file_sha256(path)

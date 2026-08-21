@@ -768,9 +768,17 @@ def build_report(
                 "sha256": _git_object_sha256(root, canonical_benchmark_revision),
             },
             "adapter_statement": (
-                "The Phase 0 adapter instantiates ActionQueue and InferenceResult from "
-                "the current src/actionstream/runtime.py without modifying that file; "
-                "the byte comparison above proves it is the accepted M4 runtime."
+                (
+                    "The Phase 0 adapter instantiates ActionQueue and InferenceResult "
+                    "from a byte-identical checkout of the accepted M4 runtime."
+                )
+                if runtime_matches_accepted_m4
+                else (
+                    "The adapter executed the current runtime, whose tracked bytes no "
+                    "longer match the accepted M4 commit. Common-domain checks remain "
+                    "useful regression evidence, but this run is not an exact canonical "
+                    "M4 replay and remains explicitly blocked."
+                )
             ),
             "working_benchmark_not_used_as_executor": True,
         },

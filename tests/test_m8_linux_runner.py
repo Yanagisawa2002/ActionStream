@@ -17,7 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 LINUX_RUNNER = ROOT / "scripts" / "m8_run_isaac.sh"
 SUPPORT = ROOT / "scripts" / "m8_linux_runner_support.py"
 WINDOWS_RUNNER = ROOT / "scripts" / "m8_run_isaac.ps1"
-BASELINE_MATRIX = ROOT / "outputs" / "m8_g0" / "baseline_gate" / "candidate_0" / "matrix.json"
+BASELINE_SEEDS = ROOT / "configs" / "m8_baseline_gate_seeds.json"
 
 
 def _linux_source() -> str:
@@ -399,20 +399,52 @@ def test_linux_runner_parses_with_bash() -> None:
     assert completed.returncode == 0, completed.stdout + completed.stderr
 
 
-def test_support_extracts_exact_frozen_baseline_inventory() -> None:
+def test_support_extracts_exact_frozen_baseline_inventory(tmp_path: Path) -> None:
+    repository = tmp_path / "repository"
+    suite_root = repository / "baseline_gate"
+    suite_root.mkdir(parents=True)
+    seeds = json.loads(BASELINE_SEEDS.read_text(encoding="utf-8"))["seeds"]
+    assert len(seeds) == 20
+    batch = suite_root / "batch_profile_0_sanity_sync_hold.json"
+    batch.write_text(
+        json.dumps(
+            {
+                "batch_strategy": "sync_hold",
+                "batch_profile_id": "profile_0_sanity",
+                "expected_episode_count": len(seeds),
+                "episodes": [{"seed": seed} for seed in seeds],
+            }
+        ),
+        encoding="utf-8",
+    )
+    suite = suite_root / "matrix.json"
+    suite.write_text(
+        json.dumps(
+            {
+                "milestone": "M8-G0",
+                "split": "baseline_gate",
+                "native_results_status_at_creation": "not_run",
+                "persistent_batch_count": 1,
+                "batch_manifests": [{"path": batch.name}],
+            }
+        ),
+        encoding="utf-8",
+    )
     completed = _support(
         "suite-records",
         "--repository-root",
-        str(ROOT),
+        str(repository),
         "--suite",
-        str(BASELINE_MATRIX),
+        str(suite),
     )
-    assert completed.returncode == 0, completed.stderr.decode()
+    assert completed.returncode == 0, completed.stderr.decode(
+        "utf-8", errors="replace"
+    )
     fields = completed.stdout.rstrip(b"\0").decode("utf-8").split("\0")
     assert fields[0:2] == ["baseline_gate", ""]
     assert len(fields) == 7
     assert Path(fields[2]).resolve() == (
-        BASELINE_MATRIX.parent / "batch_profile_0_sanity_sync_hold.json"
+        suite.parent / "batch_profile_0_sanity_sync_hold.json"
     ).resolve()
     assert fields[3:] == [
         "sync_hold",

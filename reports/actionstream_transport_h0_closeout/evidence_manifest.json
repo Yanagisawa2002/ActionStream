@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "raw_archive": {
+    "local_path": "artifacts/actionstream_transport_h0_h1_closeout_20260821.tar.gz",
+    "remote_path": "/root/autodl-tmp/actionstream_transport_h0_h1_closeout_20260821.tar.gz",
+    "sha256": "c8742250c1248b8e1793060fd677a72dab79a8e59191f723d1cc4bd422cea7ae",
+    "tracked_in_git": false
+  },
+  "extracted_local_root": "artifacts/transport_h0_h1_closeout_20260821",
+  "post_archive_dependency_bind_log": {
+    "local_path": "artifacts/transport_h0_h1_closeout_20260821/logs/transport_h0_dependency_bind_20260821.log",
+    "remote_path": "/root/autodl-tmp/actionstream-transport-h1-f29a00a/logs/transport_h0_dependency_bind_20260821.log",
+    "sha256": "66b5353e53952de15a6701b304eb482546d0c8d255c10c9aa78bc4917548bab9",
+    "tracked_in_git": false
+  },
+  "h0": {
+    "episodes": {
+      "path": "outputs/transport_h0_exact_lerobot_canary_20260821/episodes.jsonl",
+      "sha256": "efaee44616e825ebfd43c898c36b4f9bc6ffaf87f00dfea5ca0a49a98a42ed06"
+    },
+    "run_receipt": {
+      "path": "outputs/transport_h0_exact_lerobot_canary_20260821/run_receipt.json",
+      "sha256": "20717bc25503ea71dc716f3f9529d319a1650efbfc3d6c21398a0c97c691fa63"
+    },
+    "wrapper_receipt": {
+      "path": "outputs/transport_h0_exact_lerobot_canary_20260821/h0_canary_receipt.json",
+      "sha256": "a0566119f185a07ad6c7a2880c020e6253ba5d19e3ea2ad5c0007f3a4587976f"
+    },
+    "video": {
+      "path": "outputs/transport_h0_exact_lerobot_canary_20260821/videos/xvla__actionstream_backend_pipelined_aligned__fixed_0950_transport_h0_canary__task5__ep0.mp4",
+      "sha256": "cf9f2401d30fb763df8a0ba90ef6c6487735af8a0d8bcedb4fafcb6f1fb7f0a3",
+      "decode_checked": true,
+      "content_checked": true,
+      "frames": 127,
+      "resolution": "640x640",
+      "fps": 20
+    }
+  },
+  "tracked_qualitative_progression": {
+    "path": "reports/actionstream_transport_h0_closeout/qualitative_progression.png",
+    "sha256": "c49ae8301716b55e728a543484dc4f47a45bd8a1d22943d8779d2a493d523af8",
+    "source_frame_indices": [0, 63, 125]
+  },
+  "credential_boundary": "No server credential is stored in this manifest, the raw archive, or tracked report files."
+}

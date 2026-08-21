@@ -583,3 +583,49 @@ def test_formal_backend_episode_records_disconnect_recovery_and_queue_telemetry(
     assert len(record["worker_warmup"]["request_wall_latency_seconds"]) == 2
     assert record["inference_requests_per_second"] > 0
     assert Path(record["trace_path"]).is_file()
+
+
+def test_pipelined_backend_records_scheduled_and_actual_delivery(tmp_path: Path) -> None:
+    backend = _BackendBenchmarkHarness()
+    profile = DelayTrace.from_mapping(
+        {"key": "fixed_0000", "kind": "fixed", "milliseconds": 0}
+    )
+    trace_path = tmp_path / "pipelined_trace.json"
+
+    record = run_actionstream_backend_episode(
+        backend,
+        experiment_id="backend-pipelined-test",
+        runtime="actionstream_backend_pipelined_aligned",
+        engine_config=ActionStreamInferenceConfig(
+            inference_timeout_s=1.0,
+            bounded_hold_steps=1,
+            retry_backoff_s=0.0,
+            max_consecutive_failures=3,
+            join_timeout_s=1.0,
+            latest_only_fallback=False,
+            delivery_scheduler_enabled=True,
+        ),
+        profile=profile,
+        task_id=2,
+        episode_index=0,
+        initial_state_index=41,
+        seed=2026082101,
+        run_id="test-run",
+        trace_path=trace_path,
+    )
+
+    assert record["status"] == "completed"
+    assert record["success"] is True
+    assert record["engine_config"]["delivery_scheduler_enabled"] is True
+    assert record["responses_scheduled"] >= 1
+    assert record["responses_delivered"] >= 1
+    assert record["responses_rejected_out_of_order"] == 0
+    trace = json.loads(trace_path.read_text(encoding="utf-8"))
+    completed = [
+        event
+        for event in trace["inference_events"]
+        if event["status"] == "completed"
+    ]
+    assert completed
+    assert all(event["delivery_status"] == "delivered" for event in completed)
+    assert all(event["delivery_timestamp"] is not None for event in completed)

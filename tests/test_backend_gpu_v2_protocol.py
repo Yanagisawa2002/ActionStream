@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
+import subprocess
 
 import pytest
 
@@ -14,6 +15,16 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _git_object_sha256(commit: str, path: str) -> str:
+    completed = subprocess.run(
+        ["git", "show", f"{commit}:{path}"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    )
+    return hashlib.sha256(completed.stdout).hexdigest()
 
 
 def test_gpu_v2_registry_is_preserved_as_invalid_seed_freeze() -> None:
@@ -63,20 +74,21 @@ def test_gpu_v2r1_freezes_valid_new_process_and_disjoint_evidence() -> None:
         "goal",
     }
     candidate = protocols[0].raw["candidate"]
-    assert candidate["current_baselines_sha256"] == _sha256(
-        ROOT / "src/actionstream/current_baselines.py"
+    candidate_commit = registry["candidate_commit"]
+    assert candidate["current_baselines_sha256"] == _git_object_sha256(
+        candidate_commit, "src/actionstream/current_baselines.py"
     )
-    assert candidate["lerobot_inference_sha256"] == _sha256(
-        ROOT / "src/actionstream/lerobot_inference.py"
+    assert candidate["lerobot_inference_sha256"] == _git_object_sha256(
+        candidate_commit, "src/actionstream/lerobot_inference.py"
     )
-    assert candidate["gpu_measurement_sha256"] == _sha256(
-        ROOT / "src/actionstream/gpu_measurement.py"
+    assert candidate["gpu_measurement_sha256"] == _git_object_sha256(
+        candidate_commit, "src/actionstream/gpu_measurement.py"
     )
-    assert candidate["orchestrator_sha256"] == _sha256(
-        ROOT / "scripts/experiments/run_backend_gpu_v2.py"
+    assert candidate["orchestrator_sha256"] == _git_object_sha256(
+        candidate_commit, "scripts/experiments/run_backend_gpu_v2.py"
     )
-    assert candidate["report_sha256"] == _sha256(
-        ROOT / "src/actionstream/backend_gpu_v2_report.py"
+    assert candidate["report_sha256"] == _git_object_sha256(
+        candidate_commit, "src/actionstream/backend_gpu_v2_report.py"
     )
 
     seeded_canary: set[str] = set()

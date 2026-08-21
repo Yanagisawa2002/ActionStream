@@ -37,6 +37,7 @@ def _engine(
     config: ActionStreamInferenceConfig | None = None,
     shutdown_event: threading.Event | None = None,
     reset_provider=None,
+    delivery_delay_provider=None,
 ) -> ActionStreamInferenceEngine:
     policy = _Resettable()
     policy.config = SimpleNamespace(use_amp=False)
@@ -52,6 +53,7 @@ def _engine(
         shutdown_event=shutdown_event,
         infer_chunk=infer_chunk,
         reset_provider=reset_provider,
+        delivery_delay_provider=delivery_delay_provider,
     )
 
 
@@ -130,6 +132,116 @@ def test_latest_mailbox_coalesces_observations_while_one_call_is_in_flight() -> 
         _wait_for(lambda: engine.telemetry.inference_completed == 2)
         assert calls == [0, 2]
         assert engine.telemetry.observations_superseded == 1
+    finally:
+        engine.stop()
+
+
+def test_delivery_scheduler_does_not_block_inference_worker() -> None:
+    calls: list[int] = []
+
+    def infer(obs, _task):
+        calls.append(obs["step"])
+        return torch.full((1, 30, 2), float(obs["step"]))
+
+    engine = _engine(
+        infer,
+        config=ActionStreamInferenceConfig(
+            latest_only_fallback=False,
+            delivery_scheduler_enabled=True,
+        ),
+        delivery_delay_provider=lambda _ordinal: 1.0,
+    )
+    engine.reset()
+    engine.start()
+    engine.resume()
+    try:
+        engine.notify_observation({"step": 0})
+        _wait_for(lambda: engine.telemetry.inference_completed == 1)
+        engine.notify_observation({"step": 1})
+        _wait_for(lambda: engine.telemetry.inference_completed == 2)
+
+        assert calls == [0, 1]
+        assert engine.telemetry.responses_scheduled == 2
+        assert engine.telemetry.responses_delivered == 0
+        assert engine.telemetry.pending_responses == 2
+        assert engine.telemetry.queue_depth == 0
+    finally:
+        engine.stop()
+
+
+def test_delivery_scheduler_reset_rejects_pending_pre_reset_response() -> None:
+    def infer(obs, _task):
+        return torch.full((1, 4, 2), float(obs["value"]))
+
+    engine = ActionStreamInferenceEngine(
+        policy=SimpleNamespace(config=SimpleNamespace(use_amp=False)),
+        preprocessor=_Resettable(),
+        postprocessor=_Resettable(),
+        hw_features={},
+        task="task A",
+        device="cpu",
+        robot_type="mock",
+        config=ActionStreamInferenceConfig(
+            latest_only_fallback=False,
+            delivery_scheduler_enabled=True,
+        ),
+        infer_chunk=infer,
+        reset_provider=lambda: None,
+        delivery_delay_provider=lambda _ordinal: 0.1,
+    )
+    engine.reset()
+    engine.start()
+    engine.resume()
+    try:
+        engine.notify_observation({"value": 1})
+        _wait_for(lambda: engine.telemetry.responses_scheduled == 1)
+        engine.reset()
+        engine.resume()
+        engine.notify_observation({"value": 2})
+        _wait_for(lambda: engine.telemetry.chunks_accepted == 1)
+
+        torch.testing.assert_close(engine.get_action(None), torch.tensor([2.0, 2.0]))
+        assert engine.telemetry.chunks_rejected_reset == 1
+        assert engine.telemetry.responses_delivered == 1
+    finally:
+        engine.stop()
+
+
+def test_delivery_scheduler_rejects_out_of_order_older_response() -> None:
+    def infer(obs, _task):
+        return torch.full((1, 8, 2), float(obs["step"]))
+
+    engine = ActionStreamInferenceEngine(
+        policy=SimpleNamespace(config=SimpleNamespace(use_amp=False)),
+        preprocessor=_Resettable(),
+        postprocessor=_Resettable(),
+        hw_features={},
+        task="task A",
+        device="cpu",
+        robot_type="mock",
+        config=ActionStreamInferenceConfig(
+            latest_only_fallback=False,
+            delivery_scheduler_enabled=True,
+        ),
+        infer_chunk=infer,
+        reset_provider=lambda: None,
+        delivery_delay_provider=lambda ordinal: 0.2 if ordinal == 0 else 0.01,
+    )
+    engine.reset()
+    engine.start()
+    engine.resume()
+    try:
+        engine.notify_observation({"step": 0})
+        _wait_for(lambda: engine.telemetry.inference_completed == 1)
+        engine.notify_observation({"step": 1})
+        _wait_for(lambda: engine.telemetry.responses_delivered == 1)
+        _wait_for(
+            lambda: engine.telemetry.responses_rejected_out_of_order == 1
+        )
+
+        torch.testing.assert_close(engine.get_action(None), torch.tensor([1.0, 1.0]))
+        assert engine.telemetry.chunks_rejected_stale == 1
+        assert engine.telemetry.stale_actions_discarded == 8
     finally:
         engine.stop()
 

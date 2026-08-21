@@ -1,0 +1,6 @@
+incident,stage,classification,gpu_child_started,episode_rows_added,performance_effect_observed,resolution,status
+H1-F1,formal H1 orchestrator,receipt field mismatch selection.delay_profiles vs selection.profiles,true,5,false,Preserved completed serialized cell and froze structural resume,CLOSED_STRUCTURAL
+H1-F2,formal H1 resume,validator expected system_gpu on every episode row,false,0,false,Corrected validator to use run_receipt.system_gpu,CLOSED_STRUCTURAL
+H1-F3,formal H1 first pipelined child,installed LeRobot shadowed exact checkout,true,0,false,Stopped H1 without retry and split exact-checkout binding into H0,H1_BLOCKED
+H0-F1,H0 preflight,venv Python symlink was resolved to base Conda interpreter,false,0,false,Preserved venv entrypoint without Path.resolve,CLOSED_PREFLIGHT
+H0-PASS,H0 v2 canary,exact checkout import plus learned pipelined GPU rollout,true,1,true,All 14 frozen engineering gates passed,PASS_PREREQUISITE_ONLY

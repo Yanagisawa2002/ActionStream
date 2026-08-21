@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "benchmark_version": 3,
+  "experiment_id": "actionstream_transport_h1_gpu_canary_20260821",
+  "protocol_status": "frozen_canary",
+  "frozen_utc": "2026-08-21T10:12:00Z",
+  "hypothesis_id": "transport_h1_serialized_delivery",
+  "candidate": {
+    "base_commit": "1268bcc5237422ae80bbb88b57e5efc155a8936b",
+    "current_baselines_sha256": "fffe07cd2e8a59a41264dc610ea66d7caa1ea3e89716b1d43e937dc9668ed858",
+    "lerobot_inference_sha256": "59731a4f63760ec7249109a21e54082440f1b1f2a6cb49519e3720c52d35d71f",
+    "transport_h1_sha256": "92073796e1c094b6de185ec019a16436eaeb55416b02469e10eae6436c6ed229"
+  },
+  "fixture_gate_receipt": {
+    "verdict": "PASS",
+    "result_sha256": "9a51267fdc018d3a2994116220aa2e5abd726c58204e6233960a7f6f8a11854d",
+    "protocol_sha256": "f5c456a096b0d057782f0ac316b2452fe62878d3a097aa9bfe20704b100d788cc",
+    "request_rate_ratio": 6.435753304054247,
+    "serialized_median_depletion_fraction": 0.4,
+    "pipelined_median_depletion_fraction": 0.0
+  },
+  "source": {
+    "repository_url": "https://github.com/Yanagisawa2002/lerobot.git",
+    "commit": "73e1584473028a2d53ecfc856f5290db84507f90",
+    "source_version": "0.6.2"
+  },
+  "models": [
+    {
+      "key": "xvla",
+      "model_id": "lerobot/xvla-libero",
+      "revision": "12e8783e996944f5c97e490d37d4c145484ed70a",
+      "control_mode": "absolute",
+      "chunk_size": 30,
+      "request_interval_steps": 10,
+      "rtc_expected": false,
+      "required": true,
+      "rename_map": {}
+    }
+  ],
+  "runtimes": [
+    "actionstream_backend_aligned",
+    "actionstream_backend_pipelined_aligned"
+  ],
+  "environment": {
+    "type": "libero",
+    "suite": "libero_object",
+    "task_ids": [5],
+    "task_description": "pick up the tomato sauce and place it in the basket",
+    "episode_length": 300,
+    "control_frequency_hz": 20.0,
+    "initial_state_indices": [39],
+    "base_seed": 2026082139
+  },
+  "delay_profiles": [
+    {
+      "key": "fixed_0950_transport_h1",
+      "kind": "fixed",
+      "milliseconds": 950
+    }
+  ],
+  "actionstream_backend": {
+    "common": {
+      "inference_timeout_s": 5.0,
+      "bounded_hold_steps": 2,
+      "retry_backoff_s": 0.05,
+      "max_consecutive_failures": 10,
+      "join_timeout_s": 10.0
+    },
+    "actionstream_backend_aligned": {
+      "latest_only_fallback": false,
+      "delivery_scheduler_enabled": false
+    },
+    "actionstream_backend_pipelined_aligned": {
+      "latest_only_fallback": false,
+      "delivery_scheduler_enabled": true
+    }
+  },
+  "measurement_v2": {
+    "fresh_process_per_runtime": true,
+    "nvidia_smi_interval_seconds": 0.2,
+    "worker_warmup": {
+      "task_id": 5,
+      "initial_state_index": 38,
+      "seed": 2026082138,
+      "inference_calls": 2
+    },
+    "startup_latency_definition": "first inference submitted through the actual ActionStream worker",
+    "steady_state_definition": "scored inference calls after two non-scored worker calls",
+    "request_rate_definition": "scored inference requests started divided by scored episode wall time",
+    "gpu_residency_definition": "nvidia-smi process residency sampled during the steady-state episode"
+  },
+  "compact_matrix": {
+    "episodes_per_task": 1,
+    "paired": true,
+    "reuse_delay_trace_across_runtimes": true
+  },
+  "evidence_boundary": {
+    "gpu_session_budget": 1,
+    "scored_reset_identity": "libero_object + task 5 + state 39 + seed 2026082139",
+    "state_asset_count": 50,
+    "legal_state_indices": [0, 49],
+    "state_39_absent_from_prior_xvla_task5_scored_and_warmup_identities": true,
+    "warmup_state_38_is_non_scored_and_reused": true,
+    "fixed_950_has_no_trace_entropy_and_is_shared_by_definition": true,
+    "selector_fallback_policy_task_and_checkpoint_unchanged": true,
+    "single_episode_success_is_descriptive_only": true
+  },
+  "decision_rule": {
+    "minimum_request_rate_ratio": 3.0,
+    "minimum_depletion_reduction_fraction": 0.8,
+    "maximum_pipelined_depletion_fraction": 0.05,
+    "maximum_out_of_order_rejections": 0,
+    "maximum_fallback_activations": 0,
+    "policy_success_is_not_a_gate": true
+  }
+}
