@@ -1,0 +1,256 @@
+{
+  "schema_version": 1,
+  "registry_id": "actionstream_transport_h2_budget_frozen_registry_20260822",
+  "protocol_status": "frozen_before_formal_result",
+  "frozen_utc": "2026-08-22T04:27:47Z",
+  "hypothesis_id": "transport_h2_compute_budget",
+  "hypothesis": "At fixed 950 ms, a five-control-step request budget on the already-pipelined aligned runtime reduces aggregate learned-policy inference calls by at least 50% while maintaining request supply, no more than 5% queue depletion in aggregate and in every task family, and aggregate success no lower than the unbounded pipelined runtime.",
+  "predecessor_evidence": {
+    "h1_r2_status": "mechanism_go",
+    "h1_r2_role": "Established that response delivery must be pipelined before request budgeting is tested.",
+    "h1_r2_outputs_reused": false,
+    "h1_r2_scored_identities_reused": false,
+    "h2_tests_one_new_hypothesis_only": true
+  },
+  "candidate": {
+    "base_commit": "de93aa2b8c4a6f69b02a19c9435c1073e344f54d",
+    "current_baselines_sha256": "4c1af2e7a628f4a5c32bb50e42c8c2194b53062d2669a40af7154a6b9c4e946d",
+    "lerobot_inference_sha256": "fa441fdcaa34239c9c85b83c9fde42fe502115445748fe4455abbdb58006ef10",
+    "gpu_measurement_sha256": "73ef342a0f2da5f7f69394c347c5d4e2432a7dde47460ded1de712102aa7f6a0",
+    "orchestrator_sha256": "6d58b16a0a19f27b8ca5c41cb508907e6847aaf202210d8a77d3c535ae30ba3c"
+  },
+  "protocols": {
+    "object": {
+      "path": "configs/actionstream_transport_h2_budget_object.json",
+      "sha256": "f148559b9eda24cf52dfe3d261e46dfb14e978468efe5057c3d1a046a3ab835f"
+    },
+    "spatial": {
+      "path": "configs/actionstream_transport_h2_budget_spatial.json",
+      "sha256": "39c1244cd5ef08d0d778653e85a7a41f88aa440f5ccfa3c9b1b18109dbfd6116"
+    },
+    "goal": {
+      "path": "configs/actionstream_transport_h2_budget_goal.json",
+      "sha256": "2f9aeb52823da746a6237de1fb7c55a9f67adbb7bcb543f2df66c1cabcc826fe"
+    }
+  },
+  "formal_matrix": {
+    "gpu_session_budget": 1,
+    "output_root_basename": "actionstream_transport_h2_budget_holdout_20260822",
+    "task_families": [
+      {
+        "family": "object",
+        "suite": "libero_object",
+        "task_id": 5,
+        "initial_state_indices": [
+          15,
+          16,
+          17,
+          18,
+          19
+        ]
+      },
+      {
+        "family": "spatial",
+        "suite": "libero_spatial",
+        "task_id": 7,
+        "initial_state_indices": [
+          15,
+          16,
+          17,
+          18,
+          19
+        ]
+      },
+      {
+        "family": "goal",
+        "suite": "libero_goal",
+        "task_id": 2,
+        "initial_state_indices": [
+          15,
+          16,
+          17,
+          18,
+          19
+        ]
+      }
+    ],
+    "runtimes": [
+      {
+        "name": "actionstream_backend_pipelined_aligned",
+        "minimum_request_interval_steps": 1,
+        "label": "unbounded pipelined aligned"
+      },
+      {
+        "name": "actionstream_backend_budgeted_pipelined_aligned",
+        "minimum_request_interval_steps": 5,
+        "label": "budgeted pipelined aligned"
+      }
+    ],
+    "fixed_delay_milliseconds": 950,
+    "delay_profile": "fixed_0950_transport_h2_budget",
+    "paired_identities": 15,
+    "scored_episodes": 30,
+    "fresh_runtime_family_processes": 6,
+    "representative_videos": 6,
+    "balanced_runtime_execution_order": "near-balanced: budgeted first in object and goal, unbounded first in spatial"
+  },
+  "budget_choice": {
+    "frozen_minimum_request_interval_steps": 5,
+    "control_frequency_hz": 20,
+    "predicted_request_rate_per_second": 4,
+    "fixed_delivery_delay_milliseconds": 950,
+    "rationale": "Five control steps cap new submissions near 4 requests/s, leaving about four responses in flight across the fixed delivery window while reducing the prior unbounded rate near 10 requests/s.",
+    "chosen_before_formal_results": true,
+    "no_interval_sweep": true
+  },
+  "identity_audit": {
+    "reset_identity": "suite + task_id + initial_state_index + policy seed",
+    "scored_states": [
+      15,
+      16,
+      17,
+      18,
+      19
+    ],
+    "prior_exact_task_reserved_or_scored_states": {
+      "libero_object_task5": [
+        10,
+        11,
+        12,
+        13,
+        14,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        46,
+        47,
+        48,
+        49
+      ],
+      "libero_spatial_task7": [
+        10,
+        11,
+        12,
+        13,
+        14,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        37,
+        40,
+        41,
+        42,
+        43,
+        44,
+        46,
+        47,
+        48,
+        49
+      ],
+      "libero_goal_task2": [
+        0,
+        10,
+        11,
+        12,
+        13,
+        14,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        37,
+        40,
+        41,
+        42,
+        43,
+        44,
+        46,
+        47,
+        48,
+        49
+      ]
+    },
+    "local_json_jsonl_files_scanned": 1963,
+    "scored_states_disjoint_from_local_protocol_and_evidence_audit": true,
+    "base_seeds_absent_from_prior_protocols_and_evidence": true,
+    "fixed_950_has_no_stochastic_trace_identity": true,
+    "new_trace_namespace": "h2_budget_fixed_0950_20260822",
+    "non_scored_warmup_state": 20
+  },
+  "preconditions": {
+    "exact_lerobot_commit": "73e1584473028a2d53ecfc856f5290db84507f90",
+    "exact_xvla_revision": "12e8783e996944f5c97e490d37d4c145484ed70a",
+    "exact_import_preflight_before_output_root_creation": true,
+    "gpu_free_memory_gate_mib": 500,
+    "targeted_and_full_tests_must_pass_before_formal_run": true,
+    "no_scored_gpu_canary": true,
+    "warmup_only_gpu_preflight_allowed": true
+  },
+  "analysis_plan": {
+    "bootstrap_resamples": 10000,
+    "bootstrap_seed": 2026122295,
+    "paired_unit": "suite + task_id + initial_state_index + policy seed",
+    "primary_compute_effect": "aggregate budgeted inference calls divided by aggregate unbounded inference calls",
+    "success_effect": "paired mean budgeted success minus unbounded success",
+    "step_effect": "paired mean budgeted steps minus unbounded steps; failures retain the frozen 300-step cap",
+    "request_rate_effect": "budgeted median episode inference requests per second",
+    "depletion_effect": "depletion safe-hold pulls divided by environment steps, aggregate and per family",
+    "paired_bootstrap_required_for_success_steps_calls_and_request_rate": true,
+    "family_breakdown_required": true,
+    "gpu_vram_utilization_latency_queue_discard_and_video_provenance_required": true,
+    "gpu_utilization_reduction_is_descriptive_not_a_gate": true
+  },
+  "decision_gates": {
+    "maximum_aggregate_inference_call_ratio": 0.5,
+    "minimum_budgeted_median_request_rate_per_second": 2.5,
+    "maximum_budgeted_aggregate_depletion_fraction": 0.05,
+    "maximum_budgeted_depletion_fraction_per_task_family": 0.05,
+    "budgeted_success_count_must_be_at_least_unbounded": true,
+    "maximum_out_of_order_rejections": 0,
+    "maximum_fallback_activations": 0,
+    "maximum_inference_timeouts": 0,
+    "maximum_inference_errors": 0,
+    "go": "all compute, supply, depletion, success, and integrity gates pass",
+    "no_go": "any compute, supply, depletion, success, or integrity gate fails",
+    "blocked": "a prerequisite fails before any scored identity is consumed"
+  },
+  "single_hypothesis_guard": {
+    "serialized_async_rtc_latest_only_smolvla_isaac_arena_forbidden": true,
+    "selector_changes_forbidden": true,
+    "fallback_changes_forbidden": true,
+    "jitter_burst_and_outage_cells_forbidden": true,
+    "task_or_checkpoint_substitution_forbidden": true,
+    "interval_sweep_or_post_result_interval_change_forbidden": true,
+    "consumed_identity_retry_forbidden": true,
+    "post_result_threshold_changes_forbidden": true,
+    "formal_result_absent_at_freeze": true
+  },
+  "claim_boundary": "A passing H2 supports a three-family X-VLA fixed-950-ms compute-budget result on the pipelined aligned backend. It does not support jitter, burst, outage, RTC, real remote RPC, real-robot safety, universal runtime superiority, or production soak."
+}

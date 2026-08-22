@@ -1,0 +1,138 @@
+{
+  "schema_version": 1,
+  "benchmark_version": 3,
+  "experiment_id": "actionstream_transport_h2_budget_goal_20260822",
+  "protocol_status": "frozen_holdout",
+  "frozen_utc": "2026-08-22T04:27:47Z",
+  "hypothesis_id": "transport_h2_compute_budget",
+  "task_family": "goal",
+  "candidate": {
+    "base_commit": "de93aa2b8c4a6f69b02a19c9435c1073e344f54d",
+    "current_baselines_sha256": "4c1af2e7a628f4a5c32bb50e42c8c2194b53062d2669a40af7154a6b9c4e946d",
+    "lerobot_inference_sha256": "fa441fdcaa34239c9c85b83c9fde42fe502115445748fe4455abbdb58006ef10",
+    "gpu_measurement_sha256": "73ef342a0f2da5f7f69394c347c5d4e2432a7dde47460ded1de712102aa7f6a0",
+    "orchestrator_sha256": "6d58b16a0a19f27b8ca5c41cb508907e6847aaf202210d8a77d3c535ae30ba3c"
+  },
+  "source": {
+    "repository_url": "https://github.com/Yanagisawa2002/lerobot.git",
+    "commit": "73e1584473028a2d53ecfc856f5290db84507f90",
+    "source_version": "0.6.2"
+  },
+  "models": [
+    {
+      "key": "xvla",
+      "model_id": "lerobot/xvla-libero",
+      "revision": "12e8783e996944f5c97e490d37d4c145484ed70a",
+      "control_mode": "absolute",
+      "chunk_size": 30,
+      "request_interval_steps": 10,
+      "rtc_expected": false,
+      "required": true,
+      "rename_map": {}
+    }
+  ],
+  "runtimes": [
+    "actionstream_backend_pipelined_aligned",
+    "actionstream_backend_budgeted_pipelined_aligned"
+  ],
+  "runtime_execution_order": [
+    "actionstream_backend_budgeted_pipelined_aligned",
+    "actionstream_backend_pipelined_aligned"
+  ],
+  "environment": {
+    "type": "libero",
+    "suite": "libero_goal",
+    "task_ids": [
+      2
+    ],
+    "task_description": "put the wine bottle on top of the cabinet",
+    "episode_length": 300,
+    "control_frequency_hz": 20,
+    "initial_state_indices": [
+      15,
+      16,
+      17,
+      18,
+      19
+    ],
+    "base_seed": 2026122415
+  },
+  "delay_profiles": [
+    {
+      "key": "fixed_0950_transport_h2_budget",
+      "kind": "fixed",
+      "milliseconds": 950
+    }
+  ],
+  "actionstream_backend": {
+    "common": {
+      "inference_timeout_s": 5,
+      "bounded_hold_steps": 2,
+      "retry_backoff_s": 0.05,
+      "max_consecutive_failures": 10,
+      "join_timeout_s": 10
+    },
+    "actionstream_backend_pipelined_aligned": {
+      "latest_only_fallback": false,
+      "delivery_scheduler_enabled": true,
+      "minimum_request_interval_steps": 1
+    },
+    "actionstream_backend_budgeted_pipelined_aligned": {
+      "latest_only_fallback": false,
+      "delivery_scheduler_enabled": true,
+      "minimum_request_interval_steps": 5
+    }
+  },
+  "measurement_v2": {
+    "fresh_process_per_runtime": true,
+    "cell_process_timeout_s": 3600,
+    "nvidia_smi_interval_seconds": 0.2,
+    "worker_warmup": {
+      "task_id": 2,
+      "initial_state_index": 20,
+      "seed": 2026122420,
+      "inference_calls": 2
+    },
+    "startup_latency_definition": "first inference submitted through the actual runtime execution context",
+    "steady_state_definition": "scored calls after two non-scored calls in the same runtime process",
+    "request_rate_definition": "scored inference requests started divided by scored episode wall time",
+    "gpu_residency_definition": "nvidia-smi process residency sampled during steady-state episodes",
+    "compute_budget_definition": "minimum five control steps between new worker submissions; transport retries bypass the budget",
+    "interval_selection_rationale": "At 20 Hz, five steps caps supply near 4 requests/s while preserving about four in-flight responses across a fixed 950 ms delivery window."
+  },
+  "compact_matrix": {
+    "episodes_per_task": 5,
+    "paired": true,
+    "reuse_delay_trace_across_runtimes": true
+  },
+  "evidence_boundary": {
+    "episodes_per_runtime_family": 5,
+    "scored_states": [
+      15,
+      16,
+      17,
+      18,
+      19
+    ],
+    "scored_states_absent_from_prior_exact_task_records": true,
+    "base_seeds_absent_from_prior_protocol_and_evidence": true,
+    "fixed_profile_has_no_stochastic_trace_identity": true,
+    "trace_namespace": "h2_budget_fixed_0950_20260822",
+    "delivery_scheduler_policy_checkpoint_fallback_and_alignment_unchanged": true,
+    "minimum_request_interval_steps_is_the_only_runtime_difference": true,
+    "post_result_tuning_retry_or_task_substitution_forbidden": true
+  },
+  "decision_rule": {
+    "primary_contrast": "budgeted_pipelined_aligned_minus_unbounded_pipelined_aligned",
+    "maximum_aggregate_inference_call_ratio": 0.5,
+    "minimum_budgeted_median_request_rate_per_second": 2.5,
+    "maximum_budgeted_aggregate_depletion_fraction": 0.05,
+    "maximum_budgeted_depletion_fraction_per_task_family": 0.05,
+    "budgeted_success_must_not_be_below_unbounded": true,
+    "maximum_out_of_order_rejections": 0,
+    "maximum_fallback_activations": 0,
+    "maximum_inference_timeouts": 0,
+    "maximum_inference_errors": 0,
+    "no_universal_superiority_claim": true
+  }
+}
