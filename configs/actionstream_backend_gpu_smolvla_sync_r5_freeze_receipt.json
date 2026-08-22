@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "experiment_family": "actionstream_backend_gpu_smolvla_sync_r5",
+  "status": "FROZEN_BEFORE_GPU_EXECUTION",
+  "frozen_utc": "2026-08-22T07:46:12Z",
+  "candidate_commit": "162ac3bb6578b7093a21f2d12d457916266c35bb",
+  "hypothesis": {
+    "id": "SMOLVLA_SYNC_R5_HORIZON_10",
+    "statement": "The two v4 sync failures are caused by 50-step open-loop execution; replanning after 10 executed steps repairs both and passes 6/6 unseen resets.",
+    "single_changed_variable": "sync execution horizon: 50 to 10 steps",
+    "unchanged": [
+      "SmolVLA checkpoint and dependency revisions",
+      "LeRobot source commit",
+      "LIBERO tasks and official success predicate",
+      "relative action space and observation rename map",
+      "50-step predicted action chunk",
+      "zero-delay operating point"
+    ]
+  },
+  "sequential_gates": {
+    "repair": {
+      "identities": [
+        {"suite": "libero_spatial", "task_id": 0, "initial_state_index": 29, "seed": 2026090200},
+        {"suite": "libero_goal", "task_id": 5, "initial_state_index": 30, "seed": 2026090301}
+      ],
+      "required": "2/2 successes",
+      "on_failure": "STOP; do not consume canary"
+    },
+    "canary": {
+      "identities": [
+        {"suite": "libero_object", "task_id": 3, "initial_state_indices": [48, 49], "base_seed": 2026100100},
+        {"suite": "libero_spatial", "task_id": 0, "initial_state_indices": [48, 49], "base_seed": 2026100200},
+        {"suite": "libero_goal", "task_id": 5, "initial_state_indices": [48, 49], "base_seed": 2026100300}
+      ],
+      "required": "6/6 successes",
+      "on_failure": "STOP; do not run RTC"
+    },
+    "conditional_next_step": "Only a passing 6/6 canary permits a separately frozen official RTC experiment."
+  },
+  "identity_audit_before_freeze": {
+    "roots": ["configs", "reports", "outputs"],
+    "structured_files_scanned": 341,
+    "episode_rows_scanned": 669,
+    "target_identity_match_count": 0,
+    "protocol_reservation_match_count": 0,
+    "canary_seed_match_count": 0,
+    "identity_definition": "suite + task_id + initial_state_index; seeds are separately unique"
+  },
+  "network_trace_boundary": "No stochastic network trace is used or claimed in this zero-delay sync gate.",
+  "execution_state": "NOT_RUN_SERVER_OFF"
+}

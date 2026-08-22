@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "smolvla_sync_protocol_version": 5,
+  "experiment_id": "actionstream_backend_gpu_smolvla_sync_r5_repair_spatial",
+  "protocol_status": "development_repair_only",
+  "frozen_utc": "2026-08-22T07:46:12Z",
+  "task_family": "spatial",
+  "candidate": {
+    "base_commit": "162ac3bb6578b7093a21f2d12d457916266c35bb",
+    "current_baselines_sha256": "7f96ecd77a20a4cc32896e0710c253967a835268cc4f9ff858a09494a77a6213",
+    "orchestrator_sha256": "7719fc1f1831a1e9902a3d03b3f801c340fcbda03000c812ce2d33e25b0fe9be",
+    "report_sha256": "e412c016ab741605d72a5aa524f24916f3b0e71333216a98926f15670af30a60"
+  },
+  "source": {
+    "repository_url": "https://github.com/huggingface/lerobot.git",
+    "commit": "6adf51511b7625090eade8d82d9f61a1846ebe56",
+    "source_version": "0.6.2"
+  },
+  "environment": {
+    "type": "libero",
+    "suite": "libero_spatial",
+    "task_ids": [0],
+    "episode_length": 300,
+    "control_frequency_hz": 20.0,
+    "initial_state_indices": [29],
+    "base_seed": 2026090200
+  },
+  "models": [{
+    "key": "smolvla",
+    "model_id": "lerobot/smolvla_libero",
+    "revision": "31d453f7edd78c839a8bbc39744a292686daf0de",
+    "control_mode": "relative",
+    "chunk_size": 50,
+    "request_interval_steps": 10,
+    "rtc_expected": true,
+    "rtc_execution_horizon": 10,
+    "required": true,
+    "dependencies": [{
+      "model_id": "HuggingFaceTB/SmolVLM2-500M-Video-Instruct",
+      "revision": "7b375e1b73b11138ff12fe22c8f2822d8fe03467"
+    }],
+    "rename_map": {
+      "observation.images.image": "observation.images.camera1",
+      "observation.images.image2": "observation.images.camera2"
+    }
+  }],
+  "runtimes": ["sync_hold"],
+  "sync_execution": {
+    "mode": "receding_horizon",
+    "horizon_steps": 10,
+    "predicted_chunk_steps": 50,
+    "hypothesis_id": "SMOLVLA_SYNC_R5_HORIZON_10"
+  },
+  "delay_profiles": [{"key": "fixed_0000", "kind": "fixed", "milliseconds": 0}],
+  "measurement_v2": {
+    "fresh_process_per_runtime": true,
+    "nvidia_smi_interval_seconds": 0.2,
+    "worker_warmup": {"task_id": 0, "initial_state_index": 26, "seed": 2026100002, "inference_calls": 2}
+  },
+  "compact_matrix": {"episodes_per_task": 1, "paired": false, "reuse_delay_trace_across_runtimes": true},
+  "evidence_boundary": {
+    "historical_v4_outcome": "state 29 failed under 50-step full-chunk open-loop sync",
+    "single_changed_variable": "execute 10 predicted steps before replanning",
+    "headline_or_holdout_eligible": false,
+    "canary_remains_sealed_until_repair_2_of_2": true
+  }
+}
