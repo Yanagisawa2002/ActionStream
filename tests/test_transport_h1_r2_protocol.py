@@ -5,11 +5,17 @@ import importlib.util
 import json
 from pathlib import Path
 import subprocess
+import sys
 
 
 ROOT = Path(__file__).resolve().parents[1]
 REGISTRY_PATH = ROOT / "configs/actionstream_transport_h1_r2_registry.json"
 ORCHESTRATOR_PATH = ROOT / "scripts/experiments/run_transport_h1_r2.py"
+V2_ORCHESTRATOR_PATH = ROOT / "scripts/experiments/run_transport_h1_r2_v2.py"
+V2_CONFIG_PATH = ROOT / "configs/actionstream_transport_h1_r2_resume_v2.json"
+FAILURE_RECEIPT_PATH = (
+    ROOT / "reports/actionstream_transport_h1_r2/preflight_failure_v1.json"
+)
 
 
 def _sha256(path: Path) -> str:
@@ -40,6 +46,16 @@ def _protocols() -> list[tuple[str, Path, dict]]:
 
 def _orchestrator():
     spec = importlib.util.spec_from_file_location("run_transport_h1_r2", ORCHESTRATOR_PATH)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def _v2_orchestrator():
+    spec = importlib.util.spec_from_file_location(
+        "run_transport_h1_r2_v2", V2_ORCHESTRATOR_PATH
+    )
     assert spec is not None and spec.loader is not None
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
@@ -228,3 +244,42 @@ def test_h1_r2_cell_validator_uses_profiles_and_exact_identities(
         assert "wrong profile" in str(error)
     else:
         raise AssertionError("H1-R2 accepted the old receipt key")
+
+
+def test_h1_r2_v2_is_a_hash_bounded_preflight_only_resume() -> None:
+    module = _v2_orchestrator()
+    resume = json.loads(V2_CONFIG_PATH.read_text(encoding="utf-8"))
+    frozen = resume["frozen_artifacts"]
+    assert resume["status"] == "frozen_preflight_resume_before_formal_root"
+    assert frozen["registry_sha256"] == _sha256(REGISTRY_PATH)
+    assert frozen["v1_orchestrator_sha256"] == _sha256(ORCHESTRATOR_PATH)
+    assert frozen["v2_orchestrator_sha256"] == _sha256(V2_ORCHESTRATOR_PATH)
+    assert frozen["preflight_failure_receipt_sha256"] == _sha256(
+        FAILURE_RECEIPT_PATH
+    )
+    assert resume["preflight_failure"]["formal_output_root_created"] is False
+    assert resume["preflight_failure"]["gpu_child_processes_started"] == 0
+    assert resume["preflight_failure"]["scored_episodes_started"] == 0
+    assert all(resume["unchanged_scientific_contract"].values())
+    assert module._validate_resume_config(V2_CONFIG_PATH) == resume
+
+
+def test_h1_r2_v2_preserves_the_active_venv_interpreter() -> None:
+    module = _v2_orchestrator()
+    captured = {}
+    original = module._V1_PREFLIGHT
+
+    def fake_preflight(**kwargs):
+        captured.update(kwargs)
+        return {"status": "fixture"}
+
+    try:
+        module._V1_PREFLIGHT = fake_preflight
+        assert module._venv_preflight(
+            python=Path("/resolved/base/python"),
+            lerobot_root=Path("/lerobot"),
+            environment={"PYTHONPATH": "fixture"},
+        ) == {"status": "fixture"}
+    finally:
+        module._V1_PREFLIGHT = original
+    assert captured["python"] == Path(sys.executable)

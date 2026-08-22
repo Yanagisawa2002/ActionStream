@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "status": "frozen_preflight_resume_before_formal_root",
+  "frozen_utc": "2026-08-22T03:34:00Z",
+  "hypothesis_id": "transport_h1_r2_delivery_pipeline",
+  "frozen_artifacts": {
+    "registry_sha256": "627ce38b644ac891022113716c6422cfebe1f049a839c7615519bca26a9385df",
+    "v1_orchestrator_sha256": "36982cdd943eeaf832024d3ba16f4d74f761df5e819b2268a62c2de0a7a46966",
+    "v2_orchestrator_sha256": "524c9935bf8c4cfc3980154eeaf4569004a09de649f085e844ebfcf4c052b43d",
+    "preflight_failure_receipt_sha256": "b11dc672e18110e141ca36b581f4a11708898d2e6cd7819e57ea637622095c98"
+  },
+  "preflight_failure": {
+    "reason": "Path(sys.executable).resolve() selected the base interpreter instead of the active venv for the import-only subprocess.",
+    "execution_log_relative_path": "logs/transport_h1_r2_session_20260822.log",
+    "execution_log_sha256": "93d615a234115624544c118dd7a9979eb23f98a34d3d5ffa06486029d8a67680",
+    "formal_output_root_created": false,
+    "gpu_child_processes_started": 0,
+    "scored_episodes_started": 0
+  },
+  "structural_correction": {
+    "old_behavior": "resolve the venv Python symlink before the import subprocess",
+    "new_behavior": "execute the import subprocess with Path(sys.executable) from the active venv",
+    "matches_existing_h0_v2_pattern": true
+  },
+  "unchanged_scientific_contract": {
+    "candidate_runtime_sources_unchanged": true,
+    "protocol_files_unchanged": true,
+    "scored_resets_and_seeds_unchanged": true,
+    "task_families_unchanged": true,
+    "runtime_pair_unchanged": true,
+    "fixed_950_profile_unchanged": true,
+    "decision_gates_unchanged": true,
+    "output_root_unchanged_and_absent": true,
+    "post_result_tuning_absent": true
+  },
+  "claim_boundary": "This wrapper repairs only the import-only preflight interpreter. It adds no scientific evidence by itself."
+}

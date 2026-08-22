@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "status": "PRECHECK_FAILED_NO_FORMAL_OUTPUT",
+  "observed_utc": "2026-08-22T03:31:35Z",
+  "execution_checkout_head": "7512ae68bb5491e9dd5fc6bd83bbd4941aafa32e",
+  "execution_log_relative_path": "logs/transport_h1_r2_session_20260822.log",
+  "execution_log_sha256": "93d615a234115624544c118dd7a9979eb23f98a34d3d5ffa06486029d8a67680",
+  "execution_log_size_bytes": 1602,
+  "failure_class": "venv_symlink_resolution",
+  "reason": "The v1 preflight resolved the venv Python symlink to the base interpreter, dropping the venv site-packages before the import-only subprocess.",
+  "requested_interpreter": "/root/autodl-tmp/venvs/actionstream/bin/python",
+  "resolved_interpreter": "/root/miniconda3/bin/python3.12",
+  "formal_output_root_created": false,
+  "gpu_child_processes_started": 0,
+  "scored_episodes_started": 0,
+  "screen_or_formal_process_remaining": false,
+  "scientific_protocol_changed": false,
+  "credentials_present": false
+}
