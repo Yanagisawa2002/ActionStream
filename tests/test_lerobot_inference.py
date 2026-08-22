@@ -287,9 +287,7 @@ def test_delivery_scheduler_rejects_out_of_order_older_response() -> None:
         _wait_for(lambda: engine.telemetry.inference_completed == 1)
         engine.notify_observation({"step": 1})
         _wait_for(lambda: engine.telemetry.responses_delivered == 1)
-        _wait_for(
-            lambda: engine.telemetry.responses_rejected_out_of_order == 1
-        )
+        _wait_for(lambda: engine.telemetry.responses_rejected_out_of_order == 1)
 
         torch.testing.assert_close(engine.get_action(None), torch.tensor([1.0, 1.0]))
         assert engine.telemetry.chunks_rejected_stale == 1

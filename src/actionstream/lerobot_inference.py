@@ -276,9 +276,7 @@ class ActionStreamInferenceEngine(InferenceEngine):
         self._latest_observation: _ObservationEnvelope | None = None
         self._last_submitted_source_step = -1
         self._provider_reset_pending = True
-        self._pending_deliveries: list[
-            tuple[float, int, _PendingDelivery]
-        ] = []
+        self._pending_deliveries: list[tuple[float, int, _PendingDelivery]] = []
         self._latest_delivered_source_step = -1
         self._queue: deque[_QueuedAction] = deque()
         self._last_action: _QueuedAction | None = None
@@ -792,10 +790,7 @@ class ActionStreamInferenceEngine(InferenceEngine):
                             self._metrics["chunks_rejected_reset"] += 1
                             status = "rejected_reset"
                             current_step = self._current_step
-                        elif (
-                            pending.source_step
-                            <= self._latest_delivered_source_step
-                        ):
+                        elif pending.source_step <= self._latest_delivered_source_step:
                             self._metrics["responses_rejected_out_of_order"] += 1
                             self._metrics["chunks_rejected_stale"] += 1
                             self._metrics["stale_actions_discarded"] += len(
@@ -855,9 +850,7 @@ class ActionStreamInferenceEngine(InferenceEngine):
                 "request_ordinal": pending.request_ordinal,
                 "source_step": pending.source_step,
                 "model_completed_timestamp": pending.model_completed_timestamp,
-                "scheduled_delivery_timestamp": (
-                    pending.scheduled_delivery_timestamp
-                ),
+                "scheduled_delivery_timestamp": (pending.scheduled_delivery_timestamp),
                 "delivery_timestamp": delivery_timestamp,
                 "current_step": current_step,
             }
