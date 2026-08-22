@@ -1,0 +1,7 @@
+family,suite,task_id,task_instruction,runtime,episodes,successes,success_rate,mean_environment_steps,median_request_rate,depletion_safe_hold_steps_sum,environment_steps_sum,depletion_fraction,failed_state_indices
+object,libero_object,5,pick up the tomato sauce and place it in the basket,actionstream_backend_aligned,5,5,1.0,160.8,0.9003598813015191,359,804,0.4465174129353234,
+object,libero_object,5,pick up the tomato sauce and place it in the basket,actionstream_backend_pipelined_aligned,5,3,0.6,197.8,11.062312330101088,0,989,0.0,13;14
+spatial,libero_spatial,7,pick up the black bowl on the stove and place it on the plate,actionstream_backend_aligned,5,3,0.6,213.2,0.8953664918004678,510,1066,0.47842401500938087,10;13
+spatial,libero_spatial,7,pick up the black bowl on the stove and place it on the plate,actionstream_backend_pipelined_aligned,5,5,1.0,123.8,10.231733773774097,0,619,0.0,
+goal,libero_goal,2,put the wine bottle on top of the cabinet,actionstream_backend_aligned,5,2,0.4,230.0,0.9159540864432452,538,1150,0.4678260869565217,10;11;14
+goal,libero_goal,2,put the wine bottle on top of the cabinet,actionstream_backend_pipelined_aligned,5,5,1.0,92.2,9.54699974051611,0,461,0.0,

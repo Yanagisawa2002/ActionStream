@@ -1,0 +1,8 @@
+gate,actual,operator,threshold,passed
+aggregate_request_rate_ratio,11.427425381085444,>=,4.0,True
+aggregate_depletion_reduction_fraction,1.0,>=,0.8,True
+pipelined_aggregate_depletion_fraction,0.0,<=,0.05,True
+task_families_with_lower_depletion,3,>=,3,True
+responses_rejected_out_of_order,0,<=,0,True
+fallback_activations,0,<=,0,True
+pipelined_success_count_not_lower,3,>=,0,True

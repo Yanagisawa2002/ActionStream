@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "artifacts": {
+    "episode_table.csv": {
+      "bytes": 14454,
+      "sha256": "836e1cc37aa6641a2836ef7fe29cd29fe517ab6ab8b90625d5ad9947d1c813aa"
+    },
+    "failure_taxonomy.csv": {
+      "bytes": 3336,
+      "sha256": "20bf4121bcaac789f3f7fdd4e442cbfe417e9314ee2b2bdb6c403980d867e772"
+    },
+    "gates.csv": {
+      "bytes": 379,
+      "sha256": "9a8bfcde1cb8e7283ea27b9587ecb8f5f0b7db7c0d8016f7996c9c337248f8f0"
+    },
+    "gpu_systems.csv": {
+      "bytes": 818,
+      "sha256": "7e94609702acddb26c225da2f46c97685fd14d52e94b6c398f2ce14b9d37a336"
+    },
+    "h1_r2_main_figure.png": {
+      "bytes": 104770,
+      "sha256": "95c80cfcace46495eea4c870fc16bfb764ded12f4901651df596604e6381ae2a"
+    },
+    "main_table.csv": {
+      "bytes": 1410,
+      "sha256": "fb8e0b149d36464bf26dd7f130c09b94bbc28b3a0eda611e6a6e7b7c510c4ead"
+    },
+    "paired_content_contact.png": {
+      "bytes": 787216,
+      "sha256": "6d33550377b8f11de6e66f3ed604cb9590fca455aae4285680c5dc99e6dd6958"
+    },
+    "paired_effects.csv": {
+      "bytes": 497,
+      "sha256": "2c41db6d3c2206519807fdfd44c4bc0d14ec5ceb25426565f5694f0d337c4bf4"
+    },
+    "raw_artifact_manifest.json": {
+      "bytes": 18981,
+      "sha256": "f2dd7b0555bb529206c69334cb50475381ab9fc3b83bb3a485fd92333217b005"
+    },
+    "remote_orchestrator_receipt.json": {
+      "bytes": 12310,
+      "sha256": "79f57f4fea773dd1254c5fa3a10f55560dc00da1dd81d0b9bab46dab5eecdf12"
+    },
+    "report.md": {
+      "bytes": 5888,
+      "sha256": "473af476842cce993dfc1bb0a43917d9111b02e97c4e49b74e86e4ea3ab0e667"
+    },
+    "summary.json": {
+      "bytes": 15297,
+      "sha256": "b5f0582541730ebb93225bc93096e66599c6fd4d0594aa7f659adf21bc2a274a"
+    },
+    "task_table.csv": {
+      "bytes": 1196,
+      "sha256": "f25a0db999df46ae497dfb046b27c80d08cba16189bf67121e2bafb2c4a814bb"
+    },
+    "video_review.json": {
+      "bytes": 3819,
+      "sha256": "3719873e9045129d44e6978d50b8081dc74ef5b8500759731343db496550c0c0"
+    }
+  }
+}
