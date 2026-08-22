@@ -1,0 +1,3 @@
+category,suite,task_id,initial_state_index,seed,unbounded_success,budgeted_success,unbounded_steps,budgeted_steps,evidence_boundary
+budget_only_failure_paired_regression,libero_goal,2,19,2026122419,1,0,90,300,scored trace and telemetry retained; video unavailable because the frozen capture contract records episode 0 only
+shared_policy_task_failure,libero_object,5,16,2026122216,0,0,300,300,scored trace and telemetry retained; video unavailable because the frozen capture contract records episode 0 only

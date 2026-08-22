@@ -1,0 +1,4 @@
+suite,task_id,unbounded_successes,budgeted_successes,unbounded_mean_steps,budgeted_mean_steps,unbounded_inference_calls,budgeted_inference_calls,budgeted_call_ratio,call_reduction_fraction,unbounded_median_request_rate,budgeted_median_request_rate,unbounded_depletion_fraction,budgeted_depletion_fraction
+libero_goal,2,5,4,93.2,135.6,271,138,0.5092250922509225,0.4907749077490775,9.507822639888808,3.3318089197208343,0.0,0.0
+libero_object,5,4,4,161.8,161.6,477,164,0.3438155136268344,0.6561844863731656,10.153709393628933,3.4916256035325266,0.0,0.0
+libero_spatial,7,5,5,122.0,122.2,361,124,0.34349030470914127,0.6565096952908587,10.012126559995291,3.4500916048018677,0.0,0.0

@@ -27,3 +27,5 @@ __pycache__/
 /reports/actionstream_backend_gpu_v1/actionstream_backend_gpu_v1/
 /reports/actionstream_backend_gpu_v1/selected_evidence/
 /reports/actionstream_backend_gpu_v1/*.log
+/reports/actionstream_transport_h2_budget_holdout/raw/
+/reports/actionstream_transport_h2_budget_holdout/representative_video_contact_sheet.png
