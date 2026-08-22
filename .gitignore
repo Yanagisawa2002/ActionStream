@@ -1,22 +1,31 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
+/.tmp_pytest_*/
 .ruff_cache/
 .venv/
 *.egg-info/
+.external/
+/logs/
+/ros2_ws/build/
+/ros2_ws/install/
+/ros2_ws/log/
 
-# Large or replaceable runtime outputs.
-outputs/**/videos/
-outputs/**/recordings/
-outputs/**/*.mp4
-outputs/**/*.avi
-outputs/**/*.npz
-outputs/**/*.log
+# Runtime outputs are ignored by default. The release branch force-tracks only
+# the curated paths accepted by release/public_release_manifest.json.
+/outputs/**
 
-# Keep the compact final action evidence needed by the M2/M3 validators.
-!outputs/custom_sync_parity/traces/*.npz
-!outputs/m3/**/traces/*.npz
-!outputs/m4/**/traces/*.npz
+# Local transfer bundles and generated release evidence.
+/*.bundle
+/*.tgz
+/artifacts/**
 
-# One-off M4 development smoke; final evidence is under the named matrices.
-outputs/m4/smoke/
+# Formal GPU benchmark transfer bundles and raw replay/video payloads stay local.
+# Curated reports, CSVs, plots, and contact sheets are tracked explicitly.
+/reports/actionstream_backend_gpu_v1/*.tgz
+/reports/actionstream_backend_gpu_v1/raw/
+/reports/actionstream_backend_gpu_v1/actionstream_backend_gpu_v1/
+/reports/actionstream_backend_gpu_v1/selected_evidence/
+/reports/actionstream_backend_gpu_v1/*.log
+/reports/actionstream_transport_h2_budget_holdout/raw/
+/reports/actionstream_transport_h2_budget_holdout/representative_video_contact_sheet.png

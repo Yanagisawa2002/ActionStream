@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "status": "decoded_and_visually_inspected",
+  "review_scope": "matched start/mid/end simulator content and terminal overlay",
+  "video_count": 6,
+  "videos": [
+    {
+      "family": "object",
+      "runtime": "actionstream_backend_aligned",
+      "relative_path": "cells/object/actionstream_backend_aligned/videos/xvla__actionstream_backend_aligned__fixed_0950_transport_h1_r2__task5__ep0.mp4",
+      "sha256": "fa1be9745023ba13f811ef8dfa4a6afaad5e8899dfaf17884bdd48235a217ae4",
+      "bytes": 307195,
+      "duration_seconds": 8.0,
+      "width": 640,
+      "height": 640,
+      "frames": 160,
+      "average_frame_rate": "20/1"
+    },
+    {
+      "family": "object",
+      "runtime": "actionstream_backend_pipelined_aligned",
+      "relative_path": "cells/object/actionstream_backend_pipelined_aligned/videos/xvla__actionstream_backend_pipelined_aligned__fixed_0950_transport_h1_r2__task5__ep0.mp4",
+      "sha256": "4f832e815f40490b8bc8fea3636fdafe8fe969e2fa8e42197c3504d5cf4d5834",
+      "bytes": 287067,
+      "duration_seconds": 6.55,
+      "width": 640,
+      "height": 640,
+      "frames": 131,
+      "average_frame_rate": "20/1"
+    },
+    {
+      "family": "spatial",
+      "runtime": "actionstream_backend_aligned",
+      "relative_path": "cells/spatial/actionstream_backend_aligned/videos/xvla__actionstream_backend_aligned__fixed_0950_transport_h1_r2__task7__ep0.mp4",
+      "sha256": "b3813a0f8902769cc26aec19ec3d60f240a1b8f12545d20b4faf84185a660ca0",
+      "bytes": 699348,
+      "duration_seconds": 15.05,
+      "width": 640,
+      "height": 640,
+      "frames": 301,
+      "average_frame_rate": "20/1"
+    },
+    {
+      "family": "spatial",
+      "runtime": "actionstream_backend_pipelined_aligned",
+      "relative_path": "cells/spatial/actionstream_backend_pipelined_aligned/videos/xvla__actionstream_backend_pipelined_aligned__fixed_0950_transport_h1_r2__task7__ep0.mp4",
+      "sha256": "1ef792ea122dcc1f92367091169a314fa40546b9ba19774c7577aa2a5ac95fcf",
+      "bytes": 277545,
+      "duration_seconds": 6.2,
+      "width": 640,
+      "height": 640,
+      "frames": 124,
+      "average_frame_rate": "20/1"
+    },
+    {
+      "family": "goal",
+      "runtime": "actionstream_backend_aligned",
+      "relative_path": "cells/goal/actionstream_backend_aligned/videos/xvla__actionstream_backend_aligned__fixed_0950_transport_h1_r2__task2__ep0.mp4",
+      "sha256": "8eaa6c107d1429e1741c9456bf64b717a51db8df943516ae8aef4e724fde4e96",
+      "bytes": 477716,
+      "duration_seconds": 15.05,
+      "width": 640,
+      "height": 640,
+      "frames": 301,
+      "average_frame_rate": "20/1"
+    },
+    {
+      "family": "goal",
+      "runtime": "actionstream_backend_pipelined_aligned",
+      "relative_path": "cells/goal/actionstream_backend_pipelined_aligned/videos/xvla__actionstream_backend_pipelined_aligned__fixed_0950_transport_h1_r2__task2__ep0.mp4",
+      "sha256": "eacc4a28bcf49174c01b894688c0ce32746118d516b653f2f2e51463c3756608",
+      "bytes": 192273,
+      "duration_seconds": 4.7,
+      "width": 640,
+      "height": 640,
+      "frames": 94,
+      "average_frame_rate": "20/1"
+    }
+  ],
+  "observations": {
+    "object": "Both state-10 videos visibly place the tomato-sauce container in the basket and report SUCCESS.",
+    "spatial": "Serialized state 10 ends RUN/FAIL at step 300; pipelined reaches the bowl-on-plate SUCCESS state at step 123.",
+    "goal": "Serialized state 10 ends RUN/FAIL at step 300 with the bottle unplaced; pipelined reaches the cabinet placement SUCCESS state at step 93."
+  },
+  "limitations": [
+    "Only one predeclared representative video per runtime and family was captured.",
+    "The Object pipelined failures at states 13 and 14 were not captured on video.",
+    "Visual inspection does not establish real-robot safety."
+  ]
+}

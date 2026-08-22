@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "status": "private_review_candidate",
+  "h1_r2": {
+    "verdict": "GO_MECHANISM_ONLY",
+    "task_families": 3,
+    "paired_identities": 15,
+    "scored_episodes": 30,
+    "success_serialized": 10,
+    "success_pipelined": 13,
+    "request_rate_ratio": 11.4274,
+    "serialized_depletion_fraction": 0.4659,
+    "pipelined_depletion_fraction": 0.0,
+    "inference_call_ratio": 7.9308
+  },
+  "h2": {
+    "verdict": "NO_GO",
+    "task_families": 3,
+    "paired_identities": 15,
+    "scored_episodes": 30,
+    "success_unbounded": 14,
+    "success_budgeted": 13,
+    "inference_calls_unbounded": 1109,
+    "inference_calls_budgeted": 426,
+    "call_reduction_fraction": 0.6159,
+    "budgeted_depletion_fraction": 0.0
+  },
+  "unavailable": [
+    "formal_smolvla_rtc",
+    "native_learned_policy_isaac_holdout",
+    "isaac_lab_arena_holdout",
+    "real_robot_paired_ab",
+    "production_remote_service_soak"
+  ]
+}

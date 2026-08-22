@@ -1,0 +1,426 @@
+{
+  "schema_version": 1,
+  "status": "GO",
+  "hypothesis_id": "transport_h1_r2_delivery_pipeline",
+  "decision": {
+    "verdict": "GO",
+    "all_gates_passed": true,
+    "request_rate_ratio": 11.427425381085444,
+    "serialized_depletion_fraction": 0.46589403973509935,
+    "pipelined_depletion_fraction": 0.0,
+    "depletion_reduction_fraction": 1.0,
+    "families_with_lower_depletion": 3,
+    "serialized_successes": 10,
+    "pipelined_successes": 13,
+    "out_of_order_rejections": 0,
+    "fallback_activations": 0
+  },
+  "integrity": {
+    "raw_manifest": {
+      "verified": true,
+      "entry_count": 99,
+      "manifest_sha256": "f2dd7b0555bb529206c69334cb50475381ab9fc3b83bb3a485fd92333217b005",
+      "missing": [],
+      "mismatched": []
+    },
+    "contract": {
+      "validated": true,
+      "row_count": 30,
+      "paired_identity_count": 15,
+      "task_family_count": 3,
+      "delay_profile": "fixed_0950_transport_h1_r2",
+      "model_revision": [
+        "12e8783e996944f5c97e490d37d4c145484ed70a"
+      ],
+      "source_commit": [
+        "2e7e82d937c41eacb3a84b579d611e01985cd1d2"
+      ]
+    },
+    "orchestrator_receipt_sha256": "79f57f4fea773dd1254c5fa3a10f55560dc00da1dd81d0b9bab46dab5eecdf12",
+    "episode_jsonl_sha256": "305efef81cf460e184229024d60af4de972d2e27d0fa01c6cfd46304d42e64b1"
+  },
+  "bootstrap": {
+    "method": "paired nonparametric percentile bootstrap",
+    "resamples": 10000,
+    "seed": 2026102295,
+    "paired_unit": "suite + task_id + initial_state_index + policy seed",
+    "failures_retain_step_cap": 300
+  },
+  "aggregates": {
+    "actionstream_backend_aligned": {
+      "runtime": "actionstream_backend_aligned",
+      "episodes": 15,
+      "successes": 10,
+      "success_rate": 0.6666666666666666,
+      "mean_environment_steps": 201.33333333333334,
+      "mean_wall_clock_episode_seconds": 11.708485324898113,
+      "environment_steps_sum": 3020,
+      "inference_calls_sum": 159,
+      "inference_completed_sum": 159,
+      "median_inference_requests_per_second": 0.9019288273631583,
+      "depletion_safe_hold_steps_sum": 1407,
+      "depletion_fraction": 0.46589403973509935,
+      "hold_steps_sum": 1648,
+      "hold_fraction_aggregate": 0.5456953642384106,
+      "inference_latency_p50_seconds_median": 0.1229145925026387,
+      "inference_latency_p95_seconds_median": 0.22188859740272163,
+      "delivery_latency_p50_seconds_median": 1.0861109038814902,
+      "delivery_latency_p95_seconds_median": 1.1861986994743348,
+      "queue_age_p50_steps_median": 24.0,
+      "queue_age_p95_steps_median": 29.0,
+      "queue_depth_p50_steps_median": 0.0,
+      "queue_depth_p95_steps_median": 21.599999999999994,
+      "peak_cuda_memory_mib_max": 3520.8251953125,
+      "observations_superseded_sum": 2851,
+      "dropped_prefix_steps_sum": 2862,
+      "responses_scheduled_sum": 0,
+      "responses_delivered_sum": 0,
+      "responses_rejected_out_of_order_sum": 0,
+      "fallback_activations_sum": 0,
+      "inference_errors_sum": 0,
+      "inference_timeouts_sum": 0
+    },
+    "actionstream_backend_pipelined_aligned": {
+      "runtime": "actionstream_backend_pipelined_aligned",
+      "episodes": 15,
+      "successes": 13,
+      "success_rate": 0.8666666666666667,
+      "mean_environment_steps": 137.93333333333334,
+      "mean_wall_clock_episode_seconds": 7.953001177124679,
+      "environment_steps_sum": 2069,
+      "inference_calls_sum": 1261,
+      "inference_completed_sum": 1261,
+      "median_inference_requests_per_second": 10.110201100974558,
+      "depletion_safe_hold_steps_sum": 0,
+      "depletion_fraction": 0.0,
+      "hold_steps_sum": 0,
+      "hold_fraction_aggregate": 0.0,
+      "inference_latency_p50_seconds_median": 0.07128626713529229,
+      "inference_latency_p95_seconds_median": 0.09795398162677883,
+      "delivery_latency_p50_seconds_median": 1.0285092445556074,
+      "delivery_latency_p95_seconds_median": 1.0575944410637022,
+      "queue_age_p50_steps_median": 21.0,
+      "queue_age_p95_steps_median": 23.89999999999999,
+      "queue_depth_p50_steps_median": 9.0,
+      "queue_depth_p95_steps_median": 23.89999999999999,
+      "peak_cuda_memory_mib_max": 3520.8251953125,
+      "observations_superseded_sum": 803,
+      "dropped_prefix_steps_sum": 21623,
+      "responses_scheduled_sum": 1246,
+      "responses_delivered_sum": 1063,
+      "responses_rejected_out_of_order_sum": 0,
+      "fallback_activations_sum": 0,
+      "inference_errors_sum": 0,
+      "inference_timeouts_sum": 0
+    }
+  },
+  "task_table": [
+    {
+      "family": "object",
+      "suite": "libero_object",
+      "task_id": 5,
+      "task_instruction": "pick up the tomato sauce and place it in the basket",
+      "runtime": "actionstream_backend_aligned",
+      "episodes": 5,
+      "successes": 5,
+      "success_rate": 1.0,
+      "mean_environment_steps": 160.8,
+      "median_request_rate": 0.9003598813015191,
+      "depletion_safe_hold_steps_sum": 359,
+      "environment_steps_sum": 804,
+      "depletion_fraction": 0.4465174129353234,
+      "failed_state_indices": ""
+    },
+    {
+      "family": "object",
+      "suite": "libero_object",
+      "task_id": 5,
+      "task_instruction": "pick up the tomato sauce and place it in the basket",
+      "runtime": "actionstream_backend_pipelined_aligned",
+      "episodes": 5,
+      "successes": 3,
+      "success_rate": 0.6,
+      "mean_environment_steps": 197.8,
+      "median_request_rate": 11.062312330101088,
+      "depletion_safe_hold_steps_sum": 0,
+      "environment_steps_sum": 989,
+      "depletion_fraction": 0.0,
+      "failed_state_indices": "13;14"
+    },
+    {
+      "family": "spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "task_instruction": "pick up the black bowl on the stove and place it on the plate",
+      "runtime": "actionstream_backend_aligned",
+      "episodes": 5,
+      "successes": 3,
+      "success_rate": 0.6,
+      "mean_environment_steps": 213.2,
+      "median_request_rate": 0.8953664918004678,
+      "depletion_safe_hold_steps_sum": 510,
+      "environment_steps_sum": 1066,
+      "depletion_fraction": 0.47842401500938087,
+      "failed_state_indices": "10;13"
+    },
+    {
+      "family": "spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "task_instruction": "pick up the black bowl on the stove and place it on the plate",
+      "runtime": "actionstream_backend_pipelined_aligned",
+      "episodes": 5,
+      "successes": 5,
+      "success_rate": 1.0,
+      "mean_environment_steps": 123.8,
+      "median_request_rate": 10.231733773774097,
+      "depletion_safe_hold_steps_sum": 0,
+      "environment_steps_sum": 619,
+      "depletion_fraction": 0.0,
+      "failed_state_indices": ""
+    },
+    {
+      "family": "goal",
+      "suite": "libero_goal",
+      "task_id": 2,
+      "task_instruction": "put the wine bottle on top of the cabinet",
+      "runtime": "actionstream_backend_aligned",
+      "episodes": 5,
+      "successes": 2,
+      "success_rate": 0.4,
+      "mean_environment_steps": 230.0,
+      "median_request_rate": 0.9159540864432452,
+      "depletion_safe_hold_steps_sum": 538,
+      "environment_steps_sum": 1150,
+      "depletion_fraction": 0.4678260869565217,
+      "failed_state_indices": "10;11;14"
+    },
+    {
+      "family": "goal",
+      "suite": "libero_goal",
+      "task_id": 2,
+      "task_instruction": "put the wine bottle on top of the cabinet",
+      "runtime": "actionstream_backend_pipelined_aligned",
+      "episodes": 5,
+      "successes": 5,
+      "success_rate": 1.0,
+      "mean_environment_steps": 92.2,
+      "median_request_rate": 9.54699974051611,
+      "depletion_safe_hold_steps_sum": 0,
+      "environment_steps_sum": 461,
+      "depletion_fraction": 0.0,
+      "failed_state_indices": ""
+    }
+  ],
+  "paired_effects": [
+    {
+      "scope": "aggregate",
+      "metric": "success_difference",
+      "paired_n": 15,
+      "statistic": "mean",
+      "pipelined_minus_serialized_or_ratio": 0.2,
+      "bootstrap_95_ci_low": -0.13333333333333333,
+      "bootstrap_95_ci_high": 0.5333333333333333,
+      "unit": "fraction"
+    },
+    {
+      "scope": "aggregate",
+      "metric": "environment_steps_difference",
+      "paired_n": 15,
+      "statistic": "mean",
+      "pipelined_minus_serialized_or_ratio": -63.4,
+      "bootstrap_95_ci_low": -118.2,
+      "bootstrap_95_ci_high": -5.466666666666667,
+      "unit": "steps"
+    },
+    {
+      "scope": "aggregate",
+      "metric": "wall_clock_difference",
+      "paired_n": 15,
+      "statistic": "mean",
+      "pipelined_minus_serialized_or_ratio": -3.755484147773435,
+      "bootstrap_95_ci_low": -6.451193230950739,
+      "bootstrap_95_ci_high": -0.8963344317612555,
+      "unit": "seconds"
+    },
+    {
+      "scope": "aggregate",
+      "metric": "request_rate_ratio",
+      "paired_n": 15,
+      "statistic": "median",
+      "pipelined_minus_serialized_or_ratio": 11.427425381085444,
+      "bootstrap_95_ci_low": 10.936769743119063,
+      "bootstrap_95_ci_high": 11.811591465843565,
+      "unit": "ratio"
+    }
+  ],
+  "gates": [
+    {
+      "gate": "aggregate_request_rate_ratio",
+      "actual": 11.427425381085444,
+      "operator": ">=",
+      "threshold": 4.0,
+      "passed": true
+    },
+    {
+      "gate": "aggregate_depletion_reduction_fraction",
+      "actual": 1.0,
+      "operator": ">=",
+      "threshold": 0.8,
+      "passed": true
+    },
+    {
+      "gate": "pipelined_aggregate_depletion_fraction",
+      "actual": 0.0,
+      "operator": "<=",
+      "threshold": 0.05,
+      "passed": true
+    },
+    {
+      "gate": "task_families_with_lower_depletion",
+      "actual": 3,
+      "operator": ">=",
+      "threshold": 3,
+      "passed": true
+    },
+    {
+      "gate": "responses_rejected_out_of_order",
+      "actual": 0,
+      "operator": "<=",
+      "threshold": 0,
+      "passed": true
+    },
+    {
+      "gate": "fallback_activations",
+      "actual": 0,
+      "operator": "<=",
+      "threshold": 0,
+      "passed": true
+    },
+    {
+      "gate": "pipelined_success_count_not_lower",
+      "actual": 3,
+      "operator": ">=",
+      "threshold": 0,
+      "passed": true
+    }
+  ],
+  "gpu_summary": {
+    "actionstream_backend_aligned": {
+      "fresh_processes": 3,
+      "steady_resident_sample_count": 984,
+      "gpu_utilization_p50_median": 0.0,
+      "gpu_utilization_p95_median": 33.0,
+      "process_gpu_memory_mib_max": 4844.0,
+      "model_load_wall_seconds_median": 9.615478568710387
+    },
+    "actionstream_backend_pipelined_aligned": {
+      "fresh_processes": 3,
+      "steady_resident_sample_count": 674,
+      "gpu_utilization_p50_median": 68.0,
+      "gpu_utilization_p95_median": 79.0,
+      "process_gpu_memory_mib_max": 4844.0,
+      "model_load_wall_seconds_median": 9.528756528161466
+    }
+  },
+  "evidence": {
+    "raw_archive": {
+      "path": "artifacts/actionstream_transport_h1_r2/actionstream_transport_h1_r2_holdout_20260822.tar.gz",
+      "bytes": 3099924,
+      "sha256": "a7871e46485e851bea8f53afbdd55c5cb0653f3c71c6db07c6562c9dbe9374cd"
+    },
+    "session_log": {
+      "path": "artifacts/actionstream_transport_h1_r2/transport_h1_r2_v2_session_20260822.log",
+      "bytes": 10948,
+      "sha256": "0596fa390f46102277f52330c05f6bcce9b93d32f9d98b71ec8ad503e6fe8399"
+    },
+    "warmup_log": {
+      "path": "artifacts/actionstream_transport_h1_r2/warmup.log",
+      "bytes": 1716,
+      "sha256": "89b09da6b8558c293ad671a07e8ef72fe1aa3cb7ebba2ff82b8dd4dbac208297"
+    },
+    "videos_local_and_verified": 6,
+    "videos": [
+      {
+        "family": "object",
+        "runtime": "actionstream_backend_aligned",
+        "relative_path": "cells/object/actionstream_backend_aligned/videos/xvla__actionstream_backend_aligned__fixed_0950_transport_h1_r2__task5__ep0.mp4",
+        "sha256": "fa1be9745023ba13f811ef8dfa4a6afaad5e8899dfaf17884bdd48235a217ae4",
+        "bytes": 307195,
+        "duration_seconds": 8.0,
+        "width": 640,
+        "height": 640,
+        "frames": 160,
+        "average_frame_rate": "20/1"
+      },
+      {
+        "family": "object",
+        "runtime": "actionstream_backend_pipelined_aligned",
+        "relative_path": "cells/object/actionstream_backend_pipelined_aligned/videos/xvla__actionstream_backend_pipelined_aligned__fixed_0950_transport_h1_r2__task5__ep0.mp4",
+        "sha256": "4f832e815f40490b8bc8fea3636fdafe8fe969e2fa8e42197c3504d5cf4d5834",
+        "bytes": 287067,
+        "duration_seconds": 6.55,
+        "width": 640,
+        "height": 640,
+        "frames": 131,
+        "average_frame_rate": "20/1"
+      },
+      {
+        "family": "spatial",
+        "runtime": "actionstream_backend_aligned",
+        "relative_path": "cells/spatial/actionstream_backend_aligned/videos/xvla__actionstream_backend_aligned__fixed_0950_transport_h1_r2__task7__ep0.mp4",
+        "sha256": "b3813a0f8902769cc26aec19ec3d60f240a1b8f12545d20b4faf84185a660ca0",
+        "bytes": 699348,
+        "duration_seconds": 15.05,
+        "width": 640,
+        "height": 640,
+        "frames": 301,
+        "average_frame_rate": "20/1"
+      },
+      {
+        "family": "spatial",
+        "runtime": "actionstream_backend_pipelined_aligned",
+        "relative_path": "cells/spatial/actionstream_backend_pipelined_aligned/videos/xvla__actionstream_backend_pipelined_aligned__fixed_0950_transport_h1_r2__task7__ep0.mp4",
+        "sha256": "1ef792ea122dcc1f92367091169a314fa40546b9ba19774c7577aa2a5ac95fcf",
+        "bytes": 277545,
+        "duration_seconds": 6.2,
+        "width": 640,
+        "height": 640,
+        "frames": 124,
+        "average_frame_rate": "20/1"
+      },
+      {
+        "family": "goal",
+        "runtime": "actionstream_backend_aligned",
+        "relative_path": "cells/goal/actionstream_backend_aligned/videos/xvla__actionstream_backend_aligned__fixed_0950_transport_h1_r2__task2__ep0.mp4",
+        "sha256": "8eaa6c107d1429e1741c9456bf64b717a51db8df943516ae8aef4e724fde4e96",
+        "bytes": 477716,
+        "duration_seconds": 15.05,
+        "width": 640,
+        "height": 640,
+        "frames": 301,
+        "average_frame_rate": "20/1"
+      },
+      {
+        "family": "goal",
+        "runtime": "actionstream_backend_pipelined_aligned",
+        "relative_path": "cells/goal/actionstream_backend_pipelined_aligned/videos/xvla__actionstream_backend_pipelined_aligned__fixed_0950_transport_h1_r2__task2__ep0.mp4",
+        "sha256": "eacc4a28bcf49174c01b894688c0ce32746118d516b653f2f2e51463c3756608",
+        "bytes": 192273,
+        "duration_seconds": 4.7,
+        "width": 640,
+        "height": 640,
+        "frames": 94,
+        "average_frame_rate": "20/1"
+      }
+    ]
+  },
+  "limitations": [
+    "Fixed 950 ms in-process delivery delay only; no jitter, burst, outage, RTC, Async, or real remote RPC claim.",
+    "Paired success CI crosses zero despite the aggregate pre-registered success gate passing.",
+    "Object pipelined regressed from 5/5 to 3/5; failed states 13 and 14 lack videos.",
+    "Pipelined delivery uses 7.93x as many inference calls and much higher steady GPU utilization.",
+    "No real robot or hardware-safety evidence."
+  ],
+  "claim_boundary": "A passing H1-R2 supports a three-family learned-policy fixed-950-ms response-delivery scheduling result. It does not support jitter, burst, outage, RTC, real remote RPC, real-robot safety, or universal runtime superiority."
+}

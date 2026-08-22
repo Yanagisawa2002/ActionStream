@@ -1,0 +1,5 @@
+scope,metric,paired_n,statistic,pipelined_minus_serialized_or_ratio,bootstrap_95_ci_low,bootstrap_95_ci_high,unit
+aggregate,success_difference,15,mean,0.2,-0.13333333333333333,0.5333333333333333,fraction
+aggregate,environment_steps_difference,15,mean,-63.4,-118.2,-5.466666666666667,steps
+aggregate,wall_clock_difference,15,mean,-3.755484147773435,-6.451193230950739,-0.8963344317612555,seconds
+aggregate,request_rate_ratio,15,median,11.427425381085444,10.936769743119063,11.811591465843565,ratio
