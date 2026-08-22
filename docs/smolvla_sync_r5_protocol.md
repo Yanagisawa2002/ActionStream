@@ -33,3 +33,42 @@ The orchestrator refuses to start the canary without a passing repair receipt.
 
 The freeze receipt is
 [`configs/actionstream_backend_gpu_smolvla_sync_r5_freeze_receipt.json`](../configs/actionstream_backend_gpu_smolvla_sync_r5_freeze_receipt.json).
+
+## Server runbook
+
+Use a fresh result root. The canary command verifies the repair receipt and
+refuses to start unless repair is 2/2. No command below runs RTC.
+
+```bash
+export ACTIONSTREAM_R5_LEROBOT=/root/autodl-tmp/lerobot
+export ACTIONSTREAM_R5_RESULTS=/root/autodl-tmp/results/actionstream_smolvla_sync_r5
+
+source /etc/network_turbo
+uv sync --locked
+
+uv run python scripts/experiments/run_smolvla_sync_r5.py \
+  --phase repair \
+  --protocol configs/actionstream_backend_gpu_smolvla_sync_r5_repair_spatial.json \
+  --protocol configs/actionstream_backend_gpu_smolvla_sync_r5_repair_goal.json \
+  --lerobot-root "$ACTIONSTREAM_R5_LEROBOT" \
+  --output-root "$ACTIONSTREAM_R5_RESULTS/repair" \
+  --capture
+
+uv run python scripts/experiments/run_smolvla_sync_r5.py \
+  --phase canary \
+  --protocol configs/actionstream_backend_gpu_smolvla_sync_r5_canary_object.json \
+  --protocol configs/actionstream_backend_gpu_smolvla_sync_r5_canary_spatial.json \
+  --protocol configs/actionstream_backend_gpu_smolvla_sync_r5_canary_goal.json \
+  --lerobot-root "$ACTIONSTREAM_R5_LEROBOT" \
+  --repair-root "$ACTIONSTREAM_R5_RESULTS/repair" \
+  --output-root "$ACTIONSTREAM_R5_RESULTS/canary" \
+  --capture
+
+uv run python scripts/analysis/generate_smolvla_sync_r5_report.py \
+  --repair-root "$ACTIONSTREAM_R5_RESULTS/repair" \
+  --canary-root "$ACTIONSTREAM_R5_RESULTS/canary" \
+  --output-dir "$ACTIONSTREAM_R5_RESULTS/report"
+```
+
+If repair is not 2/2, omit both canary and `--canary-root` when generating the
+closeout report. Never retry a consumed repair or canary identity in place.
