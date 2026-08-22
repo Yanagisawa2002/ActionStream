@@ -2965,7 +2965,18 @@ def run_sync_episode(
     video_path: Path | None = None,
     worker_warmup: Mapping[str, Any] | None = None,
     system_monitor: NvidiaSmiMonitor | None = None,
+    execution_horizon_steps: int | None = None,
 ) -> dict[str, Any]:
+    execution_horizon = (
+        int(backend.spec.chunk_size)
+        if execution_horizon_steps is None
+        else int(execution_horizon_steps)
+    )
+    if not 1 <= execution_horizon <= int(backend.spec.chunk_size):
+        raise ValueError(
+            "sync execution horizon must be between 1 and the policy chunk size; "
+            f"got horizon={execution_horizon}, chunk={backend.spec.chunk_size}"
+        )
     worker_warmup_record: dict[str, Any] | None = None
     if worker_warmup is not None:
         if int(worker_warmup["task_id"]) != task_id:
@@ -3047,7 +3058,7 @@ def run_sync_episode(
             if injected:
                 time.sleep(injected)
             delivered = time.monotonic()
-            pending.extend(output.actions)
+            pending.extend(output.actions[:execution_horizon])
             events.append(
                 {
                     "observation_control_step": step,
@@ -3057,6 +3068,8 @@ def run_sync_episode(
                     "model_inference_latency_seconds": output.model_latency_seconds,
                     "injected_delivery_delay_seconds": injected,
                     "delay_trace_index": inference_ordinal,
+                    "predicted_chunk_steps": len(output.actions),
+                    "executed_chunk_steps": execution_horizon,
                 }
             )
             inference_ordinal += 1
@@ -3151,7 +3164,13 @@ def run_sync_episode(
             "action_acceleration_max_l2": None,
             "controller_frequency_hz": fps,
             "chunk_size": backend.spec.chunk_size,
-            "request_interval_steps": backend.spec.chunk_size,
+            "request_interval_steps": execution_horizon,
+            "sync_execution_horizon_steps": execution_horizon,
+            "sync_execution_mode": (
+                "full_chunk_open_loop"
+                if execution_horizon == int(backend.spec.chunk_size)
+                else "receding_horizon"
+            ),
             "peak_cuda_memory_mib": backend.peak_cuda_memory_mib,
             "worker_warmup": worker_warmup_record,
             "trace_path": str(trace_path),
@@ -3182,6 +3201,14 @@ def run(args: argparse.Namespace) -> list[dict[str, Any]]:
     unknown_runtimes = set(runtimes) - set(RUNTIMES)
     if unknown_runtimes:
         raise ValueError(f"Unknown runtimes: {sorted(unknown_runtimes)}")
+    sync_execution = protocol.raw.get("sync_execution")
+    sync_execution_horizon_steps: int | None = None
+    if sync_execution is not None:
+        if sync_execution.get("mode") != "receding_horizon":
+            raise ValueError(
+                "sync_execution.mode must be 'receding_horizon' when configured"
+            )
+        sync_execution_horizon_steps = int(sync_execution["horizon_steps"])
     environment = protocol.raw["environment"]
     task_ids = list(args.task_ids or environment["task_ids"])
     state_indices = list(
@@ -3317,6 +3344,9 @@ def run(args: argparse.Namespace) -> list[dict[str, Any]]:
                                         video_path=video_path,
                                         worker_warmup=worker_warmup,
                                         system_monitor=system_monitor,
+                                        execution_horizon_steps=(
+                                            sync_execution_horizon_steps
+                                        ),
                                     )
                                 elif runtime in ACTIONSTREAM_BACKEND_RUNTIMES:
                                     record = run_actionstream_backend_episode(

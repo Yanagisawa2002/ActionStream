@@ -18,6 +18,7 @@ from actionstream.current_baselines import (
     load_protocol,
     run_actionstream_backend_episode,
     run_gpu_warmup,
+    run_sync_episode,
 )
 from actionstream.lerobot_backend import StepOutput
 from actionstream.lerobot_inference import ActionStreamInferenceConfig
@@ -528,6 +529,67 @@ def test_gpu_warmup_is_non_scored_and_records_latency() -> None:
     assert record["inference_calls"] == 2
     assert record["inference_latency_seconds"] == [0.001, 0.001]
     assert backend.steps == 0
+
+
+def test_sync_receding_horizon_replans_without_changing_default(
+    tmp_path: Path,
+) -> None:
+    default_backend = _BackendBenchmarkHarness()
+    default = run_sync_episode(
+        default_backend,
+        experiment_id="sync-default-test",
+        profile=DelayTrace.from_mapping(
+            {"key": "fixed_0000", "kind": "fixed", "milliseconds": 0}
+        ),
+        task_id=2,
+        episode_index=0,
+        initial_state_index=40,
+        seed=2026082100,
+        run_id="test-run",
+        trace_path=tmp_path / "default_trace.json",
+    )
+
+    receding_backend = _BackendBenchmarkHarness()
+    receding = run_sync_episode(
+        receding_backend,
+        experiment_id="sync-receding-test",
+        profile=DelayTrace.from_mapping(
+            {"key": "fixed_0000", "kind": "fixed", "milliseconds": 0}
+        ),
+        task_id=2,
+        episode_index=0,
+        initial_state_index=40,
+        seed=2026082100,
+        run_id="test-run",
+        trace_path=tmp_path / "receding_trace.json",
+        execution_horizon_steps=1,
+    )
+
+    assert default["sync_execution_mode"] == "full_chunk_open_loop"
+    assert default["sync_execution_horizon_steps"] == 3
+    assert default["inference_calls"] == 2
+    assert receding["sync_execution_mode"] == "receding_horizon"
+    assert receding["sync_execution_horizon_steps"] == 1
+    assert receding["request_interval_steps"] == 1
+    assert receding["inference_calls"] == 5
+
+
+def test_sync_receding_horizon_rejects_invalid_step_count(tmp_path: Path) -> None:
+    with pytest.raises(ValueError, match="sync execution horizon"):
+        run_sync_episode(
+            _BackendBenchmarkHarness(),
+            experiment_id="sync-invalid-test",
+            profile=DelayTrace.from_mapping(
+                {"key": "fixed_0000", "kind": "fixed", "milliseconds": 0}
+            ),
+            task_id=2,
+            episode_index=0,
+            initial_state_index=40,
+            seed=2026082100,
+            run_id="test-run",
+            trace_path=tmp_path / "invalid_trace.json",
+            execution_horizon_steps=4,
+        )
 
 
 def test_formal_backend_episode_records_disconnect_recovery_and_queue_telemetry(
