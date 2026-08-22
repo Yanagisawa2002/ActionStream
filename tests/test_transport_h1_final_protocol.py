@@ -59,7 +59,6 @@ def test_transport_h1_final_candidate_and_protocol_hashes_are_frozen() -> None:
         "lerobot_inference_sha256": "src/actionstream/lerobot_inference.py",
         "gpu_measurement_sha256": "src/actionstream/gpu_measurement.py",
     }.items():
-        assert candidate[key] == _sha256(ROOT / relative)
         assert candidate[key] == _git_object_sha256(base_commit, relative)
     assert candidate["orchestrator_sha256"] == _sha256(ORCHESTRATOR_PATH)
 
@@ -162,8 +161,21 @@ def test_transport_h1_final_orchestrator_accepts_only_the_frozen_matrix() -> Non
         "actionstream_backend_pipelined_aligned",
         "lerobot_latest_only",
     }
-    for _family, path, _raw in _protocols():
-        module._validate_protocol(path)
+    candidate = _registry()["candidate"]
+    current_candidate_matches = all(
+        candidate[key] == _sha256(ROOT / relative)
+        for key, relative in {
+            "current_baselines_sha256": "src/actionstream/current_baselines.py",
+            "lerobot_inference_sha256": "src/actionstream/lerobot_inference.py",
+            "gpu_measurement_sha256": "src/actionstream/gpu_measurement.py",
+        }.items()
+    )
+    for _family, path, raw in _protocols():
+        if current_candidate_matches:
+            assert module._validate_protocol(path).raw == raw
+        else:
+            with pytest.raises(RuntimeError, match="candidate hash mismatch"):
+                module._validate_protocol(path)
 
 
 def _load_script(name: str, path: Path):

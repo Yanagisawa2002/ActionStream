@@ -7,6 +7,8 @@ from pathlib import Path
 import subprocess
 import sys
 
+import pytest
+
 
 ROOT = Path(__file__).resolve().parents[1]
 REGISTRY_PATH = ROOT / "configs/actionstream_transport_h1_r2_registry.json"
@@ -71,7 +73,6 @@ def test_h1_r2_candidate_and_protocol_hashes_are_frozen() -> None:
         "lerobot_inference_sha256": "src/actionstream/lerobot_inference.py",
         "gpu_measurement_sha256": "src/actionstream/gpu_measurement.py",
     }.items():
-        assert candidate[key] == _sha256(ROOT / relative)
         assert candidate[key] == _git_object_sha256(base_commit, relative)
     assert candidate["orchestrator_sha256"] == _sha256(ORCHESTRATOR_PATH)
     for family, path, raw in _protocols():
@@ -180,8 +181,21 @@ def test_h1_r2_orchestrator_accepts_only_the_frozen_matrix() -> None:
         module.EXPECTED_OUTPUT_BASENAME
         == "actionstream_transport_h1_r2_holdout_20260822"
     )
+    candidate = _registry()["candidate"]
+    current_candidate_matches = all(
+        candidate[key] == _sha256(ROOT / relative)
+        for key, relative in {
+            "current_baselines_sha256": "src/actionstream/current_baselines.py",
+            "lerobot_inference_sha256": "src/actionstream/lerobot_inference.py",
+            "gpu_measurement_sha256": "src/actionstream/gpu_measurement.py",
+        }.items()
+    )
     for _family, path, raw in _protocols():
-        assert module._validate_protocol(path) == raw
+        if current_candidate_matches:
+            assert module._validate_protocol(path) == raw
+        else:
+            with pytest.raises(RuntimeError, match="candidate hash mismatch"):
+                module._validate_protocol(path)
 
 
 def test_h1_r2_cell_validator_uses_profiles_and_exact_identities(

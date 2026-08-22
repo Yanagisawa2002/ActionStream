@@ -67,6 +67,7 @@ RUNTIMES = (
     "actionstream_aligned",
     "actionstream_backend_aligned",
     "actionstream_backend_pipelined_aligned",
+    "actionstream_backend_budgeted_pipelined_aligned",
     "actionstream_backend_guarded",
     "actionstream_adaptive",
     "lerobot_rtc",
@@ -74,6 +75,7 @@ RUNTIMES = (
 ACTIONSTREAM_BACKEND_RUNTIMES = {
     "actionstream_backend_aligned",
     "actionstream_backend_pipelined_aligned",
+    "actionstream_backend_budgeted_pipelined_aligned",
     "actionstream_backend_guarded",
 }
 OFFICIAL_ASYNC_AGGREGATES = {
@@ -1949,6 +1951,7 @@ def _actionstream_backend_config(
         "join_timeout_s",
         "latest_only_fallback",
         "delivery_scheduler_enabled",
+        "minimum_request_interval_steps",
     }
     unknown = set(common) - allowed
     if unknown:
@@ -1963,7 +1966,10 @@ def _actionstream_backend_config(
             f"{runtime} must freeze latest_only_fallback={expected_fallback}"
         )
     common["latest_only_fallback"] = actual_fallback
-    expected_scheduler = runtime == "actionstream_backend_pipelined_aligned"
+    expected_scheduler = runtime in {
+        "actionstream_backend_pipelined_aligned",
+        "actionstream_backend_budgeted_pipelined_aligned",
+    }
     actual_scheduler = bool(
         common.get("delivery_scheduler_enabled", expected_scheduler)
     )
@@ -2245,7 +2251,10 @@ def run_actionstream_backend_episode(
         for _ in range(warmup_calls):
             completed_before = engine.telemetry.inference_completed
             call_started = time.monotonic()
-            engine.notify_observation(immutable_observation_snapshot(observation))
+            for _notification in range(
+                engine_config.minimum_request_interval_steps
+            ):
+                engine.notify_observation(immutable_observation_snapshot(observation))
             deadline = time.monotonic() + 300.0
             while engine.telemetry.inference_completed <= completed_before:
                 if engine.failed:
@@ -2264,6 +2273,9 @@ def run_actionstream_backend_episode(
             "initial_state_index": reset_state,
             "seed": reset_seed,
             "inference_calls": warmup_calls,
+            "observation_notifications_per_call": (
+                engine_config.minimum_request_interval_steps
+            ),
             "wall_clock_seconds": time.monotonic() - warmup_started,
             "request_wall_latency_seconds": call_wall_latencies,
             "model_inference_latency_seconds": [
@@ -2470,6 +2482,9 @@ def run_actionstream_backend_episode(
             ),
             "observations_received": telemetry.observations_received,
             "observations_superseded": telemetry.observations_superseded,
+            "observations_skipped_by_budget": (
+                telemetry.observations_skipped_by_budget
+            ),
             "inference_timeouts": telemetry.inference_timeouts,
             "inference_errors": telemetry.inference_errors,
             "responses_scheduled": telemetry.responses_scheduled,
@@ -2494,7 +2509,7 @@ def run_actionstream_backend_episode(
             "action_acceleration_max_l2": max(acceleration_peaks, default=None),
             "controller_frequency_hz": fps,
             "chunk_size": backend.spec.chunk_size,
-            "request_interval_steps": None,
+            "request_interval_steps": engine_config.minimum_request_interval_steps,
             "peak_cuda_memory_mib": backend.peak_cuda_memory_mib,
             "worker_warmup": worker_warmup_record,
             "telemetry_jsonl_path": (
@@ -2514,6 +2529,9 @@ def run_actionstream_backend_episode(
                 "latest_only_fallback": engine_config.latest_only_fallback,
                 "delivery_scheduler_enabled": (
                     engine_config.delivery_scheduler_enabled
+                ),
+                "minimum_request_interval_steps": (
+                    engine_config.minimum_request_interval_steps
                 ),
             },
             "trace_path": str(trace_path),

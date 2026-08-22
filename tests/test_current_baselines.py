@@ -13,6 +13,7 @@ from actionstream.current_baselines import (
     CurrentInferenceOutput,
     CurrentLeRobotBackend,
     DelayTrace,
+    _actionstream_backend_config,
     _base_record,
     load_protocol,
     run_actionstream_backend_episode,
@@ -617,6 +618,9 @@ def test_pipelined_backend_records_scheduled_and_actual_delivery(tmp_path: Path)
     assert record["status"] == "completed"
     assert record["success"] is True
     assert record["engine_config"]["delivery_scheduler_enabled"] is True
+    assert record["engine_config"]["minimum_request_interval_steps"] == 1
+    assert record["request_interval_steps"] == 1
+    assert record["observations_skipped_by_budget"] == 0
     assert record["responses_scheduled"] >= 1
     assert record["responses_delivered"] >= 1
     assert record["responses_rejected_out_of_order"] == 0
@@ -629,3 +633,61 @@ def test_pipelined_backend_records_scheduled_and_actual_delivery(tmp_path: Path)
     assert completed
     assert all(event["delivery_status"] == "delivered" for event in completed)
     assert all(event["delivery_timestamp"] is not None for event in completed)
+
+
+def test_budgeted_pipelined_backend_freezes_interval_and_records_skips(
+    tmp_path: Path,
+) -> None:
+    runtime = "actionstream_backend_budgeted_pipelined_aligned"
+    protocol = SimpleNamespace(
+        raw={
+            "actionstream_backend": {
+                "common": {
+                    "inference_timeout_s": 1.0,
+                    "bounded_hold_steps": 1,
+                    "retry_backoff_s": 0.0,
+                    "max_consecutive_failures": 3,
+                    "join_timeout_s": 1.0,
+                    "latest_only_fallback": False,
+                },
+                runtime: {
+                    "delivery_scheduler_enabled": True,
+                    "minimum_request_interval_steps": 3,
+                },
+            }
+        }
+    )
+    engine_config = _actionstream_backend_config(protocol, runtime)
+    assert engine_config.delivery_scheduler_enabled is True
+    assert engine_config.minimum_request_interval_steps == 3
+
+    record = run_actionstream_backend_episode(
+        _BackendBenchmarkHarness(),
+        experiment_id="backend-budgeted-test",
+        runtime=runtime,
+        engine_config=engine_config,
+        profile=DelayTrace.from_mapping(
+            {"key": "fixed_0000", "kind": "fixed", "milliseconds": 0}
+        ),
+        task_id=2,
+        episode_index=0,
+        initial_state_index=42,
+        seed=2026082102,
+        run_id="test-run",
+        trace_path=tmp_path / "budgeted_trace.json",
+        worker_warmup={
+            "task_id": 2,
+            "initial_state_index": 45,
+            "seed": 2026082145,
+            "inference_calls": 2,
+        },
+    )
+
+    assert record["status"] == "completed"
+    assert record["success"] is True
+    assert record["engine_config"]["delivery_scheduler_enabled"] is True
+    assert record["engine_config"]["minimum_request_interval_steps"] == 3
+    assert record["request_interval_steps"] == 3
+    assert record["observations_skipped_by_budget"] > 0
+    assert record["worker_warmup"]["inference_calls"] == 2
+    assert record["worker_warmup"]["observation_notifications_per_call"] == 3

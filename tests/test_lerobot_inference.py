@@ -6,6 +6,7 @@ import threading
 import time
 from types import SimpleNamespace
 
+import pytest
 import torch
 
 from actionstream.lerobot_inference import (
@@ -132,6 +133,57 @@ def test_latest_mailbox_coalesces_observations_while_one_call_is_in_flight() -> 
         _wait_for(lambda: engine.telemetry.inference_completed == 2)
         assert calls == [0, 2]
         assert engine.telemetry.observations_superseded == 1
+    finally:
+        engine.stop()
+
+
+@pytest.mark.parametrize("value", [0, -1, True, 1.5])
+def test_request_budget_interval_requires_a_positive_int(value) -> None:
+    with pytest.raises(ValueError, match="minimum_request_interval_steps"):
+        ActionStreamInferenceConfig(minimum_request_interval_steps=value)
+
+
+def test_request_budget_caps_submissions_and_reset_clears_budget_state() -> None:
+    entered = threading.Event()
+    release = threading.Event()
+    calls: list[int] = []
+
+    def infer(obs, _task):
+        calls.append(obs["step"])
+        if len(calls) == 1:
+            entered.set()
+            assert release.wait(2)
+        return torch.full((1, 30, 2), float(obs["step"]))
+
+    engine = _engine(
+        infer,
+        config=ActionStreamInferenceConfig(minimum_request_interval_steps=5),
+    )
+    engine.reset()
+    engine.start()
+    engine.resume()
+    try:
+        engine.notify_observation({"step": 0})
+        assert entered.wait(2)
+        for step in range(1, 5):
+            engine.notify_observation({"step": step})
+
+        telemetry = engine.telemetry
+        assert telemetry.observations_received == 5
+        assert telemetry.observations_skipped_by_budget == 4
+        assert telemetry.observations_superseded == 0
+
+        release.set()
+        _wait_for(lambda: engine.telemetry.inference_completed == 1)
+        engine.notify_observation({"step": 5})
+        _wait_for(lambda: len(calls) == 2)
+        assert calls == [0, 5]
+
+        engine.reset()
+        engine.notify_observation({"step": 99})
+        _wait_for(lambda: len(calls) == 3)
+        assert calls == [0, 5, 99]
+        assert engine.telemetry.observations_skipped_by_budget == 0
     finally:
         engine.stop()
 

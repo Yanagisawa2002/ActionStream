@@ -58,6 +58,7 @@ class ActionStreamInferenceConfig:
     process_transport_startup_timeout_s: float = 30.0
     process_transport_terminate_timeout_s: float = 1.0
     delivery_scheduler_enabled: bool = False
+    minimum_request_interval_steps: int = 1
     telemetry_jsonl_path: str | None = None
 
     def __post_init__(self) -> None:
@@ -92,6 +93,11 @@ class ActionStreamInferenceConfig:
             raise ValueError("process_transport_terminate_timeout_s must be positive")
         if not isinstance(self.delivery_scheduler_enabled, bool):
             raise TypeError("delivery_scheduler_enabled must be bool")
+        if (
+            type(self.minimum_request_interval_steps) is not int
+            or self.minimum_request_interval_steps <= 0
+        ):
+            raise ValueError("minimum_request_interval_steps must be a positive int")
 
 
 @dataclass(frozen=True)
@@ -100,6 +106,7 @@ class ActionStreamTelemetry:
 
     observations_received: int
     observations_superseded: int
+    observations_skipped_by_budget: int
     inference_started: int
     inference_completed: int
     inference_timeouts: int
@@ -267,6 +274,7 @@ class ActionStreamInferenceEngine(InferenceEngine):
         self._current_step = -1
         self._next_request_ordinal = 0
         self._latest_observation: _ObservationEnvelope | None = None
+        self._last_submitted_source_step = -1
         self._provider_reset_pending = True
         self._pending_deliveries: list[
             tuple[float, int, _PendingDelivery]
@@ -406,6 +414,7 @@ class ActionStreamInferenceEngine(InferenceEngine):
             self._current_step = -1
             self._next_request_ordinal = 0
             self._latest_observation = None
+            self._last_submitted_source_step = -1
             self._provider_reset_pending = True
             self._connected = True
             self._reset_metrics_locked()
@@ -433,18 +442,39 @@ class ActionStreamInferenceEngine(InferenceEngine):
         """Publish a shallow snapshot into the coalescing latest mailbox."""
         with self._condition:
             self._current_step += 1
-            superseded = self._latest_observation is not None
-            if self._latest_observation is not None:
-                self._metrics["observations_superseded"] += 1
-            self._latest_observation = _ObservationEnvelope(
-                epoch=self._epoch,
-                step=self._current_step,
-                observation=dict(obs),
-            )
             self._metrics["observations_received"] += 1
-            self._condition.notify_all()
             step = self._current_step
             epoch = self._epoch
+            if (
+                self._last_submitted_source_step >= 0
+                and step
+                < self._last_submitted_source_step
+                + self._config.minimum_request_interval_steps
+            ):
+                self._metrics["observations_skipped_by_budget"] += 1
+                skipped_by_budget = True
+                superseded = False
+            else:
+                skipped_by_budget = False
+                superseded = self._latest_observation is not None
+                if self._latest_observation is not None:
+                    self._metrics["observations_superseded"] += 1
+                self._latest_observation = _ObservationEnvelope(
+                    epoch=epoch,
+                    step=step,
+                    observation=dict(obs),
+                )
+                self._condition.notify_all()
+        if skipped_by_budget:
+            self._emit(
+                "observation_budget_skipped",
+                epoch=epoch,
+                step=step,
+                minimum_request_interval_steps=(
+                    self._config.minimum_request_interval_steps
+                ),
+            )
+            return
         self._emit(
             "observation_received", epoch=epoch, step=step, superseded=superseded
         )
@@ -501,6 +531,9 @@ class ActionStreamInferenceEngine(InferenceEngine):
             return ActionStreamTelemetry(
                 observations_received=int(self._metrics["observations_received"]),
                 observations_superseded=int(self._metrics["observations_superseded"]),
+                observations_skipped_by_budget=int(
+                    self._metrics["observations_skipped_by_budget"]
+                ),
                 inference_started=int(self._metrics["inference_started"]),
                 inference_completed=int(self._metrics["inference_completed"]),
                 inference_timeouts=int(self._metrics["inference_timeouts"]),
@@ -570,6 +603,7 @@ class ActionStreamInferenceEngine(InferenceEngine):
                         return
                     envelope = self._latest_observation
                     self._latest_observation = None
+                    self._last_submitted_source_step = envelope.step
                     reset_provider = self._provider_reset_pending
                     self._provider_reset_pending = False
                     self._metrics["inference_started"] += 1
@@ -1030,6 +1064,7 @@ class ActionStreamInferenceEngine(InferenceEngine):
         self._metrics = {
             "observations_received": 0,
             "observations_superseded": 0,
+            "observations_skipped_by_budget": 0,
             "inference_started": 0,
             "inference_completed": 0,
             "inference_timeouts": 0,
