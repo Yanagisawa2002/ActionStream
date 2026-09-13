@@ -1,0 +1,83 @@
+name: CI
+
+on:
+  push:
+    branches: [master, "codex/**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality-and-core:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: "0.11.32"
+          enable-cache: true
+      - name: Install locked root and plugin packages
+        run: uv sync --locked --all-packages
+      - name: Lint and formatting contract
+        run: |
+          uv run ruff check src tests scripts/release scripts/engineering integrations/lerobot
+          uv run ruff format --check \
+            src/actionstream/inference_transport.py \
+            src/actionstream/lerobot_inference.py \
+            src/actionstream/telemetry.py \
+            src/actionstream/transport_stress_fixture.py \
+            tests/test_lerobot_inference.py \
+            tests/test_lerobot_plugin.py \
+            tests/test_clean_install.py \
+            scripts/release/audit_public_release.py \
+            scripts/release/generate_v1_1_demo.py \
+            scripts/engineering \
+            integrations/lerobot
+      - name: Runtime, plugin, and real CLI subprocess tests
+        run: |
+          uv run pytest \
+            tests/test_lifecycle_generation.py \
+            tests/test_lerobot_inference.py \
+            tests/test_lerobot_plugin.py \
+            tests/test_clean_install.py
+      - name: Strict release audit
+        run: uv run python scripts/release/audit_public_release.py
+
+  upstream-lerobot-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: "0.11.32"
+          enable-cache: true
+      - name: Install locked root and plugin packages
+        run: uv sync --locked --all-packages
+      - name: Materialize pinned upstream checkout and patch
+        run: |
+          git clone --filter=blob:none --no-checkout https://github.com/huggingface/lerobot.git .external/lerobot
+          git -C .external/lerobot checkout 6adf51511b7625090eade8d82d9f61a1846ebe56
+          git -C .external/lerobot apply --check "$GITHUB_WORKSPACE/upstream/lerobot/0001-feat-rollout-allow-third-party-inference-engines.patch"
+          git -C .external/lerobot apply "$GITHUB_WORKSPACE/upstream/lerobot/0001-feat-rollout-allow-third-party-inference-engines.patch"
+      - name: Validate discovery, downstream contract, and upstream tests
+        env:
+          PYTHONPATH: ${{ github.workspace }}/.external/lerobot/src:${{ github.workspace }}/src:${{ github.workspace }}/integrations/lerobot/src
+        run: |
+          uv run --no-sync python -c "from lerobot.utils.import_utils import register_third_party_plugins; register_third_party_plugins(); from lerobot.rollout.inference import InferenceEngineConfig; assert 'actionstream' in InferenceEngineConfig.get_known_choices()"
+          uv run --no-sync pytest tests/test_lerobot_inference.py tests/test_lerobot_plugin.py
+          uv run --no-sync pytest .external/lerobot/tests/test_rollout.py .external/lerobot/tests/test_interactive_rollout.py

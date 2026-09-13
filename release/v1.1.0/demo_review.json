@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "reviewed_on": "2026-08-22",
+  "duration_seconds": 61.9,
+  "video_stream": {
+    "width": 1280,
+    "height": 720,
+    "fps": 20.0
+  },
+  "sampling": "Eight evenly spaced frames plus the generated 15-second poster were visually inspected.",
+  "checks": {
+    "decodes": true,
+    "title_and_claim_boundary_legible": true,
+    "h1_same_reset_pair_visible": true,
+    "h1_serialized_failure_label_visible": true,
+    "h1_pipelined_success_label_visible": true,
+    "h2_representative_pair_not_mislabeled_as_failure": true,
+    "h2_no_go_summary_visible": true,
+    "real_robot_claim_absent": true
+  },
+  "finding": "PASS_FOR_PRIVATE_REVIEW",
+  "note": "The decisive H2 state-19 failure has scored trace evidence but no frozen video; the demo states this explicitly."
+}

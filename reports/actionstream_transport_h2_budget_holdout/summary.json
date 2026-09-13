@@ -1,0 +1,388 @@
+{
+  "claim_boundary": "A passing H2 supports a three-family X-VLA fixed-950-ms compute-budget result on the pipelined aligned backend. It does not support jitter, burst, outage, RTC, real remote RPC, real-robot safety, universal runtime superiority, or production soak.",
+  "evidence_validation": {
+    "candidate_base_commit": "de93aa2b8c4a6f69b02a19c9435c1073e344f54d",
+    "episodes_sha256": "d956db00f0f99052bad511718f0dd1efc103011570052cb101af275c75ead53d",
+    "execution_git_head": "5b3e4f1251d9ca5230c8ee7c87e9a3d2963f0111",
+    "fresh_process_count": 6,
+    "fresh_process_pid_count": 6,
+    "manifest_entries": 99,
+    "manifest_mismatches": [],
+    "record_count": 30,
+    "telemetry_count": 30,
+    "trace_count": 30,
+    "unique_runtime_identities": 30,
+    "video_count": 6
+  },
+  "experiment_id": "actionstream_transport_h2_budget_20260822",
+  "failure_count": 2,
+  "family_table": [
+    {
+      "budgeted_call_ratio": 0.5092250922509225,
+      "budgeted_depletion_fraction": 0.0,
+      "budgeted_inference_calls": 138,
+      "budgeted_mean_steps": 135.6,
+      "budgeted_median_request_rate": 3.3318089197208343,
+      "budgeted_successes": 4,
+      "call_reduction_fraction": 0.4907749077490775,
+      "suite": "libero_goal",
+      "task_id": 2,
+      "unbounded_depletion_fraction": 0.0,
+      "unbounded_inference_calls": 271,
+      "unbounded_mean_steps": 93.2,
+      "unbounded_median_request_rate": 9.507822639888808,
+      "unbounded_successes": 5
+    },
+    {
+      "budgeted_call_ratio": 0.3438155136268344,
+      "budgeted_depletion_fraction": 0.0,
+      "budgeted_inference_calls": 164,
+      "budgeted_mean_steps": 161.6,
+      "budgeted_median_request_rate": 3.4916256035325266,
+      "budgeted_successes": 4,
+      "call_reduction_fraction": 0.6561844863731656,
+      "suite": "libero_object",
+      "task_id": 5,
+      "unbounded_depletion_fraction": 0.0,
+      "unbounded_inference_calls": 477,
+      "unbounded_mean_steps": 161.8,
+      "unbounded_median_request_rate": 10.153709393628933,
+      "unbounded_successes": 4
+    },
+    {
+      "budgeted_call_ratio": 0.34349030470914127,
+      "budgeted_depletion_fraction": 0.0,
+      "budgeted_inference_calls": 124,
+      "budgeted_mean_steps": 122.2,
+      "budgeted_median_request_rate": 3.4500916048018677,
+      "budgeted_successes": 5,
+      "call_reduction_fraction": 0.6565096952908587,
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "unbounded_depletion_fraction": 0.0,
+      "unbounded_inference_calls": 361,
+      "unbounded_mean_steps": 122.0,
+      "unbounded_median_request_rate": 10.012126559995291,
+      "unbounded_successes": 5
+    }
+  ],
+  "frozen_before_result": true,
+  "gate_results": {
+    "aggregate_inference_call_ratio": {
+      "pass": true,
+      "threshold": 0.5,
+      "value": 0.3841298467087466
+    },
+    "budgeted_aggregate_depletion_fraction": {
+      "pass": true,
+      "threshold": 0.05,
+      "value": 0.0
+    },
+    "budgeted_median_request_rate": {
+      "pass": true,
+      "threshold": 2.5,
+      "value": 3.4622878819279874
+    },
+    "budgeted_per_family_depletion_fraction": {
+      "pass": true,
+      "threshold": 0.05,
+      "value": 0.0
+    },
+    "budgeted_success_count_not_below_unbounded": {
+      "pass": false,
+      "threshold": "budgeted >= unbounded",
+      "value": [
+        13,
+        14
+      ]
+    },
+    "fallback_activations": {
+      "pass": true,
+      "threshold": 0,
+      "value": 0
+    },
+    "inference_errors": {
+      "pass": true,
+      "threshold": 0,
+      "value": 0
+    },
+    "inference_timeouts": {
+      "pass": true,
+      "threshold": 0,
+      "value": 0
+    },
+    "out_of_order_rejections": {
+      "pass": true,
+      "threshold": 0,
+      "value": 0
+    }
+  },
+  "gpu_system_metrics": {
+    "actionstream_backend_budgeted_pipelined_aligned": {
+      "gpu_utilization_percent_max": 55.0,
+      "gpu_utilization_percent_p50": 14.0,
+      "gpu_utilization_percent_p95": 45.10000000000002,
+      "process_gpu_memory_mib_max": 4844.0,
+      "process_gpu_memory_mib_p50": 4782.0,
+      "process_gpu_memory_mib_p95": 4844.0,
+      "resident_sample_count": 679
+    },
+    "actionstream_backend_pipelined_aligned": {
+      "gpu_utilization_percent_max": 82.0,
+      "gpu_utilization_percent_p50": 65.0,
+      "gpu_utilization_percent_p95": 78.0,
+      "process_gpu_memory_mib_max": 4844.0,
+      "process_gpu_memory_mib_p50": 4782.0,
+      "process_gpu_memory_mib_p95": 4844.0,
+      "resident_sample_count": 627
+    }
+  },
+  "hypothesis_id": "transport_h2_compute_budget",
+  "non_scored_gpu_canary": {
+    "cuda_device": "NVIDIA GeForce RTX 5090",
+    "cuda_memory_allocated_mib": 3363.86572265625,
+    "cuda_peak_memory_allocated_mib": 12250.8251953125,
+    "hypothesis_id": "transport_h2_compute_budget",
+    "initial_state_index": 20,
+    "protocol": "/root/autodl-tmp/actionstream-transport-h2-budget-5b3e4f1/configs/actionstream_transport_h2_budget_object.json",
+    "record": {
+      "inference_calls": 2,
+      "inference_latency_seconds": [
+        4.563899095635861,
+        0.06282154796645045
+      ],
+      "initial_state_index": 20,
+      "peak_cuda_memory_mib": 12250.8251953125,
+      "seed": 2026122220,
+      "status": "completed_non_scored_warmup",
+      "task_id": 5,
+      "wall_clock_seconds": 4.640689406078309
+    },
+    "schema_version": 1,
+    "scored_environment_steps": 0,
+    "seed": 2026122220,
+    "status": "completed_non_scored_warmup",
+    "wall_clock_seconds": 17.226337819825858
+  },
+  "paired_bootstrap": {
+    "aggregate_inference_call_ratio": {
+      "ci_95": [
+        0.341326842648604,
+        0.4806531646806224
+      ],
+      "estimate": 0.3841298467087466
+    },
+    "budgeted_median_request_rate": {
+      "ci_95": [
+        3.3985617837608753,
+        3.5123109336943257
+      ],
+      "estimate": 3.4622878819279874
+    },
+    "environment_steps_difference": {
+      "ci_95": [
+        -0.4666666666666667,
+        42.53333333333333
+      ],
+      "estimate": 14.133333333333333
+    },
+    "inference_calls_difference": {
+      "ci_95": [
+        -58.93333333333333,
+        -34.06666666666667
+      ],
+      "estimate": -45.53333333333333
+    },
+    "method": "paired nonparametric percentile bootstrap",
+    "request_rate_difference": {
+      "ci_95": [
+        -6.6742522444320995,
+        -6.231302006175353
+      ],
+      "estimate": -6.4458408085007015
+    },
+    "resamples": 10000,
+    "seed": 2026122295,
+    "success_difference": {
+      "ci_95": [
+        -0.2,
+        0.0
+      ],
+      "estimate": -0.06666666666666667
+    }
+  },
+  "pooled_inference_metrics": {
+    "actionstream_backend_budgeted_pipelined_aligned": {
+      "completed_inference_events": 363,
+      "inference_latency_ms_max": 218.69134716689587,
+      "inference_latency_ms_p50": 152.55202865228057,
+      "inference_latency_ms_p95": 183.7787336204201
+    },
+    "actionstream_backend_pipelined_aligned": {
+      "completed_inference_events": 914,
+      "inference_latency_ms_max": 272.528822068125,
+      "inference_latency_ms_p50": 72.6861844304949,
+      "inference_latency_ms_p95": 111.58612612634892
+    }
+  },
+  "runtime_metrics": {
+    "actionstream_backend_budgeted_pipelined_aligned": {
+      "cuda_peak_memory_mib_max": 3520.8251953125,
+      "depletion_fraction": 0.0,
+      "depletion_safe_hold_steps": 0,
+      "dropped_prefix_steps": 7572,
+      "environment_steps": 2097,
+      "episodes": 15,
+      "fallback_activations": 0,
+      "inference_calls": 426,
+      "inference_errors": 0,
+      "inference_timeouts": 0,
+      "label": "Budgeted (5 steps)",
+      "mean_environment_steps": 139.8,
+      "median_inference_requests_per_second": 3.4622878819279874,
+      "observations_received": 2099,
+      "observations_skipped_by_budget": 1673,
+      "out_of_order_rejections": 0,
+      "queue_age_p50_steps_episode_median": 24.0,
+      "queue_age_p95_steps_episode_median": 26.0,
+      "runtime": "actionstream_backend_budgeted_pipelined_aligned",
+      "success_rate": 0.8666666666666667,
+      "successes": 13,
+      "worker_post_startup_latency_ms_p50": 73.68918508291245,
+      "worker_startup_latency_seconds_p50": 4.410571266897023
+    },
+    "actionstream_backend_pipelined_aligned": {
+      "cuda_peak_memory_mib_max": 3520.8251953125,
+      "depletion_fraction": 0.0,
+      "depletion_safe_hold_steps": 0,
+      "dropped_prefix_steps": 18609,
+      "environment_steps": 1885,
+      "episodes": 15,
+      "fallback_activations": 0,
+      "inference_calls": 1109,
+      "inference_errors": 0,
+      "inference_timeouts": 0,
+      "label": "Unbounded",
+      "mean_environment_steps": 125.66666666666667,
+      "median_inference_requests_per_second": 9.900500725440383,
+      "observations_received": 1886,
+      "observations_skipped_by_budget": 0,
+      "out_of_order_rejections": 0,
+      "queue_age_p50_steps_episode_median": 21.0,
+      "queue_age_p95_steps_episode_median": 23.599999999999994,
+      "runtime": "actionstream_backend_pipelined_aligned",
+      "success_rate": 0.9333333333333333,
+      "successes": 14,
+      "worker_post_startup_latency_ms_p50": 72.86711223423481,
+      "worker_startup_latency_seconds_p50": 4.339551905170083
+    }
+  },
+  "schema_version": 1,
+  "source_archive_sha256": "c91e347d3b249aea225aa737b45eb641ffa7dc800da20accdf5eee92dcac6d62",
+  "verdict": "NO_GO",
+  "video_inventory": [
+    {
+      "bytes": 198850,
+      "decode_status": "four_frames_checked",
+      "duration_seconds": 4.8,
+      "family": "goal",
+      "fps": 20.0,
+      "frame_count": 96,
+      "path": "cells/goal/actionstream_backend_budgeted_pipelined_aligned/videos/xvla__actionstream_backend_budgeted_pipelined_aligned__fixed_0950_transport_h2_budget__task2__ep0.mp4",
+      "runtime": "actionstream_backend_budgeted_pipelined_aligned",
+      "sampled_frame_indices": [
+        0,
+        32,
+        63,
+        95
+      ],
+      "sha256": "71a94f974f1e301beb00a91ad5271b3ae9460ed679293bea939ed7a77196b826"
+    },
+    {
+      "bytes": 191929,
+      "decode_status": "four_frames_checked",
+      "duration_seconds": 4.7,
+      "family": "goal",
+      "fps": 20.0,
+      "frame_count": 94,
+      "path": "cells/goal/actionstream_backend_pipelined_aligned/videos/xvla__actionstream_backend_pipelined_aligned__fixed_0950_transport_h2_budget__task2__ep0.mp4",
+      "runtime": "actionstream_backend_pipelined_aligned",
+      "sampled_frame_indices": [
+        0,
+        31,
+        62,
+        93
+      ],
+      "sha256": "e1a48a0895a3f6c81cce37098da083fc1ca4602b78da24065fa5d0a63f1f777d"
+    },
+    {
+      "bytes": 288363,
+      "decode_status": "four_frames_checked",
+      "duration_seconds": 6.45,
+      "family": "object",
+      "fps": 20.0,
+      "frame_count": 129,
+      "path": "cells/object/actionstream_backend_budgeted_pipelined_aligned/videos/xvla__actionstream_backend_budgeted_pipelined_aligned__fixed_0950_transport_h2_budget__task5__ep0.mp4",
+      "runtime": "actionstream_backend_budgeted_pipelined_aligned",
+      "sampled_frame_indices": [
+        0,
+        43,
+        85,
+        128
+      ],
+      "sha256": "c970afab32f6d2e459f0d80a9806beee0db21c5889dbba303d45d9cf8dd4e889"
+    },
+    {
+      "bytes": 290194,
+      "decode_status": "four_frames_checked",
+      "duration_seconds": 6.5,
+      "family": "object",
+      "fps": 20.0,
+      "frame_count": 130,
+      "path": "cells/object/actionstream_backend_pipelined_aligned/videos/xvla__actionstream_backend_pipelined_aligned__fixed_0950_transport_h2_budget__task5__ep0.mp4",
+      "runtime": "actionstream_backend_pipelined_aligned",
+      "sampled_frame_indices": [
+        0,
+        43,
+        86,
+        129
+      ],
+      "sha256": "164b1b3eacc1f7b21a894583036c2e5a46e4aad1d89721969abf1ed36dd7512f"
+    },
+    {
+      "bytes": 287915,
+      "decode_status": "four_frames_checked",
+      "duration_seconds": 6.4,
+      "family": "spatial",
+      "fps": 20.0,
+      "frame_count": 128,
+      "path": "cells/spatial/actionstream_backend_budgeted_pipelined_aligned/videos/xvla__actionstream_backend_budgeted_pipelined_aligned__fixed_0950_transport_h2_budget__task7__ep0.mp4",
+      "runtime": "actionstream_backend_budgeted_pipelined_aligned",
+      "sampled_frame_indices": [
+        0,
+        42,
+        85,
+        127
+      ],
+      "sha256": "f69d0ebe2334d846dc41c1230acb5cb2302f362cf01c2dd178388ebd2d7a16b1"
+    },
+    {
+      "bytes": 278430,
+      "decode_status": "four_frames_checked",
+      "duration_seconds": 6.3,
+      "family": "spatial",
+      "fps": 20.0,
+      "frame_count": 126,
+      "path": "cells/spatial/actionstream_backend_pipelined_aligned/videos/xvla__actionstream_backend_pipelined_aligned__fixed_0950_transport_h2_budget__task7__ep0.mp4",
+      "runtime": "actionstream_backend_pipelined_aligned",
+      "sampled_frame_indices": [
+        0,
+        42,
+        83,
+        125
+      ],
+      "sha256": "5afea4d3c13ade4745bb874eecb8f4c06900941c32e0242dea379a69d024a6be"
+    }
+  ],
+  "warmup_archive_sha256": "2eb00ee6a401a79b7166fca67bd57d07592ac46fba0e402a1145f5501fffab33"
+}

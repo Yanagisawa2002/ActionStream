@@ -1,0 +1,48 @@
+{
+  "claim_boundary": "H1-R2 is a delivery-pipeline mechanism GO; H2 is a fixed-budget NO-GO. No RTC, native-Isaac holdout, remote-RPC soak, or real-robot claim.",
+  "duration_seconds": 61.9,
+  "fps": 20,
+  "frame_size": [
+    1280,
+    720
+  ],
+  "outputs": {
+    "demo": {
+      "bytes": 1639629,
+      "filename": "actionstream_v1_1_demo.mp4",
+      "sha256": "b1afcaead640290050fffb2eab247acd05f07342af5273eb88cde4995cfc39c7"
+    },
+    "poster": {
+      "bytes": 408557,
+      "filename": "actionstream_v1_1_demo_poster.png",
+      "sha256": "ed97e63e5fd76359e7a3b8c48238929587d7ea71f4bcdadbf2b540dfc75658f3"
+    }
+  },
+  "schema_version": 1,
+  "sources": {
+    "h1_figure": {
+      "filename": "h1_r2_main_figure.png",
+      "sha256": "95c80cfcace46495eea4c870fc16bfb764ded12f4901651df596604e6381ae2a"
+    },
+    "h1_pipelined_video": {
+      "filename": "xvla__actionstream_backend_pipelined_aligned__fixed_0950_transport_h1_r2__task7__ep0.mp4",
+      "sha256": "1ef792ea122dcc1f92367091169a314fa40546b9ba19774c7577aa2a5ac95fcf"
+    },
+    "h1_serialized_video": {
+      "filename": "xvla__actionstream_backend_aligned__fixed_0950_transport_h1_r2__task7__ep0.mp4",
+      "sha256": "b3813a0f8902769cc26aec19ec3d60f240a1b8f12545d20b4faf84185a660ca0"
+    },
+    "h2_budgeted_video": {
+      "filename": "xvla__actionstream_backend_budgeted_pipelined_aligned__fixed_0950_transport_h2_budget__task2__ep0.mp4",
+      "sha256": "71a94f974f1e301beb00a91ad5271b3ae9460ed679293bea939ed7a77196b826"
+    },
+    "h2_figure": {
+      "filename": "h2_verdict.png",
+      "sha256": "beaa086a6905298373e1b7fd93a66089418764fcf20fbc065fb75628e60adae3"
+    },
+    "h2_unbounded_video": {
+      "filename": "xvla__actionstream_backend_pipelined_aligned__fixed_0950_transport_h2_budget__task2__ep0.mp4",
+      "sha256": "e1a48a0895a3f6c81cce37098da083fc1ca4602b78da24065fa5d0a63f1f777d"
+    }
+  }
+}

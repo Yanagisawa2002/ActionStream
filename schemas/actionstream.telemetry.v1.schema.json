@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Yanagisawa2002/ActionStream/schemas/actionstream.telemetry.v1.schema.json",
+  "title": "ActionStream telemetry JSONL event v1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "engine_id",
+    "event",
+    "utc_unix_ns",
+    "monotonic_ns",
+    "pid",
+    "thread"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "engine_id": {"type": "string", "pattern": "^[0-9a-f]{32}$"},
+    "event": {"type": "string", "minLength": 1},
+    "utc_unix_ns": {"type": "integer", "minimum": 0},
+    "monotonic_ns": {"type": "integer", "minimum": 0},
+    "pid": {"type": "integer", "minimum": 1},
+    "thread": {"type": "string", "minLength": 1}
+  },
+  "additionalProperties": true
+}
