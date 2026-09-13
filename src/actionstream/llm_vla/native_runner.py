@@ -15,18 +15,25 @@ from .integration import execute
 from .qwen import LocalQwen, checker_messages, parser_messages
 
 
-def main():
+def main(*, protocol_version="v1"):
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ("config", "model", "output", "base-store", "evidence"):
         parser.add_argument("--" + name, type=Path, required=True)
     args = parser.parse_args()
     config = json.loads(args.config.read_text())
-    for phase in ("language", "shadow"):
-        gate = json.loads((args.evidence / (phase + "_score.json")).read_text())
-        if gate["status"] != "PASS" or gate["source_sha256"]["receipt"] != sha256(
-            args.evidence / phase / "run_receipt.json"
-        ):
-            raise ValueError("Both real gates must pass before native model imports")
+    if protocol_version == "v2":
+        from .repair_scoring import require_joint_gates
+
+        require_joint_gates(args.evidence)
+    else:
+        for phase in ("language", "shadow"):
+            gate = json.loads((args.evidence / (phase + "_score.json")).read_text())
+            if gate["status"] != "PASS" or gate["source_sha256"]["receipt"] != sha256(
+                args.evidence / phase / "run_receipt.json"
+            ):
+                raise ValueError(
+                    "Both real gates must pass before native model imports"
+                )
     protocol = json.loads(
         (args.evidence / "scorer_only/native_protocol.json").read_text()
     )
@@ -68,7 +75,26 @@ def main():
             )
             if parsed["status"] != "COMPLETED":
                 raise ValueError("Native task parser did not complete")
-            spec = TaskSpec.parse(parsed["raw_output"], episode["request_id"])
+            authorization = original = None
+            if protocol_version == "v2":
+                from .grounding import OriginalRequest, adjudicate, materialize
+
+                original = OriginalRequest(episode["request_id"], episode["text"])
+                verdict = adjudicate(original, parsed["raw_output"], config["contract"])
+                save(directory / "authorization_verdict.json", verdict)
+                if verdict["decision"] != "accept":
+                    receipt["episodes"][index].update(
+                        status="REJECTED",
+                        decision=verdict["decision"],
+                        reason=verdict["reason"],
+                    )
+                    continue
+                authorization = materialize(
+                    original, parsed["raw_output"], config["contract"]
+                )
+                spec = authorization.control_spec()
+            else:
+                spec = TaskSpec.parse(parsed["raw_output"], episode["request_id"])
             save(directory / "taskspec.json", asdict(spec))
             if spec.decision != "accept":
                 receipt["episodes"][index].update(
@@ -136,13 +162,26 @@ def main():
                 }
 
             try:
-                result = execute(
-                    spec,
-                    port,
-                    checker,
-                    journal.emit,
-                    interruption_step=67 if episode["interruption"] else None,
-                )
+                if protocol_version == "v2":
+                    from .grounding import execute_authorized
+
+                    result = execute_authorized(
+                        original,
+                        authorization,
+                        config["contract"],
+                        port,
+                        checker,
+                        journal.emit,
+                        interruption_step=67 if episode["interruption"] else None,
+                    )
+                else:
+                    result = execute(
+                        spec,
+                        port,
+                        checker,
+                        journal.emit,
+                        interruption_step=67 if episode["interruption"] else None,
+                    )
             finally:
                 port.close()
                 journal.close()

@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Model decision union only. Host GroundedTask additionally binds original text, request ID, text/model/contract hashes and unique verified mentions before registry assembly.",
+  "oneOf": [
+    {
+      "type": "object", "additionalProperties": false,
+      "required": ["decision", "target_quote", "destination_quote"],
+      "properties": {
+        "decision": {"const": "accept"},
+        "target_quote": {"type": "string", "minLength": 1},
+        "destination_quote": {"type": "string", "minLength": 1}
+      }
+    },
+    {
+      "type": "object", "additionalProperties": false,
+      "required": ["decision", "reason"],
+      "properties": {
+        "decision": {"const": "reject"},
+        "reason": {"enum": ["unsupported_entity", "unsupported_goal", "negated", "role_reversal", "additional_goal", "quoted_or_meta"]}
+      }
+    },
+    {
+      "type": "object", "additionalProperties": false,
+      "required": ["decision", "reason"],
+      "properties": {
+        "decision": {"const": "unknown"},
+        "reason": {"const": "missing_or_ambiguous_reference"}
+      }
+    }
+  ]
+}

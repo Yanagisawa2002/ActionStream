@@ -30,6 +30,7 @@ def save(path: Path, value):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--phase", choices=("language", "shadow"), required=True)
+    parser.add_argument("--diagnostic-only", action="store_true")
     for name in ("config", "inputs", "model", "output"):
         parser.add_argument("--" + name, type=Path, required=True)
     args = parser.parse_args()
@@ -38,6 +39,7 @@ def main():
     args.output.mkdir(parents=True, exist_ok=False)
     receipt = dict(
         status="RUNNING",
+        execution_mode="DIAGNOSTIC_ONLY" if args.diagnostic_only else "GATED_PREFLIGHT",
         phase=args.phase,
         pid=os.getpid(),
         executable=sys.executable,

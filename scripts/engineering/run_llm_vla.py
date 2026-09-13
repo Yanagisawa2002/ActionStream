@@ -26,13 +26,21 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ("store", "evidence", "package"):
         parser.add_argument("--" + name, type=Path, required=True)
+    parser.add_argument("--dispatch", choices=("003", "004"), default="003")
     parser.add_argument(
-        "--phase", choices=("language", "shadow", "native"), required=True
+        "--phase", choices=("language", "comparison", "shadow", "native"), required=True
     )
     args = parser.parse_args()
     store, evidence = args.store.resolve(), args.evidence.resolve()
+    repair = args.dispatch == "004"
+    if args.phase == ("language" if repair else "comparison"):
+        raise ValueError("This text phase belongs to another dispatch")
     owner = json.loads((store / "OWNER.json").read_text())
-    if owner["scope"] != "DISPATCH_003 finite LLM VLA integration":
+    if owner["scope"] != (
+        "DISPATCH_004 grounded language repair"
+        if repair
+        else "DISPATCH_003 finite LLM VLA integration"
+    ):
         raise ValueError("Not the authorized new store")
     output = evidence / args.phase
     if output.exists():
@@ -40,7 +48,10 @@ def main():
     for drive, minimum in (("c", 15), ("d", 30)):
         if shutil.disk_usage("/mnt/" + drive).free < minimum * 1024**3:
             raise ValueError("Host drive reserve would be violated")
-    if sum(p.stat().st_size for p in store.rglob("*") if p.is_file()) > 8 * 1024**3:
+    if (
+        sum(p.stat().st_size for p in store.rglob("*") if p.is_file())
+        > (1 if repair else 8) * 1024**3
+    ):
         raise ValueError("New-store storage budget exceeded")
     frozen = json.loads((evidence / "frozen_protocol.json").read_text())
     for row in frozen["files"]:
@@ -48,22 +59,31 @@ def main():
         path = Path("/mnt/" + windows[0].lower() + windows[2:])
         if digest(path) != row["sha256"]:
             raise ValueError(f"Frozen protocol identity changed: {path}")
-    for required in {
+    requirements = {
         "language": [],
         "shadow": ["language"],
         "native": ["language", "shadow"],
-    }[args.phase]:
+    }
+    if repair:
+        requirements = {
+            "comparison": [],
+            "shadow": [],
+            "native": ["language", "shadow"],
+        }
+    for required in requirements[args.phase]:
         gate = json.loads((evidence / (required + "_score.json")).read_text())
+        receipt_phase = "comparison" if repair and required == "language" else required
         if gate["status"] != "PASS" or gate["source_sha256"]["receipt"] != digest(
-            evidence / required / "run_receipt.json"
+            evidence / receipt_phase / "run_receipt.json"
         ):
             raise ValueError("Prior real gate did not pass with intact evidence")
-    asset = json.loads((store / "asset_receipt.json").read_text())
-    model = store / "assets/qwen3-vl-8964489"
+    model_store = store.parent / "dispatch003-llm-vla" if repair else store
+    asset = json.loads((model_store / "asset_receipt.json").read_text())
+    model = model_store / "assets/qwen3-vl-8964489"
     for row in asset["files"]:
         if digest(model / row["name"]) != row["sha256"]:
             raise ValueError("Pinned model asset changed")
-    ledger_path = store / "runs/gpu_budget_dispatch003.json"
+    ledger_path = store / ("runs/gpu_budget_dispatch" + args.dispatch + ".json")
     lock = ledger_path.with_suffix(".lock").open("a")
     fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
     ledger = (
@@ -91,6 +111,12 @@ def main():
     env["PYTHONPATH"] = str(args.package.resolve())
     env["PYTHONDONTWRITEBYTECODE"] = "1"
     module = "native_runner" if args.phase == "native" else "gate_runner"
+    if repair:
+        module = {
+            "comparison": "repair_runner",
+            "shadow": "gate_runner",
+            "native": "grounded_native",
+        }[args.phase]
     command = [
         str(store.parent / ".venv/bin/python"),
         "-m",
@@ -106,11 +132,13 @@ def main():
         command += ["--base-store", str(store.parent), "--evidence", str(evidence)]
     else:
         command += [
-            "--phase",
-            args.phase,
             "--inputs",
             str(evidence / "model_inputs" / (args.phase + ".json")),
         ]
+        if args.phase != "comparison":
+            command += ["--phase", args.phase]
+        if repair and args.phase == "shadow":
+            command += ["--diagnostic-only"]
     row = dict(
         phase=args.phase,
         status="RUNNING",
