@@ -19,6 +19,7 @@ missing real-robot evidence.
 
 - [Inference backend](src/actionstream/lerobot_inference.py)
 - [Cancellable process transport](src/actionstream/inference_transport.py)
+- [Episode ownership, locks, and action revision contract](docs/lifecycle_contract.md)
 - [LeRobot plugin](integrations/lerobot/)
 - [Backend and failure-path tests](tests/test_lerobot_inference.py)
 - [H1-R2 delivery-pipeline report](reports/actionstream_transport_h1_r2/report.md)
@@ -142,7 +143,8 @@ Run the review-branch checks:
 ```bash
 uv run ruff check src tests scripts/release scripts/engineering integrations/lerobot
 uv run pytest tests/test_lerobot_inference.py tests/test_lerobot_plugin.py \
-  tests/test_clean_install.py
+  tests/test_clean_install.py tests/test_lerobot_lifecycle.py \
+  tests/test_lerobot_lifecycle_boundaries.py
 uv run python scripts/release/audit_public_release.py
 ```
 

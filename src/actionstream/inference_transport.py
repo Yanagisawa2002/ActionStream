@@ -79,6 +79,8 @@ class DirectInferenceTransport:
     def __init__(self, infer: Callable[[Mapping[str, Any], str], torch.Tensor]) -> None:
         self._infer = infer
         self._latest_request_latency_s: float | None = None
+        self._state_lock = threading.Lock()
+        self._generation = 0
 
     @property
     def deadline_enforced(self) -> bool:
@@ -98,7 +100,8 @@ class DirectInferenceTransport:
 
     @property
     def latest_request_latency_s(self) -> float | None:
-        return self._latest_request_latency_s
+        with self._state_lock:
+            return self._latest_request_latency_s
 
     def infer(
         self,
@@ -107,10 +110,30 @@ class DirectInferenceTransport:
         *,
         timeout_s: float,
     ) -> torch.Tensor:
+        return self._infer_request(observation, task, timeout_s=timeout_s)
+
+    def _infer_request(
+        self,
+        observation: Mapping[str, Any],
+        task: str,
+        *,
+        timeout_s: float,
+        cancellation_event: threading.Event | None = None,
+    ) -> torch.Tensor:
+        with self._state_lock:
+            if cancellation_event is not None and cancellation_event.is_set():
+                raise InferenceCancelled("Direct request invalidated before entry")
+            generation = self._generation
         started = time.perf_counter()
         result = self._infer(observation, task)
         elapsed = time.perf_counter() - started
-        self._latest_request_latency_s = elapsed
+        with self._state_lock:
+            if generation == self._generation and not (
+                cancellation_event is not None and cancellation_event.is_set()
+            ):
+                self._latest_request_latency_s = elapsed
+        if cancellation_event is not None and cancellation_event.is_set():
+            raise InferenceCancelled("Direct request invalidated during inference")
         if elapsed > timeout_s:
             raise InferenceDeadlineExceeded(
                 f"Direct inference returned after advisory deadline: "
@@ -118,14 +141,33 @@ class DirectInferenceTransport:
             )
         return result
 
+    def infer_cancellable(
+        self,
+        observation: Mapping[str, Any],
+        task: str,
+        *,
+        timeout_s: float,
+        cancellation_event: threading.Event,
+    ) -> torch.Tensor:
+        """Discard invalidated calls; running Python/CUDA remains advisory."""
+        return self._infer_request(
+            observation,
+            task,
+            timeout_s=timeout_s,
+            cancellation_event=cancellation_event,
+        )
+
     def cancel(self) -> bool:
-        return False
+        return self.reset()
 
     def reset(self) -> bool:
+        with self._state_lock:
+            self._generation += 1
+            self._latest_request_latency_s = None
         return False
 
     def close(self) -> None:
-        return None
+        self.reset()
 
 
 def _load_factory(
@@ -223,6 +265,7 @@ class ProcessInferenceTransport:
         self._cancellations = 0
         self._latest_startup_latency_s: float | None = None
         self._latest_request_latency_s: float | None = None
+        self._generation = 0
 
     @property
     def deadline_enforced(self) -> bool:
@@ -248,7 +291,10 @@ class ProcessInferenceTransport:
         with self._state_lock:
             return self._latest_request_latency_s
 
-    def _start(self) -> tuple[Any, Any]:
+    def _start(
+        self,
+        cancellation_event: threading.Event | None = None,
+    ) -> tuple[Any, Any]:
         """Start the client without holding the state lock while it imports.
 
         Reset and stop must be able to terminate a child even while its factory
@@ -258,6 +304,12 @@ class ProcessInferenceTransport:
         """
 
         with self._state_lock:
+            # Invalidation may precede entry into infer(). Check under the same
+            # lock that publishes a child, so reset either prevents or kills it.
+            if self._cancel_event.is_set() or (
+                cancellation_event is not None and cancellation_event.is_set()
+            ):
+                raise InferenceCancelled("Process request invalidated before startup")
             if self._process is not None and self._process.is_alive():
                 if self._connection is None:
                     raise InferenceTransportError(
@@ -332,8 +384,40 @@ class ProcessInferenceTransport:
         *,
         timeout_s: float,
     ) -> torch.Tensor:
+        return self._infer_request(observation, task, timeout_s=timeout_s)
+
+    def infer_cancellable(
+        self,
+        observation: Mapping[str, Any],
+        task: str,
+        *,
+        timeout_s: float,
+        cancellation_event: threading.Event,
+    ) -> torch.Tensor:
+        """Optional extension retaining the original infer() calling contract."""
+        return self._infer_request(
+            observation,
+            task,
+            timeout_s=timeout_s,
+            cancellation_event=cancellation_event,
+        )
+
+    def _infer_request(
+        self,
+        observation: Mapping[str, Any],
+        task: str,
+        *,
+        timeout_s: float,
+        cancellation_event: threading.Event | None = None,
+    ) -> torch.Tensor:
         if timeout_s <= 0:
             raise ValueError("timeout_s must be positive")
+
+        def cancelled() -> bool:
+            return self._cancel_event.is_set() or (
+                cancellation_event is not None and cancellation_event.is_set()
+            )
+
         with self._request_lock:
             self._cancel_event.clear()
             request_id = uuid.uuid4().hex
@@ -341,11 +425,15 @@ class ProcessInferenceTransport:
             request_started: float | None = None
             with self._state_lock:
                 self._inflight = True
+                generation = self._generation
             try:
-                connection, process = self._start()
+                connection, process = self._start(cancellation_event)
                 with self._state_lock:
-                    self._latest_startup_latency_s = time.monotonic() - startup_started
-                if self._cancel_event.is_set():
+                    if generation == self._generation and not cancelled():
+                        self._latest_startup_latency_s = (
+                            time.monotonic() - startup_started
+                        )
+                if cancelled():
                     raise InferenceCancelled("Process transport request cancelled")
                 with self._state_lock:
                     if (
@@ -359,7 +447,7 @@ class ProcessInferenceTransport:
                 request_started = time.monotonic()
                 deadline = time.monotonic() + timeout_s
                 while True:
-                    if self._cancel_event.is_set():
+                    if cancelled():
                         raise InferenceCancelled("Process transport request cancelled")
                     remaining = deadline - time.monotonic()
                     if remaining <= 0:
@@ -396,7 +484,7 @@ class ProcessInferenceTransport:
                 # preserved before the connection-error normalization below.
                 raise
             except (EOFError, BrokenPipeError, OSError) as exc:
-                if self._cancel_event.is_set():
+                if cancelled():
                     raise InferenceCancelled(
                         "Process transport request cancelled"
                     ) from exc
@@ -405,7 +493,11 @@ class ProcessInferenceTransport:
                 ) from exc
             finally:
                 with self._state_lock:
-                    if request_started is not None:
+                    if (
+                        request_started is not None
+                        and generation == self._generation
+                        and not cancelled()
+                    ):
                         self._latest_request_latency_s = (
                             time.monotonic() - request_started
                         )
@@ -416,6 +508,7 @@ class ProcessInferenceTransport:
         with self._state_lock:
             if not self._inflight:
                 return False
+            self._generation += 1
             self._cancellations += 1
             self._terminate_locked()
             return True
@@ -425,6 +518,9 @@ class ProcessInferenceTransport:
 
         self._cancel_event.set()
         with self._state_lock:
+            self._generation += 1
+            self._latest_startup_latency_s = None
+            self._latest_request_latency_s = None
             was_inflight = self._inflight
             if was_inflight:
                 self._cancellations += 1
@@ -434,4 +530,5 @@ class ProcessInferenceTransport:
     def close(self) -> None:
         self._cancel_event.set()
         with self._state_lock:
+            self._generation += 1
             self._terminate_locked()

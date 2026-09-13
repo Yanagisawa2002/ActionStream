@@ -37,6 +37,8 @@ jobs:
             src/actionstream/telemetry.py \
             src/actionstream/transport_stress_fixture.py \
             tests/test_lerobot_inference.py \
+            tests/test_lerobot_lifecycle.py \
+            tests/test_lerobot_lifecycle_boundaries.py \
             tests/test_lerobot_plugin.py \
             tests/test_clean_install.py \
             scripts/release/audit_public_release.py \
@@ -47,6 +49,8 @@ jobs:
         run: |
           uv run pytest \
             tests/test_lerobot_inference.py \
+            tests/test_lerobot_lifecycle.py \
+            tests/test_lerobot_lifecycle_boundaries.py \
             tests/test_lerobot_plugin.py \
             tests/test_clean_install.py
       - name: Strict release audit
@@ -78,5 +82,5 @@ jobs:
           PYTHONPATH: ${{ github.workspace }}/.external/lerobot/src:${{ github.workspace }}/src:${{ github.workspace }}/integrations/lerobot/src
         run: |
           uv run --no-sync python -c "from lerobot.utils.import_utils import register_third_party_plugins; register_third_party_plugins(); from lerobot.rollout.inference import InferenceEngineConfig; assert 'actionstream' in InferenceEngineConfig.get_known_choices()"
-          uv run --no-sync pytest tests/test_lerobot_inference.py tests/test_lerobot_plugin.py
+          uv run --no-sync pytest tests/test_lerobot_inference.py tests/test_lerobot_plugin.py tests/test_lerobot_lifecycle.py tests/test_lerobot_lifecycle_boundaries.py
           uv run --no-sync pytest .external/lerobot/tests/test_rollout.py .external/lerobot/tests/test_interactive_rollout.py
