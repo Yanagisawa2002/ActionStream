@@ -7,3 +7,5 @@ Run `python -m pytest tests/test_lifecycle_generation.py tests/test_lerobot_infe
 This branch starts from the compact v1.1 review candidate `e80afac6cc8a563783b6f2c71614c01e337bb728`. The default branch's v1.0 release, old large Draft PR and the compact candidate are different revisions. Review the revision linked by the project card. No upstream merge is claimed: LeRobot PR #4466 is closed and unmerged.
 
 H1-R2 remains a historical fixed-950-ms delivery experiment on RTX 5090: 10/15 to 13/15 successes, 11.43x paired request-supply ratio, and 159 to 1,261 inference calls (7.93x). The success interval crosses zero and one task family regresses. H2 remains NO-GO. These tests do not revalidate those GPU runs or establish general inference speedup.
+
+Fresh CI exposed an install failure before tests: the LeRobot archive URL pointed to a private fork and returned 404. The dependency and lock now use the same commit in the public upstream. The downloaded archive SHA-256 remains exactly `941e0f643d6d201a42b80221ba660b459f8a269e81dcc59e77c42f9c23cce923`; source bytes and dependency versions are unchanged. The fork visibility is unchanged.

@@ -10,7 +10,7 @@ readme = "README.md"
 license = "Apache-2.0"
 requires-python = ">=3.12,<3.13"
 dependencies = [
-  "lerobot[xvla,libero,evaluation,async] @ https://github.com/Yanagisawa2002/lerobot/archive/73e1584473028a2d53ecfc856f5290db84507f90.tar.gz",
+  "lerobot[xvla,libero,evaluation,async] @ https://github.com/huggingface/lerobot/archive/73e1584473028a2d53ecfc856f5290db84507f90.tar.gz",
   "torch>=2.7,<2.12.0",
   "torchvision>=0.22,<0.27.0",
 ]
