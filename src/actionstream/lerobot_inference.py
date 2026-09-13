@@ -628,7 +628,7 @@ class ActionStreamInferenceEngine(InferenceEngine):
                         timeout_s=self._config.inference_timeout_s,
                     )
                     latency_s = time.perf_counter() - started
-                    self._record_latency(latency_s)
+                    self._record_latency(latency_s, epoch=envelope.epoch)
                     actions = self._validate_chunk(chunk)
                 except InferenceCancelled:
                     with self._condition:
@@ -645,12 +645,14 @@ class ActionStreamInferenceEngine(InferenceEngine):
                     )
                     if reset_or_stop:
                         continue
-                    self._record_transient_failure(error=InferenceCancelled())
+                    self._record_transient_failure(
+                        epoch=envelope.epoch, error=InferenceCancelled()
+                    )
                     self._retry_failed_observation(envelope)
                     continue
                 except InferenceDeadlineExceeded as exc:
                     latency_s = time.perf_counter() - started
-                    self._record_latency(latency_s)
+                    self._record_latency(latency_s, epoch=envelope.epoch)
                     self._emit(
                         "inference_timeout",
                         epoch=envelope.epoch,
@@ -658,23 +660,28 @@ class ActionStreamInferenceEngine(InferenceEngine):
                         latency_ms=latency_s * 1000.0,
                         deadline_enforced=self._transport.deadline_enforced,
                     )
-                    self._record_transient_failure(timeout=True, error=exc)
+                    self._record_transient_failure(
+                        epoch=envelope.epoch, timeout=True, error=exc
+                    )
                     self._retry_failed_observation(envelope)
                     continue
                 except Exception as exc:
                     latency_s = time.perf_counter() - started
-                    self._record_latency(latency_s)
+                    self._record_latency(latency_s, epoch=envelope.epoch)
                     self._emit(
                         "inference_error",
                         epoch=envelope.epoch,
                         source_step=envelope.step,
                         error_type=type(exc).__name__,
                     )
-                    self._record_transient_failure(error=exc)
+                    self._record_transient_failure(epoch=envelope.epoch, error=exc)
                     self._retry_failed_observation(envelope)
                     continue
 
                 with self._condition:
+                    if envelope.epoch != self._epoch or self._shutdown.is_set():
+                        self._metrics["chunks_rejected_reset"] += 1
+                        continue
                     self._metrics["inference_completed"] += 1
                     if not self._connected:
                         self._connected = True
@@ -683,9 +690,6 @@ class ActionStreamInferenceEngine(InferenceEngine):
                     else:
                         recovered = False
                     self._metrics["consecutive_failures"] = 0
-                    if envelope.epoch != self._epoch or self._shutdown.is_set():
-                        self._metrics["chunks_rejected_reset"] += 1
-                        continue
                     current_step = self._current_step
 
                 self._emit(
@@ -709,6 +713,7 @@ class ActionStreamInferenceEngine(InferenceEngine):
                 else:
                     self._merge_chunk(
                         actions,
+                        epoch=envelope.epoch,
                         source_step=envelope.step,
                         current_step=current_step,
                         task=task,
@@ -799,8 +804,6 @@ class ActionStreamInferenceEngine(InferenceEngine):
                             status = "rejected_out_of_order"
                             current_step = self._current_step
                         else:
-                            self._latest_delivered_source_step = pending.source_step
-                            self._metrics["responses_delivered"] += 1
                             status = "delivered"
                             current_step = self._current_step
                         break
@@ -811,11 +814,13 @@ class ActionStreamInferenceEngine(InferenceEngine):
 
                 delivered_at = time.monotonic()
                 if status == "delivered":
-                    self._merge_chunk(
+                    status = self._merge_chunk(
                         pending.actions,
+                        epoch=pending.epoch,
                         source_step=pending.source_step,
                         current_step=current_step,
                         task=pending.task,
+                        scheduled=True,
                     )
                 else:
                     self._emit(
@@ -932,53 +937,68 @@ class ActionStreamInferenceEngine(InferenceEngine):
         self,
         actions: torch.Tensor,
         *,
+        epoch: int,
         source_step: int,
         current_step: int,
         task: str,
-    ) -> None:
-        age_steps = max(0, current_step - source_step)
-        dropped = min(age_steps, len(actions))
-        rejected = False
-        with self._queue_lock:
-            fully_stale = dropped >= len(actions)
-            allow_fallback = (
-                fully_stale
-                and self._config.latest_only_fallback
-                and not self._queue
-                and (
-                    self._starved_pulls > 0
-                    or self._hold_steps_used >= self._config.bounded_hold_steps
-                )
-            )
-            if fully_stale and not allow_fallback:
-                self._metrics["chunks_rejected_stale"] += 1
-                self._metrics["stale_actions_discarded"] += dropped
-                event = "chunk_rejected_stale"
-                queue_depth = len(self._queue)
-                rejected = True
-
-            elif allow_fallback:
-                replacement = actions
-                self._metrics["fallback_activations"] += 1
-                self._metrics["fallback_chunks_accepted"] += 1
-                event = "fallback_activated"
-            else:
-                replacement = actions[dropped:]
-                self._metrics["stale_actions_discarded"] += dropped
-                event = "chunk_accepted"
-
-            if not rejected:
-                self._queue.clear()
-                self._queue.extend(
-                    _QueuedAction(
-                        tensor=action.clone(), source_step=source_step, task=task
+        scheduled: bool = False,
+    ) -> str:
+        # Reset takes condition -> queue. Commit the generation check, control
+        # step, queue and episode metrics under the same lock order.
+        with self._condition:
+            if epoch != self._epoch or self._shutdown.is_set():
+                self._metrics["chunks_rejected_reset"] += 1
+                return "rejected_reset"
+            if scheduled:
+                if source_step <= self._latest_delivered_source_step:
+                    self._metrics["responses_rejected_out_of_order"] += 1
+                    return "rejected_out_of_order"
+                self._latest_delivered_source_step = source_step
+                self._metrics["responses_delivered"] += 1
+            current_step = self._current_step
+            age_steps = max(0, current_step - source_step)
+            dropped = min(age_steps, len(actions))
+            rejected = False
+            with self._queue_lock:
+                fully_stale = dropped >= len(actions)
+                allow_fallback = (
+                    fully_stale
+                    and self._config.latest_only_fallback
+                    and not self._queue
+                    and (
+                        self._starved_pulls > 0
+                        or self._hold_steps_used >= self._config.bounded_hold_steps
                     )
-                    for action in replacement
                 )
-                self._hold_steps_used = 0
-                self._starved_pulls = 0
-                self._metrics["chunks_accepted"] += 1
-                queue_depth = len(self._queue)
+                if fully_stale and not allow_fallback:
+                    self._metrics["chunks_rejected_stale"] += 1
+                    self._metrics["stale_actions_discarded"] += dropped
+                    event = "chunk_rejected_stale"
+                    queue_depth = len(self._queue)
+                    rejected = True
+
+                elif allow_fallback:
+                    replacement = actions
+                    self._metrics["fallback_activations"] += 1
+                    self._metrics["fallback_chunks_accepted"] += 1
+                    event = "fallback_activated"
+                else:
+                    replacement = actions[dropped:]
+                    self._metrics["stale_actions_discarded"] += dropped
+                    event = "chunk_accepted"
+
+                if not rejected:
+                    self._queue.clear()
+                    self._queue.extend(
+                        _QueuedAction(
+                            tensor=action.clone(), source_step=source_step, task=task
+                        )
+                        for action in replacement
+                    )
+                    self._hold_steps_used = 0
+                    self._starved_pulls = 0
+                    self._metrics["chunks_accepted"] += 1
+                    queue_depth = len(self._queue)
         self._emit(
             event,
             age_steps=age_steps,
@@ -986,9 +1006,13 @@ class ActionStreamInferenceEngine(InferenceEngine):
             queue_depth=queue_depth,
         )
 
-    def _record_latency(self, latency_s: float) -> None:
+        return "delivered"
+
+    def _record_latency(self, latency_s: float, *, epoch: int) -> None:
         latency_ms = latency_s * 1000.0
         with self._condition:
+            if epoch != self._epoch or self._shutdown.is_set():
+                return
             self._metrics["latest_inference_latency_ms"] = latency_ms
             current_max = self._metrics["max_inference_latency_ms"]
             if current_max is None or latency_ms > float(current_max):
@@ -997,10 +1021,14 @@ class ActionStreamInferenceEngine(InferenceEngine):
     def _record_transient_failure(
         self,
         *,
+        epoch: int,
         timeout: bool = False,
         error: Exception | None = None,
     ) -> None:
         with self._condition:
+            if epoch != self._epoch or self._shutdown.is_set():
+                self._metrics["chunks_rejected_reset"] += 1
+                return
             if timeout:
                 self._metrics["inference_timeouts"] += 1
             else:
@@ -1023,22 +1051,24 @@ class ActionStreamInferenceEngine(InferenceEngine):
                 f"Inference exceeded {self._config.inference_timeout_s:.3f}s "
                 f"for {failures} consecutive requests"
             )
-            self._mark_fatal(cause)
+            self._mark_fatal(cause, epoch=epoch)
             return
         if self._config.retry_backoff_s:
             self._shutdown.wait(self._config.retry_backoff_s)
 
-    def _mark_fatal(self, exc: BaseException) -> None:
-        if self._fatal_error.is_set():
-            return
+    def _mark_fatal(self, exc: BaseException, *, epoch: int | None = None) -> None:
         formatted = "".join(
             traceback.format_exception(type(exc), exc, exc.__traceback__)
         )
-        self._failure_traceback = formatted
-        self._fatal_error.set()
-        if self._global_shutdown_event is not None:
-            self._global_shutdown_event.set()
         with self._condition:
+            if epoch is not None and (epoch != self._epoch or self._shutdown.is_set()):
+                return
+            if self._fatal_error.is_set():
+                return
+            self._failure_traceback = formatted
+            self._fatal_error.set()
+            if self._global_shutdown_event is not None:
+                self._global_shutdown_event.set()
             self._condition.notify_all()
         self._emit("engine_fatal", error_type=type(exc).__name__)
         logger.error("Fatal ActionStream inference error: %s", exc)

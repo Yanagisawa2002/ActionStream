@@ -1,5 +1,7 @@
 # ActionStream
 
+Current code and validation boundary: [2026-09-13 fixes and reproduction](docs/REVIEW_FIXES_20260913.md). Historical measurements below retain their original conditions.
+
 ActionStream is a LeRobot-compatible asynchronous inference backend for
 chunked robot policies under delayed delivery. It separates GPU inference from
 response delivery, rejects stale work, bounds queue depletion, and emits the

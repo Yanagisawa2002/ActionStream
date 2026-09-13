@@ -46,6 +46,7 @@ jobs:
       - name: Runtime, plugin, and real CLI subprocess tests
         run: |
           uv run pytest \
+            tests/test_lifecycle_generation.py \
             tests/test_lerobot_inference.py \
             tests/test_lerobot_plugin.py \
             tests/test_clean_install.py
