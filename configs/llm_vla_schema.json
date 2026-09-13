@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "TaskSpec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "request_id", "decision", "skill", "target", "destination", "canonical_instruction", "reason"],
+      "properties": {
+        "version": {"const": "1.0"},
+        "request_id": {"type": "string", "minLength": 1},
+        "decision": {"enum": ["accept", "reject", "unknown"]},
+        "skill": {"enum": ["pick_place", null]},
+        "target": {"enum": ["tomato_sauce", null]},
+        "destination": {"enum": ["basket", null]},
+        "canonical_instruction": {"enum": ["pick up the tomato sauce and place it in the basket", null]},
+        "reason": {"type": "string", "minLength": 1, "maxLength": 1000}
+      },
+      "if": {"properties": {"decision": {"const": "accept"}}},
+      "then": {"properties": {
+        "skill": {"const": "pick_place"}, "target": {"const": "tomato_sauce"},
+        "destination": {"const": "basket"},
+        "canonical_instruction": {"const": "pick up the tomato sauce and place it in the basket"}
+      }},
+      "else": {"properties": {
+        "skill": {"type": "null"}, "target": {"type": "null"},
+        "destination": {"type": "null"}, "canonical_instruction": {"type": "null"}
+      }}
+    },
+    "CheckDecision": {
+      "type": "object", "additionalProperties": false,
+      "required": ["observation_id", "status", "evidence"],
+      "properties": {
+        "observation_id": {"type": "string", "minLength": 1},
+        "status": {"enum": ["complete", "incomplete", "unknown"]},
+        "evidence": {"type": "string", "minLength": 1, "description": "Runtime also enforces 1 to 30 whitespace-delimited words."}
+      }
+    }
+  },
+  "oneOf": [{"$ref": "#/$defs/TaskSpec"}, {"$ref": "#/$defs/CheckDecision"}]
+}

@@ -36,9 +36,16 @@ jobs:
             src/actionstream/lerobot_inference.py \
             src/actionstream/telemetry.py \
             src/actionstream/transport_stress_fixture.py \
+            src/actionstream/native_baseline.py \
+            src/actionstream/llm_vla \
             tests/test_lerobot_inference.py \
+            tests/test_lerobot_lifecycle.py \
+            tests/test_lerobot_lifecycle_boundaries.py \
             tests/test_lerobot_plugin.py \
             tests/test_clean_install.py \
+            tests/test_native_baseline.py \
+            tests/test_llm_vla.py \
+            tests/test_grounded_language.py \
             scripts/release/audit_public_release.py \
             scripts/release/generate_v1_1_demo.py \
             scripts/engineering \
@@ -48,8 +55,13 @@ jobs:
           uv run pytest \
             tests/test_lifecycle_generation.py \
             tests/test_lerobot_inference.py \
+            tests/test_lerobot_lifecycle.py \
+            tests/test_lerobot_lifecycle_boundaries.py \
             tests/test_lerobot_plugin.py \
-            tests/test_clean_install.py
+            tests/test_clean_install.py \
+            tests/test_native_baseline.py \
+            tests/test_llm_vla.py \
+            tests/test_grounded_language.py
       - name: Strict release audit
         run: uv run python scripts/release/audit_public_release.py
 
@@ -79,5 +91,5 @@ jobs:
           PYTHONPATH: ${{ github.workspace }}/.external/lerobot/src:${{ github.workspace }}/src:${{ github.workspace }}/integrations/lerobot/src
         run: |
           uv run --no-sync python -c "from lerobot.utils.import_utils import register_third_party_plugins; register_third_party_plugins(); from lerobot.rollout.inference import InferenceEngineConfig; assert 'actionstream' in InferenceEngineConfig.get_known_choices()"
-          uv run --no-sync pytest tests/test_lerobot_inference.py tests/test_lerobot_plugin.py
+          uv run --no-sync pytest tests/test_lerobot_inference.py tests/test_lerobot_plugin.py tests/test_lerobot_lifecycle.py tests/test_lerobot_lifecycle_boundaries.py
           uv run --no-sync pytest .external/lerobot/tests/test_rollout.py .external/lerobot/tests/test_interactive_rollout.py

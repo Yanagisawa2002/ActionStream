@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "purpose": "development_only_native_synchronous_baseline",
+  "model_id": "lerobot/xvla-libero",
+  "model_revision": "12e8783e996944f5c97e490d37d4c145484ed70a",
+  "lerobot_commit": "73e1584473028a2d53ecfc856f5290db84507f90",
+  "required_packages": {
+    "lerobot": "0.6.2",
+    "hf-libero": "0.1.4",
+    "robosuite": "1.4.0",
+    "mujoco": "3.8.1",
+    "transformers": "5.5.4",
+    "torch": "2.11.0+cu128",
+    "torchvision": "0.26.0+cu128"
+  },
+  "checkpoint_sha256": {
+    "config.json": "db9ff1de61760910dcc5d355528346144d6a80687212c8600cf31207f0f5e010",
+    "model.safetensors": "2a0e29448111df56b9485cb1f964db799205794c49baeda48ef960589ce649ab",
+    "policy_preprocessor.json": "b416b9d27ff58eada06d0d01d92291aa09161ba7eff5b84279e50f4a647cd37d",
+    "policy_postprocessor.json": "d1d73a18f14aca0e9db7cdbb3eb536adadf4960947347cb1645c9a246ea0acb4"
+  },
+  "tokenizer_id": "facebook/bart-large",
+  "tokenizer_revision": "cb48c1365bd826bd521f650dc2e0940aee54720c",
+  "suite": "libero_object",
+  "task_id": 5,
+  "instruction": "pick up the tomato sauce and place it in the basket",
+  "control_mode": "absolute",
+  "control_frequency_hz": 20,
+  "max_control_steps": 300,
+  "settle_steps": 10,
+  "raw_action_shape": [
+    1,
+    30,
+    20
+  ],
+  "processed_action_shape": [
+    1,
+    30,
+    7
+  ],
+  "execute_steps_per_chunk": 30,
+  "smoke": [
+    {
+      "id": "smoke_state45",
+      "initial_state_index": 45,
+      "seed": 2026091345
+    }
+  ],
+  "development": [
+    {
+      "id": "development_state0",
+      "initial_state_index": 0,
+      "seed": 2026091300
+    },
+    {
+      "id": "development_state1",
+      "initial_state_index": 1,
+      "seed": 2026091301
+    },
+    {
+      "id": "development_state2",
+      "initial_state_index": 2,
+      "seed": 2026091302
+    }
+  ],
+  "libero_assets_revision": "0b3ea86be5fe169d0fd036ae63d1070ec09e90f6",
+  "tokenizer_sha256": {
+    "config.json": "1ef73a85a141b1c46315c3c0f72c4dc678842c5d198f939510e6543ac847b17b",
+    "merges.txt": "1ce1664773c50f3e0cc8842619a93edc4624525b728b188a9e0be33b7726adc5",
+    "tokenizer.json": "847bbeab6174d66a88898f729d52fa8d355fafe1bea101cf960dd404581df70e",
+    "tokenizer_config.json": "5e04eb606e3a1583530a42e36c2a6b6615c86f34fe77e44d9ddeb43ff940931f",
+    "vocab.json": "06b4d46c8e752d410213d9548eb27a54db70fda0319b6271fb8d59dead5e1cab"
+  },
+  "native_camera_shape": [
+    1,
+    360,
+    360,
+    3
+  ]
+}

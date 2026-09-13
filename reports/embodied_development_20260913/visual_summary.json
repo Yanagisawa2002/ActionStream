@@ -1,0 +1,40 @@
+{
+  "phase": "shadow",
+  "status": "FAIL",
+  "complete_run": true,
+  "evaluated": 20,
+  "expected": 20,
+  "explicit_failures": 20,
+  "labelled": 16,
+  "positive": 4,
+  "negative": 12,
+  "confusion_matrix": {
+    "positive": {
+      "complete": 0,
+      "incomplete": 0,
+      "unknown": 0,
+      "explicit_failure": 4
+    },
+    "negative": {
+      "complete": 0,
+      "incomplete": 0,
+      "unknown": 0,
+      "explicit_failure": 12
+    },
+    "unlabeled": {
+      "complete": 0,
+      "incomplete": 0,
+      "unknown": 0,
+      "explicit_failure": 4
+    }
+  },
+  "labelled_non_unknown_coverage": 0.0,
+  "all_non_unknown_coverage": 0.0,
+  "false_complete": 0,
+  "true_complete": 0,
+  "source_sha256": {
+    "receipt": "07a22e2ee5aca2e6ce0d420cecd9ef1d173534a1538ea84e2ebcce9eb3a961a6",
+    "answers": "bd524c86d7f22424e5f911b4dede8325ce6dbd660b7460103247881008e9cca8",
+    "config": "47eb6118c9bfe7357e7f1105b997b293da2eb312459e5cf45fc308277fa68393"
+  }
+}
