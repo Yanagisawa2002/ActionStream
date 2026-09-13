@@ -1,5 +1,7 @@
 # ActionStream
 
+Current code and validation boundary: [2026-09-13 integration and measured limits](docs/embodied-development-status.md). Historical measurements below retain their original conditions.
+
 ActionStream is a LeRobot-compatible asynchronous inference backend for
 chunked robot policies under delayed delivery. It separates GPU inference from
 response delivery, rejects stale work, bounds queue depletion, and emits the
@@ -20,15 +22,18 @@ missing real-robot evidence.
 - [Inference backend](src/actionstream/lerobot_inference.py)
 - [Cancellable process transport](src/actionstream/inference_transport.py)
 - [Episode ownership, locks, and action revision contract](docs/lifecycle_contract.md)
+- [Native VLA development baseline](docs/native-baseline-development.md)
+- [Experimental language and visual checks: quality gates failed](docs/embodied-development-status.md)
 - [LeRobot plugin](integrations/lerobot/)
 - [Backend and failure-path tests](tests/test_lerobot_inference.py)
 - [H1-R2 delivery-pipeline report](reports/actionstream_transport_h1_r2/report.md)
 - [H2 compute-budget report](reports/actionstream_transport_h2_budget_holdout/report.md)
 - [LeRobot upstream PR #4466](https://github.com/huggingface/lerobot/pull/4466)
 
-The v1.1 review branch intentionally excludes the earlier selector, Isaac,
-Arena, ROS, and raw experiment archives from its diff. Existing v1.0 history on
-`master` is unchanged.
+The compact v1.1 changes exclude the earlier selector, Isaac, Arena, ROS,
+and raw experiment archives. Historical v1.0 evidence is preserved. The new
+language and observation modules are experimental and remain behind failed
+quality gates; they are not a validated autonomous robot controller.
 
 ## Runtime contract
 

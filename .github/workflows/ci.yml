@@ -36,11 +36,16 @@ jobs:
             src/actionstream/lerobot_inference.py \
             src/actionstream/telemetry.py \
             src/actionstream/transport_stress_fixture.py \
+            src/actionstream/native_baseline.py \
+            src/actionstream/llm_vla \
             tests/test_lerobot_inference.py \
             tests/test_lerobot_lifecycle.py \
             tests/test_lerobot_lifecycle_boundaries.py \
             tests/test_lerobot_plugin.py \
             tests/test_clean_install.py \
+            tests/test_native_baseline.py \
+            tests/test_llm_vla.py \
+            tests/test_grounded_language.py \
             scripts/release/audit_public_release.py \
             scripts/release/generate_v1_1_demo.py \
             scripts/engineering \
@@ -48,11 +53,15 @@ jobs:
       - name: Runtime, plugin, and real CLI subprocess tests
         run: |
           uv run pytest \
+            tests/test_lifecycle_generation.py \
             tests/test_lerobot_inference.py \
             tests/test_lerobot_lifecycle.py \
             tests/test_lerobot_lifecycle_boundaries.py \
             tests/test_lerobot_plugin.py \
-            tests/test_clean_install.py
+            tests/test_clean_install.py \
+            tests/test_native_baseline.py \
+            tests/test_llm_vla.py \
+            tests/test_grounded_language.py
       - name: Strict release audit
         run: uv run python scripts/release/audit_public_release.py
 

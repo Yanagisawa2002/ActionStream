@@ -46,7 +46,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "lerobot", extras = ["xvla", "libero", "evaluation", "async"], url = "https://github.com/Yanagisawa2002/lerobot/archive/73e1584473028a2d53ecfc856f5290db84507f90.tar.gz" },
+    { name = "lerobot", extras = ["xvla", "libero", "evaluation", "async"], url = "https://github.com/huggingface/lerobot/archive/73e1584473028a2d53ecfc856f5290db84507f90.tar.gz" },
     { name = "torch", marker = "sys_platform != 'linux'", specifier = ">=2.7,<2.12.0" },
     { name = "torch", marker = "sys_platform == 'linux'", specifier = ">=2.7,<2.12.0", index = "https://download.pytorch.org/whl/cu128" },
     { name = "torchvision", marker = "sys_platform != 'linux'", specifier = ">=0.22,<0.27.0" },
@@ -907,7 +907,7 @@ wheels = [
 [[package]]
 name = "lerobot"
 version = "0.6.2"
-source = { url = "https://github.com/Yanagisawa2002/lerobot/archive/73e1584473028a2d53ecfc856f5290db84507f90.tar.gz" }
+source = { url = "https://github.com/huggingface/lerobot/archive/73e1584473028a2d53ecfc856f5290db84507f90.tar.gz" }
 dependencies = [
     { name = "cmake" },
     { name = "draccus" },
