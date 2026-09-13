@@ -26,18 +26,25 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ("store", "evidence", "package"):
         parser.add_argument("--" + name, type=Path, required=True)
-    parser.add_argument("--dispatch", choices=("003", "004"), default="003")
+    parser.add_argument("--dispatch", choices=("003", "004", "005"), default="003")
     parser.add_argument(
-        "--phase", choices=("language", "comparison", "shadow", "native"), required=True
+        "--phase",
+        choices=("language", "comparison", "shadow", "native", "coverage", "evidence"),
+        required=True,
     )
     args = parser.parse_args()
     store, evidence = args.store.resolve(), args.evidence.resolve()
     repair = args.dispatch == "004"
+    research = args.dispatch == "005"
+    if research != (args.phase in ("coverage", "evidence")):
+        raise ValueError("DISPATCH_005 allows only offline coverage/evidence phases")
     if args.phase == ("language" if repair else "comparison"):
         raise ValueError("This text phase belongs to another dispatch")
     owner = json.loads((store / "OWNER.json").read_text())
     if owner["scope"] != (
-        "DISPATCH_004 grounded language repair"
+        "DISPATCH_005 instruction and visual evidence"
+        if research
+        else "DISPATCH_004 grounded language repair"
         if repair
         else "DISPATCH_003 finite LLM VLA integration"
     ):
@@ -50,7 +57,7 @@ def main():
             raise ValueError("Host drive reserve would be violated")
     if (
         sum(p.stat().st_size for p in store.rglob("*") if p.is_file())
-        > (1 if repair else 8) * 1024**3
+        > (1 if repair or research else 8) * 1024**3
     ):
         raise ValueError("New-store storage budget exceeded")
     frozen = json.loads((evidence / "frozen_protocol.json").read_text())
@@ -70,6 +77,8 @@ def main():
             "shadow": [],
             "native": ["language", "shadow"],
         }
+    if research:
+        requirements = {"coverage": [], "evidence": []}
     for required in requirements[args.phase]:
         gate = json.loads((evidence / (required + "_score.json")).read_text())
         receipt_phase = "comparison" if repair and required == "language" else required
@@ -77,7 +86,7 @@ def main():
             evidence / receipt_phase / "run_receipt.json"
         ):
             raise ValueError("Prior real gate did not pass with intact evidence")
-    model_store = store.parent / "dispatch003-llm-vla" if repair else store
+    model_store = store.parent / "dispatch003-llm-vla" if repair or research else store
     asset = json.loads((model_store / "asset_receipt.json").read_text())
     model = model_store / "assets/qwen3-vl-8964489"
     for row in asset["files"]:
@@ -86,23 +95,24 @@ def main():
     ledger_path = store / ("runs/gpu_budget_dispatch" + args.dispatch + ".json")
     lock = ledger_path.with_suffix(".lock").open("a")
     fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    limit = 1800 if research else 1200
     ledger = (
         json.loads(ledger_path.read_text())
         if ledger_path.exists()
         else dict(
             owner=owner,
-            limit_s=1200,
+            limit_s=limit,
             runs=[],
             measurement="Sum of child wall seconds including imports/load/inference/native/cleanup/failures",
         )
     )
-    if ledger["owner"] != owner or ledger["limit_s"] != 1200:
+    if ledger["owner"] != owner or ledger["limit_s"] != limit:
         raise ValueError("Budget ownership mismatch")
     if any(
         r["status"] == "RUNNING" or r["phase"] == args.phase for r in ledger["runs"]
     ):
         raise ValueError("No overlapping, unfinished or repeated phase is allowed")
-    allowance = 1200 - sum(r["charged_wall_s"] for r in ledger["runs"])
+    allowance = limit - sum(r["charged_wall_s"] for r in ledger["runs"])
     if allowance < 10:
         raise ValueError("GPU child budget exhausted")
     inventory = gpu_inventory()
@@ -117,6 +127,8 @@ def main():
             "shadow": "gate_runner",
             "native": "grounded_native",
         }[args.phase]
+    if research:
+        module = "research_runner"
     command = [
         str(store.parent / ".venv/bin/python"),
         "-m",

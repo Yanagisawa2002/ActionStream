@@ -46,6 +46,7 @@ jobs:
             tests/test_native_baseline.py \
             tests/test_llm_vla.py \
             tests/test_grounded_language.py \
+            tests/test_instruction_visual_evidence.py \
             scripts/release/audit_public_release.py \
             scripts/release/generate_v1_1_demo.py \
             scripts/engineering \
@@ -61,7 +62,8 @@ jobs:
             tests/test_clean_install.py \
             tests/test_native_baseline.py \
             tests/test_llm_vla.py \
-            tests/test_grounded_language.py
+            tests/test_grounded_language.py \
+            tests/test_instruction_visual_evidence.py
       - name: Strict release audit
         run: uv run python scripts/release/audit_public_release.py
 
