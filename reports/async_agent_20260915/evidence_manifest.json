@@ -1,0 +1,14 @@
+{
+  "status": "PACKAGED",
+  "full": {
+    "name": "async-acceptance-v2-full.tar.gz",
+    "bytes": 1079427385,
+    "sha256": "fe2a65c97c810645a29f014e73824be3b54ba39985e0a019ab27bfc5eb08f230"
+  },
+  "compact": {
+    "name": "async-acceptance-v2-records.tar.gz",
+    "bytes": 6145296,
+    "sha256": "ffba050b90aeb59a26bbe2c45eb701c1b0e1e4d8c146bb546c090e58a273edef"
+  },
+  "files": 470
+}

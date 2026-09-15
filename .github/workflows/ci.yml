@@ -94,6 +94,8 @@ jobs:
         run: uv run python reports/finite_agent_20260915/verify_evidence.py
       - name: Replay delivery receipts and original blob identities
         run: uv run python reports/agent_delivery_20260915/verify_evidence.py
+      - name: Replay frozen async acceptance including the timing NO-GO
+        run: uv run python reports/async_agent_20260915/verify_evidence.py
 
   upstream-lerobot-contract:
     runs-on: ubuntu-latest

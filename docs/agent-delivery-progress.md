@@ -32,6 +32,23 @@ retained separately from the historical records. The 623,243,676-byte delivery
 archive has SHA-256
 `f3912c2129d18527dbf9c66ce4255154e0da30589395f1cdee2b6343ada21be1`.
 
-Asynchronous timing and physical recovery implementation has passed automated
-checks; native acceptance has not yet run. It will use the separate frozen
-protocol and new seeds after delivery backup verification.
+The full archive was downloaded to independent storage: all 282 file hashes and
+all 21 original external identities passed. Hash-pinned receipts and the optional
+full-bundle verifier are in [the delivery report](../reports/agent_delivery_20260915/README.md).
+
+## Frozen native acceptance
+
+Runtime source `4570e7caa9fc2e2fcce6094ee40917833f31393c` was frozen before
+twenty new seeds. The normal group safely completed 10/10 tasks, but exceeded
+the 50 ms work budget on 102/2,187 controls (4.66%). Every episode exceeded the
+1% miss-fraction limit, so **asynchronous timing is NO-GO**.
+
+The recovery group proved first-attempt physical failure in 10/10 scenes and
+recovered in 9/10, passing its at-least-8/10 threshold. The remaining case
+exhausted its bounded two attempts without claiming completion. Neither group
+had premature stops, missed completion events or journal integrity errors.
+This recovery result is limited to the declared simulated gripper fault.
+
+Full results, independent state restoration and raw evidence are described in
+[the acceptance report](../reports/async_agent_20260915/README.md). Overall
+acceptance remains **NO-GO** because the timing requirement is not met.

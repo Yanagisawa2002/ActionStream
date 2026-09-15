@@ -1,7 +1,8 @@
 # Asynchronous timing and bounded physical recovery
 
-Implementation is under validation. Historical synchronous success rates do not
-validate this controller. The new protocol is
+Native acceptance found **NO-GO for asynchronous timing** and **9/10 successful
+recoveries from the declared simulated gripper fault**. See the
+[measured report](../reports/async_agent_20260915/README.md). The frozen protocol is
 [`async_agent_acceptance_v1.json`](../configs/async_agent_acceptance_v1.json).
 
 The installed `actionstream-agent` accepts `--execution-mode async` or
@@ -74,3 +75,7 @@ python scripts/engineering/evaluate_async_agent.py recovery \
 Use the same isolated EGL/offline environment as the delivery runbook. Each
 phase is single use. Keep the entire output directory, including every NPZ,
 and verify its file hashes after copying to a second storage location.
+
+The listed seeds are now consumed. Rerunning them is a reproduction attempt,
+not new heldout acceptance. Future timing improvements need a separately frozen
+protocol and new acceptance cases; the recorded first results remain unchanged.
