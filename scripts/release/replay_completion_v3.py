@@ -25,6 +25,9 @@ def main():
     with tempfile.TemporaryDirectory(prefix="actionstream-frozen-v3-") as directory:
         target = Path(directory).resolve()
         shutil.copytree(ROOT / REPORT, target / REPORT)
+        for dependency in ("completion_development_20260915", "completion_v2_20260915"):
+            source = Path("reports") / dependency
+            shutil.copytree(ROOT / source, target / source)
         protocol = "configs/completion_acceptance_v3.json"
         (target / "configs").mkdir()
         shutil.copyfile(ROOT / protocol, target / protocol)
