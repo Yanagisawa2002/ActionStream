@@ -1,0 +1,131 @@
+{
+  "schema_status": "VALID",
+  "raw_decision": "accept",
+  "decision": "accept",
+  "reason": "supported_with_textual_evidence",
+  "task": {
+    "original": {
+      "request_id": "completion_diag_1",
+      "text": "Please put the tomato sauce in the basket."
+    },
+    "original_sha256": "6fc46bddd033670696767c9246a58085c8e22029609ca39555d9c5f0c58eec9d",
+    "raw_model_output": "{\"decision\":\"accept\",\"target_quote\":\"tomato sauce\",\"destination_quote\":\"basket\"}",
+    "model_output_sha256": "52b17ad15fd12bb6fbd8852c53b43c68355346f1c7f9ef6ea634047244f3cf72",
+    "contract_sha256": "9228271b08d048b0f5426eaa4d0d932537b2126544cd70d97a6fcb47e37d9e09",
+    "target": {
+      "quote": "tomato sauce",
+      "start": 15,
+      "end": 27,
+      "entity": "tomato_sauce"
+    },
+    "destination": {
+      "quote": "basket",
+      "start": 35,
+      "end": 41,
+      "entity": "basket"
+    },
+    "version": "2.0"
+  },
+  "coverage": {
+    "complete": true,
+    "original_sha256": "6fc46bddd033670696767c9246a58085c8e22029609ca39555d9c5f0c58eec9d",
+    "grammar_sha256": "6854e0b9fa4d7e0f4c7792a6543cf044a1ef9d30fde51ac922f0cf23797a3873",
+    "production": 0,
+    "normalized": "please put the T in the B",
+    "obligations": [
+      {
+        "start": 0,
+        "end": 6,
+        "quote": "Please",
+        "kind": "grammar_or_unresolved",
+        "symbol": "please",
+        "disposition": "supported"
+      },
+      {
+        "start": 7,
+        "end": 10,
+        "quote": "put",
+        "kind": "action",
+        "symbol": "put",
+        "disposition": "supported"
+      },
+      {
+        "start": 11,
+        "end": 14,
+        "quote": "the",
+        "kind": "grammar_or_unresolved",
+        "symbol": "the",
+        "disposition": "supported"
+      },
+      {
+        "start": 15,
+        "end": 27,
+        "quote": "tomato sauce",
+        "kind": "target",
+        "symbol": "T",
+        "disposition": "supported"
+      },
+      {
+        "start": 28,
+        "end": 30,
+        "quote": "in",
+        "kind": "grammar_or_unresolved",
+        "symbol": "in",
+        "disposition": "supported"
+      },
+      {
+        "start": 31,
+        "end": 34,
+        "quote": "the",
+        "kind": "grammar_or_unresolved",
+        "symbol": "the",
+        "disposition": "supported"
+      },
+      {
+        "start": 35,
+        "end": 41,
+        "quote": "basket",
+        "kind": "destination",
+        "symbol": "B",
+        "disposition": "supported"
+      },
+      {
+        "start": 41,
+        "end": 42,
+        "quote": ".",
+        "kind": "grammar_or_unresolved",
+        "symbol": ".",
+        "disposition": "supported"
+      },
+      {
+        "kind": "role_binding",
+        "value": {
+          "moved_object": "tomato_sauce",
+          "stationary_destination": "basket"
+        },
+        "disposition": "supported"
+      },
+      {
+        "kind": "quantity",
+        "value": 1,
+        "disposition": "supported"
+      },
+      {
+        "kind": "polarity",
+        "value": "affirmative",
+        "disposition": "supported"
+      },
+      {
+        "kind": "execution",
+        "value": "one pick_place goal with optional ordered same-target substeps",
+        "disposition": "supported"
+      },
+      {
+        "kind": "coverage",
+        "value": "all source tokens consumed by finite production",
+        "disposition": "supported"
+      }
+    ],
+    "decision": "accept"
+  }
+}

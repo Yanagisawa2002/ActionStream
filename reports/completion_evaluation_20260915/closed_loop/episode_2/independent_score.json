@@ -1,0 +1,35 @@
+{
+  "status": "PASS",
+  "complete_log": true,
+  "false_complete": 0,
+  "claims": [
+    {
+      "control_step": 30,
+      "checker": "incomplete",
+      "native_is_success": false,
+      "identity_match": true
+    },
+    {
+      "control_step": 60,
+      "checker": "incomplete",
+      "native_is_success": false,
+      "identity_match": true
+    },
+    {
+      "control_step": 90,
+      "checker": "incomplete",
+      "native_is_success": false,
+      "identity_match": true
+    },
+    {
+      "control_step": 120,
+      "checker": "unknown",
+      "native_is_success": false,
+      "identity_match": true
+    }
+  ],
+  "physical_controls": 120,
+  "final_native_success": false,
+  "complete_while_held": 0,
+  "independently_confirmed_completion": false
+}

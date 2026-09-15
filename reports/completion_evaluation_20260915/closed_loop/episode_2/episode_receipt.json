@@ -1,0 +1,11 @@
+{
+  "status": "unknown_stop",
+  "checker_complete": false,
+  "control_steps": 120,
+  "recoveries": 0,
+  "checks": 4,
+  "inference_calls": 4,
+  "native_boundary": false,
+  "revision": 0,
+  "wall_s": 7.74993128888309
+}

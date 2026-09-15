@@ -4,6 +4,11 @@ This experiment trains a finite RGB-only verifier for **tomato sauce placed in
 the basket**. It is an offline candidate for the ActionStream completion module.
 Training does not enable runtime acceptance or establish a general VLA result.
 
+**Evaluation update:** the frozen epoch-4 candidate has now been tested on the
+10 heldout trajectories, controlled failure fixtures and three real simulator
+closed loops. It remains **NO-GO**. See the
+[full evaluation and label-definition diagnosis](reports/completion_evaluation_20260915/README.md).
+
 ## Why new labels are required
 
 The [official LIBERO exporter](https://github.com/Lifelong-Robot-Learning/LIBERO/blob/master/scripts/create_dataset.py)
