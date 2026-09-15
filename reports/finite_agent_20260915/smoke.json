@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "source": "previously consumed development validation_2026091808 controls 0/5/10",
+  "probabilities": [
+    [
+      0.9999995231628418,
+      1.0467396727165124e-08,
+      4.965282869306975e-07
+    ]
+  ],
+  "checkpoint_sha256": "28482b40e470d932dfe44312d2dbcb7fa732146a2b2f9c7ebf7683b47cdfa7f9",
+  "completed_unix": 1789467283.262309
+}

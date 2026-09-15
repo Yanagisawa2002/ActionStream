@@ -1,0 +1,25 @@
+{
+  "status": "GO",
+  "language": {
+    "cases": 40,
+    "supported": 20,
+    "supported_accepted": 20,
+    "unsupported": 20,
+    "unsupported_accepted": 0,
+    "model_or_schema_errors": 0,
+    "exact_request_coverage": true
+  },
+  "runtime": {
+    "requested_tasks": 20,
+    "executed_tasks": 20,
+    "language_blocked_tasks": 0,
+    "physically_completed": 20,
+    "safely_completed_tasks": 20,
+    "premature_stops": 0,
+    "missed_completed_events": 0,
+    "post_stop_failures": 0,
+    "integrity_failures": 0,
+    "maximum_confirmation_delay_s": 0.85,
+    "exact_execution_coverage": true
+  }
+}

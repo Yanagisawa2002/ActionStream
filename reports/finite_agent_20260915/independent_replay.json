@@ -1,0 +1,44 @@
+{
+  "audit": "PASS",
+  "status": "GO",
+  "language": {
+    "cases": 40,
+    "supported": 20,
+    "supported_accepted": 20,
+    "unsupported": 20,
+    "unsupported_accepted": 0,
+    "model_or_schema_errors": 0,
+    "exact_request_coverage": true
+  },
+  "runtime": {
+    "requested_tasks": 20,
+    "executed_tasks": 20,
+    "language_blocked_tasks": 0,
+    "physically_completed": 20,
+    "safely_completed_tasks": 20,
+    "premature_stops": 0,
+    "missed_completed_events": 0,
+    "post_stop_failures": 0,
+    "integrity_failures": 0,
+    "maximum_confirmation_delay_s": 0.85,
+    "exact_execution_coverage": true
+  },
+  "diagnostic": {
+    "truth_0_incomplete": 2689,
+    "truth_0_complete": 48,
+    "truth_1_complete": 186,
+    "truth_0_unknown": 18,
+    "truth_1_unknown": 18,
+    "truth_1_incomplete": 5
+  },
+  "raw_model_negative_accepts": 13,
+  "delay_median_s": 0.42500000000000004,
+  "delay_mean_s": 0.4725,
+  "delay_sample_std_s": 0.1697327620888666,
+  "audited_states": 3964,
+  "audited_rgb_clips": 2964,
+  "restored_contact_or_containment_changes": 27,
+  "restored_strict_label_changes": 0,
+  "physical_controls": 3944,
+  "limitation": "Independent record replay; single-task synchronous integration, not real-time or physical-robot acceptance"
+}

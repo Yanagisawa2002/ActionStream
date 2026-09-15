@@ -1,0 +1,24 @@
+{
+  "version": "3.0",
+  "productions": [
+    "(?:put|place|move|transfer|deposit|relocate|set|set down|get) (?:(?:the|a|one|a single|the single) )?T(?: from where it is)?(?: away)? (?:in|into|inside|to) (?:(?:the|a|one|a single|the single) )?B",
+    "(?:pick up|lift|take) (?:(?:the|a|one|a single|the single) )?T and (?:put|place|leave|set|set down|lower) it (?:down )?(?:in|into|inside|to) (?:(?:the|a|one|a single|the single) )?B",
+    "(?:pick up|lift|take) (?:(?:the|a|one|a single|the single) )?T carry it over and (?:put|place|set) it down (?:in|into|inside|to) (?:(?:the|a|one|a single|the single) )?B",
+    "(?:pick up|lift|take) (?:(?:the|a|one|a single|the single) )?T and carry it over and (?:put|place|set) it down (?:in|into|inside|to) (?:(?:the|a|one|a single|the single) )?B",
+    "carry (?:(?:the|a|one|a single|the single) )?T over to (?:(?:the|a|one|a single|the single) )?B and (?:place|put|leave) it inside",
+    "(?:in|into|inside|to) (?:(?:the|a|one|a single|the single) )?B (?:put|place|move|transfer|deposit|relocate|set|set down|get) (?:(?:the|a|one|a single|the single) )?T",
+    "(?:(?:the|a|one|a single|the single) )?B is where i want you to (?:put|place|move|transfer|deposit|relocate|set|set down|get) (?:(?:the|a|one|a single|the single) )?T",
+    "(?:i need|i would like) (?:(?:the|a|one|a single|the single) )?T (?:placed|put|moved|deposited) (?:in|into|inside|to) (?:(?:the|a|one|a single|the single) )?B",
+    "have (?:(?:the|a|one|a single|the single) )?T (?:moved|placed|put) (?:in|into|inside|to) (?:(?:the|a|one|a single|the single) )?B",
+    "finish with (?:(?:the|a|one|a single|the single) )?T resting (?:in|into|inside|to) (?:(?:the|a|one|a single|the single) )?B",
+    "(?:(?:the|a|one|a single|the single) )?T should go (?:in|into|inside|to) (?:(?:the|a|one|a single|the single) )?B",
+    "use (?:(?:the|a|one|a single|the single) )?B as the destination for (?:(?:the|a|one|a single|the single) )?T",
+    "before you finish make sure you have placed (?:(?:the|a|one|a single|the single) )?T (?:in|into|inside|to) (?:(?:the|a|one|a single|the single) )?B"
+  ],
+  "prefix": "(?:(?:please|could you|can you|would you|please could you|please can you|your task is to|all i need is for you to) )?",
+  "suffix": "(?: (?:please|for me|as your only task))?",
+  "source": "current location only; explicit counter is an unchecked constraint",
+  "quantities": "one only",
+  "residual": "unknown prevents authorization",
+  "ordering": "lift/carry/place of the same explicitly bound target only"
+}

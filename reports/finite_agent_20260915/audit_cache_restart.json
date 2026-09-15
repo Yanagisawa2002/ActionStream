@@ -1,0 +1,7 @@
+{
+  "reason": "Repeated npz RGB array access decompressed the entire trajectory per clip. Cache states and RGB once per trajectory; exact same checks and frozen inputs. Thread limiting alone did not resolve this I/O cost. No primary model or policy rerun.",
+  "initial_pid": 73358,
+  "initial_partial_records": 2,
+  "initial_directory": "state-rgb-audit-thread-limited-partial",
+  "restarted_unix": 1789467858.180435
+}
