@@ -12,7 +12,6 @@ import numpy as np
 
 from actionstream.completion_labels import StableTruth, simulator_facts
 from .contracts import CAPABILITY, Observation
-from .temporal_completion import camera_rgb
 
 
 def save(path, value):
@@ -68,7 +67,7 @@ class SimulationPort:
         facts["strict_complete"] = self.truth.update(self.control, facts)
         self.facts.append(facts)
         self.states.append(self.env.sim.get_state().flatten().copy())
-        self.rgb.append(camera_rgb(raw))
+        self.rgb.append(observation.completion_rgb)
         self.bindings.append(observation.binding())
         return observation
 
@@ -104,7 +103,9 @@ class SimulationPort:
 
     def infer(self, observation, instruction):
         result = self.backend.infer_action_chunk(
-            observation.native_input(), instruction
+            observation.native_input(),
+            instruction,
+            batch_postprocessing=getattr(self, "batch_postprocessing", False),
         )
         if result.raw_shape != (1, 30, 20) or result.raw_dtype != "torch.float32":
             raise ValueError("Pinned VLA output contract changed")

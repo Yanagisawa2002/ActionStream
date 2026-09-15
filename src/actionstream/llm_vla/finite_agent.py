@@ -61,14 +61,15 @@ class TemporalVerifier:
         self.last_control = control
         self.last_observation = observation.observation_id
         self.last_capture = observation.captured_monotonic
-        self.frames.append(
-            camera_rgb(
+        rgb = getattr(observation, "completion_rgb", None)
+        if rgb is None:
+            rgb = camera_rgb(
                 {
                     "agentview_image": observation.pixels["image"][0],
                     "robot0_eye_in_hand_image": observation.pixels["image2"][0],
                 }
             )
-        )
+        self.frames.append(rgb)
         probabilities, clip_hash = None, None
         decision = "unknown"
         started = time.monotonic()

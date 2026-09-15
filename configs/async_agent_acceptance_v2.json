@@ -1,0 +1,63 @@
+{
+  "version": 2,
+  "purpose": "Frozen 50 ms work-budget acceptance after consumed-seed profiling and isolated VLA execution",
+  "checkpoint_sha256": "28482b40e470d932dfe44312d2dbcb7fa732146a2b2f9c7ebf7683b47cdfa7f9",
+  "instruction": "Please put the tomato sauce in the basket.",
+  "normal_seeds": [
+    2026092300,
+    2026092301,
+    2026092302,
+    2026092303,
+    2026092304,
+    2026092305,
+    2026092306,
+    2026092307,
+    2026092308,
+    2026092309
+  ],
+  "recovery_seeds": [
+    2026092400,
+    2026092401,
+    2026092402,
+    2026092403,
+    2026092404,
+    2026092405,
+    2026092406,
+    2026092407,
+    2026092408,
+    2026092409
+  ],
+  "fault": {
+    "kind": "force_gripper_open",
+    "controls_exclusive": 300,
+    "reason": "Physical actuator-command clamp; no synthetic status labels or environment resets"
+  },
+  "config": {
+    "period_s": 0.05,
+    "observation_max_age_s": 0.15,
+    "action_source_max_age_s": 1.0,
+    "policy_controls": 300,
+    "settle_controls": 60,
+    "recovery_open_controls": 20,
+    "post_stop_controls": 40,
+    "max_starvation_controls": 20,
+    "request_interval_controls": 10,
+    "inference_timeout_s": 2.0,
+    "worker_warmup_timeout_s": 30.0
+  },
+  "gates": {
+    "normal_safe_completions_min": 8,
+    "recovery_eligible_min": 10,
+    "recovered_min": 8,
+    "premature_stops_max": 0,
+    "missed_events_max": 0,
+    "integrity_errors_max": 0,
+    "max_confirmation_delay_s": 2.0,
+    "normal_period_p95_s_max": 0.055,
+    "normal_period_max_s_max": 0.1,
+    "normal_deadline_miss_fraction_max": 0.01
+  },
+  "data_policy": "Freeze source and protocol before the 20 new seeds. Exclude all 142 historical layouts, including all original async acceptance cases. No seed replacement, performance retry, fitting, model/threshold change or post-hoc gate relaxation. All development cases use previously consumed seeds. Retain the original timing NO-GO.",
+  "timing_scope": "Steady physical dispatch includes verifier and environment work. Cold model warmup runs on each actual owner thread and is separately timed before the refreshed initial observation; all warmup actions are invalidated. Confirmation delay must pass in both simulated and wall seconds. Direct CUDA inference deadlines remain advisory; this is simulated hardware, not physical robot certification.",
+  "implementation_scope": "Spawned persistent-per-episode VLA owner; reset retains warmed process and RNG stream. Immutable RGB preprocessing reuse and exact official batched action conversion. Parent control owns all simulator writes. Eight Torch CPU threads and default Python switch interval; experimental thread tuning is not deployed."
+}

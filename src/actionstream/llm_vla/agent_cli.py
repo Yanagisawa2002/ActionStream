@@ -159,7 +159,7 @@ def main():
     if args.execution_mode != "sync":
         from functools import partial
         from .async_agent import AsyncAgentConfig, execute_async_request
-        from .async_native import AsyncSimulationPort
+        from .async_native import IsolatedAsyncSimulationPort
 
         executor = partial(
             execute_async_request,
@@ -167,7 +167,7 @@ def main():
                 max_attempts=2 if args.execution_mode == "recovery" else 1
             ),
         )
-        port_type = AsyncSimulationPort
+        port_type = IsolatedAsyncSimulationPort
 
     def make_port():
         nonlocal backend

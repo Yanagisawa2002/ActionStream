@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
+from functools import cached_property
 import hashlib
 import json
 import time
@@ -107,6 +108,23 @@ class Observation:
     frame_hashes: tuple[str, str]
     pixels: object
     robot_state: object
+
+    @cached_property
+    def completion_rgb(self):
+        """One immutable preprocessing result for this immutable observation.
+
+        The recorder and verifier share pixels, never simulator truth. A new
+        observation (including a new revision) owns a separate cache.
+        """
+        from .temporal_completion import camera_rgb
+
+        rgb = camera_rgb(
+            {
+                "agentview_image": self.pixels["image"][0],
+                "robot0_eye_in_hand_image": self.pixels["image2"][0],
+            }
+        )
+        return np.frombuffer(rgb.tobytes(), dtype=np.uint8).reshape(rgb.shape)
 
     @classmethod
     def project(
