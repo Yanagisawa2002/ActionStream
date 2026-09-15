@@ -26,13 +26,15 @@ actionstream-agent \
   --request 'Please put the tomato sauce in the basket.' \
   --seed 12345 \
   --assets /path/to/assets \
+  --libero-assets /path/to/libero-assets \
+  --libero-asset-manifest configs/libero_runtime_assets.json \
   --checkpoint /path/to/completion-adapt-epoch1.pt \
   --language-config configs/finite_agent_language.json \
   --asset-manifest configs/completion_runtime_assets.json \
   --output /path/to/new-single-use-output
 ```
 
-The package also supports `python -m actionstream.llm_vla.agent_cli` with the same arguments. The assets directory must contain the pinned X-VLA, Qwen and BART assets from the manifest, and BART must also be available in the configured Hugging Face cache. The existing LIBERO assets and dependencies are required. Full model weights and simulator assets are not redistributed in Git.
+The package also supports `python -m actionstream.llm_vla.agent_cli` with the same arguments. Follow the [delivery runbook](agent-delivery.md) to install the lock and materialize the pinned X-VLA, Qwen, BART and LIBERO assets. The CLI uses the explicit local BART directory and binds hf-libero's asset cache in this process; an ambient Hugging Face cache is unnecessary. Full model weights and simulator assets are not redistributed in Git. The historical acceptance above applies to its frozen source; changes to delivery require a separate fresh-install diagnostic receipt.
 
 The only accepted completion checkpoint SHA-256 is `28482b40e470d932dfe44312d2dbcb7fa732146a2b2f9c7ebf7683b47cdfa7f9`. Changing the path does not bypass this identity check.
 

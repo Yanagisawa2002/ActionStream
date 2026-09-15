@@ -110,6 +110,7 @@ class LeRobotBackend:
         model_id: str = MODEL_ID,
         model_revision: str = MODEL_REVISION,
         device: str = "cuda",
+        tokenizer_path: str | None = None,
     ) -> None:
         ensure_isolated_libero_config()
         if os.environ.get("MUJOCO_GL") != "egl" or os.environ.get("PYOPENGL_PLATFORM") != "egl":
@@ -156,14 +157,19 @@ class LeRobotBackend:
 
         self.envs = make_env(self.env_cfg, n_envs=1, use_async_envs=False)
         self.policy = make_policy(cfg=policy_cfg, env_cfg=self.env_cfg, rename_map={}).eval()
+        processor_overrides = {
+            "device_processor": {"device": str(self.policy.config.device)},
+            "rename_observations_processor": {"rename_map": {}},
+        }
+        if tokenizer_path is not None:
+            processor_overrides["tokenizer_processor"] = {
+                "tokenizer_name": str(Path(tokenizer_path).resolve())
+            }
         self.preprocessor, self.postprocessor = make_pre_post_processors(
             policy_cfg=policy_cfg,
             pretrained_path=model_id,
             pretrained_revision=model_revision,
-            preprocessor_overrides={
-                "device_processor": {"device": str(self.policy.config.device)},
-                "rename_observations_processor": {"rename_map": {}},
-            },
+            preprocessor_overrides=processor_overrides,
         )
         self.env_preprocessor, self.env_postprocessor = make_env_pre_post_processors(
             env_cfg=self.env_cfg,
