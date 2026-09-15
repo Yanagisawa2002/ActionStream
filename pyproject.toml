@@ -11,8 +11,9 @@ license = "Apache-2.0"
 requires-python = ">=3.12,<3.13"
 dependencies = [
   "lerobot[xvla,libero,evaluation,async] @ https://github.com/huggingface/lerobot/archive/73e1584473028a2d53ecfc856f5290db84507f90.tar.gz",
-  "torch>=2.7,<2.12.0",
-  "torchvision>=0.22,<0.27.0",
+  "torch==2.8.0",
+  "torchvision==0.23.0",
+  "Pillow==11.3.0",
 ]
 
 [dependency-groups]
@@ -31,6 +32,7 @@ actionstream-preflight = "actionstream.preflight:main"
 actionstream-benchmark = "actionstream.benchmark:main"
 actionstream-results = "actionstream.results:main"
 actionstream-agent = "actionstream.llm_vla.agent_cli:main"
+actionstream-delivery = "actionstream.delivery:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

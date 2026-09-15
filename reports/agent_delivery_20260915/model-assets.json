@@ -1,0 +1,160 @@
+{
+  "status": "PASS",
+  "expected": 19,
+  "verified": 19,
+  "files": [
+    {
+      "path": "xvla/config.json",
+      "expected_bytes": 9307,
+      "actual_bytes": 9307,
+      "expected_sha256": "db9ff1de61760910dcc5d355528346144d6a80687212c8600cf31207f0f5e010",
+      "actual_sha256": "db9ff1de61760910dcc5d355528346144d6a80687212c8600cf31207f0f5e010",
+      "passed": true
+    },
+    {
+      "path": "xvla/model.safetensors",
+      "expected_bytes": 3519073692,
+      "actual_bytes": 3519073692,
+      "expected_sha256": "2a0e29448111df56b9485cb1f964db799205794c49baeda48ef960589ce649ab",
+      "actual_sha256": "2a0e29448111df56b9485cb1f964db799205794c49baeda48ef960589ce649ab",
+      "passed": true
+    },
+    {
+      "path": "xvla/policy_postprocessor.json",
+      "expected_bytes": 575,
+      "actual_bytes": 575,
+      "expected_sha256": "d1d73a18f14aca0e9db7cdbb3eb536adadf4960947347cb1645c9a246ea0acb4",
+      "actual_sha256": "d1d73a18f14aca0e9db7cdbb3eb536adadf4960947347cb1645c9a246ea0acb4",
+      "passed": true
+    },
+    {
+      "path": "xvla/policy_preprocessor.json",
+      "expected_bytes": 1635,
+      "actual_bytes": 1635,
+      "expected_sha256": "b416b9d27ff58eada06d0d01d92291aa09161ba7eff5b84279e50f4a647cd37d",
+      "actual_sha256": "b416b9d27ff58eada06d0d01d92291aa09161ba7eff5b84279e50f4a647cd37d",
+      "passed": true
+    },
+    {
+      "path": "qwen/chat_template.json",
+      "expected_bytes": 5502,
+      "actual_bytes": 5502,
+      "expected_sha256": "6f8a6a55027e3da5160105556cda5dd69f6423f1c32645f6730d32de7773d0c4",
+      "actual_sha256": "6f8a6a55027e3da5160105556cda5dd69f6423f1c32645f6730d32de7773d0c4",
+      "passed": true
+    },
+    {
+      "path": "qwen/config.json",
+      "expected_bytes": 1505,
+      "actual_bytes": 1505,
+      "expected_sha256": "bec4b3d446efa05807365c9e1cec03ac590836879d02f3a6da879971154bdd3b",
+      "actual_sha256": "bec4b3d446efa05807365c9e1cec03ac590836879d02f3a6da879971154bdd3b",
+      "passed": true
+    },
+    {
+      "path": "qwen/generation_config.json",
+      "expected_bytes": 269,
+      "actual_bytes": 269,
+      "expected_sha256": "1e241830b48b397cb0900101421df5450baddc7adf01e5fc86b5615865f3bae4",
+      "actual_sha256": "1e241830b48b397cb0900101421df5450baddc7adf01e5fc86b5615865f3bae4",
+      "passed": true
+    },
+    {
+      "path": "qwen/merges.txt",
+      "expected_bytes": 1671839,
+      "actual_bytes": 1671839,
+      "expected_sha256": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3",
+      "actual_sha256": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3",
+      "passed": true
+    },
+    {
+      "path": "qwen/model.safetensors",
+      "expected_bytes": 4255140312,
+      "actual_bytes": 4255140312,
+      "expected_sha256": "7de1838c87a5349b016c26a1c3f7d2bc400a3d485f95ef39a7059ffd734977a0",
+      "actual_sha256": "7de1838c87a5349b016c26a1c3f7d2bc400a3d485f95ef39a7059ffd734977a0",
+      "passed": true
+    },
+    {
+      "path": "qwen/preprocessor_config.json",
+      "expected_bytes": 390,
+      "actual_bytes": 390,
+      "expected_sha256": "27225450ac9c6529872ee1924fcb0962ff5634834f817040f444118116f4e516",
+      "actual_sha256": "27225450ac9c6529872ee1924fcb0962ff5634834f817040f444118116f4e516",
+      "passed": true
+    },
+    {
+      "path": "qwen/tokenizer.json",
+      "expected_bytes": 7032403,
+      "actual_bytes": 7032403,
+      "expected_sha256": "a5d85b6dcc535e6b93115a9ef287e6132fdbf30270da6218194ba742261173c7",
+      "actual_sha256": "a5d85b6dcc535e6b93115a9ef287e6132fdbf30270da6218194ba742261173c7",
+      "passed": true
+    },
+    {
+      "path": "qwen/tokenizer_config.json",
+      "expected_bytes": 10868,
+      "actual_bytes": 10868,
+      "expected_sha256": "c2da771801886ad9ae98181793ffd3dfb7f1af30f6f7c6a4e15d7dbba52e2399",
+      "actual_sha256": "c2da771801886ad9ae98181793ffd3dfb7f1af30f6f7c6a4e15d7dbba52e2399",
+      "passed": true
+    },
+    {
+      "path": "qwen/video_preprocessor_config.json",
+      "expected_bytes": 385,
+      "actual_bytes": 385,
+      "expected_sha256": "7768af27c1fafa9cc9011c1dc20067e03f8915e03b63504550e11d5066986d13",
+      "actual_sha256": "7768af27c1fafa9cc9011c1dc20067e03f8915e03b63504550e11d5066986d13",
+      "passed": true
+    },
+    {
+      "path": "qwen/vocab.json",
+      "expected_bytes": 2776833,
+      "actual_bytes": 2776833,
+      "expected_sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+      "actual_sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+      "passed": true
+    },
+    {
+      "path": "bart/config.json",
+      "expected_bytes": 1628,
+      "actual_bytes": 1628,
+      "expected_sha256": "1ef73a85a141b1c46315c3c0f72c4dc678842c5d198f939510e6543ac847b17b",
+      "actual_sha256": "1ef73a85a141b1c46315c3c0f72c4dc678842c5d198f939510e6543ac847b17b",
+      "passed": true
+    },
+    {
+      "path": "bart/merges.txt",
+      "expected_bytes": 456318,
+      "actual_bytes": 456318,
+      "expected_sha256": "1ce1664773c50f3e0cc8842619a93edc4624525b728b188a9e0be33b7726adc5",
+      "actual_sha256": "1ce1664773c50f3e0cc8842619a93edc4624525b728b188a9e0be33b7726adc5",
+      "passed": true
+    },
+    {
+      "path": "bart/tokenizer.json",
+      "expected_bytes": 1355863,
+      "actual_bytes": 1355863,
+      "expected_sha256": "847bbeab6174d66a88898f729d52fa8d355fafe1bea101cf960dd404581df70e",
+      "actual_sha256": "847bbeab6174d66a88898f729d52fa8d355fafe1bea101cf960dd404581df70e",
+      "passed": true
+    },
+    {
+      "path": "bart/tokenizer_config.json",
+      "expected_bytes": 26,
+      "actual_bytes": 26,
+      "expected_sha256": "5e04eb606e3a1583530a42e36c2a6b6615c86f34fe77e44d9ddeb43ff940931f",
+      "actual_sha256": "5e04eb606e3a1583530a42e36c2a6b6615c86f34fe77e44d9ddeb43ff940931f",
+      "passed": true
+    },
+    {
+      "path": "bart/vocab.json",
+      "expected_bytes": 898822,
+      "actual_bytes": 898822,
+      "expected_sha256": "06b4d46c8e752d410213d9548eb27a54db70fda0319b6271fb8d59dead5e1cab",
+      "actual_sha256": "06b4d46c8e752d410213d9548eb27a54db70fda0319b6271fb8d59dead5e1cab",
+      "passed": true
+    }
+  ],
+  "manifest_sha256": "780181046a32a76d9bb82cd0e9e2cb52acf832ea68bd9547c1572bea9a542bd8"
+}

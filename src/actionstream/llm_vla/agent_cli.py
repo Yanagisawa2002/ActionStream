@@ -32,11 +32,15 @@ def parse_request(llm, config, original):
 
 
 def verify_assets(assets, manifest, checkpoint):
+    from actionstream.delivery import verify
+
     if digest(checkpoint) != CHECKPOINT_SHA256:
         raise ValueError("This Agent requires the frozen adapted checkpoint")
-    for row in manifest["files"]:
-        if digest(Path(assets) / row["destination"]) != row["sha256"]:
-            raise ValueError("Runtime asset mismatch: " + row["destination"])
+    receipt = verify(manifest, assets)
+    if receipt["status"] != "PASS":
+        raise ValueError(
+            "Runtime asset mismatch; run actionstream-delivery verify for details"
+        )
 
 
 def backend_factory(assets, seed):
@@ -50,10 +54,13 @@ def backend_factory(assets, seed):
         model_id=str(Path(assets) / "xvla"),
         model_revision="12e8783e996944f5c97e490d37d4c145484ed70a",
         device="cuda",
+        tokenizer_path=str(Path(assets) / "bart"),
     )
 
 
-def execute_parsed(parsed, config, seed, output, port_factory, predictor):
+def execute_parsed(
+    parsed, config, seed, output, port_factory, predictor, *, executor=execute_request
+):
     """Shared application boundary used by the CLI and heldout runner."""
     original = OriginalRequest(**parsed["original"])
     # Re-adjudicate from the immutable text/raw response, never trust stored accept flags.
@@ -86,7 +93,7 @@ def execute_parsed(parsed, config, seed, output, port_factory, predictor):
             )
             journal.flush()
 
-        result = execute_request(
+        result = executor(
             original, permit, config["contract"], port_factory, predictor, emit
         )
     save(output / "outcome.json", result)
@@ -97,19 +104,42 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--request", required=True)
     parser.add_argument("--seed", type=int, required=True)
+    parser.add_argument(
+        "--execution-mode", choices=("sync", "async", "recovery"), default="sync"
+    )
+    parser.add_argument("--libero-assets", type=Path, required=True)
+    parser.add_argument("--libero-asset-manifest", type=Path, required=True)
     for name in ("assets", "checkpoint", "language-config", "asset-manifest", "output"):
         parser.add_argument("--" + name, type=Path, required=True)
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=False)
+    from actionstream.delivery import environment, verify
+
+    runtime = environment(require_cuda=True)
+    save(args.output / "environment.json", runtime)
+    if runtime["status"] != "PASS":
+        raise RuntimeError(
+            "Runtime differs from the delivery lock; see environment.json"
+        )
     config = json.loads(args.language_config.read_text())
     verify_assets(
         args.assets, json.loads(args.asset_manifest.read_text()), args.checkpoint
     )
+    assets_receipt = verify(
+        json.loads(args.libero_asset_manifest.read_text()), args.libero_assets
+    )
+    save(args.output / "libero_assets.json", assets_receipt)
+    if assets_receipt["status"] != "PASS":
+        raise RuntimeError(
+            "LIBERO assets are incomplete or corrupt; see libero_assets.json"
+        )
     from actionstream.libero_config import ensure_isolated_libero_config
     import os
 
     os.environ["MUJOCO_GL"] = os.environ["PYOPENGL_PLATFORM"] = "egl"
-    ensure_isolated_libero_config(args.output / "libero-config")
+    ensure_isolated_libero_config(
+        args.output / "libero-config", assets_dir=args.libero_assets
+    )
     import torch
     from .qwen import LocalQwen
     from .temporal_completion import TemporalPredictor
@@ -124,22 +154,49 @@ def main():
     finally:
         llm.close()
     backend = None
+    executor = execute_request
+    port_type = SimulationPort
+    if args.execution_mode != "sync":
+        from functools import partial
+        from .async_agent import AsyncAgentConfig, execute_async_request
+        from .async_native import AsyncSimulationPort
+
+        executor = partial(
+            execute_async_request,
+            config=AsyncAgentConfig(
+                max_attempts=2 if args.execution_mode == "recovery" else 1
+            ),
+        )
+        port_type = AsyncSimulationPort
 
     def make_port():
         nonlocal backend
         backend = backend_factory(args.assets, args.seed)
-        return SimulationPort(backend, args.seed, args.output)
+        return port_type(backend, args.seed, args.output)
 
     try:
-        predictor = TemporalPredictor(args.checkpoint, CHECKPOINT_SHA256)
+        predictor = (
+            TemporalPredictor(args.checkpoint, CHECKPOINT_SHA256)
+            if parsed["verdict"]["decision"] == "accept"
+            else None
+        )
         result = execute_parsed(
-            parsed, config, args.seed, args.output, make_port, predictor
+            parsed,
+            config,
+            args.seed,
+            args.output,
+            make_port,
+            predictor,
+            executor=executor,
         )
         evaluated_success = False
         if (args.output / "private_truth.json").exists() and result[
             "status"
         ] != "ERROR":
-            from .finite_scoring import score_episode
+            if args.execution_mode == "sync":
+                from .finite_scoring import score_episode
+            else:
+                from .async_scoring import score_episode
 
             score = score_episode(args.output)
             save(args.output / "independent_score.json", score)
