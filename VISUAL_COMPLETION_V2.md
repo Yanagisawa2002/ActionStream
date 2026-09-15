@@ -63,3 +63,7 @@ The full run completed. Development labels corrected 822 premature containment-p
 On 20 fresh procedural VLA trajectories and paired interventions, v2 reduced false completion from 417/988 to 4/988 negatives. Stable-positive recall fell from 812/812 to 396/812 (48.77%). All 285 camera-blackout cases abstain. The four false completions precede the required stable interval by 0.05 to 0.25 seconds. **Acceptance is NO-GO**: zero false completions and at least 80% recall were required.
 
 See the [completed evidence report](reports/completion_v2_20260915/README.md) for raw predictions, manifests, private truth journals, independent replay and limitations. No retraining or threshold changes followed holdout inspection. These trajectories are now consumed; a further candidate requires another fresh holdout. This result does not grant runtime acceptance.
+
+## Subsequent development controls
+
+A separate [paired-controls and adaptation run](reports/completion_development_20260915/README.md) uses 12 new development trajectories, tests nuisance-factor sensitivity and decision timing, adds real VLA positives, and runs actual RGB-controlled stopping on four development validation seeds. It passes the development event gates. The original v2 checkpoint, protocol and holdout result above remain frozen; independent acceptance of the adapted candidate is pending.

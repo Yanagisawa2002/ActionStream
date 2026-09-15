@@ -1,0 +1,552 @@
+{
+  "records": [
+    {
+      "stage": "collection",
+      "episode": "train_2026091800",
+      "controls": 361,
+      "changed_controls": [],
+      "max_speed_delta": 0,
+      "image_state_sha256": "6db8d91dccb33d66fabec97943735e857b4d09d7606ea999d9b39ca079eec279"
+    },
+    {
+      "stage": "collection",
+      "episode": "train_2026091801",
+      "controls": 361,
+      "changed_controls": [],
+      "max_speed_delta": 0,
+      "image_state_sha256": "5f812c5938ba92fd86ac32378b18dc2cb0480855c0484bdbf59e3909d95c62bd"
+    },
+    {
+      "stage": "collection",
+      "episode": "train_2026091802",
+      "controls": 361,
+      "changed_controls": [
+        {
+          "control": 125,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.122397873024817,
+            "angular_speed": 0.34115668884357125,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.122397873024817,
+            "angular_speed": 0.34115668884357125,
+            "strict_complete": false
+          }
+        },
+        {
+          "control": 126,
+          "fields": [
+            "inside"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.474320730619352,
+            "angular_speed": 0.6919542263589357,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": true,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.474320730619352,
+            "angular_speed": 0.6919542263589357,
+            "strict_complete": false
+          }
+        }
+      ],
+      "max_speed_delta": 0,
+      "image_state_sha256": "53db2bf6aaea0c016c6ba2c797d4b7a26c41a9baaa33d7f1eb1f4f82e281bc32"
+    },
+    {
+      "stage": "collection",
+      "episode": "train_2026091803",
+      "controls": 361,
+      "changed_controls": [
+        {
+          "control": 55,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.01264568422669249,
+            "angular_speed": 0.28496589435835246,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.01264568422669249,
+            "angular_speed": 0.28496589435835246,
+            "strict_complete": false
+          }
+        },
+        {
+          "control": 56,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.009658180007832464,
+            "angular_speed": 0.22345051209007877,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.009658180007832464,
+            "angular_speed": 0.22345051209007877,
+            "strict_complete": false
+          }
+        }
+      ],
+      "max_speed_delta": 0,
+      "image_state_sha256": "2c3e0b1a70d049360ee0728c96c6f9ad6a19cb13a57ad9edf0d9f25785c973cc"
+    },
+    {
+      "stage": "collection",
+      "episode": "train_2026091804",
+      "controls": 361,
+      "changed_controls": [
+        {
+          "control": 52,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.010075540747597263,
+            "angular_speed": 0.25210387186475763,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.010075540747597263,
+            "angular_speed": 0.25210387186475763,
+            "strict_complete": false
+          }
+        },
+        {
+          "control": 53,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.004912730227222878,
+            "angular_speed": 0.12824509024569478,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.004912730227222878,
+            "angular_speed": 0.12824509024569478,
+            "strict_complete": false
+          }
+        },
+        {
+          "control": 54,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.0025231819129392847,
+            "angular_speed": 0.03801410496831192,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.0025231819129392847,
+            "angular_speed": 0.03801410496831192,
+            "strict_complete": false
+          }
+        }
+      ],
+      "max_speed_delta": 0,
+      "image_state_sha256": "d7ebc57ec5afb5cebfdd2b6975845402ba34ff6c3de5f271de5211d514945365"
+    },
+    {
+      "stage": "collection",
+      "episode": "train_2026091805",
+      "controls": 361,
+      "changed_controls": [
+        {
+          "control": 118,
+          "fields": [
+            "basket_contact"
+          ],
+          "recorded": {
+            "inside": true,
+            "finger_contact": true,
+            "bilateral_grasp": true,
+            "basket_contact": true,
+            "linear_speed": 0.05919348426973626,
+            "angular_speed": 0.04975134860090639,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": true,
+            "finger_contact": true,
+            "bilateral_grasp": true,
+            "basket_contact": false,
+            "linear_speed": 0.05919348426973626,
+            "angular_speed": 0.04975134860090639,
+            "strict_complete": false
+          }
+        }
+      ],
+      "max_speed_delta": 0,
+      "image_state_sha256": "49bfb0cfcc3370db4d0b059fb3c4abc6606c41ba744be0cd91c324d5988503df"
+    },
+    {
+      "stage": "collection",
+      "episode": "train_2026091806",
+      "controls": 361,
+      "changed_controls": [],
+      "max_speed_delta": 0,
+      "image_state_sha256": "020304ce4c59fc29557385ec90473ff92dfe67eef22505107748c676caaae9e5"
+    },
+    {
+      "stage": "collection",
+      "episode": "train_2026091807",
+      "controls": 361,
+      "changed_controls": [
+        {
+          "control": 125,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.13859003943321824,
+            "angular_speed": 0.7654923618172136,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.13859003943321824,
+            "angular_speed": 0.7654923618172136,
+            "strict_complete": false
+          }
+        }
+      ],
+      "max_speed_delta": 0,
+      "image_state_sha256": "9c41c3dd209783c1c4bab6581abaec324363c8dfd4fc3530e7ed9545f3be557d"
+    },
+    {
+      "stage": "collection",
+      "episode": "validation_2026091808",
+      "controls": 361,
+      "changed_controls": [
+        {
+          "control": 125,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.10922407885755887,
+            "angular_speed": 0.47533921882206187,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.10922407885755887,
+            "angular_speed": 0.47533921882206187,
+            "strict_complete": false
+          }
+        }
+      ],
+      "max_speed_delta": 0,
+      "image_state_sha256": "b9007c65b88180568544af2f63aaa094d95803a3dae20ae80008c6e24e127cb6"
+    },
+    {
+      "stage": "collection",
+      "episode": "validation_2026091809",
+      "controls": 361,
+      "changed_controls": [
+        {
+          "control": 49,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.008785992475771784,
+            "angular_speed": 0.15748985735289223,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.008785992475771784,
+            "angular_speed": 0.15748985735289223,
+            "strict_complete": false
+          }
+        }
+      ],
+      "max_speed_delta": 0,
+      "image_state_sha256": "8f6a7b2ec519a54299629873fea7f8d758541c0313adb199116b664ae95fcbc0"
+    },
+    {
+      "stage": "collection",
+      "episode": "validation_2026091810",
+      "controls": 361,
+      "changed_controls": [
+        {
+          "control": 127,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.01893579710954753,
+            "angular_speed": 0.9650884910924207,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.01893579710954753,
+            "angular_speed": 0.9650884910924207,
+            "strict_complete": false
+          }
+        },
+        {
+          "control": 130,
+          "fields": [
+            "basket_contact"
+          ],
+          "recorded": {
+            "inside": true,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 1.3097369029125607,
+            "angular_speed": 0.13317396926457145,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": true,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": true,
+            "linear_speed": 1.3097369029125607,
+            "angular_speed": 0.13317396926457145,
+            "strict_complete": false
+          }
+        }
+      ],
+      "max_speed_delta": 0,
+      "image_state_sha256": "a713e2abcfface050c8df85d0ba199c8a46b75fb35c85f96e91227e8b6f1b5f2"
+    },
+    {
+      "stage": "collection",
+      "episode": "validation_2026091811",
+      "controls": 361,
+      "changed_controls": [],
+      "max_speed_delta": 0,
+      "image_state_sha256": "6965076b29d216359f3e8845f85b63d4c157ceb750e01558b216afcf5903286a"
+    },
+    {
+      "stage": "live-development-validation",
+      "episode": "validation_2026091808",
+      "controls": 151,
+      "changed_controls": [
+        {
+          "control": 125,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.10922407885755887,
+            "angular_speed": 0.47533921882206187,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.10922407885755887,
+            "angular_speed": 0.47533921882206187,
+            "strict_complete": false
+          }
+        }
+      ],
+      "max_speed_delta": 0,
+      "image_state_sha256": "7b22f1be3672dbe075ec1b1cefba25124dd27e443359acfee008b693fd64cde8"
+    },
+    {
+      "stage": "live-development-validation",
+      "episode": "validation_2026091809",
+      "controls": 157,
+      "changed_controls": [
+        {
+          "control": 49,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.008785992475771784,
+            "angular_speed": 0.15748985735289223,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.008785992475771784,
+            "angular_speed": 0.15748985735289223,
+            "strict_complete": false
+          }
+        }
+      ],
+      "max_speed_delta": 0,
+      "image_state_sha256": "8045bf462d634ea7ed2e8f8f5278bc3d8615fc03467f2d6c7db01df563f9dfca"
+    },
+    {
+      "stage": "live-development-validation",
+      "episode": "validation_2026091810",
+      "controls": 157,
+      "changed_controls": [
+        {
+          "control": 127,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.01893579710954753,
+            "angular_speed": 0.9650884910924207,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.01893579710954753,
+            "angular_speed": 0.9650884910924207,
+            "strict_complete": false
+          }
+        },
+        {
+          "control": 130,
+          "fields": [
+            "basket_contact"
+          ],
+          "recorded": {
+            "inside": true,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 1.3097369029125607,
+            "angular_speed": 0.13317396926457145,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": true,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": true,
+            "linear_speed": 1.3097369029125607,
+            "angular_speed": 0.13317396926457145,
+            "strict_complete": false
+          }
+        }
+      ],
+      "max_speed_delta": 0,
+      "image_state_sha256": "8118d39cb740d49e02acc3729bff7c4659b884591ae790102189a01607c26d60"
+    },
+    {
+      "stage": "live-development-validation",
+      "episode": "validation_2026091811",
+      "controls": 155,
+      "changed_controls": [],
+      "max_speed_delta": 0,
+      "image_state_sha256": "71301544bd9e4a575f3395440f82f08f82e16bd6870dad2a0ae92ee46f952c1a"
+    }
+  ],
+  "source_sha256": "762c85064c9763cad8e8ab0eac90e82b470fce095a1ca80ff998360e85a411fc"
+}

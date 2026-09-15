@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "purpose": "Development-only paired nuisance and observation-cadence controls before adaptation",
+  "frozen_v2_sha256": "80dc22b4e646bb8647a5e211b407ac198a1c64ea5db9db71a309c69ccfcd54c7",
+  "train_seeds": [2026091800, 2026091801, 2026091802, 2026091803, 2026091804, 2026091805, 2026091806, 2026091807],
+  "validation_seeds": [2026091808, 2026091809, 2026091810, 2026091811],
+  "old_test_policy": "Original v1 test and consumed v2 holdout are excluded from fitting and selection; initial layouts only may be read to reject duplicates",
+  "collection": {"policy_controls": 300, "settle_controls": 60, "control_hz": 20, "render_size": 360, "dense_rgb_size": 192},
+  "truth": {"window_steps": 10, "linear_speed_max": 0.03, "angular_speed_max": 0.3},
+  "nuisance": {
+    "train_episodes": 4,
+    "arm_poses": ["reference", "initial", "late"],
+    "gripper": ["open", "closed"],
+    "external_camera_dx_m": [0.0, -0.05, 0.05],
+    "min_target_pixels_any_view": 64,
+    "comparison": "one factor at a time against reference arm, open gripper, zero camera shift",
+    "validity": "target and all nonrobot object poses fixed exactly; target support and no finger contact required; visibility counted by evaluator-only segmentation",
+    "limitation": "static rendered interventions; segmentation is a visibility proxy, not semantic recognition proof"
+  },
+  "temporal": {
+    "model_input_offsets": [10, 5, 0],
+    "modes": ["sparse_4hz", "dense_20hz", "dense_20hz_confirm_0.5s"],
+    "confirmation_controls": 10,
+    "missing_or_unknown": "reset candidate confirmation",
+    "limitation": "dense means evaluation every physical control with the same three-frame model, not a newly trained eleven-frame architecture"
+  },
+  "stop_probe": {"controls": 40, "action": "hold current arm pose and open gripper", "type": "simulator branch from first claimed-complete state"},
+  "development_gate": {"premature_stops_max": 0, "missed_completed_events_max": 0, "max_confirmation_delay_s": 2.0, "post_stop_failures_max": 0, "minimum_completed_validation_episodes": 3},
+  "adaptation": {"seed": 2026091800, "epochs": 20, "learning_rate": 0.00003, "batch_size": 24, "new_trajectory_stride": 5, "old_training_data": true, "nuisance_positive_data_if_effect_found": true, "validation_selection": "first require event gates, then minimize premature/missed/post-stop/delay violations; no independent test until development gate passes"},
+  "independent_acceptance": "not included in these development controls; requires another unused holdout after development passes"
+}

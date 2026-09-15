@@ -1,0 +1,85 @@
+{
+  "status": "FROZEN_DEVELOPMENT_CANDIDATE",
+  "checkpoint_sha256": "28482b40e470d932dfe44312d2dbcb7fa732146a2b2f9c7ebf7683b47cdfa7f9",
+  "chosen_epoch": 1,
+  "selected_validation": {
+    "epoch": 1,
+    "steps": 120,
+    "train_loss": 0.08229582715411884,
+    "validation": {
+      "episodes": 4,
+      "completed_episodes": 4,
+      "premature_stops": 0,
+      "missed_events": 0,
+      "post_stop_failures": 0,
+      "late_confirmations": 0,
+      "max_delay_s": 1.0,
+      "auxiliary": {
+        "samples": 492,
+        "physical_false_complete": 0,
+        "blackout_confident": 0
+      },
+      "passed": true
+    },
+    "events": [
+      {
+        "episode": "validation_2026091808",
+        "first_truth_control": 143,
+        "first_claim_control": 150,
+        "first_correct_control": 150,
+        "premature_stop": false,
+        "missed_completed_event": false,
+        "no_stop": false,
+        "confirmation_delay_s": 0.35,
+        "post_stop_stable": true
+      },
+      {
+        "episode": "validation_2026091809",
+        "first_truth_control": 136,
+        "first_claim_control": 156,
+        "first_correct_control": 156,
+        "premature_stop": false,
+        "missed_completed_event": false,
+        "no_stop": false,
+        "confirmation_delay_s": 1.0,
+        "post_stop_stable": true
+      },
+      {
+        "episode": "validation_2026091810",
+        "first_truth_control": 147,
+        "first_claim_control": 156,
+        "first_correct_control": 156,
+        "premature_stop": false,
+        "missed_completed_event": false,
+        "no_stop": false,
+        "confirmation_delay_s": 0.45,
+        "post_stop_stable": true
+      },
+      {
+        "episode": "validation_2026091811",
+        "first_truth_control": 145,
+        "first_claim_control": 154,
+        "first_correct_control": 154,
+        "premature_stop": false,
+        "missed_completed_event": false,
+        "no_stop": false,
+        "confirmation_delay_s": 0.45,
+        "post_stop_stable": true
+      }
+    ],
+    "elapsed_seconds": 14.90836787223816
+  },
+  "train_samples": 2877,
+  "train_counts": {
+    "0": 1724,
+    "1": 703,
+    "2": 450
+  },
+  "protocol_sha256": "64487d89bb972541ac599f90eece727f951ff4d351b651e8ba811b30c97e90cb",
+  "parent_protocol_sha256": "80673abab0d612e0f9e39a63f1e0cb553d64f3351b576b1f578b2e91b2c0cdd8",
+  "collection_sha256": "3c600fa2f2e32c911589b956a6419ad36296b84dcfc5e1300cb43e73a4d5a289",
+  "additional_data_sha256": "096d39c2935e2ec7073ef0e109805a9a286328e5ce3c889022e1673876138682",
+  "source_sha256": "3cf3737126b7ea90698d2fa0eb9e7a729cfe762a77c942c66d7372119c4198d8",
+  "frozen_unix": 1789458343.5098703,
+  "independent_test_seen": false
+}

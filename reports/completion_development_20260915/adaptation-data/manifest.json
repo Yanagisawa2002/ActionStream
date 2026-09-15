@@ -1,0 +1,15 @@
+{
+  "samples": 620,
+  "counts": {
+    "0": 224,
+    "1": 396,
+    "2": 0
+  },
+  "nuisance_effect_observed": true,
+  "nuisance_added": 52,
+  "source_sha256": "3cf3737126b7ea90698d2fa0eb9e7a729cfe762a77c942c66d7372119c4198d8",
+  "protocol_sha256": "64487d89bb972541ac599f90eece727f951ff4d351b651e8ba811b30c97e90cb",
+  "collection_sha256": "3c600fa2f2e32c911589b956a6419ad36296b84dcfc5e1300cb43e73a4d5a289",
+  "nuisance_summary_sha256": "ffc3d9c2b90f808a724155ddcf49cd568c37f7fb32ea730b71031e1d8c8bcd1e",
+  "shard_sha256": "f538c49c70c694b52ecbcee2f1ca95624bdc10fd9de8195e6036f8c7e6a7a517"
+}

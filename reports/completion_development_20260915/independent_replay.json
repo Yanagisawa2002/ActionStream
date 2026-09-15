@@ -1,0 +1,115 @@
+{
+  "status": "PASS",
+  "collection_controls": 4332,
+  "baseline_prediction_records": 4212,
+  "live_controls_and_post": 780,
+  "simulator_restored_states": 4952,
+  "restored_contact_or_containment_changes": 17,
+  "restored_strict_label_changes": 0,
+  "nuisance": {
+    "arm": {
+      "eligible_pairs": 4,
+      "complete_to_other": 1,
+      "deltas": [
+        0.0005853772163391113,
+        7.888730830740709e-06,
+        -0.11810803413391113,
+        4.4618029858932525e-13
+      ]
+    },
+    "gripper": {
+      "eligible_pairs": 4,
+      "complete_to_other": 0,
+      "deltas": [
+        -0.005565941333770752,
+        -4.665913792487042e-10,
+        -0.019205749034881592,
+        -2.467252708881722e-16
+      ]
+    },
+    "camera": {
+      "eligible_pairs": 8,
+      "complete_to_other": 0,
+      "deltas": [
+        -0.00010091066360473633,
+        -0.00018674135208129883,
+        -4.246322737877506e-11,
+        -2.2833479551565006e-10,
+        -0.00028121471405029297,
+        -0.0005199909210205078,
+        -4.221477213239464e-17,
+        -7.72120162259048e-17
+      ]
+    }
+  },
+  "temporal": {
+    "train": {
+      "sparse_4hz": {
+        "episodes": 8,
+        "premature_stops": 4,
+        "missed_completed_events": 1,
+        "post_stop_failures": 3,
+        "max_confirmation_delay_s": 0.3
+      },
+      "dense_20hz": {
+        "episodes": 8,
+        "premature_stops": 6,
+        "missed_completed_events": 1,
+        "post_stop_failures": 6,
+        "max_confirmation_delay_s": 0.2
+      },
+      "dense_20hz_confirm_0.5s": {
+        "episodes": 8,
+        "premature_stops": 0,
+        "missed_completed_events": 3,
+        "post_stop_failures": 0,
+        "max_confirmation_delay_s": 1.1
+      }
+    },
+    "validation": {
+      "sparse_4hz": {
+        "episodes": 4,
+        "premature_stops": 1,
+        "missed_completed_events": 0,
+        "post_stop_failures": 1,
+        "max_confirmation_delay_s": 0.95
+      },
+      "dense_20hz": {
+        "episodes": 4,
+        "premature_stops": 3,
+        "missed_completed_events": 0,
+        "post_stop_failures": 3,
+        "max_confirmation_delay_s": 0.0
+      },
+      "dense_20hz_confirm_0.5s": {
+        "episodes": 4,
+        "premature_stops": 0,
+        "missed_completed_events": 0,
+        "post_stop_failures": 0,
+        "max_confirmation_delay_s": 2.15
+      }
+    }
+  },
+  "chosen_epoch": 1,
+  "total_optimizer_steps": 2400,
+  "passing_epochs": 19,
+  "new_vla_positive_before_tail": 248,
+  "new_vla_positive_tail": 96,
+  "selected_clip_diagnostic": {
+    "truth_0_incomplete": 514,
+    "truth_0_unknown": 6,
+    "truth_0_complete": 11,
+    "truth_1_complete": 860,
+    "truth_1_incomplete": 8,
+    "truth_1_unknown": 5
+  },
+  "live": {
+    "episodes": 4,
+    "premature_stops": 0,
+    "missed_completed_events": 0,
+    "post_stop_failures": 0,
+    "max_confirmation_delay_s": 1.0
+  },
+  "independent_acceptance": false,
+  "limitation": "record replay; does not re-render or rerun model inference"
+}
