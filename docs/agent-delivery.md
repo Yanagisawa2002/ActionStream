@@ -71,11 +71,27 @@ uv run --no-sync actionstream-delivery verify \
 ```
 
 This requires all 21 original files and verifies their original hashes. The
-20 historical trajectories were not migrated or backed up, as confirmed by
-the owner on 2026-09-15. Only the frozen model was recovered. Therefore the
-historical full-blob gate remains **FAIL (1/21)**; the independently replayable
-compact logs retain their original status. A newly generated trajectory cannot
-replace a historical file or close that gate.
+20 historical trajectories were not migrated or backed up. On 2026-09-15,
+rerunning all twenty consumed seeds with their retained parser calls reproduced
+every original NPZ byte count and SHA-256. Together with the retained checkpoint,
+the original external manifest now passes **21/21**. This is byte-identical
+reconstruction; new execution logs and wall times remain separate from the
+historical logs. A rerun with different bytes cannot close this gate.
+
+The reconstruction command requires a fresh output directory and the verified
+offline/EGL environment above:
+
+```bash
+python scripts/engineering/rebuild_finite_trajectories.py \
+  --store "$STORE" --output "$STORE/historical-reconstruction" \
+  --source-commit "$COMMIT"
+```
+
+It retains its runner, source hashes, original manifest, new execution records
+and per-case comparisons. Only exact matches enter `restored-blobs`; the final
+`restored-verification.json` verifies that directory against the original
+manifest. The demonstrated run used runtime source commit
+`452a3351a217edcd87320adccd175de8f92831d6`.
 
 Current implementation/validation progress is tracked in
 [agent-delivery-progress.md](agent-delivery-progress.md). Asynchronous timing and

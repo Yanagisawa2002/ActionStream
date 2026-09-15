@@ -17,5 +17,21 @@ checkpoints, protocols and accepted/failed results remain frozen.
    machine, then freeze and evaluate actual simulated failure trajectories.
    Software interruption is not evidence of physical recovery.
 
-Current state: implementation in progress. No new model/simulator acceptance
-has run. No server is to be shut down or released by this work.
+## Reproducible delivery measured on 2026-09-15
+
+The clean Python 3.12 environment passed the runtime lock check on RTX 5090.
+All 19 model/tokenizer files and 585 LIBERO files matched their pinned manifests.
+The installed supported CLI exited 0 with independent physical completion,
+0.30 simulation seconds of confirmation delay, and stable post-stop continuation.
+The unsupported book request exited 2 with `backend_created=false` and no
+trajectory. Both runs left their separate offline caches empty.
+
+All twenty consumed historical seeds reproduced their original trajectory
+bytes, closing the original external-file gate at **21/21**. New run logs are
+retained separately from the historical records. The 623,243,676-byte delivery
+archive has SHA-256
+`f3912c2129d18527dbf9c66ce4255154e0da30589395f1cdee2b6343ada21be1`.
+
+Asynchronous timing and physical recovery implementation has passed automated
+checks; native acceptance has not yet run. It will use the separate frozen
+protocol and new seeds after delivery backup verification.

@@ -56,6 +56,6 @@
     "normal_period_max_s_max": 0.1,
     "normal_deadline_miss_fraction_max": 0.01
   },
-  "data_policy": "Freeze before new seeds or results. No replacement seeds, performance retries, fitting or threshold changes. Exclude all 122 retained historical layout hashes and current layouts. Original 20 state/RGB arrays are unavailable and are not reconstructed by this protocol.",
+  "data_policy": "Freeze before new seeds or results. No replacement seeds, performance retries, fitting or threshold changes. Exclude all 122 retained historical layout hashes and current layouts. The original 20 state/RGB arrays were reconstructed byte-for-byte in the separate delivery stage using consumed seeds; they provide no new asynchronous or recovery acceptance evidence.",
   "timing_scope": "Steady physical dispatch includes verifier and environment work. Cold model warmup is separately timed before the initial observation. Direct CUDA inference deadlines remain advisory; this is simulated hardware, not physical robot certification."
 }
