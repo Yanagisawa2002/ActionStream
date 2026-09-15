@@ -11,6 +11,7 @@ from .gate_runner import save, sha256
 from .grounding import OriginalRequest, adjudicate
 from .repair_scoring import summarize
 from .visual_evidence import iou, parse_evidence
+from .visual_replay import replay_visual_receipt
 
 
 def score_text(receipt, inputs, answers, config):
@@ -90,8 +91,11 @@ def score_text(receipt, inputs, answers, config):
     )
 
 
-def score_vision(receipt, annotations):
+def score_vision(receipt, annotations, public=None, input_root=None):
+    integrity = replay_visual_receipt(receipt, public, input_root)
     truth = {r["observation_id"]: r for r in annotations}
+    if len(truth) != len(annotations):
+        raise ValueError("Duplicate visual annotations")
     originals, calls = {}, {}
     for row in receipt["cases"]:
         key = row["identity"], row["variant"]
@@ -100,9 +104,7 @@ def score_vision(receipt, annotations):
         calls[key] = row
         if key[1] == "original":
             originals[key[0]] = row
-    verified = {r["identity"]: r for r in receipt.get("verified", [])}
-    if len(verified) != len(receipt.get("verified", [])):
-        raise ValueError("Duplicate verification result")
+    verified = integrity["verified"]
     rows = []
     for identity, annotation in truth.items():
         row = dict(
@@ -249,7 +251,8 @@ def score_vision(receipt, annotations):
         )
     group = groups["diagnostic_evaluation"]
     passed = (
-        receipt["status"] == "COMPLETED"
+        integrity["status"] == "PASS"
+        and receipt["status"] == "COMPLETED"
         and len(calls) == 84
         and len(verified) == 20
         and group["positives"] >= 3
@@ -260,6 +263,7 @@ def score_vision(receipt, annotations):
     )
     return dict(
         status="PASS" if passed else "FAIL",
+        integrity={k: v for k, v in integrity.items() if k != "verified"},
         groups=groups,
         causal=causal,
         rows=rows,
@@ -289,7 +293,12 @@ def main():
                 read("frozen_config.json"),
             )
             if phase == "coverage"
-            else score_vision(receipt, read("scorer_only/visual_annotations.json"))
+            else score_vision(
+                receipt,
+                read("scorer_only/visual_annotations.json"),
+                read("model_inputs/evidence.json"),
+                root / "model_inputs",
+            )
         )
         result["source_sha256"] = dict(
             receipt=sha256(root / phase / "run_receipt.json"),
