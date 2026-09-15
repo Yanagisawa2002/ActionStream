@@ -45,6 +45,21 @@ system site packages. Its additional packages include `hf-libero==0.1.4`,
 Headless rendering needs the EGL dispatcher (`libegl1` on Ubuntu) and driver
 libraries. Source `/etc/network_turbo` when provided by the server.
 
+Materialize `lerobot/libero-assets` (dataset revision
+`0b3ea86be5fe169d0fd036ae63d1070ec09e90f6`) into the isolated environment's
+`libero/libero/assets` directory before preparing data. Use an explicit successful
+`snapshot_download` with that revision: hf-libero's automatic download can fail
+after creating partial directories and later mistake them for complete assets.
+For this task, restrict `allow_patterns` to `scenes/*`, `textures/*`,
+`stable_scanned_objects/basket/*`, and the `bbq_sauce`, `butter`,
+`chocolate_pudding`, `milk`, `orange_juice`, and `tomato_sauce` directories under
+`stable_hope_objects`. The original demonstrations' `chiliocosm/assets` paths are
+rebased to this directory; robot paths are resolved by the upstream utility.
+The 5090 deployment uses explicit downloads with Xet disabled after the automatic
+download failed; a mirror can help, but reduce concurrency if it rate-limits.
+The demonstration file was obtained through `hf-mirror.com` and checked against
+its official full SHA-256.
+
 Copy this script and `src/actionstream/libero_config.py` into an isolated source
 directory, and obtain the pinned HDF5 file. Verify its full hash before use.
 

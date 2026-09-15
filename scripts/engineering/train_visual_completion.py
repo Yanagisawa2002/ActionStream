@@ -15,6 +15,7 @@ import os
 from pathlib import Path
 import random
 import time
+import xml.etree.ElementTree as ET
 
 import numpy as np
 
@@ -42,6 +43,23 @@ def episode_splits(names, seed):
         "validation": names[first:second],
         "test": names[second:],
     }
+
+
+def rebase_demo_assets(xml, assets_root):
+    """Resolve the old chiliocosm paths embedded in the official demonstrations."""
+    root = ET.fromstring(xml)
+    assets_root = Path(assets_root).resolve()
+    markers = ("/chiliocosm/assets/", "/libero/libero/assets/", "/libero/assets/")
+    for element in root.iter():
+        original = element.get("file", "")
+        for marker in markers:
+            if marker in original:
+                candidate = (assets_root / original.split(marker, 1)[1]).resolve()
+                if not candidate.is_relative_to(assets_root):
+                    raise ValueError("Demo asset path escapes the asset directory")
+                element.set("file", str(candidate))
+                break
+    return ET.tostring(root, encoding="unicode")
 
 
 def prepare(args):
@@ -87,6 +105,8 @@ def prepare(args):
             task="pick_up_the_tomato_sauce_and_place_it_in_the_basket",
             data_repo="yifengzhu-hf/LIBERO-datasets",
             data_revision="f13aa24a3da8c43c7225569f28c562979fa0e35a",
+            assets_repo="lerobot/libero-assets",
+            assets_revision="0b3ea86be5fe169d0fd036ae63d1070ec09e90f6",
             source_sha256=source_sha256,
             builder_sha256=sha256(__file__),
             label_source="env.check_success() at the exact rendered simulator state",
@@ -104,6 +124,7 @@ def prepare(args):
                     demo = root[name]
                     env.reset()
                     xml = postprocess_model_xml(str(demo.attrs["model_file"]), {})
+                    xml = rebase_demo_assets(xml, get_libero_path("assets"))
                     env.reset_from_xml_string(xml)
                     indices = sorted(
                         set(range(0, len(demo["states"]), args.stride))

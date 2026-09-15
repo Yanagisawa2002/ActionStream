@@ -2,10 +2,12 @@
 
 import numpy as np
 import pytest
+import xml.etree.ElementTree as ET
 
 from scripts.engineering.train_visual_completion import (
     completion_metrics,
     episode_splits,
+    rebase_demo_assets,
 )
 
 
@@ -34,3 +36,24 @@ def test_nonfinite_prediction_is_invalid():
 def test_duplicate_episode_is_rejected():
     with pytest.raises(ValueError, match="distinct"):
         episode_splits(["same"] * 50, 20260915)
+
+
+def test_legacy_demo_asset_rebase_preserves_camera_and_robot(tmp_path):
+    xml = '<mujoco><asset><texture file="/old/chiliocosm/assets/scenes/../textures/floor.png"/><mesh file="/active/robosuite/models/assets/robot.stl"/></asset><worldbody><camera name="agentview" pos="1 2 3"/></worldbody></mujoco>'
+    result = ET.fromstring(rebase_demo_assets(xml, tmp_path))
+    assert result.find("asset/texture").get("file") == str(
+        tmp_path / "textures/floor.png"
+    )
+    assert (
+        result.find("asset/mesh").get("file")
+        == "/active/robosuite/models/assets/robot.stl"
+    )
+    assert result.find("worldbody/camera").get("pos") == "1 2 3"
+
+
+def test_legacy_demo_asset_rebase_rejects_escape(tmp_path):
+    with pytest.raises(ValueError, match="escapes"):
+        rebase_demo_assets(
+            '<mujoco><mesh file="/old/chiliocosm/assets/../../other.stl"/></mujoco>',
+            tmp_path,
+        )
