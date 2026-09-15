@@ -30,6 +30,7 @@ Issues = "https://github.com/Yanagisawa2002/ActionStream/issues"
 actionstream-preflight = "actionstream.preflight:main"
 actionstream-benchmark = "actionstream.benchmark:main"
 actionstream-results = "actionstream.results:main"
+actionstream-agent = "actionstream.llm_vla.agent_cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
