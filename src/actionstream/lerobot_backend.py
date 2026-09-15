@@ -15,7 +15,10 @@ import numpy as np
 import torch
 
 from actionstream.libero_config import ensure_isolated_libero_config
-from actionstream.processors import postprocess_action_chunk_per_timestep
+from actionstream.processors import (
+    postprocess_action_chunk_per_timestep,
+    postprocess_xvla_libero_chunk_batched,
+)
 
 
 MODEL_ID = "lerobot/xvla-libero"
@@ -242,6 +245,8 @@ class LeRobotBackend:
         self,
         observation: dict[str, Any],
         task_instruction: str,
+        *,
+        batch_postprocessing: bool = False,
     ) -> InferenceOutput:
         batch = self.prepare_observation(observation, task_instruction)
         torch.cuda.synchronize()
@@ -251,7 +256,11 @@ class LeRobotBackend:
         torch.cuda.synchronize()
         model_latency = time.perf_counter() - started
 
-        final_chunk = postprocess_action_chunk_per_timestep(
+        postprocess = (
+            postprocess_xvla_libero_chunk_batched
+            if batch_postprocessing else postprocess_action_chunk_per_timestep
+        )
+        final_chunk = postprocess(
             raw_chunk,
             policy_postprocessor=self.postprocessor,
             env_postprocessor=self.env_postprocessor,

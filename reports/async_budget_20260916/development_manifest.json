@@ -1,0 +1,14 @@
+{
+  "status": "PACKAGED",
+  "files": 817,
+  "full": {
+    "name": "async-budget-development-full.tar.gz",
+    "bytes": 795545238,
+    "sha256": "bacb4684e1e1a1a21db03af44f4f54526c217e52325d991d3eac8d127712ae4b"
+  },
+  "compact": {
+    "name": "async-budget-development-records.tar.gz",
+    "bytes": 8816305,
+    "sha256": "ae9f44542fe7e722cb54dd741534f85c49b27baa5c7713bb2b630f08deb38a0e"
+  }
+}

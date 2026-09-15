@@ -1,9 +1,14 @@
 # Asynchronous timing and bounded physical recovery
 
-Native acceptance found **NO-GO for asynchronous timing** and **9/10 successful
+Original native acceptance found **NO-GO for asynchronous timing** and **9/10 successful
 recoveries from the declared simulated gripper fault**. See the
 [measured report](../reports/async_agent_20260915/README.md). The frozen protocol is
 [`async_agent_acceptance_v1.json`](../configs/async_agent_acceptance_v1.json).
+
+The separate [2026-09-16 frozen budget follow-up](../reports/async_budget_20260916/README.md)
+passes the unchanged gates on new layouts: 4/2,207 normal work misses and 10/10
+physical failures recovered. Its [runbook](async-budget.md) documents profiling,
+spawned inference ownership, additional startup/memory cost and protocol v2.
 
 The installed `actionstream-agent` accepts `--execution-mode async` or
 `--execution-mode recovery` with the same verified assets and language contract
@@ -11,8 +16,9 @@ as the [finite Agent](finite-agent.md). The default remains `sync`.
 
 ## Execution boundary
 
-- The production `ActionStreamInferenceEngine` owns VLA inference and processor
-  reset on its worker. The control thread owns the simulator and physical writes.
+- The production `ActionStreamInferenceEngine` owns inference/reset requests on
+  its worker. The current native port forwards these to one spawned VLA process;
+  the control thread owns the simulator and physical writes.
 - Controls are paced at 50 ms. Startup warmup has a separate timing record. Slow
   iterations are retained and the loop never issues a burst to catch up.
 - VLA warmup runs on its actual inference worker, with a thirty-second startup

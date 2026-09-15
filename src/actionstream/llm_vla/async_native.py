@@ -6,10 +6,13 @@ import numpy as np
 
 from actionstream.completion_labels import StableTruth
 from .finite_native import SimulationPort
+from .async_process import ProcessInferenceMixin
 from .temporal_completion import camera_rgb
 
 
 class AsyncSimulationPort(SimulationPort):
+    batch_postprocessing = True
+
     def reset_inference(self):
         import torch
 
@@ -57,3 +60,7 @@ class AsyncSimulationPort(SimulationPort):
         rotation = Rotation.from_matrix(matrix.copy()).as_rotvec()
         # Keep the native controller in absolute mode throughout all phases.
         return np.concatenate([position, rotation, [gripper]]).astype(np.float32)
+
+
+class IsolatedAsyncSimulationPort(ProcessInferenceMixin, AsyncSimulationPort):
+    """Native VLA process isolation with unchanged control and RGB semantics."""

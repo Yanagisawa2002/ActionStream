@@ -73,6 +73,31 @@ def test_oracle_and_mutable_inputs_cannot_cross_public_projection():
     assert set(json.loads(text[1]["content"][0]["text"])) == {"request_id", "utterance"}
 
 
+def test_completion_rgb_cache_preserves_pixels_and_cannot_cross_observations():
+    from actionstream.llm_vla.temporal_completion import camera_rgb
+
+    raw, _ = observation()
+    rng = np.random.default_rng(42)
+    for value in raw["pixels"].values():
+        value[:] = rng.integers(0, 256, value.shape, dtype=np.uint8)
+    public = Observation.project(raw, "opaque", 0, "random")
+    expected = camera_rgb(
+        {
+            "agentview_image": raw["pixels"]["image"][0],
+            "robot0_eye_in_hand_image": raw["pixels"]["image2"][0],
+        }
+    )
+    assert np.array_equal(public.completion_rgb, expected)
+    assert public.completion_rgb is public.completion_rgb
+    with pytest.raises(ValueError):
+        public.completion_rgb.setflags(write=True)
+    raw["pixels"]["image"].fill(0)
+    new = Observation.project(raw, "opaque", 1, "new")
+    assert np.array_equal(public.completion_rgb, expected)
+    assert not np.array_equal(new.completion_rgb, expected)
+    assert new.completion_rgb is not public.completion_rgb
+
+
 @pytest.mark.parametrize("decision", ["reject", "unknown"])
 def test_rejection_prevents_execution_construction(decision):
     with pytest.raises(ValueError):
