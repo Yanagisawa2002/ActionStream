@@ -252,6 +252,10 @@ def run(args):
             s.get("confirmation_delay_s") is None
             or s["confirmation_delay_s"] <= gates["max_confirmation_delay_s"]
         )
+        and (
+            s.get("confirmation_wall_delay_s") is None
+            or 0 <= s["confirmation_wall_delay_s"] <= gates["max_confirmation_delay_s"]
+        )
         for s in scores
     )
     passed = common and safe >= gates["normal_safe_completions_min"]

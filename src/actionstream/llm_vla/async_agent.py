@@ -32,6 +32,7 @@ class AsyncAgentConfig:
     max_starvation_controls: int = 20
     request_interval_controls: int = 10
     inference_timeout_s: float = 2.0
+    worker_warmup_timeout_s: float = 30.0
 
     def __post_init__(self):
         for key, value in asdict(self).items():
@@ -54,10 +55,26 @@ class ChunkWorker:
             ActionStreamInferenceEngine,
         )
 
+        self.warmup_done = threading.Event()
+        self.warmup_error = None
+        self.warmup_timeout = config.worker_warmup_timeout_s
+        self.emit = emit
+
         def infer(data, task):
             observation = data["public"]
-            actions, receipt = port.infer(observation, task)
-            validated = np.stack(validate_chunk(actions))
+            warming = data.get("warmup", False)
+            try:
+                actions, receipt = port.infer(observation, task)
+                validated = np.stack(validate_chunk(actions))
+            except BaseException as exc:
+                if warming:
+                    self.warmup_error = exc
+                raise
+            finally:
+                if warming:
+                    self.warmup_done.set()
+            if warming:
+                return torch.from_numpy(validated)
             emit(
                 "async_chunk",
                 source_control=data["control"],
@@ -82,12 +99,38 @@ class ChunkWorker:
                 latest_only_fallback=False,
                 minimum_request_interval_steps=config.request_interval_controls,
                 join_timeout_s=3.0,
+                telemetry_jsonl_path=str(port.output / "engine.jsonl")
+                if hasattr(port, "output")
+                else None,
             ),
         )
         self.publications = {}
         self.next_publication = 0
+        self.epoch = 0
         self.engine.start()
         self.engine.resume()
+
+    def warmup(self, observation):
+        # CUDA library initialization can be thread-specific. Warm the actual
+        # owner, then invalidate every warmup action before refreshing the scene.
+        started = time.monotonic()
+        self.engine.notify_observation(
+            dict(public=observation, control=-1, warmup=True)
+        )
+        if not self.warmup_done.wait(self.warmup_timeout):
+            raise TimeoutError("Inference worker warmup exceeded its startup budget")
+        if self.warmup_error is not None:
+            raise RuntimeError("Inference worker warmup failed") from self.warmup_error
+        self.invalidate()
+        offset = self.epoch
+        self.emit(
+            "worker_warmup_complete",
+            wall_s=time.monotonic() - started,
+            engine_epoch_offset=offset,
+            discarded_all_warmup_actions=True,
+        )
+        self.resume()
+        return offset
 
     def publish(self, control, observation):
         self.publications[self.next_publication] = (control, observation)
@@ -112,6 +155,7 @@ class ChunkWorker:
         before = self.engine.telemetry.to_dict()
         self.engine.pause()
         self.engine.reset()
+        self.epoch += 1
         self.publications.clear()
         self.next_publication = 0
         return before
@@ -123,6 +167,11 @@ class ChunkWorker:
         self.engine.stop()
         snapshot = self.engine.telemetry.to_dict()
         if snapshot["failed"]:
+            self.emit(
+                "worker_close_failed",
+                telemetry=snapshot,
+                failure_traceback=self.engine.failure_traceback,
+            )
             raise RuntimeError("Asynchronous inference worker failed to stop cleanly")
         return snapshot
 
@@ -181,6 +230,7 @@ def execute_async_request(
         emit("warmup", wall_s=time.monotonic() - warmup_started)
         # Warmup did not move the simulator; obtain a fresh timestamped image.
         worker = worker_factory(port, task.canonical_instruction, config, emit)
+        record["engine_epoch_offset"] = worker.warmup(observation)
         observation = port.refresh(request.request_id, revision)
         while True:
             if next_tick is not None:
@@ -213,6 +263,7 @@ def execute_async_request(
                     "confirmed_stop",
                     control=control,
                     revision=revision,
+                    confirmed_monotonic=invalidated,
                     invalidation_wall_s=time.monotonic() - invalidated,
                     telemetry=telemetry,
                 )

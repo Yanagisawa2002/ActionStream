@@ -29,7 +29,7 @@ class AsyncSimulationPort(SimulationPort):
 
     def warmup(self, observation, instruction, predictor):
         # Reported separately from paced dispatch. No physical action is executed.
-        self.infer(observation, instruction)
+        # VLA warmup is performed on the actual ActionStream owner thread.
         rgb = camera_rgb(
             {
                 "agentview_image": observation.pixels["image"][0],

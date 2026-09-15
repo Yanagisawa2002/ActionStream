@@ -159,6 +159,32 @@ def test_retry_is_bounded_and_clears_rgb_history_and_old_action_revisions():
             assert event["source"]["observation"]["revision"] == event["revision"]
 
 
+def test_thread_cold_start_finishes_before_dispatch_and_warmup_actions_are_discarded():
+    class ColdPort(Port):
+        def infer(self, observation, instruction):
+            cold = not self.infer_threads
+            self.delay = 0.12 if cold else 0
+            actions, _ = super().infer(observation, instruction)
+            actions[:, 0] = 0.9 if cold else 0.25
+            return actions, dict(actions=actions.tolist())
+
+    port = ColdPort()
+    outcome, events = run(port, complete_after=20, max_starvation_controls=3)
+    assert outcome["status"] == "complete", outcome
+    warm = next(
+        i for i, e in enumerate(events) if e["event"] == "worker_warmup_complete"
+    )
+    assert not any(e["event"] == "dispatch" for e in events[:warm])
+    assert outcome["engine_epoch_offset"] == 1
+    assert len(set(port.infer_threads)) == 1
+    assert all(action[0] != np.float32(0.9) for action in port.steps)
+    assert all(
+        e["source"]["epoch"] == 1
+        for e in events
+        if e["event"] == "dispatch" and e["source"]
+    )
+
+
 def test_all_incomplete_exhausts_exact_two_attempts_without_success():
     result, events = run(Port(), max_attempts=2)
     assert result["status"] == "unconfirmed_horizon"
@@ -171,6 +197,9 @@ class StaleWorker:
     def __init__(self, port, instruction, config, emit):
         self.source = None
         self.age = config.action_source_max_age_s
+
+    def warmup(self, observation):
+        return 0
 
     def publish(self, control, observation):
         if self.source is None:

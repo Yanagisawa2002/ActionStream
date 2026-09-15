@@ -14,6 +14,10 @@ as the [finite Agent](finite-agent.md). The default remains `sync`.
   reset on its worker. The control thread owns the simulator and physical writes.
 - Controls are paced at 50 ms. Startup warmup has a separate timing record. Slow
   iterations are retained and the loop never issues a burst to catch up.
+- VLA warmup runs on its actual inference worker, with a thirty-second startup
+  cap. The warmup queue is invalidated before refreshing the unmoved initial
+  observation. Its extra engine epoch is recorded separately from request
+  revisions. RGB warmup runs on the control owner.
 - Every dispatched policy action carries its source observation, epoch and
   request ordinal. Foreign revisions and sources older than one second are
   rejected. Queue starvation permits at most twenty pose holds before an
@@ -48,6 +52,11 @@ physical failure and later stable completion in the same scene. Cases without
 a proven failure do not count as recovered, and failures remain in the
 predeclared denominator. No seed replacement, fitting, or performance retry is
 allowed after acceptance begins.
+
+The two-second confirmation-delay gate applies to both simulated time and
+elapsed wall time. Initial development exposed a thread-specific CUDA cold
+start (5.19 seconds versus 75 milliseconds for the next inference); the failed
+development run is retained separately and no new acceptance seeds were used.
 
 ```bash
 python scripts/engineering/evaluate_async_agent.py freeze \

@@ -1,0 +1,20 @@
+{
+  "files": {
+    "backup-verification.json": "0355b53ec574f268e1b8c039da66959630e3914455848649b3ce664b2eb5a3ba",
+    "current-delivery.json": "6f3a467d3ddff2ba96f21519d414788fe745e2c4711e3a488eb1181a02a8e2d0",
+    "delivery-files.json": "0d6f47d3b5d38a1060566ace838c8a1cae9a97332a2bd9fc7e4c736d3b7e6276",
+    "environment.json": "8a2879c72e134907e542d778e8737dd39a3aa4be74ccf45a1c842ecdbe24b18b",
+    "libero-assets.json": "035fa564e6525ccfda1dca8d7054fcebae082c6b9517cc9ddd41afef7fbe5617",
+    "model-assets.json": "b7773f2d5ad9fa9f404ff41c4eb31f76c7bdcc8ac7272349708577167bb4fd2f",
+    "progress.json": "829a5e78fcf182238b80b99d0b512ff656ee7c31991662fa0a52ccea390d322b",
+    "provenance.json": "a240720519d5f29b00aa5ffad4d7be851048d69595c843e5233ccf6721cf118e",
+    "restored-verification.json": "a49921ebb73dd9c58d259a051e0ba92a21ec03a69efd02df61e66a6617ac8ba5"
+  },
+  "archive": {
+    "name": "current-delivery-v1.tar.gz",
+    "bytes": 623243676,
+    "sha256": "f3912c2129d18527dbf9c66ce4255154e0da30589395f1cdee2b6343ada21be1",
+    "github_release_id": 389087456,
+    "github_asset_id": 565649962
+  }
+}

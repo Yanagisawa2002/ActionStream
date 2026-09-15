@@ -42,7 +42,8 @@
     "post_stop_controls": 40,
     "max_starvation_controls": 20,
     "request_interval_controls": 10,
-    "inference_timeout_s": 2.0
+    "inference_timeout_s": 2.0,
+    "worker_warmup_timeout_s": 30.0
   },
   "gates": {
     "normal_safe_completions_min": 8,
@@ -57,5 +58,5 @@
     "normal_deadline_miss_fraction_max": 0.01
   },
   "data_policy": "Freeze before new seeds or results. No replacement seeds, performance retries, fitting or threshold changes. Exclude all 122 retained historical layout hashes and current layouts. The original 20 state/RGB arrays were reconstructed byte-for-byte in the separate delivery stage using consumed seeds; they provide no new asynchronous or recovery acceptance evidence.",
-  "timing_scope": "Steady physical dispatch includes verifier and environment work. Cold model warmup is separately timed before the initial observation. Direct CUDA inference deadlines remain advisory; this is simulated hardware, not physical robot certification."
+  "timing_scope": "Steady physical dispatch includes verifier and environment work. Cold model warmup runs on each actual owner thread and is separately timed before the refreshed initial observation; all warmup actions are invalidated. Confirmation delay must pass in both simulated and wall seconds. Direct CUDA inference deadlines remain advisory; this is simulated hardware, not physical robot certification."
 }

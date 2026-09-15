@@ -1,0 +1,29 @@
+{
+  "status": "PASS",
+  "checks": {
+    "runtime_lock": true,
+    "models": true,
+    "libero": true,
+    "supported_cli": true,
+    "supported_physics": true,
+    "blocked_cli": true,
+    "empty_offline_caches": true,
+    "original_blobs": true
+  },
+  "source_commit": "452a3351a217edcd87320adccd175de8f92831d6",
+  "completed_unix": 1789474644.845621,
+  "historical_blobs": 21,
+  "historical_method": "20 original trajectory arrays reconstructed byte-for-byte and checked against original hashes; original checkpoint retained",
+  "supported_score": {
+    "first_truth_control": 146,
+    "first_claim_control": 152,
+    "first_correct_control": 152,
+    "premature_stop": false,
+    "missed_completed_event": false,
+    "no_stop": false,
+    "confirmation_delay_s": 0.3,
+    "post_stop_stable": true,
+    "integrity_passed": true,
+    "integrity_errors": []
+  }
+}

@@ -121,6 +121,14 @@ def score_episode(directory, *, forced_open_until=0):
     }
     changed_commands = 0
     ages = []
+    warmups = [e for e in events if e["event"] == "worker_warmup_complete"]
+    epoch_offset = outcome.get("engine_epoch_offset", 0)
+    if (
+        epoch_offset != 1
+        or len(warmups) != 1
+        or not warmups[0]["discarded_all_warmup_actions"]
+    ):
+        errors.append("worker_warmup_boundary")
     for row, actual in zip(dispatches, actions):
         control = row["control"]
         requested = list(row["action"])
@@ -143,7 +151,7 @@ def score_episode(directory, *, forced_open_until=0):
             and control >= first_claim
             or binding["request_id"] != outcome["request_id"]
             or binding["revision"] != row["revision"]
-            or source["epoch"] != row["revision"]
+            or source["epoch"] != epoch_offset + row["revision"]
             or not 0 <= age <= config["action_source_max_age_s"]
             or chunk is None
             or chunk["observation"] != binding
@@ -213,6 +221,12 @@ def score_episode(directory, *, forced_open_until=0):
         and stable is True
     )
     retry_control = retries[0]["control"] if retries else None
+    stops = [e for e in events if e["event"] == "confirmed_stop"]
+    wall_delay = (
+        stops[0]["confirmed_monotonic"] - bindings[first_truth]["captured_monotonic"]
+        if first_claim is not None and first_truth is not None and not premature
+        else None
+    )
     attempt_end = config["policy_controls"] + config["settle_controls"]
     eligible = (
         forced_open_until > 0
@@ -232,6 +246,7 @@ def score_episode(directory, *, forced_open_until=0):
         confirmation_delay_s=(first_claim - first_truth) / 20
         if first_claim is not None and first_truth is not None and not premature
         else None,
+        confirmation_wall_delay_s=wall_delay,
         timing=dict(
             controls=len(work),
             deadline_misses=sum(v > config["period_s"] for v in work),
