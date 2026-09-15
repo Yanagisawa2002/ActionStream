@@ -10,3 +10,8 @@
 *.csv text eol=lf
 *.tex text eol=lf
 *.patch text eol=lf whitespace=-blank-at-eol
+
+# Preserve the exact pre-execution byte hashes of the frozen experiment inputs.
+configs/completion_evaluation_v1.json -text whitespace=cr-at-eol
+configs/completion_runtime_assets.json -text whitespace=cr-at-eol
+reports/completion_evaluation_20260915/**/protocol.json -text whitespace=cr-at-eol
