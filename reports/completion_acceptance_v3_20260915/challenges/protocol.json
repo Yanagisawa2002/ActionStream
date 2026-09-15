@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "purpose": "First independent acceptance of the frozen adapted RGB model plus continuous confirmation",
+  "checkpoint_sha256": "28482b40e470d932dfe44312d2dbcb7fa732146a2b2f9c7ebf7683b47cdfa7f9",
+  "baseline_sha256": "80dc22b4e646bb8647a5e211b407ac198a1c64ea5db9db71a309c69ccfcd54c7",
+  "policy_id": "lerobot/xvla-libero",
+  "policy_revision": "12e8783e996944f5c97e490d37d4c145484ed70a",
+  "task": {"suite": "libero_object", "task_id": 5},
+  "seeds": [2026091900, 2026091901, 2026091902, 2026091903, 2026091904, 2026091905, 2026091906, 2026091907, 2026091908, 2026091909, 2026091910, 2026091911, 2026091912, 2026091913, 2026091914, 2026091915, 2026091916, 2026091917, 2026091918, 2026091919],
+  "initial_states": "procedural; reject layouts matching any original demonstration, consumed v2 holdout, development controls, or another acceptance episode; duplicate is an execution failure, no seed substitution",
+  "collection": {"policy_controls": 300, "settle_controls": 60, "control_hz": 20, "render_size": 360},
+  "truth": {"window_steps": 10, "linear_speed_max": 0.03, "angular_speed_max": 0.3},
+  "rgb_offsets": [10, 5, 0],
+  "thresholds": {"complete": 0.95, "incomplete": 0.90},
+  "confirmation_controls": 10,
+  "stop_probe": {"controls": 40, "action": "hold current arm pose and open gripper"},
+  "closed_loop_gate": {"expected_episodes": 20, "minimum_physically_completed_episodes": 16, "premature_stops_max": 0, "missed_completed_episodes_max": 0, "max_confirmation_delay_s": 2.0, "post_stop_failures_max": 0, "missing_post_stop_probes_max": 0},
+  "metrics": "First-stop safety, confirmation delay from first strict completion, whole-episode completed-event miss, and all 40 post-stop controls stable. Later predictions cannot erase an early stop. Policy noncompletion is reported separately and at least 16/20 physically completed episodes are required. Raw clip recall and individual complete intervals on the full reference rollout are diagnostics.",
+  "paired_reference": "Collect full-horizon real VLA trajectories without verifier decisions; compare baseline v2 plus confirmation and adapted model plus confirmation on identical observations with executed simulator stop branches. Actual adapted live reruns must preserve initial layout and verify observations/actions match reference until stop; any divergence is reported, never silently discarded.",
+  "challenges": {
+    "sources": 4,
+    "selection": "first four seed-ordered reference trajectories with both a 21-control held interval and a 21-control strictly complete interval, selected using physical truth only",
+    "sequence_controls": 21,
+    "categories": ["held", "above", "wrong_object", "outside", "recent_drop", "external_hidden", "wrist_hidden", "both_hidden"],
+    "construction": "Held uses actual contiguous finger-contact RGB. Other sequences use 21 consecutive stable-source states. Above raises target 0.15 m, outside shifts x 0.30 m, wrong_object swaps tomato/BBQ positions, and recent_drop shifts target outside at sequence control 11. All physical interventions are restored/forwarded with verified false containment, not executed natural motion. Camera blackouts replace one/both RGB streams. Every model decision uses actual or state-rendered frames at offsets 10/5/0; confirmation spans the eleven evaluated controls 10..20.",
+    "gates": {"expected_sequences": 32, "confirmed_false_complete_max": 0, "blackout_confident_decisions_max": 0},
+    "limitation": "Controlled counterfactual sequences are a separate acceptance stratum; blackouts do not establish natural-occluder robustness. Short pre-drop positive intervals are not scored for event recall. These challenges do not alter the natural live trajectories."
+  },
+  "overall_gate": "GO only if the actual live closed-loop gate, identical-reference replay gate, and separate challenge gate all pass; any missing required evidence is INCOMPLETE; a measured gate violation is NO-GO",
+  "test_policy": "No fitting, threshold changes, checkpoint selection, seed substitution, or retries based on performance after the lock. Preserve original results; engineering failures must retain failure receipts and identify any resumed attempt.",
+  "scope": "Single finite LIBERO tomato-to-basket task in simulation. No new Qwen grounding test, physical-robot deadline guarantee, natural-occlusion guarantee, or other-task claim. Simulated 20 Hz; two-second post-stop horizon."
+}

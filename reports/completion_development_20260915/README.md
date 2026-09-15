@@ -115,3 +115,7 @@ Implementation CI passed at `be019d7`: [run 34942989266](https://github.com/Yana
 Freeze this checkpoint, thresholds and confirmation policy before collecting another unused holdout. Score premature first stops, per-event detection/confirmation delay, missed whole completed events and post-stop stability as primary closed-loop outcomes. Include real VLA releases, regrasp, held-above-basket, wrong object, natural occlusion and later escape/drop conditions. Retain clip recall as a diagnostic.
 
 This development set contains one eventual stable completion per episode; the current event summary is episode-level. Separate multiple completion/release/escape intervals explicitly when the acceptance set contains them. Two seconds of stable stopping does not imply indefinite stability. Four development episodes are insufficient to estimate rare premature-stop risk. No independent GO or deployment claim is made by this report.
+
+## Subsequent independent acceptance
+
+The checkpoint and confirmation policy above were later frozen and evaluated on twenty additional unused trajectories. That separate [acceptance report](../completion_acceptance_v3_20260915/README.md) records GO within the predeclared finite simulation scope. This development report and its original evidence remain a record of the preceding selection stage.

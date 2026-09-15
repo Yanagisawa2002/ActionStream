@@ -1,0 +1,1654 @@
+{
+  "records": [
+    {
+      "stage": "collection",
+      "episode": "holdout_2026091900",
+      "controls": 361,
+      "post_controls": 0,
+      "changed_controls": [
+        {
+          "control": 58,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.14237220020427624,
+            "angular_speed": 1.1620607336769642,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.14237220020427624,
+            "angular_speed": 1.1620607336769642,
+            "strict_complete": false
+          }
+        }
+      ],
+      "reference_prefix": null,
+      "image_state_sha256": "c451538b8663f4179b7eafa04e065370de404e07072f7324e806911b6d1e9cf4"
+    },
+    {
+      "stage": "collection",
+      "episode": "holdout_2026091901",
+      "controls": 361,
+      "post_controls": 0,
+      "changed_controls": [],
+      "reference_prefix": null,
+      "image_state_sha256": "589f468855714f7cc4fe6b74140f6768710fa044f3ade569d1997a7fc54cc347"
+    },
+    {
+      "stage": "collection",
+      "episode": "holdout_2026091902",
+      "controls": 361,
+      "post_controls": 0,
+      "changed_controls": [
+        {
+          "control": 131,
+          "fields": [
+            "basket_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": true,
+            "basket_contact": false,
+            "linear_speed": 0.0726942387006322,
+            "angular_speed": 0.11576337849138219,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": true,
+            "basket_contact": true,
+            "linear_speed": 0.0726942387006322,
+            "angular_speed": 0.11576337849138219,
+            "strict_complete": false
+          }
+        }
+      ],
+      "reference_prefix": null,
+      "image_state_sha256": "cba84627d7354552661cd4c1971535fcf92da0d20abe678495afad0f32b135d9"
+    },
+    {
+      "stage": "collection",
+      "episode": "holdout_2026091903",
+      "controls": 361,
+      "post_controls": 0,
+      "changed_controls": [],
+      "reference_prefix": null,
+      "image_state_sha256": "2ccdf90912cf95e4db5eaacaa0e2c17aa97ef00525ba9d00e0e4696bf5414523"
+    },
+    {
+      "stage": "collection",
+      "episode": "holdout_2026091904",
+      "controls": 361,
+      "post_controls": 0,
+      "changed_controls": [
+        {
+          "control": 122,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.10714333661551338,
+            "angular_speed": 2.1358767429949395,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.10714333661551338,
+            "angular_speed": 2.1358767429949395,
+            "strict_complete": false
+          }
+        },
+        {
+          "control": 125,
+          "fields": [
+            "basket_contact"
+          ],
+          "recorded": {
+            "inside": true,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 1.469594071841499,
+            "angular_speed": 0.051574382812076935,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": true,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": true,
+            "linear_speed": 1.469594071841499,
+            "angular_speed": 0.051574382812076935,
+            "strict_complete": false
+          }
+        }
+      ],
+      "reference_prefix": null,
+      "image_state_sha256": "59c91663323f3de915d85b35097bcc17fadfb2f385cf86b805e9c689b647368e"
+    },
+    {
+      "stage": "collection",
+      "episode": "holdout_2026091905",
+      "controls": 361,
+      "post_controls": 0,
+      "changed_controls": [
+        {
+          "control": 129,
+          "fields": [
+            "basket_contact"
+          ],
+          "recorded": {
+            "inside": true,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.15800130582113875,
+            "angular_speed": 2.9346116514004357,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": true,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": true,
+            "linear_speed": 0.15800130582113875,
+            "angular_speed": 2.9346116514004357,
+            "strict_complete": false
+          }
+        }
+      ],
+      "reference_prefix": null,
+      "image_state_sha256": "e64223e0b6d3a0ed6dd46f0be437262126c6673daa75a05ff3068e8fa3c9b5a8"
+    },
+    {
+      "stage": "collection",
+      "episode": "holdout_2026091906",
+      "controls": 361,
+      "post_controls": 0,
+      "changed_controls": [
+        {
+          "control": 128,
+          "fields": [
+            "basket_contact"
+          ],
+          "recorded": {
+            "inside": true,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": true,
+            "linear_speed": 0.13487566689664288,
+            "angular_speed": 2.838183071295508,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": true,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.13487566689664288,
+            "angular_speed": 2.838183071295508,
+            "strict_complete": false
+          }
+        }
+      ],
+      "reference_prefix": null,
+      "image_state_sha256": "86c9b4caab1dff827f1e80f520a6649a3a4b66db6fc2a83af2c48b334c49aced"
+    },
+    {
+      "stage": "collection",
+      "episode": "holdout_2026091907",
+      "controls": 361,
+      "post_controls": 0,
+      "changed_controls": [
+        {
+          "control": 88,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.08285967741542884,
+            "angular_speed": 0.8177999012769182,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.08285967741542884,
+            "angular_speed": 0.8177999012769182,
+            "strict_complete": false
+          }
+        },
+        {
+          "control": 90,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.014888403578338722,
+            "angular_speed": 0.15081381256558177,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.014888403578338722,
+            "angular_speed": 0.15081381256558177,
+            "strict_complete": false
+          }
+        },
+        {
+          "control": 152,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.05669428241213675,
+            "angular_speed": 1.3636751639632925,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.05669428241213675,
+            "angular_speed": 1.3636751639632925,
+            "strict_complete": false
+          }
+        }
+      ],
+      "reference_prefix": null,
+      "image_state_sha256": "be55f153aac27e86b3b690da9fa973d7820c5577f418e0c7eccbd49820d884e0"
+    },
+    {
+      "stage": "collection",
+      "episode": "holdout_2026091908",
+      "controls": 361,
+      "post_controls": 0,
+      "changed_controls": [],
+      "reference_prefix": null,
+      "image_state_sha256": "40edbe2f96f91181509391acfee5baef6d1ced445fdbbded01ae6761ad2bd947"
+    },
+    {
+      "stage": "collection",
+      "episode": "holdout_2026091909",
+      "controls": 361,
+      "post_controls": 0,
+      "changed_controls": [
+        {
+          "control": 52,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.0042306731931833165,
+            "angular_speed": 0.07333539869897249,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.0042306731931833165,
+            "angular_speed": 0.07333539869897249,
+            "strict_complete": false
+          }
+        },
+        {
+          "control": 53,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.0022278240733298506,
+            "angular_speed": 0.03289113874542255,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.0022278240733298506,
+            "angular_speed": 0.03289113874542255,
+            "strict_complete": false
+          }
+        }
+      ],
+      "reference_prefix": null,
+      "image_state_sha256": "adc6d51b4c29cf2bc6fc90e9ec5c94012c5ba3395c64890938872a6a84b76b65"
+    },
+    {
+      "stage": "collection",
+      "episode": "holdout_2026091910",
+      "controls": 361,
+      "post_controls": 0,
+      "changed_controls": [],
+      "reference_prefix": null,
+      "image_state_sha256": "601bf3fb788b6946b394ed47303f787c6ff3c771208dbddb8b6886744b554840"
+    },
+    {
+      "stage": "collection",
+      "episode": "holdout_2026091911",
+      "controls": 361,
+      "post_controls": 0,
+      "changed_controls": [
+        {
+          "control": 131,
+          "fields": [
+            "basket_contact"
+          ],
+          "recorded": {
+            "inside": true,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 1.3953689968439296,
+            "angular_speed": 0.1137716993149904,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": true,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": true,
+            "linear_speed": 1.3953689968439296,
+            "angular_speed": 0.1137716993149904,
+            "strict_complete": false
+          }
+        }
+      ],
+      "reference_prefix": null,
+      "image_state_sha256": "c351a02e3c99ac6b64a6a517080120c96dd613fe634a491b89316e4253df970a"
+    },
+    {
+      "stage": "collection",
+      "episode": "holdout_2026091912",
+      "controls": 361,
+      "post_controls": 0,
+      "changed_controls": [
+        {
+          "control": 52,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.0060399354115656155,
+            "angular_speed": 0.16745453932196278,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.0060399354115656155,
+            "angular_speed": 0.16745453932196278,
+            "strict_complete": false
+          }
+        },
+        {
+          "control": 53,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.00517104428946721,
+            "angular_speed": 0.12819933649183335,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.00517104428946721,
+            "angular_speed": 0.12819933649183335,
+            "strict_complete": false
+          }
+        },
+        {
+          "control": 55,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.0039601011677189435,
+            "angular_speed": 0.07020140626112181,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.0039601011677189435,
+            "angular_speed": 0.07020140626112181,
+            "strict_complete": false
+          }
+        }
+      ],
+      "reference_prefix": null,
+      "image_state_sha256": "3789fd908df56ed4db65510183d0269eaeaa84b2cace72feba54a147efde3736"
+    },
+    {
+      "stage": "collection",
+      "episode": "holdout_2026091913",
+      "controls": 361,
+      "post_controls": 0,
+      "changed_controls": [],
+      "reference_prefix": null,
+      "image_state_sha256": "3e5f4b05d9edb59ae9f04134fb7a1a42eb927094186f9edb1ff4f8cf5eef8ee4"
+    },
+    {
+      "stage": "collection",
+      "episode": "holdout_2026091914",
+      "controls": 361,
+      "post_controls": 0,
+      "changed_controls": [
+        {
+          "control": 130,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.05689568350326976,
+            "angular_speed": 0.7584704442502066,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.05689568350326976,
+            "angular_speed": 0.7584704442502066,
+            "strict_complete": false
+          }
+        }
+      ],
+      "reference_prefix": null,
+      "image_state_sha256": "2dde8a70f3e1b24845e48ceb388fde2e0ae5f31a619704a241a2e90306e8d792"
+    },
+    {
+      "stage": "collection",
+      "episode": "holdout_2026091915",
+      "controls": 361,
+      "post_controls": 0,
+      "changed_controls": [
+        {
+          "control": 128,
+          "fields": [
+            "basket_contact"
+          ],
+          "recorded": {
+            "inside": true,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": true,
+            "linear_speed": 0.8148054724205058,
+            "angular_speed": 1.8737775752769095,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": true,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.8148054724205058,
+            "angular_speed": 1.8737775752769095,
+            "strict_complete": false
+          }
+        }
+      ],
+      "reference_prefix": null,
+      "image_state_sha256": "67e0f4eaf06f24bad0c8dd2fae9835c89fffc1bf17d12890f935bbabb097a559"
+    },
+    {
+      "stage": "collection",
+      "episode": "holdout_2026091916",
+      "controls": 361,
+      "post_controls": 0,
+      "changed_controls": [
+        {
+          "control": 56,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 2.5065172748845443e-15,
+            "angular_speed": 6.142502081332034e-14,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 2.5065172748845443e-15,
+            "angular_speed": 6.142502081332034e-14,
+            "strict_complete": false
+          }
+        },
+        {
+          "control": 59,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.13193063791046236,
+            "angular_speed": 1.395298051327514,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.13193063791046236,
+            "angular_speed": 1.395298051327514,
+            "strict_complete": false
+          }
+        },
+        {
+          "control": 123,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.13345781539661494,
+            "angular_speed": 1.6375908007476294,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.13345781539661494,
+            "angular_speed": 1.6375908007476294,
+            "strict_complete": false
+          }
+        },
+        {
+          "control": 124,
+          "fields": [
+            "inside"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.45160561463876936,
+            "angular_speed": 4.298501625181884,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": true,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.45160561463876936,
+            "angular_speed": 4.298501625181884,
+            "strict_complete": false
+          }
+        }
+      ],
+      "reference_prefix": null,
+      "image_state_sha256": "852c61fdb3728891f42dc1d0aee386d9d08440abae890c702ef5f44fdabdbd14"
+    },
+    {
+      "stage": "collection",
+      "episode": "holdout_2026091917",
+      "controls": 361,
+      "post_controls": 0,
+      "changed_controls": [
+        {
+          "control": 125,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.10418971561275268,
+            "angular_speed": 0.33579870565024206,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.10418971561275268,
+            "angular_speed": 0.33579870565024206,
+            "strict_complete": false
+          }
+        }
+      ],
+      "reference_prefix": null,
+      "image_state_sha256": "f4b3ad42f87bcad5ae2c1aeb183cadf2bfdf64c0b62c611b193457287e1da63b"
+    },
+    {
+      "stage": "collection",
+      "episode": "holdout_2026091918",
+      "controls": 361,
+      "post_controls": 0,
+      "changed_controls": [
+        {
+          "control": 53,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.0026897829024329395,
+            "angular_speed": 0.05365807341098166,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.0026897829024329395,
+            "angular_speed": 0.05365807341098166,
+            "strict_complete": false
+          }
+        },
+        {
+          "control": 118,
+          "fields": [
+            "basket_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": true,
+            "basket_contact": true,
+            "linear_speed": 0.033347965205018294,
+            "angular_speed": 0.23858896533548463,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": true,
+            "basket_contact": false,
+            "linear_speed": 0.033347965205018294,
+            "angular_speed": 0.23858896533548463,
+            "strict_complete": false
+          }
+        },
+        {
+          "control": 131,
+          "fields": [
+            "basket_contact"
+          ],
+          "recorded": {
+            "inside": true,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": true,
+            "linear_speed": 0.14881156967034476,
+            "angular_speed": 3.056094640354105,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": true,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.14881156967034476,
+            "angular_speed": 3.056094640354105,
+            "strict_complete": false
+          }
+        }
+      ],
+      "reference_prefix": null,
+      "image_state_sha256": "9d63edd55b5a6e7faa508a8dc224bbd1f9ac9125b98a57c5b84fcafd4d978a60"
+    },
+    {
+      "stage": "collection",
+      "episode": "holdout_2026091919",
+      "controls": 361,
+      "post_controls": 0,
+      "changed_controls": [],
+      "reference_prefix": null,
+      "image_state_sha256": "daec58588145b95edbb3bc7b583803c17f730a4e3cdc88c086678ac7fd909ab5"
+    },
+    {
+      "stage": "live",
+      "episode": "holdout_2026091900",
+      "controls": 158,
+      "post_controls": 40,
+      "changed_controls": [
+        {
+          "control": 58,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.14237220020427624,
+            "angular_speed": 1.1620607336769642,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.14237220020427624,
+            "angular_speed": 1.1620607336769642,
+            "strict_complete": false
+          }
+        }
+      ],
+      "reference_prefix": {
+        "rgb_equal": true,
+        "max_state_delta": 0.0
+      },
+      "image_state_sha256": "cc10bc5fab4725a211a50cd2487c1026e63278cc8773734c33e16b9f1ba66173"
+    },
+    {
+      "stage": "live",
+      "episode": "holdout_2026091901",
+      "controls": 173,
+      "post_controls": 40,
+      "changed_controls": [],
+      "reference_prefix": {
+        "rgb_equal": true,
+        "max_state_delta": 0.0
+      },
+      "image_state_sha256": "88973c7b2806c04b995dcab9342ce34c7a8d1e71654ed2bfbbb5e0a266359814"
+    },
+    {
+      "stage": "live",
+      "episode": "holdout_2026091902",
+      "controls": 175,
+      "post_controls": 40,
+      "changed_controls": [
+        {
+          "control": 131,
+          "fields": [
+            "basket_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": true,
+            "basket_contact": false,
+            "linear_speed": 0.0726942387006322,
+            "angular_speed": 0.11576337849138219,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": true,
+            "basket_contact": true,
+            "linear_speed": 0.0726942387006322,
+            "angular_speed": 0.11576337849138219,
+            "strict_complete": false
+          }
+        }
+      ],
+      "reference_prefix": {
+        "rgb_equal": true,
+        "max_state_delta": 0.0
+      },
+      "image_state_sha256": "36c7ff0c44225b7d62e6493338615f877584546058b31d198cd851cdb0088682"
+    },
+    {
+      "stage": "live",
+      "episode": "holdout_2026091903",
+      "controls": 161,
+      "post_controls": 40,
+      "changed_controls": [],
+      "reference_prefix": {
+        "rgb_equal": true,
+        "max_state_delta": 0.0
+      },
+      "image_state_sha256": "9ec4ee66fbcf7cd75575767d4ab1c5854151c3d73a71d87e132751eec6480a70"
+    },
+    {
+      "stage": "live",
+      "episode": "holdout_2026091904",
+      "controls": 160,
+      "post_controls": 40,
+      "changed_controls": [
+        {
+          "control": 122,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.10714333661551338,
+            "angular_speed": 2.1358767429949395,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.10714333661551338,
+            "angular_speed": 2.1358767429949395,
+            "strict_complete": false
+          }
+        },
+        {
+          "control": 125,
+          "fields": [
+            "basket_contact"
+          ],
+          "recorded": {
+            "inside": true,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 1.469594071841499,
+            "angular_speed": 0.051574382812076935,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": true,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": true,
+            "linear_speed": 1.469594071841499,
+            "angular_speed": 0.051574382812076935,
+            "strict_complete": false
+          }
+        }
+      ],
+      "reference_prefix": {
+        "rgb_equal": true,
+        "max_state_delta": 0.0
+      },
+      "image_state_sha256": "3fd785b2a4bc964830ff4443693adfd8e0a7d55d9f09d46502edf140fc5b166c"
+    },
+    {
+      "stage": "live",
+      "episode": "holdout_2026091905",
+      "controls": 157,
+      "post_controls": 40,
+      "changed_controls": [
+        {
+          "control": 129,
+          "fields": [
+            "basket_contact"
+          ],
+          "recorded": {
+            "inside": true,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.15800130582113875,
+            "angular_speed": 2.9346116514004357,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": true,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": true,
+            "linear_speed": 0.15800130582113875,
+            "angular_speed": 2.9346116514004357,
+            "strict_complete": false
+          }
+        }
+      ],
+      "reference_prefix": {
+        "rgb_equal": true,
+        "max_state_delta": 0.0
+      },
+      "image_state_sha256": "e230f30bee8094ea4d7ecbb176f9281e29698fd579ae28f65495139f20415bd0"
+    },
+    {
+      "stage": "live",
+      "episode": "holdout_2026091906",
+      "controls": 152,
+      "post_controls": 40,
+      "changed_controls": [
+        {
+          "control": 128,
+          "fields": [
+            "basket_contact"
+          ],
+          "recorded": {
+            "inside": true,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": true,
+            "linear_speed": 0.13487566689664288,
+            "angular_speed": 2.838183071295508,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": true,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.13487566689664288,
+            "angular_speed": 2.838183071295508,
+            "strict_complete": false
+          }
+        }
+      ],
+      "reference_prefix": {
+        "rgb_equal": true,
+        "max_state_delta": 0.0
+      },
+      "image_state_sha256": "ea65de5a53512a17570abb4d1820409627cb370c805baf27f8f4ed1d1042ded9"
+    },
+    {
+      "stage": "live",
+      "episode": "holdout_2026091907",
+      "controls": 178,
+      "post_controls": 40,
+      "changed_controls": [
+        {
+          "control": 88,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.08285967741542884,
+            "angular_speed": 0.8177999012769182,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.08285967741542884,
+            "angular_speed": 0.8177999012769182,
+            "strict_complete": false
+          }
+        },
+        {
+          "control": 90,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.014888403578338722,
+            "angular_speed": 0.15081381256558177,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.014888403578338722,
+            "angular_speed": 0.15081381256558177,
+            "strict_complete": false
+          }
+        },
+        {
+          "control": 152,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.05669428241213675,
+            "angular_speed": 1.3636751639632925,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.05669428241213675,
+            "angular_speed": 1.3636751639632925,
+            "strict_complete": false
+          }
+        }
+      ],
+      "reference_prefix": {
+        "rgb_equal": true,
+        "max_state_delta": 0.0
+      },
+      "image_state_sha256": "c63ac51dc07a68ee05fb81a7793144d39523529f39448cf0362e4001b6288d71"
+    },
+    {
+      "stage": "live",
+      "episode": "holdout_2026091908",
+      "controls": 152,
+      "post_controls": 40,
+      "changed_controls": [],
+      "reference_prefix": {
+        "rgb_equal": true,
+        "max_state_delta": 0.0
+      },
+      "image_state_sha256": "61108f6a9b28e3ac10bc08148cd72c77f79bbf7228b193a601eca19b3bb685f4"
+    },
+    {
+      "stage": "live",
+      "episode": "holdout_2026091909",
+      "controls": 146,
+      "post_controls": 40,
+      "changed_controls": [
+        {
+          "control": 52,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.0042306731931833165,
+            "angular_speed": 0.07333539869897249,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.0042306731931833165,
+            "angular_speed": 0.07333539869897249,
+            "strict_complete": false
+          }
+        },
+        {
+          "control": 53,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.0022278240733298506,
+            "angular_speed": 0.03289113874542255,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.0022278240733298506,
+            "angular_speed": 0.03289113874542255,
+            "strict_complete": false
+          }
+        }
+      ],
+      "reference_prefix": {
+        "rgb_equal": true,
+        "max_state_delta": 0.0
+      },
+      "image_state_sha256": "0d904d3077be8b4b879bcac0cb130c852504700789fe757a5bc3dbcc91d39ae7"
+    },
+    {
+      "stage": "live",
+      "episode": "holdout_2026091910",
+      "controls": 361,
+      "post_controls": 0,
+      "changed_controls": [],
+      "reference_prefix": {
+        "rgb_equal": true,
+        "max_state_delta": 0.0
+      },
+      "image_state_sha256": "601bf3fb788b6946b394ed47303f787c6ff3c771208dbddb8b6886744b554840"
+    },
+    {
+      "stage": "live",
+      "episode": "holdout_2026091911",
+      "controls": 160,
+      "post_controls": 40,
+      "changed_controls": [
+        {
+          "control": 131,
+          "fields": [
+            "basket_contact"
+          ],
+          "recorded": {
+            "inside": true,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 1.3953689968439296,
+            "angular_speed": 0.1137716993149904,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": true,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": true,
+            "linear_speed": 1.3953689968439296,
+            "angular_speed": 0.1137716993149904,
+            "strict_complete": false
+          }
+        }
+      ],
+      "reference_prefix": {
+        "rgb_equal": true,
+        "max_state_delta": 0.0
+      },
+      "image_state_sha256": "0687c6cb51fa9b864c6c08e4fa7cf96b40e11fa522fb650c22b491c0f2856735"
+    },
+    {
+      "stage": "live",
+      "episode": "holdout_2026091912",
+      "controls": 169,
+      "post_controls": 40,
+      "changed_controls": [
+        {
+          "control": 52,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.0060399354115656155,
+            "angular_speed": 0.16745453932196278,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.0060399354115656155,
+            "angular_speed": 0.16745453932196278,
+            "strict_complete": false
+          }
+        },
+        {
+          "control": 53,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.00517104428946721,
+            "angular_speed": 0.12819933649183335,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.00517104428946721,
+            "angular_speed": 0.12819933649183335,
+            "strict_complete": false
+          }
+        },
+        {
+          "control": 55,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.0039601011677189435,
+            "angular_speed": 0.07020140626112181,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.0039601011677189435,
+            "angular_speed": 0.07020140626112181,
+            "strict_complete": false
+          }
+        }
+      ],
+      "reference_prefix": {
+        "rgb_equal": true,
+        "max_state_delta": 0.0
+      },
+      "image_state_sha256": "b6093e131447b2605666a0f413e74f0d19e36f544dd40fe746681c4f38739b45"
+    },
+    {
+      "stage": "live",
+      "episode": "holdout_2026091913",
+      "controls": 154,
+      "post_controls": 40,
+      "changed_controls": [],
+      "reference_prefix": {
+        "rgb_equal": true,
+        "max_state_delta": 0.0
+      },
+      "image_state_sha256": "fd16307ea7d4034916128334cab222d2cb7a7219b8619e3b635cfbc8dc229812"
+    },
+    {
+      "stage": "live",
+      "episode": "holdout_2026091914",
+      "controls": 157,
+      "post_controls": 40,
+      "changed_controls": [
+        {
+          "control": 130,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.05689568350326976,
+            "angular_speed": 0.7584704442502066,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.05689568350326976,
+            "angular_speed": 0.7584704442502066,
+            "strict_complete": false
+          }
+        }
+      ],
+      "reference_prefix": {
+        "rgb_equal": true,
+        "max_state_delta": 0.0
+      },
+      "image_state_sha256": "a9f489f999e9eaa63b42e5013ad4c4c8f17d975120a013f3a75a08edd7a488f6"
+    },
+    {
+      "stage": "live",
+      "episode": "holdout_2026091915",
+      "controls": 170,
+      "post_controls": 40,
+      "changed_controls": [
+        {
+          "control": 128,
+          "fields": [
+            "basket_contact"
+          ],
+          "recorded": {
+            "inside": true,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": true,
+            "linear_speed": 0.8148054724205058,
+            "angular_speed": 1.8737775752769095,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": true,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.8148054724205058,
+            "angular_speed": 1.8737775752769095,
+            "strict_complete": false
+          }
+        }
+      ],
+      "reference_prefix": {
+        "rgb_equal": true,
+        "max_state_delta": 0.0
+      },
+      "image_state_sha256": "0d7f48c186fd81914dd90dfc407ad4d25ac6f3ecf4d7bdc0fbb6e5e51e0d479c"
+    },
+    {
+      "stage": "live",
+      "episode": "holdout_2026091916",
+      "controls": 158,
+      "post_controls": 40,
+      "changed_controls": [
+        {
+          "control": 56,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 2.5065172748845443e-15,
+            "angular_speed": 6.142502081332034e-14,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 2.5065172748845443e-15,
+            "angular_speed": 6.142502081332034e-14,
+            "strict_complete": false
+          }
+        },
+        {
+          "control": 59,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.13193063791046236,
+            "angular_speed": 1.395298051327514,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.13193063791046236,
+            "angular_speed": 1.395298051327514,
+            "strict_complete": false
+          }
+        },
+        {
+          "control": 123,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.13345781539661494,
+            "angular_speed": 1.6375908007476294,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.13345781539661494,
+            "angular_speed": 1.6375908007476294,
+            "strict_complete": false
+          }
+        },
+        {
+          "control": 124,
+          "fields": [
+            "inside"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.45160561463876936,
+            "angular_speed": 4.298501625181884,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": true,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.45160561463876936,
+            "angular_speed": 4.298501625181884,
+            "strict_complete": false
+          }
+        }
+      ],
+      "reference_prefix": {
+        "rgb_equal": true,
+        "max_state_delta": 0.0
+      },
+      "image_state_sha256": "c2f5c8f5936b86a7f073980e3ef160d1d09c77b294995dd36f86a77a9b29d6c3"
+    },
+    {
+      "stage": "live",
+      "episode": "holdout_2026091917",
+      "controls": 151,
+      "post_controls": 40,
+      "changed_controls": [
+        {
+          "control": 125,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.10418971561275268,
+            "angular_speed": 0.33579870565024206,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.10418971561275268,
+            "angular_speed": 0.33579870565024206,
+            "strict_complete": false
+          }
+        }
+      ],
+      "reference_prefix": {
+        "rgb_equal": true,
+        "max_state_delta": 0.0
+      },
+      "image_state_sha256": "aa3afb750bef30b95b13367a9905565517b9bb8c818aab344c27d70bfd8c90d8"
+    },
+    {
+      "stage": "live",
+      "episode": "holdout_2026091918",
+      "controls": 151,
+      "post_controls": 40,
+      "changed_controls": [
+        {
+          "control": 53,
+          "fields": [
+            "finger_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.0026897829024329395,
+            "angular_speed": 0.05365807341098166,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.0026897829024329395,
+            "angular_speed": 0.05365807341098166,
+            "strict_complete": false
+          }
+        },
+        {
+          "control": 118,
+          "fields": [
+            "basket_contact"
+          ],
+          "recorded": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": true,
+            "basket_contact": true,
+            "linear_speed": 0.033347965205018294,
+            "angular_speed": 0.23858896533548463,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": false,
+            "finger_contact": true,
+            "bilateral_grasp": true,
+            "basket_contact": false,
+            "linear_speed": 0.033347965205018294,
+            "angular_speed": 0.23858896533548463,
+            "strict_complete": false
+          }
+        },
+        {
+          "control": 131,
+          "fields": [
+            "basket_contact"
+          ],
+          "recorded": {
+            "inside": true,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": true,
+            "linear_speed": 0.14881156967034476,
+            "angular_speed": 3.056094640354105,
+            "strict_complete": false
+          },
+          "restored": {
+            "inside": true,
+            "finger_contact": false,
+            "bilateral_grasp": false,
+            "basket_contact": false,
+            "linear_speed": 0.14881156967034476,
+            "angular_speed": 3.056094640354105,
+            "strict_complete": false
+          }
+        }
+      ],
+      "reference_prefix": {
+        "rgb_equal": true,
+        "max_state_delta": 0.0
+      },
+      "image_state_sha256": "9069bd4136d56154a6265e9f1d0b9f3882579fe44487f999127129a4e1f6df9a"
+    },
+    {
+      "stage": "live",
+      "episode": "holdout_2026091919",
+      "controls": 151,
+      "post_controls": 40,
+      "changed_controls": [],
+      "reference_prefix": {
+        "rgb_equal": true,
+        "max_state_delta": 0.0
+      },
+      "image_state_sha256": "0859dcfb4be4337cd6dbe87b9d0b395a712d973518af7e3f653a4fdc7f6f49be"
+    }
+  ],
+  "source_sha256": "4dd9872dfc6c008fe742e9359579e8198f1a8457fcd285c7d4078d29263fb33f",
+  "freeze_sha256": "0f04e36cea791893d67b12f8b707e2f6a4a50782aad5650c4c44d4b6ff9c5ee6"
+}

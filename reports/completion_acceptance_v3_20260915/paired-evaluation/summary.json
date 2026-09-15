@@ -1,0 +1,1193 @@
+{
+  "results": {
+    "baseline": {
+      "episodes": [
+        {
+          "episode": "holdout_2026091900",
+          "seed": 2026091900,
+          "first_truth_control": 138,
+          "first_claim_control": 158,
+          "first_correct_control": 158,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 1.0,
+          "post_stop_stable": true,
+          "complete_intervals": [
+            {
+              "start": 138,
+              "end": 360,
+              "detected": true
+            }
+          ]
+        },
+        {
+          "episode": "holdout_2026091901",
+          "seed": 2026091901,
+          "first_truth_control": 148,
+          "first_claim_control": 181,
+          "first_correct_control": 181,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 1.65,
+          "post_stop_stable": true,
+          "complete_intervals": [
+            {
+              "start": 148,
+              "end": 360,
+              "detected": true
+            }
+          ]
+        },
+        {
+          "episode": "holdout_2026091902",
+          "seed": 2026091902,
+          "first_truth_control": 165,
+          "first_claim_control": 174,
+          "first_correct_control": 174,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 0.45,
+          "post_stop_stable": true,
+          "complete_intervals": [
+            {
+              "start": 165,
+              "end": 360,
+              "detected": true
+            }
+          ]
+        },
+        {
+          "episode": "holdout_2026091903",
+          "seed": 2026091903,
+          "first_truth_control": 146,
+          "first_claim_control": 162,
+          "first_correct_control": 162,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 0.8,
+          "post_stop_stable": true,
+          "complete_intervals": [
+            {
+              "start": 146,
+              "end": 360,
+              "detected": true
+            }
+          ]
+        },
+        {
+          "episode": "holdout_2026091904",
+          "seed": 2026091904,
+          "first_truth_control": 142,
+          "first_claim_control": 192,
+          "first_correct_control": 192,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 2.5,
+          "post_stop_stable": true,
+          "complete_intervals": [
+            {
+              "start": 142,
+              "end": 360,
+              "detected": true
+            }
+          ]
+        },
+        {
+          "episode": "holdout_2026091905",
+          "seed": 2026091905,
+          "first_truth_control": 144,
+          "first_claim_control": 156,
+          "first_correct_control": 156,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 0.6,
+          "post_stop_stable": true,
+          "complete_intervals": [
+            {
+              "start": 144,
+              "end": 360,
+              "detected": true
+            }
+          ]
+        },
+        {
+          "episode": "holdout_2026091906",
+          "seed": 2026091906,
+          "first_truth_control": 143,
+          "first_claim_control": null,
+          "first_correct_control": null,
+          "premature_stop": false,
+          "missed_completed_event": true,
+          "no_stop": true,
+          "confirmation_delay_s": null,
+          "post_stop_stable": null,
+          "complete_intervals": [
+            {
+              "start": 143,
+              "end": 360,
+              "detected": false
+            }
+          ]
+        },
+        {
+          "episode": "holdout_2026091907",
+          "seed": 2026091907,
+          "first_truth_control": 169,
+          "first_claim_control": null,
+          "first_correct_control": null,
+          "premature_stop": false,
+          "missed_completed_event": true,
+          "no_stop": true,
+          "confirmation_delay_s": null,
+          "post_stop_stable": null,
+          "complete_intervals": [
+            {
+              "start": 169,
+              "end": 360,
+              "detected": false
+            }
+          ]
+        },
+        {
+          "episode": "holdout_2026091908",
+          "seed": 2026091908,
+          "first_truth_control": 143,
+          "first_claim_control": 190,
+          "first_correct_control": 190,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 2.35,
+          "post_stop_stable": true,
+          "complete_intervals": [
+            {
+              "start": 143,
+              "end": 360,
+              "detected": true
+            }
+          ]
+        },
+        {
+          "episode": "holdout_2026091909",
+          "seed": 2026091909,
+          "first_truth_control": 138,
+          "first_claim_control": 162,
+          "first_correct_control": 162,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 1.2,
+          "post_stop_stable": true,
+          "complete_intervals": [
+            {
+              "start": 138,
+              "end": 360,
+              "detected": true
+            }
+          ]
+        },
+        {
+          "episode": "holdout_2026091910",
+          "seed": 2026091910,
+          "first_truth_control": null,
+          "first_claim_control": null,
+          "first_correct_control": null,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": true,
+          "confirmation_delay_s": null,
+          "post_stop_stable": null,
+          "complete_intervals": []
+        },
+        {
+          "episode": "holdout_2026091911",
+          "seed": 2026091911,
+          "first_truth_control": 145,
+          "first_claim_control": 166,
+          "first_correct_control": 166,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 1.05,
+          "post_stop_stable": true,
+          "complete_intervals": [
+            {
+              "start": 145,
+              "end": 360,
+              "detected": true
+            }
+          ]
+        },
+        {
+          "episode": "holdout_2026091912",
+          "seed": 2026091912,
+          "first_truth_control": 138,
+          "first_claim_control": 183,
+          "first_correct_control": 183,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 2.25,
+          "post_stop_stable": true,
+          "complete_intervals": [
+            {
+              "start": 138,
+              "end": 360,
+              "detected": true
+            }
+          ]
+        },
+        {
+          "episode": "holdout_2026091913",
+          "seed": 2026091913,
+          "first_truth_control": 142,
+          "first_claim_control": 153,
+          "first_correct_control": 153,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 0.55,
+          "post_stop_stable": true,
+          "complete_intervals": [
+            {
+              "start": 142,
+              "end": 360,
+              "detected": true
+            }
+          ]
+        },
+        {
+          "episode": "holdout_2026091914",
+          "seed": 2026091914,
+          "first_truth_control": 150,
+          "first_claim_control": 156,
+          "first_correct_control": 156,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 0.3,
+          "post_stop_stable": true,
+          "complete_intervals": [
+            {
+              "start": 150,
+              "end": 360,
+              "detected": true
+            }
+          ]
+        },
+        {
+          "episode": "holdout_2026091915",
+          "seed": 2026091915,
+          "first_truth_control": 143,
+          "first_claim_control": 185,
+          "first_correct_control": 185,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 2.1,
+          "post_stop_stable": true,
+          "complete_intervals": [
+            {
+              "start": 143,
+              "end": 360,
+              "detected": true
+            }
+          ]
+        },
+        {
+          "episode": "holdout_2026091916",
+          "seed": 2026091916,
+          "first_truth_control": 144,
+          "first_claim_control": 158,
+          "first_correct_control": 158,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 0.7,
+          "post_stop_stable": true,
+          "complete_intervals": [
+            {
+              "start": 144,
+              "end": 360,
+              "detected": true
+            }
+          ]
+        },
+        {
+          "episode": "holdout_2026091917",
+          "seed": 2026091917,
+          "first_truth_control": 141,
+          "first_claim_control": 161,
+          "first_correct_control": 161,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 1.0,
+          "post_stop_stable": true,
+          "complete_intervals": [
+            {
+              "start": 141,
+              "end": 360,
+              "detected": true
+            }
+          ]
+        },
+        {
+          "episode": "holdout_2026091918",
+          "seed": 2026091918,
+          "first_truth_control": 142,
+          "first_claim_control": 150,
+          "first_correct_control": 150,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 0.4,
+          "post_stop_stable": true,
+          "complete_intervals": [
+            {
+              "start": 142,
+              "end": 360,
+              "detected": true
+            }
+          ]
+        },
+        {
+          "episode": "holdout_2026091919",
+          "seed": 2026091919,
+          "first_truth_control": 142,
+          "first_claim_control": 160,
+          "first_correct_control": 160,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 0.9,
+          "post_stop_stable": true,
+          "complete_intervals": [
+            {
+              "start": 142,
+              "end": 360,
+              "detected": true
+            }
+          ]
+        }
+      ],
+      "closed_loop": {
+        "episodes": 20,
+        "physically_completed_episodes": 19,
+        "premature_stops": 0,
+        "missed_completed_episodes": 2,
+        "no_stop": 3,
+        "post_stop_failures": 0,
+        "missing_post_stop_probes": 0,
+        "maximum_confirmation_delay_s": 2.5,
+        "median_confirmation_delay_s": 1.0,
+        "late_confirmations": 4,
+        "exact_seed_coverage": true,
+        "passed": false
+      },
+      "challenges": [
+        {
+          "case": "holdout_2026091900_held",
+          "category": "held",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091900_above",
+          "category": "above",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091900_wrong_object",
+          "category": "wrong_object",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091900_outside",
+          "category": "outside",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091900_recent_drop",
+          "category": "recent_drop",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091900_external_hidden",
+          "category": "external_hidden",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091900_wrist_hidden",
+          "category": "wrist_hidden",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091900_both_hidden",
+          "category": "both_hidden",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091901_held",
+          "category": "held",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091901_above",
+          "category": "above",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091901_wrong_object",
+          "category": "wrong_object",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091901_outside",
+          "category": "outside",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091901_recent_drop",
+          "category": "recent_drop",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091901_external_hidden",
+          "category": "external_hidden",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091901_wrist_hidden",
+          "category": "wrist_hidden",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091901_both_hidden",
+          "category": "both_hidden",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091902_held",
+          "category": "held",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091902_above",
+          "category": "above",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091902_wrong_object",
+          "category": "wrong_object",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091902_outside",
+          "category": "outside",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091902_recent_drop",
+          "category": "recent_drop",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091902_external_hidden",
+          "category": "external_hidden",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091902_wrist_hidden",
+          "category": "wrist_hidden",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091902_both_hidden",
+          "category": "both_hidden",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091903_held",
+          "category": "held",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091903_above",
+          "category": "above",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091903_wrong_object",
+          "category": "wrong_object",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091903_outside",
+          "category": "outside",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091903_recent_drop",
+          "category": "recent_drop",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091903_external_hidden",
+          "category": "external_hidden",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091903_wrist_hidden",
+          "category": "wrist_hidden",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091903_both_hidden",
+          "category": "both_hidden",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        }
+      ],
+      "challenge_gate": {
+        "sequences": 32,
+        "confirmed_false_complete": 0,
+        "blackout_confident_decisions": 0,
+        "passed": true
+      },
+      "checkpoint_sha256": "80dc22b4e646bb8647a5e211b407ac198a1c64ea5db9db71a309c69ccfcd54c7"
+    },
+    "adapted": {
+      "episodes": [
+        {
+          "episode": "holdout_2026091900",
+          "seed": 2026091900,
+          "first_truth_control": 138,
+          "first_claim_control": 157,
+          "first_correct_control": 157,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 0.95,
+          "post_stop_stable": true,
+          "complete_intervals": [
+            {
+              "start": 138,
+              "end": 360,
+              "detected": true
+            }
+          ]
+        },
+        {
+          "episode": "holdout_2026091901",
+          "seed": 2026091901,
+          "first_truth_control": 148,
+          "first_claim_control": 172,
+          "first_correct_control": 172,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 1.2,
+          "post_stop_stable": true,
+          "complete_intervals": [
+            {
+              "start": 148,
+              "end": 360,
+              "detected": true
+            }
+          ]
+        },
+        {
+          "episode": "holdout_2026091902",
+          "seed": 2026091902,
+          "first_truth_control": 165,
+          "first_claim_control": 174,
+          "first_correct_control": 174,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 0.45,
+          "post_stop_stable": true,
+          "complete_intervals": [
+            {
+              "start": 165,
+              "end": 360,
+              "detected": true
+            }
+          ]
+        },
+        {
+          "episode": "holdout_2026091903",
+          "seed": 2026091903,
+          "first_truth_control": 146,
+          "first_claim_control": 160,
+          "first_correct_control": 160,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 0.7,
+          "post_stop_stable": true,
+          "complete_intervals": [
+            {
+              "start": 146,
+              "end": 360,
+              "detected": true
+            }
+          ]
+        },
+        {
+          "episode": "holdout_2026091904",
+          "seed": 2026091904,
+          "first_truth_control": 142,
+          "first_claim_control": 159,
+          "first_correct_control": 159,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 0.85,
+          "post_stop_stable": true,
+          "complete_intervals": [
+            {
+              "start": 142,
+              "end": 360,
+              "detected": true
+            }
+          ]
+        },
+        {
+          "episode": "holdout_2026091905",
+          "seed": 2026091905,
+          "first_truth_control": 144,
+          "first_claim_control": 156,
+          "first_correct_control": 156,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 0.6,
+          "post_stop_stable": true,
+          "complete_intervals": [
+            {
+              "start": 144,
+              "end": 360,
+              "detected": true
+            }
+          ]
+        },
+        {
+          "episode": "holdout_2026091906",
+          "seed": 2026091906,
+          "first_truth_control": 143,
+          "first_claim_control": 151,
+          "first_correct_control": 151,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 0.4,
+          "post_stop_stable": true,
+          "complete_intervals": [
+            {
+              "start": 143,
+              "end": 360,
+              "detected": true
+            }
+          ]
+        },
+        {
+          "episode": "holdout_2026091907",
+          "seed": 2026091907,
+          "first_truth_control": 169,
+          "first_claim_control": 177,
+          "first_correct_control": 177,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 0.4,
+          "post_stop_stable": true,
+          "complete_intervals": [
+            {
+              "start": 169,
+              "end": 360,
+              "detected": true
+            }
+          ]
+        },
+        {
+          "episode": "holdout_2026091908",
+          "seed": 2026091908,
+          "first_truth_control": 143,
+          "first_claim_control": 151,
+          "first_correct_control": 151,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 0.4,
+          "post_stop_stable": true,
+          "complete_intervals": [
+            {
+              "start": 143,
+              "end": 360,
+              "detected": true
+            }
+          ]
+        },
+        {
+          "episode": "holdout_2026091909",
+          "seed": 2026091909,
+          "first_truth_control": 138,
+          "first_claim_control": 145,
+          "first_correct_control": 145,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 0.35,
+          "post_stop_stable": true,
+          "complete_intervals": [
+            {
+              "start": 138,
+              "end": 360,
+              "detected": true
+            }
+          ]
+        },
+        {
+          "episode": "holdout_2026091910",
+          "seed": 2026091910,
+          "first_truth_control": null,
+          "first_claim_control": null,
+          "first_correct_control": null,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": true,
+          "confirmation_delay_s": null,
+          "post_stop_stable": null,
+          "complete_intervals": []
+        },
+        {
+          "episode": "holdout_2026091911",
+          "seed": 2026091911,
+          "first_truth_control": 145,
+          "first_claim_control": 159,
+          "first_correct_control": 159,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 0.7,
+          "post_stop_stable": true,
+          "complete_intervals": [
+            {
+              "start": 145,
+              "end": 360,
+              "detected": true
+            }
+          ]
+        },
+        {
+          "episode": "holdout_2026091912",
+          "seed": 2026091912,
+          "first_truth_control": 138,
+          "first_claim_control": 168,
+          "first_correct_control": 168,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 1.5,
+          "post_stop_stable": true,
+          "complete_intervals": [
+            {
+              "start": 138,
+              "end": 360,
+              "detected": true
+            }
+          ]
+        },
+        {
+          "episode": "holdout_2026091913",
+          "seed": 2026091913,
+          "first_truth_control": 142,
+          "first_claim_control": 153,
+          "first_correct_control": 153,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 0.55,
+          "post_stop_stable": true,
+          "complete_intervals": [
+            {
+              "start": 142,
+              "end": 360,
+              "detected": true
+            }
+          ]
+        },
+        {
+          "episode": "holdout_2026091914",
+          "seed": 2026091914,
+          "first_truth_control": 150,
+          "first_claim_control": 156,
+          "first_correct_control": 156,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 0.3,
+          "post_stop_stable": true,
+          "complete_intervals": [
+            {
+              "start": 150,
+              "end": 360,
+              "detected": true
+            }
+          ]
+        },
+        {
+          "episode": "holdout_2026091915",
+          "seed": 2026091915,
+          "first_truth_control": 143,
+          "first_claim_control": 169,
+          "first_correct_control": 169,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 1.3,
+          "post_stop_stable": true,
+          "complete_intervals": [
+            {
+              "start": 143,
+              "end": 360,
+              "detected": true
+            }
+          ]
+        },
+        {
+          "episode": "holdout_2026091916",
+          "seed": 2026091916,
+          "first_truth_control": 144,
+          "first_claim_control": 157,
+          "first_correct_control": 157,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 0.65,
+          "post_stop_stable": true,
+          "complete_intervals": [
+            {
+              "start": 144,
+              "end": 360,
+              "detected": true
+            }
+          ]
+        },
+        {
+          "episode": "holdout_2026091917",
+          "seed": 2026091917,
+          "first_truth_control": 141,
+          "first_claim_control": 150,
+          "first_correct_control": 150,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 0.45,
+          "post_stop_stable": true,
+          "complete_intervals": [
+            {
+              "start": 141,
+              "end": 360,
+              "detected": true
+            }
+          ]
+        },
+        {
+          "episode": "holdout_2026091918",
+          "seed": 2026091918,
+          "first_truth_control": 142,
+          "first_claim_control": 150,
+          "first_correct_control": 150,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 0.4,
+          "post_stop_stable": true,
+          "complete_intervals": [
+            {
+              "start": 142,
+              "end": 360,
+              "detected": true
+            }
+          ]
+        },
+        {
+          "episode": "holdout_2026091919",
+          "seed": 2026091919,
+          "first_truth_control": 142,
+          "first_claim_control": 150,
+          "first_correct_control": 150,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 0.4,
+          "post_stop_stable": true,
+          "complete_intervals": [
+            {
+              "start": 142,
+              "end": 360,
+              "detected": true
+            }
+          ]
+        }
+      ],
+      "closed_loop": {
+        "episodes": 20,
+        "physically_completed_episodes": 19,
+        "premature_stops": 0,
+        "missed_completed_episodes": 0,
+        "no_stop": 1,
+        "post_stop_failures": 0,
+        "missing_post_stop_probes": 0,
+        "maximum_confirmation_delay_s": 1.5,
+        "median_confirmation_delay_s": 0.55,
+        "late_confirmations": 0,
+        "exact_seed_coverage": true,
+        "passed": true
+      },
+      "challenges": [
+        {
+          "case": "holdout_2026091900_held",
+          "category": "held",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091900_above",
+          "category": "above",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091900_wrong_object",
+          "category": "wrong_object",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091900_outside",
+          "category": "outside",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091900_recent_drop",
+          "category": "recent_drop",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091900_external_hidden",
+          "category": "external_hidden",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091900_wrist_hidden",
+          "category": "wrist_hidden",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091900_both_hidden",
+          "category": "both_hidden",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091901_held",
+          "category": "held",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091901_above",
+          "category": "above",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091901_wrong_object",
+          "category": "wrong_object",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091901_outside",
+          "category": "outside",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091901_recent_drop",
+          "category": "recent_drop",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091901_external_hidden",
+          "category": "external_hidden",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091901_wrist_hidden",
+          "category": "wrist_hidden",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091901_both_hidden",
+          "category": "both_hidden",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091902_held",
+          "category": "held",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091902_above",
+          "category": "above",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091902_wrong_object",
+          "category": "wrong_object",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091902_outside",
+          "category": "outside",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091902_recent_drop",
+          "category": "recent_drop",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091902_external_hidden",
+          "category": "external_hidden",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091902_wrist_hidden",
+          "category": "wrist_hidden",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091902_both_hidden",
+          "category": "both_hidden",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091903_held",
+          "category": "held",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091903_above",
+          "category": "above",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091903_wrong_object",
+          "category": "wrong_object",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091903_outside",
+          "category": "outside",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091903_recent_drop",
+          "category": "recent_drop",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091903_external_hidden",
+          "category": "external_hidden",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091903_wrist_hidden",
+          "category": "wrist_hidden",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        },
+        {
+          "case": "holdout_2026091903_both_hidden",
+          "category": "both_hidden",
+          "confirmed_false_complete_controls": [],
+          "blackout_confident_decisions": 0
+        }
+      ],
+      "challenge_gate": {
+        "sequences": 32,
+        "confirmed_false_complete": 0,
+        "blackout_confident_decisions": 0,
+        "passed": true
+      },
+      "checkpoint_sha256": "28482b40e470d932dfe44312d2dbcb7fa732146a2b2f9c7ebf7683b47cdfa7f9"
+    }
+  },
+  "collection_sha256": "3f81776373660768cbb6507e976ce567b88dcbbe2f0671e38dbbc3c35f374e7b",
+  "challenge_manifest_sha256": "af67431086372c3e422ce1b4f8aa950221a3cda503eb48312aa43acf2340bdb6",
+  "freeze_sha256": "0f04e36cea791893d67b12f8b707e2f6a4a50782aad5650c4c44d4b6ff9c5ee6"
+}

@@ -1,0 +1,57 @@
+{
+  "status": "GO",
+  "live": {
+    "episodes": 20,
+    "physically_completed_episodes": 19,
+    "premature_stops": 0,
+    "missed_completed_episodes": 0,
+    "no_stop": 1,
+    "post_stop_failures": 0,
+    "missing_post_stop_probes": 0,
+    "maximum_confirmation_delay_s": 1.5,
+    "median_confirmation_delay_s": 0.55,
+    "late_confirmations": 0,
+    "exact_seed_coverage": true,
+    "passed": true
+  },
+  "paired_adapted": {
+    "episodes": 20,
+    "physically_completed_episodes": 19,
+    "premature_stops": 0,
+    "missed_completed_episodes": 0,
+    "no_stop": 1,
+    "post_stop_failures": 0,
+    "missing_post_stop_probes": 0,
+    "maximum_confirmation_delay_s": 1.5,
+    "median_confirmation_delay_s": 0.55,
+    "late_confirmations": 0,
+    "exact_seed_coverage": true,
+    "passed": true
+  },
+  "paired_baseline": {
+    "episodes": 20,
+    "physically_completed_episodes": 19,
+    "premature_stops": 0,
+    "missed_completed_episodes": 2,
+    "no_stop": 3,
+    "post_stop_failures": 0,
+    "missing_post_stop_probes": 0,
+    "maximum_confirmation_delay_s": 2.5,
+    "median_confirmation_delay_s": 1.0,
+    "late_confirmations": 4,
+    "exact_seed_coverage": true,
+    "passed": false
+  },
+  "challenges": {
+    "sequences": 32,
+    "confirmed_false_complete": 0,
+    "blackout_confident_decisions": 0,
+    "passed": true
+  },
+  "freeze_sha256": "0f04e36cea791893d67b12f8b707e2f6a4a50782aad5650c4c44d4b6ff9c5ee6",
+  "protocol_sha256": "1854226c0a6a3565647207c66032480a1390f65643b2c15a73264e53f1260e64",
+  "checkpoint_sha256": "28482b40e470d932dfe44312d2dbcb7fa732146a2b2f9c7ebf7683b47cdfa7f9",
+  "completed_unix": 1789461476.4306545,
+  "test_used_for_fitting": false,
+  "scope": "Single finite LIBERO tomato-to-basket task in simulation. No new Qwen grounding test, physical-robot deadline guarantee, natural-occlusion guarantee, or other-task claim. Simulated 20 Hz; two-second post-stop horizon."
+}
