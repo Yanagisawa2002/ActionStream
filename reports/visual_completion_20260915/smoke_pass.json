@@ -1,0 +1,21 @@
+{
+  "event": "epoch",
+  "epoch": 1,
+  "step": 1,
+  "train_loss": 1.5298278331756592,
+  "validation_loss": 0.5196520090103149,
+  "validation": {
+    "frames": 64,
+    "positives": 4,
+    "negatives": 60,
+    "accuracy": 0.921875,
+    "false_complete_at_0_9": 0,
+    "true_complete_at_0_9": 0,
+    "false_incomplete_at_0_1": 0,
+    "unknown_at_0_1_0_9": 64
+  },
+  "elapsed_seconds": 0.8454458713531494,
+  "peak_gpu_mib": 580.18603515625,
+  "passed": true,
+  "checkpoint_reload_equal": true
+}
