@@ -1,0 +1,13 @@
+{
+  "reason": "Verification-only restart with bounded BLAS/OMP/llvmpipe threads; initial process had 254 threads and approximately 110 percent CPU. No inference, policy execution, thresholds, seeds or primary results are rerun or changed.",
+  "initial_pid": 71874,
+  "initial_partial_records": 5,
+  "initial_directory": "state-rgb-audit-initial-partial",
+  "restarted_unix": 1789467752.2332249,
+  "limits": {
+    "OPENBLAS_NUM_THREADS": 1,
+    "OMP_NUM_THREADS": 1,
+    "MKL_NUM_THREADS": 1,
+    "LP_NUM_THREADS": 1
+  }
+}

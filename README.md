@@ -1,6 +1,6 @@
 # ActionStream
 
-Current code and validation boundary: [2026-09-13 integration and measured limits](docs/embodied-development-status.md). Historical measurements below retain their original conditions.
+Current finite Agent: [entrypoint and scope](docs/finite-agent.md), with [2026-09-15 language-to-VLA acceptance](reports/finite_agent_20260915/README.md). The frozen synchronous single-task integration passed: 20/20 supported requests accepted, 0/20 unsupported requests admitted, 20/20 new trajectories completed, and zero premature stops. Original-text authorization and continuous RGB confirmation remain required. Historical measurements below retain their original conditions.
 
 ActionStream is a LeRobot-compatible asynchronous inference backend for
 chunked robot policies under delayed delivery. It separates GPU inference from
@@ -23,7 +23,8 @@ missing real-robot evidence.
 - [Cancellable process transport](src/actionstream/inference_transport.py)
 - [Episode ownership, locks, and action revision contract](docs/lifecycle_contract.md)
 - [Native VLA development baseline](docs/native-baseline-development.md)
-- [Experimental language and visual checks: quality gates failed](docs/embodied-development-status.md)
+- [Finite language-to-VLA Agent and confirmed stopping](docs/finite-agent.md)
+- [Historical 2026-09-13 language and visual quality failures](docs/embodied-development-status.md)
 - [LeRobot plugin](integrations/lerobot/)
 - [Backend and failure-path tests](tests/test_lerobot_inference.py)
 - [H1-R2 delivery-pipeline report](reports/actionstream_transport_h1_r2/report.md)
@@ -31,9 +32,10 @@ missing real-robot evidence.
 - [LeRobot upstream PR #4466](https://github.com/huggingface/lerobot/pull/4466)
 
 The compact v1.1 changes exclude the earlier selector, Isaac, Arena, ROS,
-and raw experiment archives. Historical v1.0 evidence is preserved. The new
-language and observation modules are experimental and remain behind failed
-quality gates; they are not a validated autonomous robot controller.
+and raw experiment archives. Historical v1.0 evidence is preserved. The finite
+language and temporal-visual Agent now has separate single-task synchronous
+simulation acceptance. Integration with the asynchronous engine, real-time
+deadlines, physical failure recovery and real-robot acceptance remain open.
 
 ## Runtime contract
 

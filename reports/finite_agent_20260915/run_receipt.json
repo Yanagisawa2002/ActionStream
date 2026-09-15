@@ -1,0 +1,18 @@
+{
+  "status": "COMPLETED",
+  "started_unix": 1789467285.2574513,
+  "freeze_sha256": "6c75702af5f2439cd8b50ef7747d9bfa6f8b5bcd0beae3cae48eb321c86d7cdf",
+  "packages": {
+    "torch": "2.8.0+cu128",
+    "torchvision": "0.23.0+cu128",
+    "transformers": "5.5.4",
+    "lerobot": "0.6.2",
+    "hf-libero": "0.1.4",
+    "mujoco": "3.8.1",
+    "robosuite": "1.4.0",
+    "numpy": "2.2.6",
+    "Pillow": "11.3.0"
+  },
+  "completed_unix": 1789467477.4220011,
+  "verdict": "GO"
+}

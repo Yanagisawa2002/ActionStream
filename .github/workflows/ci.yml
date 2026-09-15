@@ -84,6 +84,8 @@ jobs:
         run: uv run python reports/completion_development_20260915/verify_evidence.py
       - name: Replay frozen heldout completion acceptance
         run: uv run python reports/completion_acceptance_v3_20260915/verify_evidence.py
+      - name: Independently replay finite Agent integration acceptance
+        run: uv run python reports/finite_agent_20260915/verify_evidence.py
 
   upstream-lerobot-contract:
     runs-on: ubuntu-latest

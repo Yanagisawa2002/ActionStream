@@ -1,5 +1,7 @@
 # Embodied development status — 2026-09-13
 
+This historical report retains its original failures. Subsequent [2026-09-15 finite Agent integration](../reports/finite_agent_20260915/README.md) passed a new single-task synchronous acceptance protocol with original-text authorization and temporal RGB confirmation.
+
 This update combines the compact v1.1 candidate, its byte-identical public
 LeRobot dependency source, and four completed implementation stages. The
 runtime fixes and experimental evaluation tooling are delivered together;

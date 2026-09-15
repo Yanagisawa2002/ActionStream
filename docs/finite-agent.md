@@ -2,7 +2,7 @@
 
 The `actionstream-agent` entrypoint connects real Qwen language parsing, whole-utterance authorization, native X-VLA actions, the frozen adapted temporal RGB verifier, continuous confirmation, and a two-second physical stop continuation. It supports the single LIBERO Object task: tomato sauce into the basket.
 
-The model and confirmation policy match the [previous independent completion acceptance](../reports/completion_acceptance_v3_20260915/README.md). That result does not automatically certify this new integration. A separate [predeclared acceptance protocol](../configs/finite_agent_acceptance_v1.json) evaluates the complete entrypoint with new language and layouts.
+The model and confirmation policy match the [previous independent completion acceptance](../reports/completion_acceptance_v3_20260915/README.md). A separate [predeclared acceptance protocol](../configs/finite_agent_acceptance_v1.json) evaluated the complete entrypoint with new language and layouts and **passed**: 20/20 supported requests accepted, 0/20 unsupported requests admitted, 20/20 tasks safely completed, zero premature stops/missed events, maximum confirmation delay 0.85 seconds and all stops stable for two seconds. See the [complete evidence and limits](../reports/finite_agent_20260915/README.md).
 
 ## Behavior
 

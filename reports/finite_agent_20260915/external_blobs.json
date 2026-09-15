@@ -1,0 +1,86 @@
+{
+  "frozen.pt": {
+    "bytes": 57369399,
+    "sha256": "28482b40e470d932dfe44312d2dbcb7fa732146a2b2f9c7ebf7683b47cdfa7f9"
+  },
+  "run/fa_001/trajectory.npz": {
+    "bytes": 25504996,
+    "sha256": "b18c8cfb2b3dda8587bbc510d2eb52683e1928c192eda7c297d8467ba0e64643"
+  },
+  "run/fa_002/trajectory.npz": {
+    "bytes": 26525515,
+    "sha256": "f6a6e6c488df19194e0c63fee5fb0d05d679d16da8311d504bca2d78a2b97367"
+  },
+  "run/fa_003/trajectory.npz": {
+    "bytes": 25130887,
+    "sha256": "2e29a7e3a11d06b340462fad09ea57eddea40631bb0bd12ad53980a8482300c2"
+  },
+  "run/fa_004/trajectory.npz": {
+    "bytes": 25933656,
+    "sha256": "ff5802485f50d0c1d890ca63cf0ee25e7f5d11b1c6af30d431d063af688abb03"
+  },
+  "run/fa_005/trajectory.npz": {
+    "bytes": 27238977,
+    "sha256": "8934e8d2a5da68eb5c171df3d4c0a5273e0d5dbdbe09720a841ff077759b9fe3"
+  },
+  "run/fa_006/trajectory.npz": {
+    "bytes": 26947427,
+    "sha256": "ad170e0f2f49d47e11f89b9fd6806bcff028b5d7fc89f8ec5c09a8f62f03398a"
+  },
+  "run/fa_007/trajectory.npz": {
+    "bytes": 27357377,
+    "sha256": "5e9a15cb852c69a612088d1cffacc6f4db2fbea6e07bbd2e4c1693c27d54b220"
+  },
+  "run/fa_008/trajectory.npz": {
+    "bytes": 25914596,
+    "sha256": "c52e189acfc488a8d8280674a46a249a71ba6da152d5dce70c9336b66ad7ce44"
+  },
+  "run/fa_009/trajectory.npz": {
+    "bytes": 25774451,
+    "sha256": "5c41f9d02777606b3a10f3fd8a296fd3e3c6fd65b416b831a18b9bf0b8b58847"
+  },
+  "run/fa_010/trajectory.npz": {
+    "bytes": 25968332,
+    "sha256": "7446014b29150bfab8e4f977e500d9ccc5cfe6323790975c01f547c89c6e62b5"
+  },
+  "run/fa_011/trajectory.npz": {
+    "bytes": 26033635,
+    "sha256": "92fe91cdeae291c6b78d4579ce241c6fc5995f92510b7e966f57ba914de6d1c4"
+  },
+  "run/fa_012/trajectory.npz": {
+    "bytes": 25937589,
+    "sha256": "c7a04aeb955d7a28c37c41c517f95916a0cde99a734cc6f270a35d8f393d5320"
+  },
+  "run/fa_013/trajectory.npz": {
+    "bytes": 26152048,
+    "sha256": "70c4f1dad81cd905e514d047fdb0403cfabee9c473df832f1e82b2c075c4e515"
+  },
+  "run/fa_014/trajectory.npz": {
+    "bytes": 26305282,
+    "sha256": "7d1eb905d049680473f04c2d045bad32a9f1c247a62079c97cf47ee0b7e35be1"
+  },
+  "run/fa_015/trajectory.npz": {
+    "bytes": 26118858,
+    "sha256": "afd8f49cc8fc389f866d2d84f39255d911935396e3c38a8525d82bd4ca4db8d9"
+  },
+  "run/fa_016/trajectory.npz": {
+    "bytes": 24679022,
+    "sha256": "5cbb5931387cc70f2544a24c44a64e1f731ccde8d0248cdf4faa0c8f2047a3d7"
+  },
+  "run/fa_017/trajectory.npz": {
+    "bytes": 25223860,
+    "sha256": "ebda05d6f36e757c03fb79f8191e928b992d74210626bdc3d4d5e0d21f7730c3"
+  },
+  "run/fa_018/trajectory.npz": {
+    "bytes": 26604656,
+    "sha256": "49931b2805c47cc48c77bbbc671c8e655001ad38a4282ff240828cc04f42268c"
+  },
+  "run/fa_019/trajectory.npz": {
+    "bytes": 29323681,
+    "sha256": "408126543dcdf09d2a83a7c1e34db5ca11e82e722b4c0fbb3a06b25dd8dee704"
+  },
+  "run/fa_020/trajectory.npz": {
+    "bytes": 26451311,
+    "sha256": "455d72c2c58341aa8fedb61bf3734ad02fd0759668bd81beada6c465b9afbdc8"
+  }
+}
