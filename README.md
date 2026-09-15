@@ -1,6 +1,6 @@
 # ActionStream
 
-Current finite Agent: [entrypoint and scope](docs/finite-agent.md), with [2026-09-15 language-to-VLA acceptance](reports/finite_agent_20260915/README.md). The frozen synchronous single-task integration passed: 20/20 supported requests accepted, 0/20 unsupported requests admitted, 20/20 new trajectories completed, and zero premature stops. Original-text authorization and continuous RGB confirmation remain required. Historical measurements below retain their original conditions.
+Current finite Agent: [entrypoint and scope](docs/finite-agent.md), with [2026-09-16 async budget acceptance](reports/async_budget_20260916/README.md). The frozen single-task simulation passes its declared gates: 10/10 normal safe completions, 4/2,207 controls over 50 ms (0.181%, every episode below 1%), and 10/10 eligible physical failures recovered. Original-text authorization and continuous fresh-RGB confirmation remain required. The [original timing NO-GO](reports/async_agent_20260915/README.md) and [synchronous language acceptance](reports/finite_agent_20260915/README.md) retain their original conditions.
 
 ActionStream is a LeRobot-compatible asynchronous inference backend for
 chunked robot policies under delayed delivery. It separates GPU inference from
@@ -24,6 +24,7 @@ missing real-robot evidence.
 - [Episode ownership, locks, and action revision contract](docs/lifecycle_contract.md)
 - [Native VLA development baseline](docs/native-baseline-development.md)
 - [Finite language-to-VLA Agent and confirmed stopping](docs/finite-agent.md)
+- [50 ms diagnosis, frozen acceptance and complete evidence](reports/async_budget_20260916/README.md)
 - [Historical 2026-09-13 language and visual quality failures](docs/embodied-development-status.md)
 - [LeRobot plugin](integrations/lerobot/)
 - [Backend and failure-path tests](tests/test_lerobot_inference.py)
@@ -33,9 +34,9 @@ missing real-robot evidence.
 
 The compact v1.1 changes exclude the earlier selector, Isaac, Arena, ROS,
 and raw experiment archives. Historical v1.0 evidence is preserved. The finite
-language and temporal-visual Agent now has separate single-task synchronous
-simulation acceptance. Integration with the asynchronous engine, real-time
-deadlines, physical failure recovery and real-robot acceptance remain open.
+language and temporal-visual Agent now has separate single-task synchronous and
+asynchronous simulation acceptance, including one injected gripper-failure type.
+Hard real-time deadlines, broader tasks/faults and real-robot acceptance remain open.
 
 ## Runtime contract
 

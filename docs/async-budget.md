@@ -4,6 +4,10 @@ The original [2026-09-15 timing NO-GO](../reports/async_agent_20260915/README.md
 remains unchanged. This follow-up profiles only consumed seeds, then freezes a
 separate implementation and twenty new cases before acceptance.
 
+The [frozen follow-up report](../reports/async_budget_20260916/README.md) now passes:
+10/10 normal safe completions, 4/2,207 work misses (0.181%, every case under 1%),
+and 10/10 eligible physical failures recovered. Independent state/RGB audit passes.
+
 ## Measured development findings
 
 The original 2,187 controls averaged 34.78 ms of work. The 102 misses averaged
@@ -19,7 +23,7 @@ compared with native simulation. Single-thread BLAS, single-thread Torch and a
 1 ms Python switch interval each left development cases above the miss limit.
 Those experimental settings are not deployed.
 
-## Candidate execution
+## Validated execution
 
 - Async/recovery CLI execution uses `IsolatedAsyncSimulationPort`. The production
   ActionStream engine still owns the request mailbox, queue and reset epochs.
@@ -79,3 +83,10 @@ python scripts/engineering/evaluate_async_budget.py recovery \
 
 The native results and independent state/RGB audit, rather than CI success,
 determine the new GO/NO-GO verdict.
+
+These listed seeds have now been consumed. Reusing them is reproduction or
+development; another implementation requires a separate freeze and untouched
+acceptance cases. The current installed delivery used an independently reinstalled
+root/plugin with the verified dependency clone; fresh network installation attempts
+remain incomplete and documented in the report. See the report's separate warmup
+times and GPU residency sample when provisioning this native process configuration.

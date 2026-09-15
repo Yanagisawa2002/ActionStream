@@ -1,0 +1,23 @@
+{
+  "raw_records.tar.gz": {
+    "bytes": 18732701,
+    "sha256": "f027f6d86114383f5d2ead774a532c2f3bea1806980a5703b8db778c73ba3c3a",
+    "parts": [
+      {
+        "name": "raw_records.tar.gz.part000",
+        "bytes": 8388608,
+        "sha256": "f7ed3fc8297a07a56efd3a6a74b86bfb3b2348e8e16a09caf58e0b3f62ec0e96"
+      },
+      {
+        "name": "raw_records.tar.gz.part001",
+        "bytes": 8388608,
+        "sha256": "3d02373bc8739b1db455525dcf4c7459c3ab875998ee946508e259c5118668b2"
+      },
+      {
+        "name": "raw_records.tar.gz.part002",
+        "bytes": 1955485,
+        "sha256": "2efde3eec357a1188059a78efa0d11ca86610b64fcc6fdef751ad6fb5a84f763"
+      }
+    ]
+  }
+}

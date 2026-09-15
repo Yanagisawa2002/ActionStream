@@ -1,0 +1,14 @@
+{
+  "status": "PACKAGED",
+  "files": 517,
+  "full": {
+    "name": "async-budget-acceptance-full.tar.gz",
+    "bytes": 1049765080,
+    "sha256": "1651500d3aa6f6116b0309343faf15705bbef90e9a9a00096fab610ce6523bad"
+  },
+  "compact": {
+    "name": "async-budget-acceptance-records.tar.gz",
+    "bytes": 18732701,
+    "sha256": "f027f6d86114383f5d2ead774a532c2f3bea1806980a5703b8db778c73ba3c3a"
+  }
+}
