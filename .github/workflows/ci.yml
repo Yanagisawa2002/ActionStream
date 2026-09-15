@@ -57,6 +57,7 @@ jobs:
             tests/test_completion_acceptance.py \
             tests/test_finite_agent.py \
             tests/test_delivery.py \
+            tests/test_async_agent.py \
             scripts/release/audit_public_release.py \
             scripts/release/generate_v1_1_demo.py \
             scripts/engineering \
@@ -81,7 +82,8 @@ jobs:
             tests/test_completion_confirmation.py \
             tests/test_completion_acceptance.py \
             tests/test_finite_agent.py \
-            tests/test_delivery.py
+            tests/test_delivery.py \
+            tests/test_async_agent.py
       - name: Strict release audit
         run: uv run python scripts/release/audit_public_release.py
       - name: Replay completion development evidence

@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "purpose": "Separate paced async timing and physical gripper-failure recovery acceptance",
+  "checkpoint_sha256": "28482b40e470d932dfe44312d2dbcb7fa732146a2b2f9c7ebf7683b47cdfa7f9",
+  "instruction": "Please put the tomato sauce in the basket.",
+  "normal_seeds": [
+    2026092100,
+    2026092101,
+    2026092102,
+    2026092103,
+    2026092104,
+    2026092105,
+    2026092106,
+    2026092107,
+    2026092108,
+    2026092109
+  ],
+  "recovery_seeds": [
+    2026092200,
+    2026092201,
+    2026092202,
+    2026092203,
+    2026092204,
+    2026092205,
+    2026092206,
+    2026092207,
+    2026092208,
+    2026092209
+  ],
+  "fault": {
+    "kind": "force_gripper_open",
+    "controls_exclusive": 300,
+    "reason": "Physical actuator-command clamp; no synthetic status labels or environment resets"
+  },
+  "config": {
+    "period_s": 0.05,
+    "observation_max_age_s": 0.15,
+    "action_source_max_age_s": 1.0,
+    "policy_controls": 300,
+    "settle_controls": 60,
+    "recovery_open_controls": 20,
+    "post_stop_controls": 40,
+    "max_starvation_controls": 20,
+    "request_interval_controls": 10,
+    "inference_timeout_s": 2.0
+  },
+  "gates": {
+    "normal_safe_completions_min": 8,
+    "recovery_eligible_min": 10,
+    "recovered_min": 8,
+    "premature_stops_max": 0,
+    "missed_events_max": 0,
+    "integrity_errors_max": 0,
+    "max_confirmation_delay_s": 2.0,
+    "normal_period_p95_s_max": 0.055,
+    "normal_period_max_s_max": 0.1,
+    "normal_deadline_miss_fraction_max": 0.01
+  },
+  "data_policy": "Freeze before new seeds or results. No replacement seeds, performance retries, fitting or threshold changes. Exclude all 122 retained historical layout hashes and current layouts. Original 20 state/RGB arrays are unavailable and are not reconstructed by this protocol.",
+  "timing_scope": "Steady physical dispatch includes verifier and environment work. Cold model warmup is separately timed before the initial observation. Direct CUDA inference deadlines remain advisory; this is simulated hardware, not physical robot certification."
+}
