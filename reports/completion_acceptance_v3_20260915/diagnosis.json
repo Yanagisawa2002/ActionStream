@@ -1,0 +1,47 @@
+{
+  "matched_safe_stop_pairs": 17,
+  "mean_delay_reduction_s": 0.4735294117647059,
+  "median_delay_reduction_s": 0.3500000000000001,
+  "improved": 12,
+  "unchanged": 5,
+  "worsened": 0,
+  "baseline_event_misses": [
+    {
+      "seed": 2026091906,
+      "positive_decisions": {
+        "incomplete": 165,
+        "unknown": 53
+      },
+      "longest_raw_positive_run": 0
+    },
+    {
+      "seed": 2026091907,
+      "positive_decisions": {
+        "complete": 12,
+        "unknown": 3,
+        "incomplete": 177
+      },
+      "longest_raw_positive_run": 7
+    }
+  ],
+  "policy_failures": [
+    {
+      "seed": 2026091910,
+      "final_facts": {
+        "inside": false,
+        "finger_contact": false,
+        "bilateral_grasp": false,
+        "basket_contact": false,
+        "linear_speed": 7.526411771911926e-16,
+        "angular_speed": 7.842406624732616e-16,
+        "strict_complete": false
+      },
+      "controls_inside": 0,
+      "controls_finger_contact": 39,
+      "controls_basket_contact": 0
+    }
+  ],
+  "live_delay_min_s": 0.3,
+  "live_delay_mean_s": 0.6605263157894736,
+  "live_delay_sample_std_s": 0.3494356352146912
+}

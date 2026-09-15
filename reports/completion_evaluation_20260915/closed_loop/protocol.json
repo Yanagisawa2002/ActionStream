@@ -1,0 +1,75 @@
+{
+  "version": 1,
+  "purpose": "frozen candidate held-out, stress and diagnostic simulator closed-loop evaluation",
+  "checkpoint_sha256": "35c122539730783bc4c61a65d7515a075385a5ac81a0dd8fa2a34c445a55e7c5",
+  "thresholds": {
+    "incomplete": 0.1,
+    "complete": 0.9
+  },
+  "heldout": {
+    "episodes": 10,
+    "frames": 485,
+    "split_seed": 20260915
+  },
+  "stress": {
+    "seed": 2026091501,
+    "construction": "simulation fixtures from training demonstrations only; exact state interventions with separate truth",
+    "source_episodes": [
+      "demo_32",
+      "demo_29",
+      "demo_23",
+      "demo_42",
+      "demo_37"
+    ],
+    "categories": [
+      "held",
+      "above_basket",
+      "wrong_object",
+      "occluded",
+      "dropped_after_placement"
+    ],
+    "views": [
+      "external",
+      "wrist"
+    ],
+    "report_native_360_resized": true,
+    "occluded_requires_unknown": "both views fully hidden; single-view occlusions reported separately",
+    "recipe": {
+      "held": "Last training-demo state before first success where MuJoCo reports gripper contact grasping tomato sauce; report missing fixture if none exists",
+      "above_basket": "First successful training state, translate tomato sauce 0.20 m upward with pose otherwise fixed; require native success false",
+      "wrong_object": "First successful training state, exchange tomato sauce and bbq sauce free-joint positions; require native success false",
+      "occluded": "First successful training state, replace external view, wrist view, then both views with zero RGB; report separately; both hidden must abstain",
+      "dropped_after_placement": "First successful training state followed by tomato sauce displaced 0.30 m laterally and lowered to table height; require true-to-false native success transition; controlled state fixture, not an observed spontaneous policy drop",
+      "positive_control": "First successful training state unmodified",
+      "negative_control": "First training state unmodified"
+    }
+  },
+  "closed_loop": {
+    "mode": "diagnostic simulator experiment; never changes existing release gates",
+    "initial_state_indices": [
+      10,
+      11,
+      12
+    ],
+    "seeds": [
+      2026091510,
+      2026091511,
+      2026091512
+    ],
+    "instructions": [
+      "Please put the tomato sauce in the basket.",
+      "Move the tomato sauce container into the basket.",
+      "Pick up the tomato sauce and place it in the basket."
+    ],
+    "max_control_steps": 300,
+    "controls_between_checks": 30,
+    "unknown_behavior": "stop",
+    "physical_truth": "private evaluator journal only"
+  },
+  "acceptance": {
+    "false_complete_max": 0,
+    "positive_confirmation_required": true,
+    "all_unknown_is_not_pass": true
+  },
+  "retraining": false
+}

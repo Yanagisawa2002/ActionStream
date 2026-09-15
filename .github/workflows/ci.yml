@@ -46,6 +46,13 @@ jobs:
             tests/test_native_baseline.py \
             tests/test_llm_vla.py \
             tests/test_grounded_language.py \
+            tests/test_instruction_visual_evidence.py \
+            tests/test_visual_score_integrity.py \
+            tests/test_visual_completion_training.py \
+            tests/test_frozen_completion.py \
+            tests/test_stable_completion.py \
+            tests/test_completion_confirmation.py \
+            tests/test_completion_acceptance.py \
             scripts/release/audit_public_release.py \
             scripts/release/generate_v1_1_demo.py \
             scripts/engineering \
@@ -61,9 +68,20 @@ jobs:
             tests/test_clean_install.py \
             tests/test_native_baseline.py \
             tests/test_llm_vla.py \
-            tests/test_grounded_language.py
+            tests/test_grounded_language.py \
+            tests/test_instruction_visual_evidence.py \
+            tests/test_visual_score_integrity.py \
+            tests/test_visual_completion_training.py \
+            tests/test_frozen_completion.py \
+            tests/test_stable_completion.py \
+            tests/test_completion_confirmation.py \
+            tests/test_completion_acceptance.py
       - name: Strict release audit
         run: uv run python scripts/release/audit_public_release.py
+      - name: Replay completion development evidence
+        run: uv run python reports/completion_development_20260915/verify_evidence.py
+      - name: Replay frozen heldout completion acceptance
+        run: uv run python reports/completion_acceptance_v3_20260915/verify_evidence.py
 
   upstream-lerobot-contract:
     runs-on: ubuntu-latest

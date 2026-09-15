@@ -1,0 +1,91 @@
+{
+  "version": 2,
+  "purpose": "Released and stable RGB completion repair; fresh VLA trajectories held out",
+  "seed": 2026091502,
+  "old_test_policy": "excluded from new training, selection and acceptance; diagnostic only",
+  "truth": {
+    "window_steps": 10,
+    "linear_speed_max": 0.03,
+    "angular_speed_max": 0.3,
+    "require_inside": true,
+    "require_no_finger_contact": true,
+    "require_basket_contact": true,
+    "control_hz": 20
+  },
+  "input": {
+    "size": 192,
+    "views": [
+      "external",
+      "wrist"
+    ],
+    "offsets": [
+      10,
+      5,
+      0
+    ],
+    "simulator_fields": false
+  },
+  "development": {
+    "train": "original 30 train episodes only",
+    "validation": "original 10 validation episodes only",
+    "settle_extension_controls": 60,
+    "clip_stride": 5,
+    "counterfactual_contexts_per_episode": 5,
+    "categories": [
+      "above",
+      "wrong_object",
+      "outside",
+      "recent_drop",
+      "single_camera_hidden",
+      "both_cameras_hidden"
+    ],
+    "training_seed": 2026091502,
+    "epochs": 40,
+    "batch_size": 24,
+    "learning_rate": 0.0001,
+    "selection": "lexicographic validation false_complete, missed_complete, cross_entropy"
+  },
+  "thresholds": {
+    "complete": 0.95,
+    "incomplete": 0.9,
+    "unknown": "remaining probability mass; explicit unknown class"
+  },
+  "fresh_holdout": {
+    "episodes": 20,
+    "seeds": [
+      2026091700,
+      2026091701,
+      2026091702,
+      2026091703,
+      2026091704,
+      2026091705,
+      2026091706,
+      2026091707,
+      2026091708,
+      2026091709,
+      2026091710,
+      2026091711,
+      2026091712,
+      2026091713,
+      2026091714,
+      2026091715,
+      2026091716,
+      2026091717,
+      2026091718,
+      2026091719
+    ],
+    "initial_states": "fresh procedural LIBERO reset; packaged init_states disabled; reject duplicate object layouts",
+    "policy": "lerobot/xvla-libero@12e8783e996944f5c97e490d37d4c145484ed70a",
+    "policy_controls": 300,
+    "settle_controls": 60,
+    "checkpoint_visible_during_generation": false,
+    "comparison": "old epoch-4 RGB model and v2 both scored against strict v2 truth"
+  },
+  "acceptance": {
+    "false_complete_max": 0,
+    "minimum_complete_recall": 0.8,
+    "require_positive_and_negative": true,
+    "all_unknown_is_not_pass": true
+  },
+  "retraining_after_holdout": false
+}

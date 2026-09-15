@@ -1,0 +1,33 @@
+{
+  "status": "FROZEN",
+  "checkpoint_sha256": "80dc22b4e646bb8647a5e211b407ac198a1c64ea5db9db71a309c69ccfcd54c7",
+  "chosen_epoch": 25,
+  "validation": {
+    "epoch": 25,
+    "steps": 2375,
+    "train_loss": 0.0022649390736715243,
+    "validation_cross_entropy": 0.610500693321228,
+    "validation": {
+      "samples": 747,
+      "positive": 105,
+      "negative": 492,
+      "unobservable": 150,
+      "false_complete": 2,
+      "true_complete": 76,
+      "missed_complete": 29,
+      "unknown": 160,
+      "hidden_confident": 0
+    },
+    "elapsed_seconds": 64.69674110412598
+  },
+  "protocol_sha256": "e8f6d429d50ae214a3ba7a5bb062cae9506910f0c7bd2d16acc2e4620a467df0",
+  "development_manifest_sha256": "0f45ddb0dd37a67ef798689f636742fed1bc0136f9f2a25abf9d50a3331b4107",
+  "frozen_unix": 1789454587.5722387,
+  "test_seen": false,
+  "thresholds": {
+    "complete": 0.95,
+    "incomplete": 0.9,
+    "unknown": "remaining probability mass; explicit unknown class"
+  },
+  "trainer_sha256": "83dec7a199767a7fd098c7c695fd53f6b8c56100580fbf19041f22c402e09c88"
+}

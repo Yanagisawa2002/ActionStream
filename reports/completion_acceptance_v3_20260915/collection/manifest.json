@@ -1,0 +1,327 @@
+{
+  "entries": [
+    {
+      "episode": "holdout_2026091900",
+      "seed": 2026091900,
+      "instruction": "pick up the tomato sauce and place it in the basket",
+      "initial_layout_sha256": "eff61a72855e1008af02f26e96559df441f06f9eca371270496c2d1e53c1de05",
+      "control_records": 361,
+      "post_control_records": 0,
+      "files_sha256": {
+        "holdout_2026091900.npz": "c451538b8663f4179b7eafa04e065370de404e07072f7324e806911b6d1e9cf4",
+        "holdout_2026091900.xml": "8b7f169e249ba62f569a10ef9288e0f1bb00dee35db11d43cdede58537e68a49",
+        "holdout_2026091900_truth.json": "a77ed5d8385262a272d39c41214555d9920fd1b4821174bedf7313ddb26c038b",
+        "holdout_2026091900_actions.json": "9aba3a2707e8ef43dda3a58e9a8b9b96b4a1838e9971b824fffb20cba368c413",
+        "holdout_2026091900_observations.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "holdout_2026091900_post.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+      }
+    },
+    {
+      "episode": "holdout_2026091901",
+      "seed": 2026091901,
+      "instruction": "pick up the tomato sauce and place it in the basket",
+      "initial_layout_sha256": "177ad951a0b7e49193267ce3b842b7ca1b22bdc14906cab446d5a9e08309cfbd",
+      "control_records": 361,
+      "post_control_records": 0,
+      "files_sha256": {
+        "holdout_2026091901.npz": "589f468855714f7cc4fe6b74140f6768710fa044f3ade569d1997a7fc54cc347",
+        "holdout_2026091901.xml": "8b7f169e249ba62f569a10ef9288e0f1bb00dee35db11d43cdede58537e68a49",
+        "holdout_2026091901_truth.json": "1c0f91aa7bf7e5eeb6312470f4e5df89c36362a052d3a3a5f77011e4c3993d87",
+        "holdout_2026091901_actions.json": "c0f6cd20883cdff5a69a5331d0ec73ec07514bc12ba493981c1703f579120fc9",
+        "holdout_2026091901_observations.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "holdout_2026091901_post.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+      }
+    },
+    {
+      "episode": "holdout_2026091902",
+      "seed": 2026091902,
+      "instruction": "pick up the tomato sauce and place it in the basket",
+      "initial_layout_sha256": "7656281fce08e5c21b3995a8b29730ff1123dede15e13f905dcef8faed58132a",
+      "control_records": 361,
+      "post_control_records": 0,
+      "files_sha256": {
+        "holdout_2026091902.npz": "cba84627d7354552661cd4c1971535fcf92da0d20abe678495afad0f32b135d9",
+        "holdout_2026091902.xml": "8b7f169e249ba62f569a10ef9288e0f1bb00dee35db11d43cdede58537e68a49",
+        "holdout_2026091902_truth.json": "0dff37a3678fac18097cb4219084650e8f2bc0163aacfc76aadf139989d32df6",
+        "holdout_2026091902_actions.json": "2633e2ab58e8d29a4c600a094ce3c9868957d5d9e92f6224f5f2dcada30b4da5",
+        "holdout_2026091902_observations.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "holdout_2026091902_post.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+      }
+    },
+    {
+      "episode": "holdout_2026091903",
+      "seed": 2026091903,
+      "instruction": "pick up the tomato sauce and place it in the basket",
+      "initial_layout_sha256": "2979471a917cba3ad17fd932d9d7a7690142d65d9a7fad8a62cb30f81114fe0a",
+      "control_records": 361,
+      "post_control_records": 0,
+      "files_sha256": {
+        "holdout_2026091903.npz": "2ccdf90912cf95e4db5eaacaa0e2c17aa97ef00525ba9d00e0e4696bf5414523",
+        "holdout_2026091903.xml": "8b7f169e249ba62f569a10ef9288e0f1bb00dee35db11d43cdede58537e68a49",
+        "holdout_2026091903_truth.json": "6e07c7c09e3e10bbcf30e5727a0c15c9c7585d3f5d1125d54fe1e828d06ff6fb",
+        "holdout_2026091903_actions.json": "dd7327805e234c2d89265b2ffd2474f2ff6ad1889b7bd08350c0e6ecb2b0561f",
+        "holdout_2026091903_observations.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "holdout_2026091903_post.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+      }
+    },
+    {
+      "episode": "holdout_2026091904",
+      "seed": 2026091904,
+      "instruction": "pick up the tomato sauce and place it in the basket",
+      "initial_layout_sha256": "812af4162fd53adfdcf82fbd615cab74df8d1e09e9c8d3498b6f7ccd3fb9d48a",
+      "control_records": 361,
+      "post_control_records": 0,
+      "files_sha256": {
+        "holdout_2026091904.npz": "59c91663323f3de915d85b35097bcc17fadfb2f385cf86b805e9c689b647368e",
+        "holdout_2026091904.xml": "8b7f169e249ba62f569a10ef9288e0f1bb00dee35db11d43cdede58537e68a49",
+        "holdout_2026091904_truth.json": "1e9b5ca1f41cfc5992aa549e7d04deee6b728b94ee3c28508d19d2725ea4be62",
+        "holdout_2026091904_actions.json": "9ae9a74baede6c47d7e3db055bdf5207aef26ae99798c449d8319658af28fbde",
+        "holdout_2026091904_observations.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "holdout_2026091904_post.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+      }
+    },
+    {
+      "episode": "holdout_2026091905",
+      "seed": 2026091905,
+      "instruction": "pick up the tomato sauce and place it in the basket",
+      "initial_layout_sha256": "009d8d55f7cf7b292ae007caa10d8bdc3d7fdfda44e6c84ca0699b3ec17b8812",
+      "control_records": 361,
+      "post_control_records": 0,
+      "files_sha256": {
+        "holdout_2026091905.npz": "e64223e0b6d3a0ed6dd46f0be437262126c6673daa75a05ff3068e8fa3c9b5a8",
+        "holdout_2026091905.xml": "8b7f169e249ba62f569a10ef9288e0f1bb00dee35db11d43cdede58537e68a49",
+        "holdout_2026091905_truth.json": "eba770d3b8ac85cbf1f2e9905742e3a1ef86e9e680ac415b76c10edee3621bb9",
+        "holdout_2026091905_actions.json": "b90155cc73d5d991add89969ed617ae2e2a235579ab808fe855d35f6faf5c8ef",
+        "holdout_2026091905_observations.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "holdout_2026091905_post.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+      }
+    },
+    {
+      "episode": "holdout_2026091906",
+      "seed": 2026091906,
+      "instruction": "pick up the tomato sauce and place it in the basket",
+      "initial_layout_sha256": "5efe723f3df71fa5c78e3a24892c5d1553abf92646bde1cc0587707982ec9d1f",
+      "control_records": 361,
+      "post_control_records": 0,
+      "files_sha256": {
+        "holdout_2026091906.npz": "86c9b4caab1dff827f1e80f520a6649a3a4b66db6fc2a83af2c48b334c49aced",
+        "holdout_2026091906.xml": "8b7f169e249ba62f569a10ef9288e0f1bb00dee35db11d43cdede58537e68a49",
+        "holdout_2026091906_truth.json": "ec9fae6dd98f013d021c0fae86f2a357b1bf4fe6a05ffae7f100d69def746abf",
+        "holdout_2026091906_actions.json": "d545b63468569201fac170027be658c1aab251f18c18750e6b3b820eb4c0e36a",
+        "holdout_2026091906_observations.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "holdout_2026091906_post.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+      }
+    },
+    {
+      "episode": "holdout_2026091907",
+      "seed": 2026091907,
+      "instruction": "pick up the tomato sauce and place it in the basket",
+      "initial_layout_sha256": "a9ff2c3682a2cd00b02ff826df6e6c5bbca029773310599dc9c3559db59c9c5f",
+      "control_records": 361,
+      "post_control_records": 0,
+      "files_sha256": {
+        "holdout_2026091907.npz": "be55f153aac27e86b3b690da9fa973d7820c5577f418e0c7eccbd49820d884e0",
+        "holdout_2026091907.xml": "8b7f169e249ba62f569a10ef9288e0f1bb00dee35db11d43cdede58537e68a49",
+        "holdout_2026091907_truth.json": "21dd109abe3366df53f4246cfc0ecea5576307abe73ea6fd3521a4b618282512",
+        "holdout_2026091907_actions.json": "2420576f091d2abb6fc755b087684eb46b5247c93838eac0fd2e838e87e52c33",
+        "holdout_2026091907_observations.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "holdout_2026091907_post.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+      }
+    },
+    {
+      "episode": "holdout_2026091908",
+      "seed": 2026091908,
+      "instruction": "pick up the tomato sauce and place it in the basket",
+      "initial_layout_sha256": "53669a65a8fb8867691c06e542c427df59ef23152cf96b059012aee9ef015dae",
+      "control_records": 361,
+      "post_control_records": 0,
+      "files_sha256": {
+        "holdout_2026091908.npz": "40edbe2f96f91181509391acfee5baef6d1ced445fdbbded01ae6761ad2bd947",
+        "holdout_2026091908.xml": "8b7f169e249ba62f569a10ef9288e0f1bb00dee35db11d43cdede58537e68a49",
+        "holdout_2026091908_truth.json": "48f4fc00e54e38eccee733608e7c057b046798ea313da6e300f42f5d318e8b36",
+        "holdout_2026091908_actions.json": "57b1b09e62df21a69b6fdb77cc87d38c9cd5095fa2b007a447fd303fbddc572c",
+        "holdout_2026091908_observations.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "holdout_2026091908_post.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+      }
+    },
+    {
+      "episode": "holdout_2026091909",
+      "seed": 2026091909,
+      "instruction": "pick up the tomato sauce and place it in the basket",
+      "initial_layout_sha256": "0fe6ca6dd11a49305fcee82d1d26033e0d8a49e9c7904f33065229b8274cd4a5",
+      "control_records": 361,
+      "post_control_records": 0,
+      "files_sha256": {
+        "holdout_2026091909.npz": "adc6d51b4c29cf2bc6fc90e9ec5c94012c5ba3395c64890938872a6a84b76b65",
+        "holdout_2026091909.xml": "8b7f169e249ba62f569a10ef9288e0f1bb00dee35db11d43cdede58537e68a49",
+        "holdout_2026091909_truth.json": "1f5dcec486e8fe2e8a549e6c7de560e28110acd8e0a4a2c09336cc21155f5aa2",
+        "holdout_2026091909_actions.json": "0ac4e91c2f8e69c9049f314f8f1d05800f58628676196c1fe16626b15d6a9cab",
+        "holdout_2026091909_observations.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "holdout_2026091909_post.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+      }
+    },
+    {
+      "episode": "holdout_2026091910",
+      "seed": 2026091910,
+      "instruction": "pick up the tomato sauce and place it in the basket",
+      "initial_layout_sha256": "452c1874e26405eee319b25fe140c4bd835d15ca24faab9fc1aa87ca4652a9d2",
+      "control_records": 361,
+      "post_control_records": 0,
+      "files_sha256": {
+        "holdout_2026091910.npz": "601bf3fb788b6946b394ed47303f787c6ff3c771208dbddb8b6886744b554840",
+        "holdout_2026091910.xml": "8b7f169e249ba62f569a10ef9288e0f1bb00dee35db11d43cdede58537e68a49",
+        "holdout_2026091910_truth.json": "3bc5603353868c814491de23358bd43faca0e8bf921fb86d1ed4e9e64d1e9966",
+        "holdout_2026091910_actions.json": "6ef9e678fe7187f0a390f80206a93bd78874c79c541da7c59fbeba878699db25",
+        "holdout_2026091910_observations.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "holdout_2026091910_post.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+      }
+    },
+    {
+      "episode": "holdout_2026091911",
+      "seed": 2026091911,
+      "instruction": "pick up the tomato sauce and place it in the basket",
+      "initial_layout_sha256": "414ea3d994e1da2ea0a3eeabafef733f92e1d2d3e26c2e310679a092246854b2",
+      "control_records": 361,
+      "post_control_records": 0,
+      "files_sha256": {
+        "holdout_2026091911.npz": "c351a02e3c99ac6b64a6a517080120c96dd613fe634a491b89316e4253df970a",
+        "holdout_2026091911.xml": "8b7f169e249ba62f569a10ef9288e0f1bb00dee35db11d43cdede58537e68a49",
+        "holdout_2026091911_truth.json": "07099a911e1ce9564f2e4b81e5e3f9996409753b5a6fe51b09c1dcaf7063062e",
+        "holdout_2026091911_actions.json": "738982250e05225522427e0debb238c42e019bcad18a96471d5c4a7989568ef0",
+        "holdout_2026091911_observations.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "holdout_2026091911_post.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+      }
+    },
+    {
+      "episode": "holdout_2026091912",
+      "seed": 2026091912,
+      "instruction": "pick up the tomato sauce and place it in the basket",
+      "initial_layout_sha256": "aaa77b1b9745449bf64c1cc3abfe927edf2cefa12044af25c50aaa0e53eb66a4",
+      "control_records": 361,
+      "post_control_records": 0,
+      "files_sha256": {
+        "holdout_2026091912.npz": "3789fd908df56ed4db65510183d0269eaeaa84b2cace72feba54a147efde3736",
+        "holdout_2026091912.xml": "8b7f169e249ba62f569a10ef9288e0f1bb00dee35db11d43cdede58537e68a49",
+        "holdout_2026091912_truth.json": "a6b8725b19ed229a14cb81a90749701ee1716f7c1856abf8a3fbdb816dd5ac3b",
+        "holdout_2026091912_actions.json": "26176296f29c12555f37651f6c81ddae95fb6efeb98ccf3fe7019169c4edac07",
+        "holdout_2026091912_observations.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "holdout_2026091912_post.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+      }
+    },
+    {
+      "episode": "holdout_2026091913",
+      "seed": 2026091913,
+      "instruction": "pick up the tomato sauce and place it in the basket",
+      "initial_layout_sha256": "cb7014c8db074ecdf9db7aa33d7b80fa9f9db917730a676e6d30640b5ca6ecb9",
+      "control_records": 361,
+      "post_control_records": 0,
+      "files_sha256": {
+        "holdout_2026091913.npz": "3e5f4b05d9edb59ae9f04134fb7a1a42eb927094186f9edb1ff4f8cf5eef8ee4",
+        "holdout_2026091913.xml": "8b7f169e249ba62f569a10ef9288e0f1bb00dee35db11d43cdede58537e68a49",
+        "holdout_2026091913_truth.json": "eda78b95cc3ce883e7f46b51a24bdfc9c75c1cddb9a35991fab42f0605314ae2",
+        "holdout_2026091913_actions.json": "496c4eed8367cfd829f8b767f23214e2162a261b797018064e5aad84505176d4",
+        "holdout_2026091913_observations.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "holdout_2026091913_post.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+      }
+    },
+    {
+      "episode": "holdout_2026091914",
+      "seed": 2026091914,
+      "instruction": "pick up the tomato sauce and place it in the basket",
+      "initial_layout_sha256": "fc32a44f408db3a6af5cc6ef799a401fe6d1e2e96a91490182d637cea0095e82",
+      "control_records": 361,
+      "post_control_records": 0,
+      "files_sha256": {
+        "holdout_2026091914.npz": "2dde8a70f3e1b24845e48ceb388fde2e0ae5f31a619704a241a2e90306e8d792",
+        "holdout_2026091914.xml": "8b7f169e249ba62f569a10ef9288e0f1bb00dee35db11d43cdede58537e68a49",
+        "holdout_2026091914_truth.json": "b7d38807f50df75920307729731bb979380646ec9c029d2e7ff9f0c2027d1175",
+        "holdout_2026091914_actions.json": "c2c86728bacf9d03836040ba53c9f9702944a384314fd81b6402a464575e4fb7",
+        "holdout_2026091914_observations.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "holdout_2026091914_post.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+      }
+    },
+    {
+      "episode": "holdout_2026091915",
+      "seed": 2026091915,
+      "instruction": "pick up the tomato sauce and place it in the basket",
+      "initial_layout_sha256": "40b53c6d8824a0979d8dc7e7409a0b258459a80b8a64ac36586646ee4b926782",
+      "control_records": 361,
+      "post_control_records": 0,
+      "files_sha256": {
+        "holdout_2026091915.npz": "67e0f4eaf06f24bad0c8dd2fae9835c89fffc1bf17d12890f935bbabb097a559",
+        "holdout_2026091915.xml": "8b7f169e249ba62f569a10ef9288e0f1bb00dee35db11d43cdede58537e68a49",
+        "holdout_2026091915_truth.json": "378f1b39b04301ac88c1c73929af68f2cb953dd7890bc7a13ce4ca533433adaf",
+        "holdout_2026091915_actions.json": "66202f36534ca5025cd4a829836820e73fb66b421f95994f295d8ef39473381d",
+        "holdout_2026091915_observations.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "holdout_2026091915_post.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+      }
+    },
+    {
+      "episode": "holdout_2026091916",
+      "seed": 2026091916,
+      "instruction": "pick up the tomato sauce and place it in the basket",
+      "initial_layout_sha256": "7951712eadfa2302488d647331b756bb9c2e4bbb3c43c1b7e72b5c95f0fb55d1",
+      "control_records": 361,
+      "post_control_records": 0,
+      "files_sha256": {
+        "holdout_2026091916.npz": "852c61fdb3728891f42dc1d0aee386d9d08440abae890c702ef5f44fdabdbd14",
+        "holdout_2026091916.xml": "8b7f169e249ba62f569a10ef9288e0f1bb00dee35db11d43cdede58537e68a49",
+        "holdout_2026091916_truth.json": "5a90402fc78e66f0188e7c7859aca4d10f1fe2e79daf59ada8ce5bcedae05b05",
+        "holdout_2026091916_actions.json": "3ff9c1394124816629ec6d583bf1a32d7e9c10bdb70f1f44917a5d5d636b8f30",
+        "holdout_2026091916_observations.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "holdout_2026091916_post.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+      }
+    },
+    {
+      "episode": "holdout_2026091917",
+      "seed": 2026091917,
+      "instruction": "pick up the tomato sauce and place it in the basket",
+      "initial_layout_sha256": "3db62e0bf9b97f42860ad1279105c22b59e0c4ebc7c2db26920978d5158c1421",
+      "control_records": 361,
+      "post_control_records": 0,
+      "files_sha256": {
+        "holdout_2026091917.npz": "f4b3ad42f87bcad5ae2c1aeb183cadf2bfdf64c0b62c611b193457287e1da63b",
+        "holdout_2026091917.xml": "8b7f169e249ba62f569a10ef9288e0f1bb00dee35db11d43cdede58537e68a49",
+        "holdout_2026091917_truth.json": "cd5cb80cc050ca8d0c63e0b7f44d67f1ea8d744a07ba7c2b1099766860aed5a5",
+        "holdout_2026091917_actions.json": "e6961f4156b327078502d8b284c29123eca9780d29ea9702c5b3cbc4f6755779",
+        "holdout_2026091917_observations.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "holdout_2026091917_post.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+      }
+    },
+    {
+      "episode": "holdout_2026091918",
+      "seed": 2026091918,
+      "instruction": "pick up the tomato sauce and place it in the basket",
+      "initial_layout_sha256": "c73a9595232b937abe2b52e18663d39e438a7e7cf302e38e41c5c93182432be8",
+      "control_records": 361,
+      "post_control_records": 0,
+      "files_sha256": {
+        "holdout_2026091918.npz": "9d63edd55b5a6e7faa508a8dc224bbd1f9ac9125b98a57c5b84fcafd4d978a60",
+        "holdout_2026091918.xml": "8b7f169e249ba62f569a10ef9288e0f1bb00dee35db11d43cdede58537e68a49",
+        "holdout_2026091918_truth.json": "28d8ce69f854571054e8969d5d3638f98d107e42d586a62b80c3329429e48a56",
+        "holdout_2026091918_actions.json": "c7c26dd26a3378a99083bfa6811b57bac37f0a4ad46066f4e42591c6eae7cdc5",
+        "holdout_2026091918_observations.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "holdout_2026091918_post.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+      }
+    },
+    {
+      "episode": "holdout_2026091919",
+      "seed": 2026091919,
+      "instruction": "pick up the tomato sauce and place it in the basket",
+      "initial_layout_sha256": "0303f2533c1f1f42198effff86182b2d56086586eee8113a0225072742fd47cd",
+      "control_records": 361,
+      "post_control_records": 0,
+      "files_sha256": {
+        "holdout_2026091919.npz": "daec58588145b95edbb3bc7b583803c17f730a4e3cdc88c086678ac7fd909ab5",
+        "holdout_2026091919.xml": "8b7f169e249ba62f569a10ef9288e0f1bb00dee35db11d43cdede58537e68a49",
+        "holdout_2026091919_truth.json": "ea55ffb589c3045b0100d453e1cd428b476acade902934c44c36c6ba940ab1d8",
+        "holdout_2026091919_actions.json": "33d247412a4c42e449d941a26f40a296a9383f44d0b0b9a4c203c2a13a56e349",
+        "holdout_2026091919_observations.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "holdout_2026091919_post.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+      }
+    }
+  ],
+  "freeze_sha256": "0f04e36cea791893d67b12f8b707e2f6a4a50782aad5650c4c44d4b6ff9c5ee6",
+  "completed_unix": 1789460962.846466,
+  "model_predictions_used": false
+}

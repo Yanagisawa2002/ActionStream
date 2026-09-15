@@ -1,0 +1,463 @@
+{
+  "results": [
+    {
+      "episode": "train_2026091800",
+      "split": "train",
+      "modes": {
+        "sparse_4hz": {
+          "first_truth_control": 142,
+          "first_claim_control": 140,
+          "first_correct_control": 145,
+          "premature_stop": true,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": null,
+          "post_stop_stable": false
+        },
+        "dense_20hz": {
+          "first_truth_control": 142,
+          "first_claim_control": 137,
+          "first_correct_control": 142,
+          "premature_stop": true,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": null,
+          "post_stop_stable": false
+        },
+        "dense_20hz_confirm_0.5s": {
+          "first_truth_control": 142,
+          "first_claim_control": 150,
+          "first_correct_control": 150,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 0.4,
+          "post_stop_stable": true
+        }
+      }
+    },
+    {
+      "episode": "train_2026091801",
+      "split": "train",
+      "modes": {
+        "sparse_4hz": {
+          "first_truth_control": 168,
+          "first_claim_control": 165,
+          "first_correct_control": null,
+          "premature_stop": true,
+          "missed_completed_event": true,
+          "no_stop": false,
+          "confirmation_delay_s": null,
+          "post_stop_stable": false
+        },
+        "dense_20hz": {
+          "first_truth_control": 168,
+          "first_claim_control": 165,
+          "first_correct_control": null,
+          "premature_stop": true,
+          "missed_completed_event": true,
+          "no_stop": false,
+          "confirmation_delay_s": null,
+          "post_stop_stable": false
+        },
+        "dense_20hz_confirm_0.5s": {
+          "first_truth_control": 168,
+          "first_claim_control": null,
+          "first_correct_control": null,
+          "premature_stop": false,
+          "missed_completed_event": true,
+          "no_stop": true,
+          "confirmation_delay_s": null,
+          "post_stop_stable": null
+        }
+      }
+    },
+    {
+      "episode": "train_2026091802",
+      "split": "train",
+      "modes": {
+        "sparse_4hz": {
+          "first_truth_control": 145,
+          "first_claim_control": 145,
+          "first_correct_control": 145,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 0.0,
+          "post_stop_stable": true
+        },
+        "dense_20hz": {
+          "first_truth_control": 145,
+          "first_claim_control": 145,
+          "first_correct_control": 145,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 0.0,
+          "post_stop_stable": true
+        },
+        "dense_20hz_confirm_0.5s": {
+          "first_truth_control": 145,
+          "first_claim_control": 155,
+          "first_correct_control": 155,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 0.5,
+          "post_stop_stable": true
+        }
+      }
+    },
+    {
+      "episode": "train_2026091803",
+      "split": "train",
+      "modes": {
+        "sparse_4hz": {
+          "first_truth_control": 147,
+          "first_claim_control": 145,
+          "first_correct_control": 150,
+          "premature_stop": true,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": null,
+          "post_stop_stable": false
+        },
+        "dense_20hz": {
+          "first_truth_control": 147,
+          "first_claim_control": 142,
+          "first_correct_control": 148,
+          "premature_stop": true,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": null,
+          "post_stop_stable": false
+        },
+        "dense_20hz_confirm_0.5s": {
+          "first_truth_control": 147,
+          "first_claim_control": null,
+          "first_correct_control": null,
+          "premature_stop": false,
+          "missed_completed_event": true,
+          "no_stop": true,
+          "confirmation_delay_s": null,
+          "post_stop_stable": null
+        }
+      }
+    },
+    {
+      "episode": "train_2026091804",
+      "split": "train",
+      "modes": {
+        "sparse_4hz": {
+          "first_truth_control": 156,
+          "first_claim_control": 155,
+          "first_correct_control": 170,
+          "premature_stop": true,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": null,
+          "post_stop_stable": true
+        },
+        "dense_20hz": {
+          "first_truth_control": 156,
+          "first_claim_control": 153,
+          "first_correct_control": 156,
+          "premature_stop": true,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": null,
+          "post_stop_stable": false
+        },
+        "dense_20hz_confirm_0.5s": {
+          "first_truth_control": 156,
+          "first_claim_control": 178,
+          "first_correct_control": 178,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 1.1,
+          "post_stop_stable": true
+        }
+      }
+    },
+    {
+      "episode": "train_2026091805",
+      "split": "train",
+      "modes": {
+        "sparse_4hz": {
+          "first_truth_control": 144,
+          "first_claim_control": 145,
+          "first_correct_control": 145,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 0.05,
+          "post_stop_stable": true
+        },
+        "dense_20hz": {
+          "first_truth_control": 144,
+          "first_claim_control": 141,
+          "first_correct_control": 144,
+          "premature_stop": true,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": null,
+          "post_stop_stable": false
+        },
+        "dense_20hz_confirm_0.5s": {
+          "first_truth_control": 144,
+          "first_claim_control": null,
+          "first_correct_control": null,
+          "premature_stop": false,
+          "missed_completed_event": true,
+          "no_stop": true,
+          "confirmation_delay_s": null,
+          "post_stop_stable": null
+        }
+      }
+    },
+    {
+      "episode": "train_2026091806",
+      "split": "train",
+      "modes": {
+        "sparse_4hz": {
+          "first_truth_control": 139,
+          "first_claim_control": 140,
+          "first_correct_control": 140,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 0.05,
+          "post_stop_stable": true
+        },
+        "dense_20hz": {
+          "first_truth_control": 139,
+          "first_claim_control": 136,
+          "first_correct_control": 139,
+          "premature_stop": true,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": null,
+          "post_stop_stable": false
+        },
+        "dense_20hz_confirm_0.5s": {
+          "first_truth_control": 139,
+          "first_claim_control": 148,
+          "first_correct_control": 148,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 0.45,
+          "post_stop_stable": true
+        }
+      }
+    },
+    {
+      "episode": "train_2026091807",
+      "split": "train",
+      "modes": {
+        "sparse_4hz": {
+          "first_truth_control": 144,
+          "first_claim_control": 150,
+          "first_correct_control": 150,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 0.3,
+          "post_stop_stable": true
+        },
+        "dense_20hz": {
+          "first_truth_control": 144,
+          "first_claim_control": 148,
+          "first_correct_control": 148,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 0.2,
+          "post_stop_stable": true
+        },
+        "dense_20hz_confirm_0.5s": {
+          "first_truth_control": 144,
+          "first_claim_control": 158,
+          "first_correct_control": 158,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 0.7,
+          "post_stop_stable": true
+        }
+      }
+    },
+    {
+      "episode": "validation_2026091808",
+      "split": "validation",
+      "modes": {
+        "sparse_4hz": {
+          "first_truth_control": 143,
+          "first_claim_control": 145,
+          "first_correct_control": 145,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 0.1,
+          "post_stop_stable": true
+        },
+        "dense_20hz": {
+          "first_truth_control": 143,
+          "first_claim_control": 143,
+          "first_correct_control": 143,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 0.0,
+          "post_stop_stable": true
+        },
+        "dense_20hz_confirm_0.5s": {
+          "first_truth_control": 143,
+          "first_claim_control": 169,
+          "first_correct_control": 169,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 1.3,
+          "post_stop_stable": true
+        }
+      }
+    },
+    {
+      "episode": "validation_2026091809",
+      "split": "validation",
+      "modes": {
+        "sparse_4hz": {
+          "first_truth_control": 136,
+          "first_claim_control": 155,
+          "first_correct_control": 155,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 0.95,
+          "post_stop_stable": true
+        },
+        "dense_20hz": {
+          "first_truth_control": 136,
+          "first_claim_control": 133,
+          "first_correct_control": 153,
+          "premature_stop": true,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": null,
+          "post_stop_stable": false
+        },
+        "dense_20hz_confirm_0.5s": {
+          "first_truth_control": 136,
+          "first_claim_control": 179,
+          "first_correct_control": 179,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 2.15,
+          "post_stop_stable": true
+        }
+      }
+    },
+    {
+      "episode": "validation_2026091810",
+      "split": "validation",
+      "modes": {
+        "sparse_4hz": {
+          "first_truth_control": 147,
+          "first_claim_control": 140,
+          "first_correct_control": 150,
+          "premature_stop": true,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": null,
+          "post_stop_stable": false
+        },
+        "dense_20hz": {
+          "first_truth_control": 147,
+          "first_claim_control": 140,
+          "first_correct_control": 147,
+          "premature_stop": true,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": null,
+          "post_stop_stable": false
+        },
+        "dense_20hz_confirm_0.5s": {
+          "first_truth_control": 147,
+          "first_claim_control": 157,
+          "first_correct_control": 157,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 0.5,
+          "post_stop_stable": true
+        }
+      }
+    },
+    {
+      "episode": "validation_2026091811",
+      "split": "validation",
+      "modes": {
+        "sparse_4hz": {
+          "first_truth_control": 145,
+          "first_claim_control": 150,
+          "first_correct_control": 150,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 0.25,
+          "post_stop_stable": true
+        },
+        "dense_20hz": {
+          "first_truth_control": 145,
+          "first_claim_control": 138,
+          "first_correct_control": 146,
+          "premature_stop": true,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": null,
+          "post_stop_stable": false
+        },
+        "dense_20hz_confirm_0.5s": {
+          "first_truth_control": 145,
+          "first_claim_control": 156,
+          "first_correct_control": 156,
+          "premature_stop": false,
+          "missed_completed_event": false,
+          "no_stop": false,
+          "confirmation_delay_s": 0.55,
+          "post_stop_stable": true
+        }
+      }
+    }
+  ],
+  "train_comparison": {
+    "sparse_4hz": {
+      "episodes": 8,
+      "premature_stops": 4,
+      "missed_completed_events": 1,
+      "max_confirmation_delay_s": 0.3,
+      "post_stop_failures": 3
+    },
+    "dense_20hz": {
+      "episodes": 8,
+      "premature_stops": 6,
+      "missed_completed_events": 1,
+      "max_confirmation_delay_s": 0.2,
+      "post_stop_failures": 6
+    },
+    "dense_20hz_confirm_0.5s": {
+      "episodes": 8,
+      "premature_stops": 0,
+      "missed_completed_events": 3,
+      "max_confirmation_delay_s": 1.1,
+      "post_stop_failures": 0
+    }
+  },
+  "source_sha256": "4577fd817699e82538d2d49d88b4b34c0c121b7de718bf4a8cafa51d8c65f3b3",
+  "protocol_sha256": "80673abab0d612e0f9e39a63f1e0cb553d64f3351b576b1f578b2e91b2c0cdd8",
+  "checkpoint_sha256": "80dc22b4e646bb8647a5e211b407ac198a1c64ea5db9db71a309c69ccfcd54c7",
+  "limitation": "same three-frame model at different decision cadences; executed simulator stop branches, not independent live acceptance"
+}

@@ -1,0 +1,63 @@
+{
+  "status": "PASS",
+  "verdict": "GO",
+  "audited_simulator_states": 11374,
+  "restored_strict_label_changes": [],
+  "baseline_and_adapted_predictions": 14040,
+  "challenge_decisions": 704,
+  "clip_diagnostics": {
+    "baseline": {
+      "truth_0_incomplete": 2893,
+      "truth_1_incomplete": 1827,
+      "truth_1_unknown": 535,
+      "truth_1_complete": 1734,
+      "truth_0_complete": 21,
+      "truth_0_unknown": 10
+    },
+    "adapted": {
+      "truth_0_incomplete": 2869,
+      "truth_1_incomplete": 28,
+      "truth_1_unknown": 48,
+      "truth_1_complete": 4020,
+      "truth_0_complete": 32,
+      "truth_0_unknown": 23
+    }
+  },
+  "live": {
+    "episodes": 20,
+    "physically_completed_episodes": 19,
+    "premature_stops": 0,
+    "missed_completed_episodes": 0,
+    "no_stop": 1,
+    "post_stop_failures": 0,
+    "missing_post_stop_probes": 0,
+    "maximum_confirmation_delay_s": 1.5,
+    "median_confirmation_delay_s": 0.55,
+    "late_confirmations": 0,
+    "exact_seed_coverage": true,
+    "passed": true
+  },
+  "failed_live_episodes": [],
+  "paired_baseline": {
+    "episodes": 20,
+    "physically_completed_episodes": 19,
+    "premature_stops": 0,
+    "missed_completed_episodes": 2,
+    "no_stop": 3,
+    "post_stop_failures": 0,
+    "missing_post_stop_probes": 0,
+    "maximum_confirmation_delay_s": 2.5,
+    "median_confirmation_delay_s": 1.0,
+    "late_confirmations": 4,
+    "exact_seed_coverage": true,
+    "passed": false
+  },
+  "challenges": {
+    "sequences": 32,
+    "confirmed_false_complete": 0,
+    "blackout_confident_decisions": 0,
+    "passed": true
+  },
+  "reference_prefix_divergences": 0,
+  "limitation": "Frozen heldout protocol, one task and checkpoint; source replay and simulator state audit, not physical-robot acceptance"
+}

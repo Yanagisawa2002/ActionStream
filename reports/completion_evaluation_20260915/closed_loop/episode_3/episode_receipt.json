@@ -1,0 +1,11 @@
+{
+  "status": "complete",
+  "checker_complete": true,
+  "control_steps": 127,
+  "recoveries": 0,
+  "checks": 5,
+  "inference_calls": 5,
+  "native_boundary": true,
+  "revision": 0,
+  "wall_s": 8.121292885392904
+}

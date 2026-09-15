@@ -1,0 +1,23 @@
+{
+  "python": "3.12.3 | packaged by Anaconda, Inc. | (main, May  6 2024, 19:46:43) [GCC 11.2.0]",
+  "gpu": "NVIDIA GeForce RTX 5090",
+  "torch": "2.8.0+cu128",
+  "packages": {
+    "numpy": "2.2.6",
+    "pillow": "11.3.0",
+    "mujoco": "3.8.1",
+    "robosuite": "1.4.0",
+    "hf-libero": "0.1.4",
+    "torchvision": "0.23.0+cu128"
+  },
+  "source_sha256": {
+    "scripts/engineering/completion_controls.py": "4577fd817699e82538d2d49d88b4b34c0c121b7de718bf4a8cafa51d8c65f3b3",
+    "scripts/engineering/completion_adapt.py": "3cf3737126b7ea90698d2fa0eb9e7a729cfe762a77c942c66d7372119c4198d8",
+    "scripts/engineering/completion_v2.py": "83dec7a199767a7fd098c7c695fd53f6b8c56100580fbf19041f22c402e09c88",
+    "src/actionstream/completion_labels.py": "03bca17ed18374d21273571576449326c2d0c46afb865887e05bb17eb5551c38",
+    "src/actionstream/llm_vla/temporal_completion.py": "48e685dccbe1cef1e9975abcd2e8c0c132ab995a100e74a01e9acb212e1c9689",
+    "src/actionstream/llm_vla/confirmation.py": "e0de850a2a9207fd48d770defb92c27e59d8fbc8260c7c02160014465c7b9271"
+  },
+  "checkpoint_sha256": "28482b40e470d932dfe44312d2dbcb7fa732146a2b2f9c7ebf7683b47cdfa7f9",
+  "checkpoint_bytes": 57369399
+}

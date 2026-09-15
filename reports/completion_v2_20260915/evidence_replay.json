@@ -1,0 +1,85 @@
+{
+  "status": "EVIDENCE_REPLAY_PASS",
+  "acceptance": "NO_GO",
+  "episodes": 20,
+  "checked_controls": 15558,
+  "checked_predictions": 2085,
+  "candidate": {
+    "samples": 2085,
+    "positive": 812,
+    "negative": 988,
+    "unobservable": 285,
+    "false_complete": 4,
+    "true_complete": 396,
+    "missed_complete": 416,
+    "unknown": 390,
+    "hidden_confident": 0
+  },
+  "baseline": {
+    "samples": 2085,
+    "positive": 812,
+    "negative": 988,
+    "unobservable": 285,
+    "false_complete": 417,
+    "true_complete": 812,
+    "missed_complete": 0,
+    "unknown": 155,
+    "hidden_confident": 177
+  },
+  "natural_baseline": {
+    "samples": 1420,
+    "positive": 812,
+    "negative": 608,
+    "unobservable": 0,
+    "false_complete": 109,
+    "true_complete": 812,
+    "missed_complete": 0,
+    "unknown": 10,
+    "hidden_confident": 0
+  },
+  "missed_as_incomplete": 316,
+  "missed_as_unknown": 100,
+  "false_complete_diagnostics": [
+    {
+      "episode": "fresh_01",
+      "control_step": 140,
+      "completion_probability": 0.9882640838623047,
+      "currently_released_supported_slow": true,
+      "window_max_linear_speed": 0.16244300101893722,
+      "window_max_angular_speed": 3.4056949240455197,
+      "next_strict_complete_step": 145,
+      "premature_seconds": 0.25
+    },
+    {
+      "episode": "fresh_03",
+      "control_step": 140,
+      "completion_probability": 0.9999377727508545,
+      "currently_released_supported_slow": true,
+      "window_max_linear_speed": 0.018369344529279595,
+      "window_max_angular_speed": 0.43565394977261823,
+      "next_strict_complete_step": 142,
+      "premature_seconds": 0.1
+    },
+    {
+      "episode": "fresh_10",
+      "control_step": 145,
+      "completion_probability": 0.9824956655502319,
+      "currently_released_supported_slow": true,
+      "window_max_linear_speed": 0.028357010837029822,
+      "window_max_angular_speed": 0.7372260101179239,
+      "next_strict_complete_step": 146,
+      "premature_seconds": 0.05
+    },
+    {
+      "episode": "fresh_18",
+      "control_step": 145,
+      "completion_probability": 0.9999994039535522,
+      "currently_released_supported_slow": true,
+      "window_max_linear_speed": 0.09118462257588414,
+      "window_max_angular_speed": 1.777752591794676,
+      "next_strict_complete_step": 148,
+      "premature_seconds": 0.15
+    }
+  ],
+  "limitation": "Checks retained labels, predictions and hashes; image shards, state arrays and weights remain on server."
+}

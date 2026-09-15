@@ -1,0 +1,33 @@
+{
+  "status": "SMOKE_PASS",
+  "checkpoint_sha256": "28b8a8b9aa0472c41748c6ac3471186608fbd41cba90f37c1a78c9fab7cde196",
+  "chosen_epoch": 1,
+  "validation": {
+    "epoch": 1,
+    "steps": 1,
+    "train_loss": 1.0958466529846191,
+    "validation_cross_entropy": 0.7376526594161987,
+    "validation": {
+      "samples": 747,
+      "positive": 105,
+      "negative": 492,
+      "unobservable": 150,
+      "false_complete": 0,
+      "true_complete": 0,
+      "missed_complete": 105,
+      "unknown": 470,
+      "hidden_confident": 0
+    },
+    "elapsed_seconds": 1.2279436588287354
+  },
+  "protocol_sha256": "e8f6d429d50ae214a3ba7a5bb062cae9506910f0c7bd2d16acc2e4620a467df0",
+  "development_manifest_sha256": "0f45ddb0dd37a67ef798689f636742fed1bc0136f9f2a25abf9d50a3331b4107",
+  "frozen_unix": 1789454476.3151498,
+  "test_seen": false,
+  "thresholds": {
+    "complete": 0.95,
+    "incomplete": 0.9,
+    "unknown": "remaining probability mass; explicit unknown class"
+  },
+  "trainer_sha256": "83dec7a199767a7fd098c7c695fd53f6b8c56100580fbf19041f22c402e09c88"
+}

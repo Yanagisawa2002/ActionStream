@@ -1,0 +1,156 @@
+{
+  "files": [
+    {
+      "repo": "lerobot/xvla-libero",
+      "revision": "12e8783e996944f5c97e490d37d4c145484ed70a",
+      "file": "config.json",
+      "destination": "xvla/config.json",
+      "size": 9307,
+      "sha256": "db9ff1de61760910dcc5d355528346144d6a80687212c8600cf31207f0f5e010"
+    },
+    {
+      "repo": "lerobot/xvla-libero",
+      "revision": "12e8783e996944f5c97e490d37d4c145484ed70a",
+      "file": "model.safetensors",
+      "destination": "xvla/model.safetensors",
+      "size": 3519073692,
+      "sha256": "2a0e29448111df56b9485cb1f964db799205794c49baeda48ef960589ce649ab"
+    },
+    {
+      "repo": "lerobot/xvla-libero",
+      "revision": "12e8783e996944f5c97e490d37d4c145484ed70a",
+      "file": "policy_postprocessor.json",
+      "destination": "xvla/policy_postprocessor.json",
+      "size": 575,
+      "sha256": "d1d73a18f14aca0e9db7cdbb3eb536adadf4960947347cb1645c9a246ea0acb4"
+    },
+    {
+      "repo": "lerobot/xvla-libero",
+      "revision": "12e8783e996944f5c97e490d37d4c145484ed70a",
+      "file": "policy_preprocessor.json",
+      "destination": "xvla/policy_preprocessor.json",
+      "size": 1635,
+      "sha256": "b416b9d27ff58eada06d0d01d92291aa09161ba7eff5b84279e50f4a647cd37d"
+    },
+    {
+      "repo": "Qwen/Qwen3-VL-2B-Instruct",
+      "revision": "89644892e4d85e24eaac8bacfd4f463576704203",
+      "file": "chat_template.json",
+      "destination": "qwen/chat_template.json",
+      "size": 5502,
+      "sha256": "6f8a6a55027e3da5160105556cda5dd69f6423f1c32645f6730d32de7773d0c4"
+    },
+    {
+      "repo": "Qwen/Qwen3-VL-2B-Instruct",
+      "revision": "89644892e4d85e24eaac8bacfd4f463576704203",
+      "file": "config.json",
+      "destination": "qwen/config.json",
+      "size": 1505,
+      "sha256": "bec4b3d446efa05807365c9e1cec03ac590836879d02f3a6da879971154bdd3b"
+    },
+    {
+      "repo": "Qwen/Qwen3-VL-2B-Instruct",
+      "revision": "89644892e4d85e24eaac8bacfd4f463576704203",
+      "file": "generation_config.json",
+      "destination": "qwen/generation_config.json",
+      "size": 269,
+      "sha256": "1e241830b48b397cb0900101421df5450baddc7adf01e5fc86b5615865f3bae4"
+    },
+    {
+      "repo": "Qwen/Qwen3-VL-2B-Instruct",
+      "revision": "89644892e4d85e24eaac8bacfd4f463576704203",
+      "file": "merges.txt",
+      "destination": "qwen/merges.txt",
+      "size": 1671839,
+      "sha256": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3"
+    },
+    {
+      "repo": "Qwen/Qwen3-VL-2B-Instruct",
+      "revision": "89644892e4d85e24eaac8bacfd4f463576704203",
+      "file": "model.safetensors",
+      "destination": "qwen/model.safetensors",
+      "size": 4255140312,
+      "sha256": "7de1838c87a5349b016c26a1c3f7d2bc400a3d485f95ef39a7059ffd734977a0"
+    },
+    {
+      "repo": "Qwen/Qwen3-VL-2B-Instruct",
+      "revision": "89644892e4d85e24eaac8bacfd4f463576704203",
+      "file": "preprocessor_config.json",
+      "destination": "qwen/preprocessor_config.json",
+      "size": 390,
+      "sha256": "27225450ac9c6529872ee1924fcb0962ff5634834f817040f444118116f4e516"
+    },
+    {
+      "repo": "Qwen/Qwen3-VL-2B-Instruct",
+      "revision": "89644892e4d85e24eaac8bacfd4f463576704203",
+      "file": "tokenizer.json",
+      "destination": "qwen/tokenizer.json",
+      "size": 7032403,
+      "sha256": "a5d85b6dcc535e6b93115a9ef287e6132fdbf30270da6218194ba742261173c7"
+    },
+    {
+      "repo": "Qwen/Qwen3-VL-2B-Instruct",
+      "revision": "89644892e4d85e24eaac8bacfd4f463576704203",
+      "file": "tokenizer_config.json",
+      "destination": "qwen/tokenizer_config.json",
+      "size": 10868,
+      "sha256": "c2da771801886ad9ae98181793ffd3dfb7f1af30f6f7c6a4e15d7dbba52e2399"
+    },
+    {
+      "repo": "Qwen/Qwen3-VL-2B-Instruct",
+      "revision": "89644892e4d85e24eaac8bacfd4f463576704203",
+      "file": "video_preprocessor_config.json",
+      "destination": "qwen/video_preprocessor_config.json",
+      "size": 385,
+      "sha256": "7768af27c1fafa9cc9011c1dc20067e03f8915e03b63504550e11d5066986d13"
+    },
+    {
+      "repo": "Qwen/Qwen3-VL-2B-Instruct",
+      "revision": "89644892e4d85e24eaac8bacfd4f463576704203",
+      "file": "vocab.json",
+      "destination": "qwen/vocab.json",
+      "size": 2776833,
+      "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+    },
+    {
+      "repo": "facebook/bart-large",
+      "revision": "cb48c1365bd826bd521f650dc2e0940aee54720c",
+      "file": "config.json",
+      "destination": "bart/config.json",
+      "size": 1628,
+      "sha256": "1ef73a85a141b1c46315c3c0f72c4dc678842c5d198f939510e6543ac847b17b"
+    },
+    {
+      "repo": "facebook/bart-large",
+      "revision": "cb48c1365bd826bd521f650dc2e0940aee54720c",
+      "file": "merges.txt",
+      "destination": "bart/merges.txt",
+      "size": 456318,
+      "sha256": "1ce1664773c50f3e0cc8842619a93edc4624525b728b188a9e0be33b7726adc5"
+    },
+    {
+      "repo": "facebook/bart-large",
+      "revision": "cb48c1365bd826bd521f650dc2e0940aee54720c",
+      "file": "tokenizer.json",
+      "destination": "bart/tokenizer.json",
+      "size": 1355863,
+      "sha256": "847bbeab6174d66a88898f729d52fa8d355fafe1bea101cf960dd404581df70e"
+    },
+    {
+      "repo": "facebook/bart-large",
+      "revision": "cb48c1365bd826bd521f650dc2e0940aee54720c",
+      "file": "tokenizer_config.json",
+      "destination": "bart/tokenizer_config.json",
+      "size": 26,
+      "sha256": "5e04eb606e3a1583530a42e36c2a6b6615c86f34fe77e44d9ddeb43ff940931f"
+    },
+    {
+      "repo": "facebook/bart-large",
+      "revision": "cb48c1365bd826bd521f650dc2e0940aee54720c",
+      "file": "vocab.json",
+      "destination": "bart/vocab.json",
+      "size": 898822,
+      "sha256": "06b4d46c8e752d410213d9548eb27a54db70fda0319b6271fb8d59dead5e1cab"
+    }
+  ]
+}

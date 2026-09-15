@@ -1,0 +1,86 @@
+{
+  "status": "DEVELOPMENT_PASS",
+  "metrics": {
+    "episodes": 4,
+    "completed_episodes": 4,
+    "premature_stops": 0,
+    "missed_events": 0,
+    "post_stop_failures": 0,
+    "late_confirmations": 0,
+    "max_delay_s": 1.0,
+    "auxiliary": {
+      "samples": 492,
+      "physical_false_complete": 0,
+      "blackout_confident": 0
+    },
+    "passed": true
+  },
+  "episodes": [
+    {
+      "episode": "validation_2026091808",
+      "seed": 2026091808,
+      "instruction": "pick up the tomato sauce and place it in the basket",
+      "first_truth_control": 143,
+      "first_claim_control": 150,
+      "first_correct_control": 150,
+      "premature_stop": false,
+      "missed_completed_event": false,
+      "no_stop": false,
+      "confirmation_delay_s": 0.35,
+      "post_stop_stable": true,
+      "image_state_sha256": "7b22f1be3672dbe075ec1b1cefba25124dd27e443359acfee008b693fd64cde8",
+      "observation_sha256": "2574e835a13b6ca86388b65d03c6a9e2d2027b195b53ae6d13ea706a8a86aeac"
+    },
+    {
+      "episode": "validation_2026091809",
+      "seed": 2026091809,
+      "instruction": "pick up the tomato sauce and place it in the basket",
+      "first_truth_control": 136,
+      "first_claim_control": 156,
+      "first_correct_control": 156,
+      "premature_stop": false,
+      "missed_completed_event": false,
+      "no_stop": false,
+      "confirmation_delay_s": 1.0,
+      "post_stop_stable": true,
+      "image_state_sha256": "8045bf462d634ea7ed2e8f8f5278bc3d8615fc03467f2d6c7db01df563f9dfca",
+      "observation_sha256": "b7b780541f2cd6a7ca9462e1320a594a1dc2e89606947ad6d62283b17b7a87f2"
+    },
+    {
+      "episode": "validation_2026091810",
+      "seed": 2026091810,
+      "instruction": "pick up the tomato sauce and place it in the basket",
+      "first_truth_control": 147,
+      "first_claim_control": 156,
+      "first_correct_control": 156,
+      "premature_stop": false,
+      "missed_completed_event": false,
+      "no_stop": false,
+      "confirmation_delay_s": 0.45,
+      "post_stop_stable": true,
+      "image_state_sha256": "8118d39cb740d49e02acc3729bff7c4659b884591ae790102189a01607c26d60",
+      "observation_sha256": "b0543c674e0d06ffe172f0e9984dfa4e034e3e8984e79c9f12e769d8d36153de"
+    },
+    {
+      "episode": "validation_2026091811",
+      "seed": 2026091811,
+      "instruction": "pick up the tomato sauce and place it in the basket",
+      "first_truth_control": 145,
+      "first_claim_control": 154,
+      "first_correct_control": 154,
+      "premature_stop": false,
+      "missed_completed_event": false,
+      "no_stop": false,
+      "confirmation_delay_s": 0.45,
+      "post_stop_stable": true,
+      "image_state_sha256": "71301544bd9e4a575f3395440f82f08f82e16bd6870dad2a0ae92ee46f952c1a",
+      "observation_sha256": "e4e97f55b6db243e61f535a216bb53512dabc7aacb74726a883d880a5b2f769f"
+    }
+  ],
+  "checkpoint_sha256": "28482b40e470d932dfe44312d2dbcb7fa732146a2b2f9c7ebf7683b47cdfa7f9",
+  "frozen_sha256": "c5aa04d679060a1ed68a9155b1b776733988fd411d458fa06e89bb3a0dc46997",
+  "source_sha256": "3cf3737126b7ea90698d2fa0eb9e7a729cfe762a77c942c66d7372119c4198d8",
+  "protocol_sha256": "64487d89bb972541ac599f90eece727f951ff4d351b651e8ba811b30c97e90cb",
+  "independent_acceptance": false,
+  "limitation": "same four development validation seeds; actual VLA/RGB stopping with two-second post-stop physics; no new Qwen evaluation"
+}

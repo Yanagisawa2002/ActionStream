@@ -1,0 +1,140 @@
+{
+  "entries": [
+    {
+      "case": "holdout_2026091900_held",
+      "record_sha256": "83d55275da28cc392650dbf082f32921f24d98068a2c99548387f5f31cd89844"
+    },
+    {
+      "case": "holdout_2026091900_above",
+      "record_sha256": "94e5cf0e8160251bde61d2bdc0c982677e047a787fe342b6a096168361b5b012"
+    },
+    {
+      "case": "holdout_2026091900_wrong_object",
+      "record_sha256": "6772feaa9bf73faac25140aed7eabfb0c89f11c179e6b5d9de864e1332bec905"
+    },
+    {
+      "case": "holdout_2026091900_outside",
+      "record_sha256": "61b68b8de10ebbe288368a40e862c541a06fd3bb25d72f5fc3143c0fdc55734e"
+    },
+    {
+      "case": "holdout_2026091900_recent_drop",
+      "record_sha256": "0016a24b3e28bac56abfecf98fe7b338c71c28f6145e5d177acede676c66d0d3"
+    },
+    {
+      "case": "holdout_2026091900_external_hidden",
+      "record_sha256": "604579803fe87072715370b6084bae1314fbafff8eeb43975253bafc94cc158d"
+    },
+    {
+      "case": "holdout_2026091900_wrist_hidden",
+      "record_sha256": "837f49f99f23bb071b90877e7974a0cde4fac0ab5affefc0cdf2b885a4df754b"
+    },
+    {
+      "case": "holdout_2026091900_both_hidden",
+      "record_sha256": "d5b046c7523bfac436e29b19dc27e30be3d90179f0c6d0584c823b81a66bf34d"
+    },
+    {
+      "case": "holdout_2026091901_held",
+      "record_sha256": "3d10555b09f4a8f97ffb00d8f9288e00553e504b666c854b7454428d8d476229"
+    },
+    {
+      "case": "holdout_2026091901_above",
+      "record_sha256": "9fae47c493e466cabe54c846a5405de1c40dbf1ecc93f67826df2c8993e2b21e"
+    },
+    {
+      "case": "holdout_2026091901_wrong_object",
+      "record_sha256": "cacbd15fa263435631b56f70d3cb894baa6aa5421145e199b67807230b2406bc"
+    },
+    {
+      "case": "holdout_2026091901_outside",
+      "record_sha256": "0e7eab6f7108820ba0e7b06a1e03e15f0bd3ae2a79cbecfc3764b34269d42398"
+    },
+    {
+      "case": "holdout_2026091901_recent_drop",
+      "record_sha256": "e1c3cc2799fcee62834698e510785cbdfcb0a1ff2a7c49709fe98ae80196bd21"
+    },
+    {
+      "case": "holdout_2026091901_external_hidden",
+      "record_sha256": "71efa4ed18ccb948a0ce3d7afa77ae950d57d9b216b93f21d0f1c2c4ffeeacde"
+    },
+    {
+      "case": "holdout_2026091901_wrist_hidden",
+      "record_sha256": "378a620a99d2a7c5c503ea7e717847521f97419d02baf7023a57c0cce7092308"
+    },
+    {
+      "case": "holdout_2026091901_both_hidden",
+      "record_sha256": "b59633fd6085d80b3280c288d4c5dd628e4ef03cb1b94656c8e624669d88f002"
+    },
+    {
+      "case": "holdout_2026091902_held",
+      "record_sha256": "e27c55422056988ba940f8044f4300ca630c70f65edf4688b5acfe40295630d2"
+    },
+    {
+      "case": "holdout_2026091902_above",
+      "record_sha256": "38bac0226dba50add68a78e98eded5ab220c5babc26f47a74c4910c9df1a71b8"
+    },
+    {
+      "case": "holdout_2026091902_wrong_object",
+      "record_sha256": "bdf2ce5d5c799b67fecb760bba35ebfd1d436e4d9bd1a314d13496aa251c535b"
+    },
+    {
+      "case": "holdout_2026091902_outside",
+      "record_sha256": "b3d36f59aabff4722311afc0d0acb61ff92bf40e89c8e91dbab352da4472e4d9"
+    },
+    {
+      "case": "holdout_2026091902_recent_drop",
+      "record_sha256": "7bccb1217870934b7ddfee9a608c99a1d8fdcacf402d37d7b8b0c1e2f2297be0"
+    },
+    {
+      "case": "holdout_2026091902_external_hidden",
+      "record_sha256": "2f635edba432db936a04909994128823e3bc3bc05c9bcee876eae2e0bd2dc43a"
+    },
+    {
+      "case": "holdout_2026091902_wrist_hidden",
+      "record_sha256": "e6f1f721330a5af0b2db48517abe131e561b0a9ccd5d894f43e2dcd54ef67f6a"
+    },
+    {
+      "case": "holdout_2026091902_both_hidden",
+      "record_sha256": "80a22f7922adbc350eb0316d73a78cbc62581d51a15b23f364ed5e02816c474d"
+    },
+    {
+      "case": "holdout_2026091903_held",
+      "record_sha256": "a1525840a5e7c95a751a7f569dca58c1f4afb3afd37e44c40ce0ea66ce15ffc4"
+    },
+    {
+      "case": "holdout_2026091903_above",
+      "record_sha256": "f0a23660b95e25ca3a6735d2076cf31f7ce117e30cabd35459e3838e33e01528"
+    },
+    {
+      "case": "holdout_2026091903_wrong_object",
+      "record_sha256": "2ed804a5467444ce9016ad245d90c445832755d72f040fe3e1fb7aaf7634712a"
+    },
+    {
+      "case": "holdout_2026091903_outside",
+      "record_sha256": "07bb68b669809cab94ce69b9135ce4fb1383bb313def0f3fb0b3c2d8059f124d"
+    },
+    {
+      "case": "holdout_2026091903_recent_drop",
+      "record_sha256": "c6ab844526ae9b544f8e200ca6103e552a2dcfed28dcf93bc05e4578cd6667dd"
+    },
+    {
+      "case": "holdout_2026091903_external_hidden",
+      "record_sha256": "42277b9b9fb3a965a4e0c4bb2f908e9326c4d1f86c1b8d9418c46b51ea4451b5"
+    },
+    {
+      "case": "holdout_2026091903_wrist_hidden",
+      "record_sha256": "0ce050218488b3891de868a614200502b2ab4d0579e2a9e8bbfe43c5782f013a"
+    },
+    {
+      "case": "holdout_2026091903_both_hidden",
+      "record_sha256": "221f66aa87b8c0d6ab6ff018d09f7222e8a1ae403df79049f230ed7b4b5370f3"
+    }
+  ],
+  "source_episodes": [
+    "holdout_2026091900",
+    "holdout_2026091901",
+    "holdout_2026091902",
+    "holdout_2026091903"
+  ],
+  "selection_uses_model_predictions": false,
+  "collection_sha256": "3f81776373660768cbb6507e976ce567b88dcbbe2f0671e38dbbc3c35f374e7b"
+}

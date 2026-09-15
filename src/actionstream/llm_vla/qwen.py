@@ -89,7 +89,14 @@ class LocalQwen:
             },
         )
 
-    def generate(self, messages: list) -> dict:
+    def generate(
+        self,
+        messages: list,
+        *,
+        structured_slots=None,
+        record_tensors=False,
+        max_new_tokens=None,
+    ) -> dict:
         started = time.monotonic()
         record = dict(status="RUNNING", raw_output=None)
 
@@ -120,11 +127,48 @@ class LocalQwen:
                 if "image_grid_thw" in inputs
                 else None
             )
+            options = {}
+            if record_tensors:
+
+                def tensor_digest(tensor):
+                    data = tensor.detach().contiguous().view(self.torch.uint8).cpu()
+                    return hashlib.sha256(data.numpy().tobytes()).hexdigest()
+
+                record["tensor_sha256"] = {
+                    key: tensor_digest(value) for key, value in inputs.items()
+                }
+                record["tensor_dtypes"] = {
+                    key: str(value.dtype) for key, value in inputs.items()
+                }
+                if "pixel_values" in inputs:
+                    offset = 0
+                    hashes = []
+                    for grid in record["image_grid_thw"]:
+                        size = grid[0] * grid[1] * grid[2]
+                        hashes.append(
+                            tensor_digest(
+                                inputs["pixel_values"][offset : offset + size]
+                            )
+                        )
+                        offset += size
+                    if offset != inputs["pixel_values"].shape[0]:
+                        raise ValueError("Cannot establish per-image tensor boundaries")
+                    record["image_tensor_sha256"] = hashes
+            if structured_slots is not None:
+                from .structured import SlotDecoder
+
+                options["prefix_allowed_tokens_fn"] = SlotDecoder(
+                    self.processor.tokenizer,
+                    structured_slots,
+                    inputs["input_ids"].shape[1],
+                )
+                record["structured_decoding"] = "finite_token_slots_v1"
             with self.torch.inference_mode():
                 output = self.model.generate(
                     **inputs,
                     do_sample=False,
-                    max_new_tokens=self.settings["max_new_tokens"],
+                    max_new_tokens=max_new_tokens or self.settings["max_new_tokens"],
+                    **options,
                 )
             self.torch.cuda.synchronize()
             new = output[:, inputs["input_ids"].shape[1] :]

@@ -1,0 +1,22 @@
+{
+  "status": "FROZEN_BEFORE_HELDOUT_COLLECTION",
+  "checkpoint_sha256": "28482b40e470d932dfe44312d2dbcb7fa732146a2b2f9c7ebf7683b47cdfa7f9",
+  "protocol_sha256": "1854226c0a6a3565647207c66032480a1390f65643b2c15a73264e53f1260e64",
+  "source_sha256": {
+    "scripts/engineering/completion_acceptance.py": "884f4cc7a8850abb944aa969b1fba69d004745a5ed2bce5fc1193a414acc2e45",
+    "scripts/engineering/completion_controls.py": "4577fd817699e82538d2d49d88b4b34c0c121b7de718bf4a8cafa51d8c65f3b3",
+    "scripts/engineering/completion_v2.py": "83dec7a199767a7fd098c7c695fd53f6b8c56100580fbf19041f22c402e09c88",
+    "scripts/engineering/train_visual_completion.py": "b9fdb7fb441bc171a5e39bcbc76b41b7e4229266c81cfd5f803a2bfb12a01478",
+    "src/actionstream/completion_labels.py": "03bca17ed18374d21273571576449326c2d0c46afb865887e05bb17eb5551c38",
+    "src/actionstream/llm_vla/confirmation.py": "e0de850a2a9207fd48d770defb92c27e59d8fbc8260c7c02160014465c7b9271",
+    "src/actionstream/llm_vla/temporal_completion.py": "48e685dccbe1cef1e9975abcd2e8c0c132ab995a100e74a01e9acb212e1c9689",
+    "src/actionstream/llm_vla/completion.py": "c5218bd4a160b98f8a5353c94a1f8be403300e267989aaf30ea03a542a49e8c3",
+    "src/actionstream/lerobot_backend.py": "62f2532e533587e8f79dadab255600a5aa6558046742ed35e2840e2158048c92",
+    "src/actionstream/libero_config.py": "4936c382c2baf0c787f6643ca677675303f43e242d005272d0694e9efd097d7f"
+  },
+  "development_freeze_sha256": "c5aa04d679060a1ed68a9155b1b776733988fd411d458fa06e89bb3a0dc46997",
+  "development_collection_sha256": "3c600fa2f2e32c911589b956a6419ad36296b84dcfc5e1300cb43e73a4d5a289",
+  "consumed_v2_collection_sha256": "ad832f1a17920f303cf839c7a323127c294eb7c401bfc70f3ba0522795f81dfb",
+  "frozen_unix": 1789460718.4955602,
+  "independent_test_seen": false
+}

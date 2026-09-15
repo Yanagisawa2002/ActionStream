@@ -1,0 +1,150 @@
+{
+  "status": "COMPLETED",
+  "checkpoint_sha256": "35c122539730783bc4c61a65d7515a075385a5ac81a0dd8fa2a34c445a55e7c5",
+  "manifest_sha256": "7ae52ff3c456c94368e3c8b1f4b3641982349e615ebd46db2dde1d19253c59c3",
+  "protocol_sha256": "2a65fea1efe4d8222dddbbf8a6466581834d14f0223f2d16ffc701a553d06d85",
+  "evaluator_sha256": "b737b9dad0d8c759966e9ef1f966ffabe1636e690ff71d12f71bcd382193437a",
+  "metrics": {
+    "frames": 485,
+    "positive": 50,
+    "negative": 435,
+    "false_complete": 2,
+    "true_complete": 45,
+    "missed_complete": 5,
+    "false_incomplete": 0,
+    "unknown": 11,
+    "positive_unknown": 5,
+    "negative_unknown": 6
+  },
+  "episodes": {
+    "demo_25": {
+      "frames": 45,
+      "positive": 5,
+      "negative": 40,
+      "false_complete": 0,
+      "true_complete": 3,
+      "missed_complete": 2,
+      "false_incomplete": 0,
+      "unknown": 2,
+      "positive_unknown": 2,
+      "negative_unknown": 0
+    },
+    "demo_31": {
+      "frames": 44,
+      "positive": 4,
+      "negative": 40,
+      "false_complete": 0,
+      "true_complete": 4,
+      "missed_complete": 0,
+      "false_incomplete": 0,
+      "unknown": 1,
+      "positive_unknown": 0,
+      "negative_unknown": 1
+    },
+    "demo_1": {
+      "frames": 54,
+      "positive": 6,
+      "negative": 48,
+      "false_complete": 2,
+      "true_complete": 6,
+      "missed_complete": 0,
+      "false_incomplete": 0,
+      "unknown": 0,
+      "positive_unknown": 0,
+      "negative_unknown": 0
+    },
+    "demo_28": {
+      "frames": 43,
+      "positive": 4,
+      "negative": 39,
+      "false_complete": 0,
+      "true_complete": 2,
+      "missed_complete": 2,
+      "false_incomplete": 0,
+      "unknown": 2,
+      "positive_unknown": 2,
+      "negative_unknown": 0
+    },
+    "demo_6": {
+      "frames": 47,
+      "positive": 4,
+      "negative": 43,
+      "false_complete": 0,
+      "true_complete": 4,
+      "missed_complete": 0,
+      "false_incomplete": 0,
+      "unknown": 0,
+      "positive_unknown": 0,
+      "negative_unknown": 0
+    },
+    "demo_20": {
+      "frames": 46,
+      "positive": 4,
+      "negative": 42,
+      "false_complete": 0,
+      "true_complete": 4,
+      "missed_complete": 0,
+      "false_incomplete": 0,
+      "unknown": 0,
+      "positive_unknown": 0,
+      "negative_unknown": 0
+    },
+    "demo_14": {
+      "frames": 62,
+      "positive": 4,
+      "negative": 58,
+      "false_complete": 0,
+      "true_complete": 4,
+      "missed_complete": 0,
+      "false_incomplete": 0,
+      "unknown": 1,
+      "positive_unknown": 0,
+      "negative_unknown": 1
+    },
+    "demo_49": {
+      "frames": 46,
+      "positive": 7,
+      "negative": 39,
+      "false_complete": 0,
+      "true_complete": 6,
+      "missed_complete": 1,
+      "false_incomplete": 0,
+      "unknown": 1,
+      "positive_unknown": 1,
+      "negative_unknown": 0
+    },
+    "demo_41": {
+      "frames": 47,
+      "positive": 7,
+      "negative": 40,
+      "false_complete": 0,
+      "true_complete": 7,
+      "missed_complete": 0,
+      "false_incomplete": 0,
+      "unknown": 2,
+      "positive_unknown": 0,
+      "negative_unknown": 2
+    },
+    "demo_46": {
+      "frames": 51,
+      "positive": 5,
+      "negative": 46,
+      "false_complete": 0,
+      "true_complete": 5,
+      "missed_complete": 0,
+      "false_incomplete": 0,
+      "unknown": 2,
+      "positive_unknown": 0,
+      "negative_unknown": 2
+    }
+  },
+  "episodes_with_false_complete": 1,
+  "elapsed_seconds": 1.0118138790130615,
+  "thresholds": {
+    "incomplete": 0.1,
+    "complete": 0.9
+  },
+  "weights_updated": false,
+  "thresholds_tuned": false,
+  "prediction_file_sha256": "956bd858b32b9963014fa107ea595bae7fa1737871709e5628bbafdb40d7b07d"
+}

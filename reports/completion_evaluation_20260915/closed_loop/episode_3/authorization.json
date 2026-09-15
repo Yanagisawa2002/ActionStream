@@ -1,0 +1,155 @@
+{
+  "schema_status": "VALID",
+  "raw_decision": "accept",
+  "decision": "accept",
+  "reason": "supported_with_textual_evidence",
+  "task": {
+    "original": {
+      "request_id": "completion_diag_3",
+      "text": "Pick up the tomato sauce and place it in the basket."
+    },
+    "original_sha256": "5c73350bb06bd52981bf9d329136c8d86f17ade1c86482522bef94917df6e5a3",
+    "raw_model_output": "{\"decision\":\"accept\",\"target_quote\":\"tomato sauce\",\"destination_quote\":\"basket\"}",
+    "model_output_sha256": "52b17ad15fd12bb6fbd8852c53b43c68355346f1c7f9ef6ea634047244f3cf72",
+    "contract_sha256": "9228271b08d048b0f5426eaa4d0d932537b2126544cd70d97a6fcb47e37d9e09",
+    "target": {
+      "quote": "tomato sauce",
+      "start": 12,
+      "end": 24,
+      "entity": "tomato_sauce"
+    },
+    "destination": {
+      "quote": "basket",
+      "start": 45,
+      "end": 51,
+      "entity": "basket"
+    },
+    "version": "2.0"
+  },
+  "coverage": {
+    "complete": true,
+    "original_sha256": "5c73350bb06bd52981bf9d329136c8d86f17ade1c86482522bef94917df6e5a3",
+    "grammar_sha256": "6854e0b9fa4d7e0f4c7792a6543cf044a1ef9d30fde51ac922f0cf23797a3873",
+    "production": 1,
+    "normalized": "pick up the T and place it in the B",
+    "obligations": [
+      {
+        "start": 0,
+        "end": 4,
+        "quote": "Pick",
+        "kind": "action",
+        "symbol": "pick",
+        "disposition": "supported"
+      },
+      {
+        "start": 5,
+        "end": 7,
+        "quote": "up",
+        "kind": "grammar_or_unresolved",
+        "symbol": "up",
+        "disposition": "supported"
+      },
+      {
+        "start": 8,
+        "end": 11,
+        "quote": "the",
+        "kind": "grammar_or_unresolved",
+        "symbol": "the",
+        "disposition": "supported"
+      },
+      {
+        "start": 12,
+        "end": 24,
+        "quote": "tomato sauce",
+        "kind": "target",
+        "symbol": "T",
+        "disposition": "supported"
+      },
+      {
+        "start": 25,
+        "end": 28,
+        "quote": "and",
+        "kind": "ordering",
+        "symbol": "and",
+        "disposition": "supported"
+      },
+      {
+        "start": 29,
+        "end": 34,
+        "quote": "place",
+        "kind": "action",
+        "symbol": "place",
+        "disposition": "supported"
+      },
+      {
+        "start": 35,
+        "end": 37,
+        "quote": "it",
+        "kind": "grammar_or_unresolved",
+        "symbol": "it",
+        "disposition": "supported"
+      },
+      {
+        "start": 38,
+        "end": 40,
+        "quote": "in",
+        "kind": "grammar_or_unresolved",
+        "symbol": "in",
+        "disposition": "supported"
+      },
+      {
+        "start": 41,
+        "end": 44,
+        "quote": "the",
+        "kind": "grammar_or_unresolved",
+        "symbol": "the",
+        "disposition": "supported"
+      },
+      {
+        "start": 45,
+        "end": 51,
+        "quote": "basket",
+        "kind": "destination",
+        "symbol": "B",
+        "disposition": "supported"
+      },
+      {
+        "start": 51,
+        "end": 52,
+        "quote": ".",
+        "kind": "grammar_or_unresolved",
+        "symbol": ".",
+        "disposition": "supported"
+      },
+      {
+        "kind": "role_binding",
+        "value": {
+          "moved_object": "tomato_sauce",
+          "stationary_destination": "basket"
+        },
+        "disposition": "supported"
+      },
+      {
+        "kind": "quantity",
+        "value": 1,
+        "disposition": "supported"
+      },
+      {
+        "kind": "polarity",
+        "value": "affirmative",
+        "disposition": "supported"
+      },
+      {
+        "kind": "execution",
+        "value": "one pick_place goal with optional ordered same-target substeps",
+        "disposition": "supported"
+      },
+      {
+        "kind": "coverage",
+        "value": "all source tokens consumed by finite production",
+        "disposition": "supported"
+      }
+    ],
+    "decision": "accept"
+  }
+}

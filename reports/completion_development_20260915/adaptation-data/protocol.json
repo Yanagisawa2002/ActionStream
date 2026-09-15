@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "purpose": "One development adaptation after paired nuisance/cadence controls",
+  "parent_protocol": "configs/completion_development_controls.json",
+  "warm_start_sha256": "80dc22b4e646bb8647a5e211b407ac198a1c64ea5db9db71a309c69ccfcd54c7",
+  "seed": 2026091800,
+  "epochs": 20,
+  "batch_size": 24,
+  "learning_rate": 0.00003,
+  "weight_decay": 0.01,
+  "new_frame_stride": 5,
+  "new_labels": "strict physical truth when target visibility proxy passes; unknown when neither view has 64 target pixels",
+  "nuisance_training": "add physically valid, visible training-scene interventions after observed eligible completion-to-other flip",
+  "original_training": "all original v2 training clips; no original validation or consumed test in optimizer",
+  "thresholds": {"complete": 0.95, "incomplete": 0.90},
+  "confirmation": "positive at every 20 Hz control for 0.5 seconds; negative/unknown/missing control resets",
+  "validation": "four new development validation trajectories; original validation held/wrong/above/outside/recent-drop and blackouts as auxiliary regressions",
+  "auxiliary_gates": {"physical_failure_false_complete_max": 0, "blackout_confident_max": 0},
+  "selection": "passing development event and auxiliary gates first; otherwise minimize premature stops, missed events, post-stop failures, late confirmations, auxiliary errors, then max delay",
+  "stop_probe": "40 physical controls holding current arm pose with open gripper; scorer has private simulator truth",
+  "live_validation": "selected checkpoint only; same four development validation seeds, actual VLA loop stops on RGB confirmation",
+  "independent_acceptance": "not run in this development experiment; old NO-GO and consumed holdout remain frozen"
+}

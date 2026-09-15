@@ -1,0 +1,198 @@
+{
+  "status": "COMPLETED",
+  "mode": "DIAGNOSTIC_SIMULATION",
+  "release_gates_changed": false,
+  "protocol_sha256": "2a65fea1efe4d8222dddbbf8a6466581834d14f0223f2d16ffc701a553d06d85",
+  "runner_sha256": "da978c3e7d6a177a9c1324f638772c3c1046bd88959da65bc33afac40767820d",
+  "asset_manifest_sha256": "f98cb80aa0c21b13d70a40c8c39e69ea5f45ab8594073f83f4a8601df9e7d357",
+  "language_config_sha256": "7f368dbef0e408bd98433452cb44c154b4ccbf54a31d891a517bbb581f846d28",
+  "packages": {
+    "torch": "2.8.0+cu128",
+    "torchvision": "0.23.0+cu128",
+    "transformers": "5.5.4",
+    "lerobot": "0.6.2",
+    "hf-libero": "0.1.4",
+    "mujoco": "3.8.1",
+    "robosuite": "1.4.0",
+    "numpy": "2.2.6",
+    "Pillow": "11.3.0"
+  },
+  "episodes": [
+    {
+      "id": "episode_1",
+      "instruction": "Please put the tomato sauce in the basket.",
+      "language_decision": "accept",
+      "status": "complete",
+      "checker_complete": true,
+      "control_steps": 128,
+      "recoveries": 0,
+      "checks": 5,
+      "inference_calls": 5,
+      "native_boundary": true,
+      "revision": 0,
+      "wall_s": 16.10305005684495,
+      "independent_score": {
+        "status": "PASS",
+        "complete_log": true,
+        "false_complete": 0,
+        "claims": [
+          {
+            "control_step": 30,
+            "checker": "incomplete",
+            "native_is_success": false,
+            "identity_match": true
+          },
+          {
+            "control_step": 60,
+            "checker": "incomplete",
+            "native_is_success": false,
+            "identity_match": true
+          },
+          {
+            "control_step": 90,
+            "checker": "incomplete",
+            "native_is_success": false,
+            "identity_match": true
+          },
+          {
+            "control_step": 120,
+            "checker": "incomplete",
+            "native_is_success": false,
+            "identity_match": true
+          },
+          {
+            "control_step": 128,
+            "checker": "complete",
+            "native_is_success": true,
+            "identity_match": true
+          }
+        ],
+        "physical_controls": 128,
+        "final_native_success": true,
+        "complete_while_held": 0,
+        "independently_confirmed_completion": true
+      }
+    },
+    {
+      "id": "episode_2",
+      "instruction": "Move the tomato sauce container into the basket.",
+      "language_decision": "accept",
+      "status": "unknown_stop",
+      "checker_complete": false,
+      "control_steps": 120,
+      "recoveries": 0,
+      "checks": 4,
+      "inference_calls": 4,
+      "native_boundary": false,
+      "revision": 0,
+      "wall_s": 7.74993128888309,
+      "independent_score": {
+        "status": "PASS",
+        "complete_log": true,
+        "false_complete": 0,
+        "claims": [
+          {
+            "control_step": 30,
+            "checker": "incomplete",
+            "native_is_success": false,
+            "identity_match": true
+          },
+          {
+            "control_step": 60,
+            "checker": "incomplete",
+            "native_is_success": false,
+            "identity_match": true
+          },
+          {
+            "control_step": 90,
+            "checker": "incomplete",
+            "native_is_success": false,
+            "identity_match": true
+          },
+          {
+            "control_step": 120,
+            "checker": "unknown",
+            "native_is_success": false,
+            "identity_match": true
+          }
+        ],
+        "physical_controls": 120,
+        "final_native_success": false,
+        "complete_while_held": 0,
+        "independently_confirmed_completion": false
+      }
+    },
+    {
+      "id": "episode_3",
+      "instruction": "Pick up the tomato sauce and place it in the basket.",
+      "language_decision": "accept",
+      "status": "complete",
+      "checker_complete": true,
+      "control_steps": 127,
+      "recoveries": 0,
+      "checks": 5,
+      "inference_calls": 5,
+      "native_boundary": true,
+      "revision": 0,
+      "wall_s": 8.121292885392904,
+      "independent_score": {
+        "status": "PASS",
+        "complete_log": true,
+        "false_complete": 0,
+        "claims": [
+          {
+            "control_step": 30,
+            "checker": "incomplete",
+            "native_is_success": false,
+            "identity_match": true
+          },
+          {
+            "control_step": 60,
+            "checker": "incomplete",
+            "native_is_success": false,
+            "identity_match": true
+          },
+          {
+            "control_step": 90,
+            "checker": "incomplete",
+            "native_is_success": false,
+            "identity_match": true
+          },
+          {
+            "control_step": 120,
+            "checker": "incomplete",
+            "native_is_success": false,
+            "identity_match": true
+          },
+          {
+            "control_step": 127,
+            "checker": "complete",
+            "native_is_success": true,
+            "identity_match": true
+          }
+        ],
+        "physical_controls": 127,
+        "final_native_success": true,
+        "complete_while_held": 0,
+        "independently_confirmed_completion": true
+      }
+    }
+  ],
+  "language_model": {
+    "model_id": "Qwen/Qwen3-VL-2B-Instruct",
+    "revision": "89644892e4d85e24eaac8bacfd4f463576704203",
+    "source": "/root/autodl-tmp/actionstream-agent-20260915/runtime-venv/lib/python3.12/site-packages/transformers/models/qwen3_vl/modeling_qwen3_vl.py",
+    "processor_source": "/root/autodl-tmp/actionstream-agent-20260915/runtime-venv/lib/python3.12/site-packages/transformers/models/qwen3_vl/processing_qwen3_vl.py",
+    "parameter_count": 2127532032,
+    "dtype": "torch.bfloat16",
+    "device": "cuda:0",
+    "load_wall_s": 1.7971877176314592,
+    "generation": {
+      "do_sample": false,
+      "max_new_tokens": 192
+    }
+  },
+  "all_three_confirmed": false,
+  "acceptance": "FAIL",
+  "elapsed_seconds": 50.020319839939475
+}
