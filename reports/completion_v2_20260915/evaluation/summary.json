@@ -1,0 +1,534 @@
+{
+  "status": "NO_GO",
+  "candidate": {
+    "samples": 2085,
+    "positive": 812,
+    "negative": 988,
+    "unobservable": 285,
+    "false_complete": 4,
+    "true_complete": 396,
+    "missed_complete": 416,
+    "unknown": 390,
+    "hidden_confident": 0
+  },
+  "baseline": {
+    "samples": 2085,
+    "positive": 812,
+    "negative": 988,
+    "unobservable": 285,
+    "false_complete": 417,
+    "true_complete": 812,
+    "missed_complete": 0,
+    "unknown": 155,
+    "hidden_confident": 177
+  },
+  "natural_trajectory": {
+    "samples": 1420,
+    "positive": 812,
+    "negative": 608,
+    "unobservable": 0,
+    "false_complete": 4,
+    "true_complete": 396,
+    "missed_complete": 416,
+    "unknown": 105,
+    "hidden_confident": 0
+  },
+  "categories": {
+    "above": {
+      "candidate": {
+        "samples": 95,
+        "positive": 0,
+        "negative": 95,
+        "unobservable": 0,
+        "false_complete": 0,
+        "true_complete": 0,
+        "missed_complete": 0,
+        "unknown": 0,
+        "hidden_confident": 0
+      },
+      "baseline": {
+        "samples": 95,
+        "positive": 0,
+        "negative": 95,
+        "unobservable": 0,
+        "false_complete": 23,
+        "true_complete": 0,
+        "missed_complete": 0,
+        "unknown": 37,
+        "hidden_confident": 0
+      }
+    },
+    "both_hidden": {
+      "candidate": {
+        "samples": 95,
+        "positive": 0,
+        "negative": 0,
+        "unobservable": 95,
+        "false_complete": 0,
+        "true_complete": 0,
+        "missed_complete": 0,
+        "unknown": 95,
+        "hidden_confident": 0
+      },
+      "baseline": {
+        "samples": 95,
+        "positive": 0,
+        "negative": 0,
+        "unobservable": 95,
+        "false_complete": 0,
+        "true_complete": 0,
+        "missed_complete": 0,
+        "unknown": 95,
+        "hidden_confident": 0
+      }
+    },
+    "external_hidden": {
+      "candidate": {
+        "samples": 95,
+        "positive": 0,
+        "negative": 0,
+        "unobservable": 95,
+        "false_complete": 0,
+        "true_complete": 0,
+        "missed_complete": 0,
+        "unknown": 95,
+        "hidden_confident": 0
+      },
+      "baseline": {
+        "samples": 95,
+        "positive": 0,
+        "negative": 0,
+        "unobservable": 95,
+        "false_complete": 0,
+        "true_complete": 0,
+        "missed_complete": 0,
+        "unknown": 0,
+        "hidden_confident": 95
+      }
+    },
+    "held": {
+      "candidate": {
+        "samples": 270,
+        "positive": 0,
+        "negative": 270,
+        "unobservable": 0,
+        "false_complete": 0,
+        "true_complete": 0,
+        "missed_complete": 0,
+        "unknown": 0,
+        "hidden_confident": 0
+      },
+      "baseline": {
+        "samples": 270,
+        "positive": 0,
+        "negative": 270,
+        "unobservable": 0,
+        "false_complete": 3,
+        "true_complete": 0,
+        "missed_complete": 0,
+        "unknown": 4,
+        "hidden_confident": 0
+      }
+    },
+    "incomplete": {
+      "candidate": {
+        "samples": 270,
+        "positive": 0,
+        "negative": 270,
+        "unobservable": 0,
+        "false_complete": 0,
+        "true_complete": 0,
+        "missed_complete": 0,
+        "unknown": 1,
+        "hidden_confident": 0
+      },
+      "baseline": {
+        "samples": 270,
+        "positive": 0,
+        "negative": 270,
+        "unobservable": 0,
+        "false_complete": 41,
+        "true_complete": 0,
+        "missed_complete": 0,
+        "unknown": 3,
+        "hidden_confident": 0
+      }
+    },
+    "outside": {
+      "candidate": {
+        "samples": 95,
+        "positive": 0,
+        "negative": 95,
+        "unobservable": 0,
+        "false_complete": 0,
+        "true_complete": 0,
+        "missed_complete": 0,
+        "unknown": 0,
+        "hidden_confident": 0
+      },
+      "baseline": {
+        "samples": 95,
+        "positive": 0,
+        "negative": 95,
+        "unobservable": 0,
+        "false_complete": 95,
+        "true_complete": 0,
+        "missed_complete": 0,
+        "unknown": 0,
+        "hidden_confident": 0
+      }
+    },
+    "recent_drop": {
+      "candidate": {
+        "samples": 95,
+        "positive": 0,
+        "negative": 95,
+        "unobservable": 0,
+        "false_complete": 0,
+        "true_complete": 0,
+        "missed_complete": 0,
+        "unknown": 0,
+        "hidden_confident": 0
+      },
+      "baseline": {
+        "samples": 95,
+        "positive": 0,
+        "negative": 95,
+        "unobservable": 0,
+        "false_complete": 95,
+        "true_complete": 0,
+        "missed_complete": 0,
+        "unknown": 0,
+        "hidden_confident": 0
+      }
+    },
+    "stable": {
+      "candidate": {
+        "samples": 812,
+        "positive": 812,
+        "negative": 0,
+        "unobservable": 0,
+        "false_complete": 0,
+        "true_complete": 396,
+        "missed_complete": 416,
+        "unknown": 100,
+        "hidden_confident": 0
+      },
+      "baseline": {
+        "samples": 812,
+        "positive": 812,
+        "negative": 0,
+        "unobservable": 0,
+        "false_complete": 0,
+        "true_complete": 812,
+        "missed_complete": 0,
+        "unknown": 0,
+        "hidden_confident": 0
+      }
+    },
+    "unsettled": {
+      "candidate": {
+        "samples": 68,
+        "positive": 0,
+        "negative": 68,
+        "unobservable": 0,
+        "false_complete": 4,
+        "true_complete": 0,
+        "missed_complete": 0,
+        "unknown": 4,
+        "hidden_confident": 0
+      },
+      "baseline": {
+        "samples": 68,
+        "positive": 0,
+        "negative": 68,
+        "unobservable": 0,
+        "false_complete": 65,
+        "true_complete": 0,
+        "missed_complete": 0,
+        "unknown": 3,
+        "hidden_confident": 0
+      }
+    },
+    "wrist_hidden": {
+      "candidate": {
+        "samples": 95,
+        "positive": 0,
+        "negative": 0,
+        "unobservable": 95,
+        "false_complete": 0,
+        "true_complete": 0,
+        "missed_complete": 0,
+        "unknown": 95,
+        "hidden_confident": 0
+      },
+      "baseline": {
+        "samples": 95,
+        "positive": 0,
+        "negative": 0,
+        "unobservable": 95,
+        "false_complete": 0,
+        "true_complete": 0,
+        "missed_complete": 0,
+        "unknown": 13,
+        "hidden_confident": 82
+      }
+    },
+    "wrong_object": {
+      "candidate": {
+        "samples": 95,
+        "positive": 0,
+        "negative": 95,
+        "unobservable": 0,
+        "false_complete": 0,
+        "true_complete": 0,
+        "missed_complete": 0,
+        "unknown": 0,
+        "hidden_confident": 0
+      },
+      "baseline": {
+        "samples": 95,
+        "positive": 0,
+        "negative": 95,
+        "unobservable": 0,
+        "false_complete": 95,
+        "true_complete": 0,
+        "missed_complete": 0,
+        "unknown": 0,
+        "hidden_confident": 0
+      }
+    }
+  },
+  "episodes": {
+    "fresh_00": {
+      "samples": 106,
+      "positive": 44,
+      "negative": 47,
+      "unobservable": 15,
+      "false_complete": 0,
+      "true_complete": 24,
+      "missed_complete": 20,
+      "unknown": 28,
+      "hidden_confident": 0
+    },
+    "fresh_01": {
+      "samples": 106,
+      "positive": 44,
+      "negative": 47,
+      "unobservable": 15,
+      "false_complete": 1,
+      "true_complete": 4,
+      "missed_complete": 40,
+      "unknown": 17,
+      "hidden_confident": 0
+    },
+    "fresh_02": {
+      "samples": 106,
+      "positive": 44,
+      "negative": 47,
+      "unobservable": 15,
+      "false_complete": 0,
+      "true_complete": 34,
+      "missed_complete": 10,
+      "unknown": 19,
+      "hidden_confident": 0
+    },
+    "fresh_03": {
+      "samples": 106,
+      "positive": 44,
+      "negative": 47,
+      "unobservable": 15,
+      "false_complete": 1,
+      "true_complete": 18,
+      "missed_complete": 26,
+      "unknown": 20,
+      "hidden_confident": 0
+    },
+    "fresh_04": {
+      "samples": 106,
+      "positive": 34,
+      "negative": 57,
+      "unobservable": 15,
+      "false_complete": 0,
+      "true_complete": 32,
+      "missed_complete": 2,
+      "unknown": 16,
+      "hidden_confident": 0
+    },
+    "fresh_05": {
+      "samples": 71,
+      "positive": 0,
+      "negative": 71,
+      "unobservable": 0,
+      "false_complete": 0,
+      "true_complete": 0,
+      "missed_complete": 0,
+      "unknown": 1,
+      "hidden_confident": 0
+    },
+    "fresh_06": {
+      "samples": 106,
+      "positive": 33,
+      "negative": 58,
+      "unobservable": 15,
+      "false_complete": 0,
+      "true_complete": 23,
+      "missed_complete": 10,
+      "unknown": 22,
+      "hidden_confident": 0
+    },
+    "fresh_07": {
+      "samples": 106,
+      "positive": 43,
+      "negative": 48,
+      "unobservable": 15,
+      "false_complete": 0,
+      "true_complete": 23,
+      "missed_complete": 20,
+      "unknown": 24,
+      "hidden_confident": 0
+    },
+    "fresh_08": {
+      "samples": 106,
+      "positive": 43,
+      "negative": 48,
+      "unobservable": 15,
+      "false_complete": 0,
+      "true_complete": 16,
+      "missed_complete": 27,
+      "unknown": 19,
+      "hidden_confident": 0
+    },
+    "fresh_09": {
+      "samples": 106,
+      "positive": 45,
+      "negative": 46,
+      "unobservable": 15,
+      "false_complete": 0,
+      "true_complete": 24,
+      "missed_complete": 21,
+      "unknown": 22,
+      "hidden_confident": 0
+    },
+    "fresh_10": {
+      "samples": 106,
+      "positive": 43,
+      "negative": 48,
+      "unobservable": 15,
+      "false_complete": 1,
+      "true_complete": 26,
+      "missed_complete": 17,
+      "unknown": 22,
+      "hidden_confident": 0
+    },
+    "fresh_11": {
+      "samples": 106,
+      "positive": 44,
+      "negative": 47,
+      "unobservable": 15,
+      "false_complete": 0,
+      "true_complete": 20,
+      "missed_complete": 24,
+      "unknown": 20,
+      "hidden_confident": 0
+    },
+    "fresh_12": {
+      "samples": 106,
+      "positive": 42,
+      "negative": 49,
+      "unobservable": 15,
+      "false_complete": 0,
+      "true_complete": 27,
+      "missed_complete": 15,
+      "unknown": 20,
+      "hidden_confident": 0
+    },
+    "fresh_13": {
+      "samples": 106,
+      "positive": 43,
+      "negative": 48,
+      "unobservable": 15,
+      "false_complete": 0,
+      "true_complete": 28,
+      "missed_complete": 15,
+      "unknown": 23,
+      "hidden_confident": 0
+    },
+    "fresh_14": {
+      "samples": 106,
+      "positive": 44,
+      "negative": 47,
+      "unobservable": 15,
+      "false_complete": 0,
+      "true_complete": 34,
+      "missed_complete": 10,
+      "unknown": 21,
+      "hidden_confident": 0
+    },
+    "fresh_15": {
+      "samples": 106,
+      "positive": 45,
+      "negative": 46,
+      "unobservable": 15,
+      "false_complete": 0,
+      "true_complete": 9,
+      "missed_complete": 36,
+      "unknown": 17,
+      "hidden_confident": 0
+    },
+    "fresh_16": {
+      "samples": 106,
+      "positive": 45,
+      "negative": 46,
+      "unobservable": 15,
+      "false_complete": 0,
+      "true_complete": 7,
+      "missed_complete": 38,
+      "unknown": 25,
+      "hidden_confident": 0
+    },
+    "fresh_17": {
+      "samples": 106,
+      "positive": 45,
+      "negative": 46,
+      "unobservable": 15,
+      "false_complete": 0,
+      "true_complete": 37,
+      "missed_complete": 8,
+      "unknown": 18,
+      "hidden_confident": 0
+    },
+    "fresh_18": {
+      "samples": 106,
+      "positive": 43,
+      "negative": 48,
+      "unobservable": 15,
+      "false_complete": 1,
+      "true_complete": 5,
+      "missed_complete": 38,
+      "unknown": 17,
+      "hidden_confident": 0
+    },
+    "fresh_19": {
+      "samples": 106,
+      "positive": 44,
+      "negative": 47,
+      "unobservable": 15,
+      "false_complete": 0,
+      "true_complete": 5,
+      "missed_complete": 39,
+      "unknown": 19,
+      "hidden_confident": 0
+    }
+  },
+  "complete_recall": 0.4876847290640394,
+  "false_complete_relative_reduction": 0.9904076738609112,
+  "checkpoint_sha256": "80dc22b4e646bb8647a5e211b407ac198a1c64ea5db9db71a309c69ccfcd54c7",
+  "chosen_epoch": 25,
+  "protocol_sha256": "e8f6d429d50ae214a3ba7a5bb062cae9506910f0c7bd2d16acc2e4620a467df0",
+  "holdout_manifest_sha256": "ad832f1a17920f303cf839c7a323127c294eb7c401bfc70f3ba0522795f81dfb",
+  "predictions_sha256": "960b0d46a008a0a024833f1246dfed38bcfa39b74ba19c79fca5c61bd4d650ae",
+  "evaluator_sha256": "83dec7a199767a7fd098c7c695fd53f6b8c56100580fbf19041f22c402e09c88",
+  "test_used_for_selection": false,
+  "limitation": "20 procedural simulated VLA rollouts and controlled failure/camera interventions; shadow predictions, not a live candidate-controlled closed loop"
+}

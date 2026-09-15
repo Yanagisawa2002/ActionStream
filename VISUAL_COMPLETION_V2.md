@@ -58,4 +58,8 @@ Full datasets, simulator states and weights remain under the remote completion-v
 
 ## Status
 
-Implementation and label-regression tests are ready. Data generation and the sequential training/evaluation run are in progress. This document does not grant runtime acceptance.
+The full run completed. Development labels corrected 822 premature containment-positive controls. Training used 2,257 clips, completed 40 epochs / 3,800 steps and froze epoch 25 using validation data only.
+
+On 20 fresh procedural VLA trajectories and paired interventions, v2 reduced false completion from 417/988 to 4/988 negatives. Stable-positive recall fell from 812/812 to 396/812 (48.77%). All 285 camera-blackout cases abstain. The four false completions precede the required stable interval by 0.05 to 0.25 seconds. **Acceptance is NO-GO**: zero false completions and at least 80% recall were required.
+
+See the [completed evidence report](reports/completion_v2_20260915/README.md) for raw predictions, manifests, private truth journals, independent replay and limitations. No retraining or threshold changes followed holdout inspection. These trajectories are now consumed; a further candidate requires another fresh holdout. This result does not grant runtime acceptance.

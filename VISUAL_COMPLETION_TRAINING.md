@@ -9,6 +9,11 @@ Training does not enable runtime acceptance or establish a general VLA result.
 closed loops. It remains **NO-GO**. See the
 [full evaluation and label-definition diagnosis](reports/completion_evaluation_20260915/README.md).
 
+**Separate v2 update:** released-and-stable labels, hard negatives and a temporal
+candidate were trained and evaluated on 20 newly generated VLA trajectories.
+False completions decreased substantially, but recall remains below the gate.
+See the [v2 NO-GO result and fresh evidence](reports/completion_v2_20260915/README.md).
+
 ## Why new labels are required
 
 The [official LIBERO exporter](https://github.com/Lifelong-Robot-Learning/LIBERO/blob/master/scripts/create_dataset.py)
