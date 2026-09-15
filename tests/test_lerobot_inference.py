@@ -554,7 +554,11 @@ def test_process_deadline_kills_hung_transport_and_recovers_with_new_observation
     telemetry_path = tmp_path / "deadline.jsonl"
     engine = _engine(
         lambda _obs, _task: torch.empty(0),
-        config=_process_config(telemetry_path),
+        # This exercises real spawned Torch IPC. A 150 ms budget can time out
+        # the healthy reply on shared CI runners as well as the deliberate hang.
+        # Keep the exact one-timeout/two-process contract with a bounded budget
+        # that allows the healthy tensor transfer to finish.
+        config=_process_config(telemetry_path, timeout_s=1.0),
     )
     engine.reset()
     engine.start()
@@ -568,6 +572,7 @@ def test_process_deadline_kills_hung_transport_and_recovers_with_new_observation
         torch.testing.assert_close(engine.get_action(None), torch.tensor([7.0, 7.0]))
         telemetry = engine.telemetry
         assert telemetry.deadline_enforced is True
+        assert telemetry.inference_timeouts == 1
         assert telemetry.transport_process_restarts == 2
         assert telemetry.recoveries == 1
     finally:
