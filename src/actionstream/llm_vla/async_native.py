@@ -11,7 +11,21 @@ from .temporal_completion import camera_rgb
 
 class AsyncSimulationPort(SimulationPort):
     def reset_inference(self):
+        import torch
+
+        if not hasattr(self, "inference_stream"):
+            self.inference_stream = torch.cuda.Stream()
         self.backend.reset_runtime()
+
+    def infer(self, observation, instruction):
+        # Warmup runs before the worker exists. Subsequent model operations use
+        # a worker-owned stream so the RGB verifier need not queue behind VLA.
+        if not hasattr(self, "inference_stream"):
+            return super().infer(observation, instruction)
+        import torch
+
+        with torch.cuda.stream(self.inference_stream):
+            return super().infer(observation, instruction)
 
     def warmup(self, observation, instruction, predictor):
         # Reported separately from paced dispatch. No physical action is executed.
