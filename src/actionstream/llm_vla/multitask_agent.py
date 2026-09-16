@@ -16,6 +16,10 @@ def execute_task(
 ):
     task = validate_permit(request, permit)
     predictor.validate_binding(task)
+    # The text vector may contain thousands of values. Bind it once at startup,
+    # not by reserializing/hashing it inside every 50 ms journal event.
+    task_hash = task.sha256
+    condition_hash = predictor.condition.sha256
 
     def make_port():
         # Pass the host-validated task; a caller cannot preselect a different task.
@@ -29,8 +33,8 @@ def execute_task(
         emit(
             event,
             task_key=task.key,
-            task_sha256=task.sha256,
-            condition_sha256=predictor.condition.sha256,
+            task_sha256=task_hash,
+            condition_sha256=condition_hash,
             **values,
         )
 
@@ -48,6 +52,6 @@ def execute_task(
     return dict(
         outcome,
         task_key=task.key,
-        task_sha256=task.sha256,
-        condition_sha256=predictor.condition.sha256,
+        task_sha256=task_hash,
+        condition_sha256=condition_hash,
     )
