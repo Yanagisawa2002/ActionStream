@@ -44,10 +44,15 @@ def layout(env):
 class SimulationPort:
     """The controller receives RGB/proprioception, never truth or native done flags."""
 
+    task_id = 5
+    canonical_instruction = CAPABILITY["canonical_instruction"]
+    new_truth = staticmethod(StableTruth)
+    read_facts = staticmethod(simulator_facts)
+
     def __init__(self, backend, seed, output, excluded_layouts=None):
         self.backend, self.seed, self.output = backend, seed, Path(output)
         self.excluded = excluded_layouts if excluded_layouts is not None else set()
-        self.truth = StableTruth()
+        self.truth = self.new_truth()
         self.control = 0
         self.states, self.rgb, self.facts, self.actions, self.bindings = (
             [],
@@ -63,7 +68,7 @@ class SimulationPort:
         observation = Observation.project(
             batch(self.sub._format_raw_obs(raw)), request_id, revision, uuid.uuid4().hex
         )
-        facts = simulator_facts(self.env)
+        facts = self.read_facts(self.env)
         facts["strict_complete"] = self.truth.update(self.control, facts)
         self.facts.append(facts)
         self.states.append(self.env.sim.get_state().flatten().copy())
@@ -72,17 +77,17 @@ class SimulationPort:
         return observation
 
     def start(self, request_id, revision):
-        self.sub = self.backend._sub_env(5)
+        self.sub = self.backend._sub_env(self.task_id)
         self.sub.init_states = False
         self.sub._init_states = None
         _, _, instruction = self.backend.reset_episode(
-            task_id=5, seed=self.seed, initial_state_index=0
+            task_id=self.task_id, seed=self.seed, initial_state_index=0
         )
         self.env = self.sub._env
-        if instruction != CAPABILITY["canonical_instruction"]:
+        if instruction != self.canonical_instruction:
             raise ValueError("Native instruction differs from authorized skill")
         if (
-            self.backend.controller_frequency_hz(5) != 20
+            self.backend.controller_frequency_hz(self.task_id) != 20
             or self.sub.num_steps_wait != 10
         ):
             raise ValueError("Native control/reset frequency changed")

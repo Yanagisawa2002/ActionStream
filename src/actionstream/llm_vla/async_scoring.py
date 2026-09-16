@@ -15,7 +15,7 @@ from pathlib import Path
 import numpy as np
 
 
-def score_episode(directory, *, forced_open_until=0):
+def score_episode(directory, *, forced_open_until=0, fact_predicate=None):
     directory = Path(directory)
 
     def read(name):
@@ -36,12 +36,16 @@ def score_episode(directory, *, forced_open_until=0):
     for control, fact in enumerate(facts):
         speeds = (fact["linear_speed"], fact["angular_speed"])
         instantaneous = (
-            fact["inside"]
-            and not fact["finger_contact"]
-            and fact["basket_contact"]
-            and all(math.isfinite(v) and v >= 0 for v in speeds)
-            and speeds[0] <= 0.03
-            and speeds[1] <= 0.3
+            fact_predicate(fact)
+            if fact_predicate is not None
+            else (
+                fact["inside"]
+                and not fact["finger_contact"]
+                and fact["basket_contact"]
+                and all(math.isfinite(v) and v >= 0 for v in speeds)
+                and speeds[0] <= 0.03
+                and speeds[1] <= 0.3
+            )
         )
         window.append(instantaneous)
         strict = len(window) == 11 and all(window)

@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import numpy as np
 
-from actionstream.completion_labels import StableTruth
 from .finite_native import SimulationPort
 from .async_process import ProcessInferenceMixin
 from .temporal_completion import camera_rgb
@@ -49,7 +48,7 @@ class AsyncSimulationPort(SimulationPort):
         self.rgb.clear()
         self.facts.clear()
         self.bindings.clear()
-        self.truth = StableTruth()
+        self.truth = self.new_truth()
         return self.capture(raw, request_id, revision)
 
     def pose_hold(self, observation, gripper):

@@ -13,14 +13,22 @@ from pathlib import Path
 import traceback
 
 
-def _serve(connection, assets, seed, batch_postprocessing):
+def _serve(connection, assets, seed, batch_postprocessing, task_key=None):
     backend = None
     try:
         import torch
         from .agent_cli import backend_factory
 
         torch.set_num_threads(8)
-        backend = backend_factory(Path(assets), seed)
+        if task_key is None:
+            backend = backend_factory(Path(assets), seed)
+        else:
+            from .multitask_native import backend_factory as task_backend_factory
+            from .task_registry import development_task
+
+            backend = task_backend_factory(
+                Path(assets), seed, development_task(task_key)
+            )
         # Match the parent's episode reset, after loading all modules/weights.
         backend._set_seed(seed)
         backend.reset_runtime()
@@ -56,6 +64,9 @@ class ProcessInferenceMixin:
 
     inference_process_target = staticmethod(_serve)
 
+    def inference_process_extra_args(self):
+        return ()
+
     def _receive(self, expected, timeout=30.0):
         if not self.inference_connection.poll(timeout):
             raise TimeoutError("Native inference owner did not respond")
@@ -75,6 +86,7 @@ class ProcessInferenceMixin:
                     str(Path(self.backend.model_id).parent),
                     self.seed,
                     self.batch_postprocessing,
+                    *self.inference_process_extra_args(),
                 ),
                 name="ActionStreamNativeVLA",
             )
