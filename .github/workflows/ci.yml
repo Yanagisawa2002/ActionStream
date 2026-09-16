@@ -59,6 +59,7 @@ jobs:
             tests/test_delivery.py \
             tests/test_async_agent.py \
             tests/test_async_process.py \
+            tests/test_multitask_agent.py \
             tests/test_processors.py \
             scripts/release/audit_public_release.py \
             scripts/release/generate_v1_1_demo.py \
@@ -87,6 +88,7 @@ jobs:
             tests/test_delivery.py \
             tests/test_async_agent.py \
             tests/test_async_process.py \
+            tests/test_multitask_agent.py \
             tests/test_processors.py
       - name: Strict release audit
         run: uv run python scripts/release/audit_public_release.py

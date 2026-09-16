@@ -193,6 +193,32 @@ def execute_async_request(
         raise ValueError("Changed or forged whole-request authorization")
     task = materialize(request, permit.raw, contract).control_spec()
     task.require_accepted()
+    return _execute_authorized_task(
+        request,
+        permit,
+        task,
+        port_factory,
+        predictor,
+        emit,
+        config,
+        worker_factory=worker_factory,
+        checkpoint_sha256=CHECKPOINT_SHA256,
+    )
+
+
+def _execute_authorized_task(
+    request,
+    permit,
+    task,
+    port_factory,
+    predictor,
+    emit,
+    config,
+    *,
+    worker_factory=ChunkWorker,
+    checkpoint_sha256,
+):
+    """Internal dispatch core. Public entry points must validate their permit first."""
     # Both the control thread and the inference worker produce journal events.
     event_lock = threading.Lock()
     original_emit = emit
@@ -208,7 +234,7 @@ def execute_async_request(
         control_steps=0,
         post_stop_controls=0,
         first_claim_control=None,
-        checkpoint_sha256=CHECKPOINT_SHA256,
+        checkpoint_sha256=checkpoint_sha256,
         config=asdict(config),
     )
     emit(

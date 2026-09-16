@@ -1,0 +1,123 @@
+{
+  "version": 1,
+  "status": "DEVELOPMENT_NOT_FROZEN",
+  "registry_sha256": "a42f496d8d19a38e3ef5e112543788d09c5129214215928dec4a0ca812ef113d",
+  "integration_tasks": [
+    {
+      "key": "object_tomato_basket",
+      "suite": "libero_object",
+      "task_id": 5,
+      "canonical_instruction": "pick up the tomato sauce and place it in the basket",
+      "target_phrase": "tomato sauce",
+      "relation": "in",
+      "destination_phrase": "basket"
+    },
+    {
+      "key": "spatial_bowl_stove_plate",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "canonical_instruction": "pick up the black bowl on the stove and place it on the plate",
+      "target_phrase": "black bowl on the stove",
+      "relation": "on",
+      "destination_phrase": "plate"
+    },
+    {
+      "key": "goal_wine_cabinet",
+      "suite": "libero_goal",
+      "task_id": 2,
+      "canonical_instruction": "put the wine bottle on top of the cabinet",
+      "target_phrase": "wine bottle",
+      "relation": "on top of",
+      "destination_phrase": "cabinet"
+    }
+  ],
+  "development": {
+    "train_episodes_per_task": 8,
+    "validation_episodes_per_task": 4,
+    "epochs": 16,
+    "batch_size": 8,
+    "seed": 20260916,
+    "frame_stride": 5,
+    "min_target_pixels": 24,
+    "split_key": [
+      "task_key",
+      "layout_sha256"
+    ],
+    "task_condition": "frozen Qwen text-only last-hidden-state masked mean; L2 normalized before control",
+    "model": "shared temporal ResNet18 and language fusion head",
+    "selection": "mean of per-task validation cross entropy; validation clips do not substitute for online rollout gates"
+  },
+  "integration_acceptance": {
+    "status": "BLOCKED_UNTIL_DEVELOPMENT_FREEZE",
+    "normal_episodes_per_task": 10,
+    "recovery_episodes_per_task": 10,
+    "gates_per_task": {
+      "normal_safe_completions_min": 8,
+      "recovery_eligible_min": 10,
+      "recovered_min": 8,
+      "premature_stops_max": 0,
+      "missed_events_max": 0,
+      "integrity_errors_max": 0,
+      "max_confirmation_delay_s": 2.0,
+      "normal_period_p95_s_max": 0.055,
+      "normal_period_max_s_max": 0.1,
+      "normal_deadline_miss_fraction_max": 0.01
+    },
+    "fault": {
+      "kind": "force_gripper_open",
+      "controls_exclusive": 300
+    },
+    "all_tasks_must_pass": true,
+    "preserve_prior_no_go": true,
+    "no_seed_replacement": true
+  },
+  "heldout_task_candidates": [
+    {
+      "suite": "libero_object",
+      "task_id": 1,
+      "instruction": "pick up the cream cheese and place it in the basket"
+    },
+    {
+      "suite": "libero_spatial",
+      "task_id": 5,
+      "instruction": "pick up the black bowl on the ramekin and place it on the plate"
+    },
+    {
+      "suite": "libero_goal",
+      "task_id": 9,
+      "instruction": "put the wine bottle on the rack"
+    }
+  ],
+  "generalization": {
+    "status": "NOT_STARTED",
+    "candidate_history_audit": "pending complete historical use inventory; tracked reports/config text search found no direct usage",
+    "runtime_allowlist": "development tasks only",
+    "sample_access": "prohibited before stage-one GO and source/model/protocol freeze",
+    "claim_scope": "held out from local completion training, tuning and model selection only; upstream exposure must be separately disclosed",
+    "zero_shot_claim_allowed": false
+  },
+  "upstream_exposure": {
+    "xvla": {
+      "model": "lerobot/xvla-libero",
+      "revision": "12e8783e996944f5c97e490d37d4c145484ed70a",
+      "libero_training": "declared by pinned model card",
+      "task_specific_overlap": "unknown; do not assume absence",
+      "source": "https://huggingface.co/lerobot/xvla-libero/blob/12e8783e996944f5c97e490d37d4c145484ed70a/README.md",
+      "source_sha256": "236c6b453d8c54c12ab3ae1ed7dfe4bec98b0e69891b36e120cf3084d9b31fda"
+    },
+    "qwen": {
+      "model": "Qwen/Qwen3-VL-2B-Instruct",
+      "revision": "89644892e4d85e24eaac8bacfd4f463576704203",
+      "task_specific_overlap": "unknown"
+    },
+    "vision": {
+      "model": "torchvision ResNet18 IMAGENET1K_V1",
+      "task_specific_overlap": "not established; initialization identity is not proof of task novelty"
+    }
+  },
+  "native_definition_source": {
+    "distribution": "hf-libero==0.1.4",
+    "wheel_sha256": "207f76e2f28bff30f78132223d8592fe8f64b1f8fd90ce7024948ada0d7e2c27",
+    "catalog_sha256": "0c950df0a785aa55de968bb38ccd865d2017f71ddbe6f48cfd05ac0742b6d62d"
+  }
+}
