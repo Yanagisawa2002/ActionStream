@@ -1,5 +1,6 @@
 name: Format RPC Once
 
+# Temporary branch-only bootstrap. Delete after Ruff writes the four RPC sources.
 on:
   push:
     branches: ["codex/actionstream/remote-resilience-v12"]
