@@ -1,0 +1,123 @@
+{
+  "schema_version": 1,
+  "status": "PRE_REGISTERED_NOT_EXECUTED",
+  "purpose": "real_remote_rpc_fault_and_multitask_external_validity",
+  "model_id": "lerobot/xvla-libero",
+  "model_revision": "12e8783e996944f5c97e490d37d4c145484ed70a",
+  "lerobot_commit": "73e1584473028a2d53ecfc856f5290db84507f90",
+  "controller_frequency_hz": 20,
+  "max_control_steps": 300,
+  "transport": {
+    "mode": "tcp",
+    "separate_client_and_gpu_hosts_required": true,
+    "client_deadline_s": 5.0,
+    "delivery_scheduler_enabled": true,
+    "minimum_request_interval_steps": 1
+  },
+  "task_families": [
+    {
+      "family": "Object",
+      "suite": "libero_object",
+      "task_id": 5,
+      "candidate_reset_indices": [20, 21, 22, 23, 24]
+    },
+    {
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "candidate_reset_indices": [20, 21, 22, 23, 24]
+    },
+    {
+      "family": "Goal",
+      "suite": "libero_goal",
+      "task_id": 2,
+      "candidate_reset_indices": [20, 21, 22, 23, 24]
+    }
+  ],
+  "identity_rule": {
+    "candidate_resets_must_be_unused": true,
+    "collision_action": "NO_RUN_AND_FREEZE_NEW_IDENTITIES_BEFORE_EXECUTION",
+    "same_task_reset_and_policy_seed_across_network_conditions": true,
+    "fresh_runtime_process_per_family_condition": true
+  },
+  "stages": [
+    {
+      "name": "remote_no_fault",
+      "reset_indices": [20, 21, 22, 23, 24],
+      "conditions": [
+        {
+          "name": "tcp_no_injected_fault",
+          "response_delay_ms": 0,
+          "response_jitter_ms": 0
+        }
+      ]
+    },
+    {
+      "name": "remote_fault_matrix",
+      "reset_indices": [20, 21, 22],
+      "conditions": [
+        {
+          "name": "mild_jitter",
+          "response_delay_ms": 50,
+          "response_jitter_ms": 20,
+          "fault_seed": 2026091701
+        },
+        {
+          "name": "wan_jitter",
+          "response_delay_ms": 250,
+          "response_jitter_ms": 100,
+          "fault_seed": 2026091702
+        },
+        {
+          "name": "long_delay_jitter",
+          "response_delay_ms": 950,
+          "response_jitter_ms": 250,
+          "fault_seed": 2026091703
+        },
+        {
+          "name": "periodic_disconnect",
+          "disconnect_before_infer_every_n": 7,
+          "fault_seed": 2026091704
+        }
+      ]
+    }
+  ],
+  "required_metrics": [
+    "task_success",
+    "completion_steps_failures_equal_cap",
+    "request_rate_hz",
+    "queue_depletion_fraction",
+    "queue_age_p50_steps",
+    "queue_age_p95_steps",
+    "rpc_roundtrip_p50_ms",
+    "rpc_roundtrip_p95_ms",
+    "rpc_roundtrip_p99_ms",
+    "server_inference_p50_ms",
+    "server_inference_p95_ms",
+    "stale_response_rejections",
+    "out_of_order_response_rejections",
+    "transport_deadlines",
+    "transport_errors",
+    "transport_reconnects",
+    "recovery_latency_ms",
+    "gpu_utilization_p50",
+    "gpu_utilization_p95",
+    "process_vram_max_mib"
+  ],
+  "hard_gates": {
+    "declared_episode_coverage_exact": true,
+    "stale_action_crosses_reset": 0,
+    "accepted_out_of_order_responses": 0,
+    "no_fault_transport_deadlines": 0,
+    "no_fault_transport_errors": 0,
+    "fault_condition_must_exercise_declared_fault": true,
+    "post_fault_later_request_must_recover": true,
+    "raw_receipt_and_telemetry_hashes_required": true
+  },
+  "claim_boundary": {
+    "task_success_is_descriptive_not_a_predeclared_superiority_gate": true,
+    "loopback_ci_is_not_remote_gpu_evidence": true,
+    "tcp_deadline_is_not_remote_cuda_preemption": true,
+    "simulation_is_not_real_robot_safety_evidence": true
+  }
+}
