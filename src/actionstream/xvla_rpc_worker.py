@@ -22,7 +22,9 @@ class XVLARemoteWorker:
         if not store:
             raise RuntimeError("ACTIONSTREAM_RPC_STORE is required")
         task_ids_raw = os.environ.get("ACTIONSTREAM_RPC_TASK_IDS", "5")
-        task_ids = [int(item.strip()) for item in task_ids_raw.split(",") if item.strip()]
+        task_ids = [
+            int(item.strip()) for item in task_ids_raw.split(",") if item.strip()
+        ]
         if not task_ids:
             raise RuntimeError("ACTIONSTREAM_RPC_TASK_IDS must contain at least one id")
         suite = os.environ.get("ACTIONSTREAM_RPC_SUITE", "libero_object")

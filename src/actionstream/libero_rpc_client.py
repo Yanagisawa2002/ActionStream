@@ -62,9 +62,10 @@ class LiberoEnvironmentClient:
         seed: int,
     ) -> None:
         ensure_isolated_libero_config()
-        if os.environ.get("MUJOCO_GL") != "egl" or os.environ.get(
-            "PYOPENGL_PLATFORM"
-        ) != "egl":
+        if (
+            os.environ.get("MUJOCO_GL") != "egl"
+            or os.environ.get("PYOPENGL_PLATFORM") != "egl"
+        ):
             raise RuntimeError(
                 "LIBERO RPC client requires MUJOCO_GL=egl and PYOPENGL_PLATFORM=egl"
             )
@@ -209,7 +210,9 @@ def run_episode(args) -> dict[str, Any]:
         )
         receipt["instruction"] = instruction
         receipt["controller_frequency_hz"] = frequency
-        if not math.isclose(frequency, args.expected_frequency_hz, rel_tol=0, abs_tol=1e-6):
+        if not math.isclose(
+            frequency, args.expected_frequency_hz, rel_tol=0, abs_tol=1e-6
+        ):
             raise RuntimeError(
                 f"Controller frequency changed: {frequency} != {args.expected_frequency_hz}"
             )
@@ -231,7 +234,9 @@ def run_episode(args) -> dict[str, Any]:
                 action = engine.get_action(None)
                 if action is None:
                     if time.perf_counter() - wait_started > args.action_wait_timeout_s:
-                        raise TimeoutError("No remote action became available before wait timeout")
+                        raise TimeoutError(
+                            "No remote action became available before wait timeout"
+                        )
                     time.sleep(args.action_poll_s)
             waiting_ms.append(1000 * (time.perf_counter() - wait_started))
             result = env.step(action.detach().cpu().numpy())

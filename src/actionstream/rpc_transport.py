@@ -445,7 +445,9 @@ class TcpInferenceTransport:
                         f"{response.get('error')}"
                     )
                 if kind != "ok":
-                    raise InferenceTransportError(f"Unknown RPC response kind: {kind!r}")
+                    raise InferenceTransportError(
+                        f"Unknown RPC response kind: {kind!r}"
+                    )
                 actions = response.get("actions")
                 if not isinstance(actions, torch.Tensor):
                     raise InferenceTransportError(
@@ -453,9 +455,13 @@ class TcpInferenceTransport:
                     )
                 with self._state_lock:
                     if generation != self._generation:
-                        raise InferenceCancelled("TCP response belongs to invalidated generation")
+                        raise InferenceCancelled(
+                            "TCP response belongs to invalidated generation"
+                        )
                     if cancellation_event is not None and cancellation_event.is_set():
-                        raise InferenceCancelled("TCP response arrived after cancellation")
+                        raise InferenceCancelled(
+                            "TCP response arrived after cancellation"
+                        )
                     self._requests_completed += 1
                     self._latest_roundtrip_latency_s = time.monotonic() - started
                     server_s = response.get("server_inference_s")
@@ -627,9 +633,7 @@ class RpcInferenceServer:
                         return
                     ordinal = self._claim_ordinal()
                     faults = self._faults
-                    if faults._matches(
-                        ordinal, faults.disconnect_before_infer_every_n
-                    ):
+                    if faults._matches(ordinal, faults.disconnect_before_infer_every_n):
                         return
                     if faults._matches(ordinal, faults.stall_every_n):
                         time.sleep(faults.stall_s)

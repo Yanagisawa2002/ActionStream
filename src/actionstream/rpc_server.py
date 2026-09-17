@@ -13,7 +13,9 @@ from actionstream.rpc_transport import RpcFaultProfile, RpcInferenceServer, load
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--factory", required=True, help="Trusted module:factory worker")
+    parser.add_argument(
+        "--factory", required=True, help="Trusted module:factory worker"
+    )
     parser.add_argument("--host", default="0.0.0.0")
     parser.add_argument("--port", type=int, default=50051)
     parser.add_argument("--ready-file", type=Path)
