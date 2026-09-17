@@ -32,6 +32,7 @@ actionstream-benchmark = "actionstream.benchmark:main"
 actionstream-results = "actionstream.results:main"
 actionstream-rpc-server = "actionstream.rpc_server:main"
 actionstream-rpc-matrix = "actionstream.rpc_matrix:main"
+actionstream-libero-rpc-client = "actionstream.libero_rpc_client:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
