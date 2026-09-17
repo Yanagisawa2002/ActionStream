@@ -13,41 +13,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  format-rpc-on-push:
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/codex/actionstream/remote-resilience-v12' && !contains(github.event.head_commit.message, 'style: apply ruff formatting') }}
-    permissions:
-      contents: write
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          ref: codex/actionstream/remote-resilience-v12
-      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
-        with:
-          version: "0.11.32"
-      - name: Format new RPC sources
-        run: |
-          uvx --from ruff==0.14.1 ruff format \
-            src/actionstream/rpc_transport.py \
-            src/actionstream/rpc_server.py \
-            src/actionstream/xvla_rpc_worker.py \
-            src/actionstream/libero_rpc_client.py
-      - name: Commit formatter output
-        run: |
-          if git diff --quiet; then
-            echo "Already formatted"
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add \
-            src/actionstream/rpc_transport.py \
-            src/actionstream/rpc_server.py \
-            src/actionstream/xvla_rpc_worker.py \
-            src/actionstream/libero_rpc_client.py
-          git commit -m "style: apply ruff formatting"
-          git push origin HEAD:codex/actionstream/remote-resilience-v12
-
   quality-and-core:
     runs-on: ubuntu-latest
     steps:
