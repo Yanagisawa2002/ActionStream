@@ -30,6 +30,8 @@ Issues = "https://github.com/Yanagisawa2002/ActionStream/issues"
 actionstream-preflight = "actionstream.preflight:main"
 actionstream-benchmark = "actionstream.benchmark:main"
 actionstream-results = "actionstream.results:main"
+actionstream-rpc-server = "actionstream.rpc_server:main"
+actionstream-rpc-matrix = "actionstream.rpc_matrix:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
