@@ -4,6 +4,8 @@ This small package registers `--inference.type=actionstream` with LeRobot's
 rollout inference factory. It depends on the generic third-party inference-engine
 registry proposed in
 `upstream/lerobot/0001-feat-rollout-allow-third-party-inference-engines.patch`.
+A refreshed, smaller patch against LeRobot main `30074f7` is retained as
+`upstream/lerobot/0002-current-main-third-party-inference-builders.patch`.
 
 The backend executes action-chunk inference on one worker, aligns returned chunks
 to observation age, rejects pre-reset and timed-out responses, bounds queue-empty
@@ -40,7 +42,7 @@ TCP I/O deadlines are not remote CUDA cancellation. If the server has already
 entered a kernel, closing the client connection does not kill that kernel. Use a
 server-side process-isolation layer when remote compute itself must be preempted.
 
-## RPC server
+## RPC server contract
 
 A trusted `module:factory` can be exposed with:
 
@@ -51,12 +53,18 @@ uv run actionstream-rpc-server \
 ```
 
 The factory returns a callable `(observation, task) -> torch.Tensor`; a callable
-`reset()` method is used when present. For the pinned X-VLA/LIBERO development
-stack, `actionstream.xvla_rpc_worker:make_xvla_remote_worker` reuses the existing
-`LeRobotBackend`. Set `ACTIONSTREAM_RPC_STORE`, `ACTIONSTREAM_RPC_SUITE`, and
-`ACTIONSTREAM_RPC_TASK_IDS` on the GPU server before starting it.
+`reset()` method is used when present. For the generic `lerobot-rollout` plugin,
+the worker must consume the same raw robot-observation contract that the rollout
+engine forwards. ActionStream does not auto-convert arbitrary robot observations
+into LIBERO-native observations.
 
-The server also supports deterministic response delay/jitter, stalls, disconnects,
+The repository also contains
+`actionstream.xvla_rpc_worker:make_xvla_remote_worker`, but that worker consumes
+native LIBERO observations and belongs to the separate two-host external-validity
+runner documented in `docs/remote-rpc-validation.md`. It should not be used as a
+generic `lerobot-rollout` server without an explicit observation adapter.
+
+The server supports deterministic response delay/jitter, stalls, disconnects,
 dropped responses, and injected server errors. These knobs are for controlled
 fault experiments, not production traffic shaping.
 
