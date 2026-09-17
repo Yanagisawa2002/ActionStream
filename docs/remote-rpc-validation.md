@@ -74,7 +74,7 @@ export PYOPENGL_PLATFORM=egl
 export ACTIONSTREAM_RPC_STORE=/path/to/owned/store
 export ACTIONSTREAM_RPC_SUITE=libero_object
 export ACTIONSTREAM_RPC_TASK_IDS=5
-export ACTIONSTREAM_RPC_SEED=2026091720
+export ACTIONSTREAM_RPC_SEED=2026091725
 export ACTIONSTREAM_RPC_DEVICE=cuda
 
 uv run actionstream-rpc-server \
@@ -99,10 +99,10 @@ export PYOPENGL_PLATFORM=egl
 uv run actionstream-libero-rpc-client \
   --suite libero_object \
   --task-id 5 \
-  --initial-state-index 20 \
-  --seed 2026091720 \
+  --initial-state-index 25 \
+  --seed 2026091725 \
   --host <gpu-server> --port 50051 \
-  --output /tmp/object5-state20-no-fault
+  --output /tmp/object5-state25-no-fault
 ```
 
 This explicit client is the X-VLA/LIBERO external-validity path. It is separate
@@ -125,10 +125,12 @@ input contract matches that robot. Do not point the generic plugin at
 - a fresh GPU server process for every episode/condition;
 - complete queue, RPC, recovery, task and GPU telemetry.
 
-Candidate identities are not authorized merely because they appear in the config.
-Before GPU execution, the orchestrator must verify that none collide with consumed
-ActionStream evidence. A collision makes the run `NO_RUN`; replacement identities
-must be frozen before collecting outcomes.
+The candidate packaged reset range is now 25-29. States 10-14 were consumed by
+H1-R2, states 15-19 by H2, and state 20 appears in the H2 CUDA canary, so state 20
+is explicitly excluded rather than treated as fresh. This Git-visible audit is
+still insufficient by itself: before execution, the local raw/ignored evidence
+archive must be checked as well. Any collision makes the run `NO_RUN`; replacement
+identities must be frozen before outcomes are collected.
 
 The hard gates are mechanism gates: exact declared coverage, zero stale actions
 crossing reset, zero accepted out-of-order responses, no unexplained errors in the
