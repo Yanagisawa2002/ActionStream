@@ -20,16 +20,56 @@ uv sync --locked --all-packages
 `uv run lerobot-rollout --help` then exercises LeRobot's actual CLI subprocess
 and must list `actionstream` as an inference choice.
 
-The default `transport_mode=direct` keeps local CUDA policy inference in the
-worker thread. Its timeout is advisory because Python cannot safely interrupt a
-blocked CUDA call; telemetry therefore records `deadline_enforced=false`.
-Deployments with a restartable remote/client factory can select
-`transport_mode=process` and a pinned `module:callable` factory. That mode owns
-the client in a child process, enforces startup and request deadlines, and
-terminates the child on timeout, reset, or stop before accepting more work.
+## Transport modes
 
-Set `telemetry_jsonl_path` to append schema-v1 lifecycle, request, queue,
-discard, depletion, recovery, and fallback events. Frames, observations,
-actions, credentials, and model payloads are deliberately excluded. The field
-contract is documented in `docs/telemetry_jsonl_v1.md` and validated by
+`transport_mode=direct` keeps local CUDA policy inference in the worker thread.
+Its timeout is advisory because Python cannot safely interrupt a blocked CUDA
+call; telemetry therefore records `deadline_enforced=false`.
+
+`transport_mode=process` owns a restartable inference client in a child process.
+It can enforce a hard local deadline by terminating that child on timeout, reset,
+or stop before accepting more work.
+
+`transport_mode=tcp` crosses a real socket boundary. Configure `tcp_host`,
+`tcp_port`, `tcp_connect_timeout_s`, and `tcp_control_timeout_s`. The client uses
+versioned length-prefixed frames, reconnects after transport failure, and closes
+the connection on request deadlines or lifecycle invalidation. A late response
+from an invalidated connection cannot cross the engine's episode generation.
+
+TCP I/O deadlines are not remote CUDA cancellation. If the server has already
+entered a kernel, closing the client connection does not kill that kernel. Use a
+server-side process-isolation layer when remote compute itself must be preempted.
+
+## RPC server
+
+A trusted `module:factory` can be exposed with:
+
+```bash
+uv run actionstream-rpc-server \
+  --factory my_package.worker:make_worker \
+  --host 0.0.0.0 --port 50051
+```
+
+The factory returns a callable `(observation, task) -> torch.Tensor`; a callable
+`reset()` method is used when present. For the pinned X-VLA/LIBERO development
+stack, `actionstream.xvla_rpc_worker:make_xvla_remote_worker` reuses the existing
+`LeRobotBackend`. Set `ACTIONSTREAM_RPC_STORE`, `ACTIONSTREAM_RPC_SUITE`, and
+`ACTIONSTREAM_RPC_TASK_IDS` on the GPU server before starting it.
+
+The server also supports deterministic response delay/jitter, stalls, disconnects,
+dropped responses, and injected server errors. These knobs are for controlled
+fault experiments, not production traffic shaping.
+
+Run the CPU/loopback failure contract with:
+
+```bash
+uv run actionstream-rpc-matrix \
+  --config configs/rpc_fault_matrix_v1.json \
+  --output /tmp/actionstream-rpc-matrix
+```
+
+Set `telemetry_jsonl_path` on the rollout backend to append schema-v1 lifecycle,
+request, queue, discard, depletion, recovery, and fallback events. Frames,
+observations, actions, credentials, and model payloads are deliberately excluded.
+The field contract is documented in `docs/telemetry_jsonl_v1.md` and validated by
 `schemas/actionstream.telemetry.v1.schema.json`.
