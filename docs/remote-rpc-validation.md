@@ -3,7 +3,7 @@
 ActionStream now has a real TCP transport in addition to the historical in-process
 delivery scheduler and child-process transport. This document separates what is
 already executable in CPU CI from the GPU/simulator experiment that still needs a
-separate client host and GPU server.
+separate LIBERO client host and GPU inference server.
 
 ## What is implemented
 
@@ -15,7 +15,7 @@ server inference latency.
 
 The server exposes a trusted `module:factory` worker and supports deterministic:
 
-- response delay and bounded jitter;
+- application-level response delay and bounded jitter;
 - pre-inference disconnects;
 - request stalls;
 - response drops after inference;
@@ -23,6 +23,11 @@ The server exposes a trusted `module:factory` worker and supports deterministic:
 
 The server serializes model calls so reconnecting clients do not issue concurrent
 calls into one policy object. Reset callbacks use the same model lock.
+
+These injected delays happen around a real TCP request/response, but they are not
+Linux `tc netem` or a claim about packet-level impairment. A two-host no-fault run
+still measures the real network path; the deterministic delay/jitter cases isolate
+application-delivery sensitivity on top of that path.
 
 ## Cancellation boundary
 
@@ -50,12 +55,18 @@ uv run actionstream-rpc-matrix \
 This creates real loopback TCP connections and verifies the frozen failure
 taxonomy for healthy traffic, delivery jitter, deadlines, disconnects, dropped
 responses and explicit server errors. It is transport/lifecycle evidence only. It
-is not X-VLA, LIBERO, remote-host, or GPU evidence.
+is not X-VLA, LIBERO, two-host, or GPU evidence.
 
-## Pinned X-VLA worker
+## Two-host X-VLA / LIBERO path
 
-On the GPU server, use the same owned store and EGL environment as the existing
-native X-VLA evidence:
+The GPU server and the environment client intentionally have different jobs.
+
+### GPU server
+
+The server owns X-VLA, CUDA and the official policy/environment processor chain.
+Use the same owned store and EGL environment as the existing native X-VLA
+evidence. A fresh server process is required for every episode/condition so the
+policy RNG seed and fault ordinal cannot leak across paired runs.
 
 ```bash
 export MUJOCO_GL=egl
@@ -63,6 +74,7 @@ export PYOPENGL_PLATFORM=egl
 export ACTIONSTREAM_RPC_STORE=/path/to/owned/store
 export ACTIONSTREAM_RPC_SUITE=libero_object
 export ACTIONSTREAM_RPC_TASK_IDS=5
+export ACTIONSTREAM_RPC_SEED=2026091720
 export ACTIONSTREAM_RPC_DEVICE=cuda
 
 uv run actionstream-rpc-server \
@@ -71,42 +83,52 @@ uv run actionstream-rpc-server \
   --ready-file /tmp/actionstream-rpc-ready.json
 ```
 
-Run a separate fresh server process per LIBERO family/condition. The current
-worker deliberately reuses `LeRobotBackend`, so policy construction and official
-pre/post-processing stay aligned with the prior frozen evidence rather than
-creating a second model-loading path.
+`XVLARemoteWorker` consumes **native LIBERO observations** and returns the final
+30 x 7 environment-action chunk after the same official pre/post-processing used
+by `LeRobotBackend`.
 
-The LeRobot client selects:
+### LIBERO client
 
-```text
---inference.type=actionstream
---inference.transport_mode=tcp
---inference.tcp_host=<gpu-server>
---inference.tcp_port=50051
---inference.delivery_scheduler_enabled=true
---inference.minimum_request_interval_steps=1
+The environment host does not load X-VLA weights. It owns the LIBERO simulator,
+ActionStream scheduling/queue/lifecycle state, and the TCP client:
+
+```bash
+export MUJOCO_GL=egl
+export PYOPENGL_PLATFORM=egl
+
+uv run actionstream-libero-rpc-client \
+  --suite libero_object \
+  --task-id 5 \
+  --initial-state-index 20 \
+  --seed 2026091720 \
+  --host <gpu-server> --port 50051 \
+  --output /tmp/object5-state20-no-fault
 ```
 
-Exact rollout arguments remain the same as the pinned ActionStream/LeRobot
-benchmark environment.
+This explicit client is the X-VLA/LIBERO external-validity path. It is separate
+from the generic `lerobot-rollout` TCP plugin surface. The generic plugin forwards
+`lerobot-rollout` robot observations and therefore requires a server worker whose
+input contract matches that robot. Do not point the generic plugin at
+`XVLARemoteWorker` and assume the observation schemas are interchangeable.
 
 ## Remote GPU external-validity protocol
 
 `configs/rpc_external_validity_v1.json` preregisters the next execution boundary:
 
 - Object task 5, Spatial task 7 and Goal task 2;
-- five candidate no-fault resets per family;
-- three candidate fault resets per family;
-- no-fault, mild jitter, WAN-like jitter, long-delay jitter and periodic
-  disconnect conditions;
-- exact identity reuse across network conditions;
-- fresh runtime processes by family/condition;
+- five candidate no-fault episodes per family, with explicit reset indices and
+  policy seeds;
+- three candidate fault episodes per family;
+- no-fault, three application-delivery delay/jitter conditions, and periodic
+  pre-inference disconnects;
+- exact task/reset/seed reuse across transport conditions;
+- a fresh GPU server process for every episode/condition;
 - complete queue, RPC, recovery, task and GPU telemetry.
 
-Candidate reset indices 20-24 are not authorized merely because they appear in
-the config. Before GPU execution, the orchestrator must verify that none collide
-with any consumed ActionStream evidence. A collision makes the run `NO_RUN`; new
-identities must be frozen before collecting outcomes.
+Candidate identities are not authorized merely because they appear in the config.
+Before GPU execution, the orchestrator must verify that none collide with consumed
+ActionStream evidence. A collision makes the run `NO_RUN`; replacement identities
+must be frozen before collecting outcomes.
 
 The hard gates are mechanism gates: exact declared coverage, zero stale actions
 crossing reset, zero accepted out-of-order responses, no unexplained errors in the
