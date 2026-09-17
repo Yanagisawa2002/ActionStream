@@ -11,7 +11,7 @@
     "mode": "tcp",
     "separate_client_and_gpu_hosts_required": true,
     "client_deadline_s": 5.0,
-    "delivery_scheduler_enabled": true,
+    "delivery_scheduler_enabled": false,
     "minimum_request_interval_steps": 1
   },
   "task_families": [
@@ -19,31 +19,50 @@
       "family": "Object",
       "suite": "libero_object",
       "task_id": 5,
-      "candidate_reset_indices": [20, 21, 22, 23, 24]
+      "candidate_episodes": [
+        {"initial_state_index": 20, "seed": 2026091720},
+        {"initial_state_index": 21, "seed": 2026091721},
+        {"initial_state_index": 22, "seed": 2026091722},
+        {"initial_state_index": 23, "seed": 2026091723},
+        {"initial_state_index": 24, "seed": 2026091724}
+      ]
     },
     {
       "family": "Spatial",
       "suite": "libero_spatial",
       "task_id": 7,
-      "candidate_reset_indices": [20, 21, 22, 23, 24]
+      "candidate_episodes": [
+        {"initial_state_index": 20, "seed": 2026091720},
+        {"initial_state_index": 21, "seed": 2026091721},
+        {"initial_state_index": 22, "seed": 2026091722},
+        {"initial_state_index": 23, "seed": 2026091723},
+        {"initial_state_index": 24, "seed": 2026091724}
+      ]
     },
     {
       "family": "Goal",
       "suite": "libero_goal",
       "task_id": 2,
-      "candidate_reset_indices": [20, 21, 22, 23, 24]
+      "candidate_episodes": [
+        {"initial_state_index": 20, "seed": 2026091720},
+        {"initial_state_index": 21, "seed": 2026091721},
+        {"initial_state_index": 22, "seed": 2026091722},
+        {"initial_state_index": 23, "seed": 2026091723},
+        {"initial_state_index": 24, "seed": 2026091724}
+      ]
     }
   ],
   "identity_rule": {
-    "candidate_resets_must_be_unused": true,
+    "candidate_episode_identities_must_be_unused": true,
     "collision_action": "NO_RUN_AND_FREEZE_NEW_IDENTITIES_BEFORE_EXECUTION",
-    "same_task_reset_and_policy_seed_across_network_conditions": true,
-    "fresh_runtime_process_per_family_condition": true
+    "same_task_reset_and_policy_seed_across_transport_conditions": true,
+    "fresh_gpu_server_process_per_episode_condition": true,
+    "server_ACTIONSTREAM_RPC_SEED_equals_episode_seed": true
   },
   "stages": [
     {
       "name": "remote_no_fault",
-      "reset_indices": [20, 21, 22, 23, 24],
+      "episode_positions": [0, 1, 2, 3, 4],
       "conditions": [
         {
           "name": "tcp_no_injected_fault",
@@ -54,28 +73,28 @@
     },
     {
       "name": "remote_fault_matrix",
-      "reset_indices": [20, 21, 22],
+      "episode_positions": [0, 1, 2],
       "conditions": [
         {
-          "name": "mild_jitter",
+          "name": "application_delivery_jitter_50ms",
           "response_delay_ms": 50,
           "response_jitter_ms": 20,
           "fault_seed": 2026091701
         },
         {
-          "name": "wan_jitter",
+          "name": "application_delivery_jitter_250ms",
           "response_delay_ms": 250,
           "response_jitter_ms": 100,
           "fault_seed": 2026091702
         },
         {
-          "name": "long_delay_jitter",
+          "name": "application_delivery_jitter_950ms",
           "response_delay_ms": 950,
           "response_jitter_ms": 250,
           "fault_seed": 2026091703
         },
         {
-          "name": "periodic_disconnect",
+          "name": "periodic_pre_inference_disconnect",
           "disconnect_before_infer_every_n": 7,
           "fault_seed": 2026091704
         }
@@ -117,6 +136,7 @@
   "claim_boundary": {
     "task_success_is_descriptive_not_a_predeclared_superiority_gate": true,
     "loopback_ci_is_not_remote_gpu_evidence": true,
+    "application_delivery_jitter_is_not_kernel_netem": true,
     "tcp_deadline_is_not_remote_cuda_preemption": true,
     "simulation_is_not_real_robot_safety_evidence": true
   }
