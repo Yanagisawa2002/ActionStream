@@ -20,11 +20,11 @@
       "suite": "libero_object",
       "task_id": 5,
       "candidate_episodes": [
-        {"initial_state_index": 20, "seed": 2026091720},
-        {"initial_state_index": 21, "seed": 2026091721},
-        {"initial_state_index": 22, "seed": 2026091722},
-        {"initial_state_index": 23, "seed": 2026091723},
-        {"initial_state_index": 24, "seed": 2026091724}
+        {"initial_state_index": 25, "seed": 2026091725},
+        {"initial_state_index": 26, "seed": 2026091726},
+        {"initial_state_index": 27, "seed": 2026091727},
+        {"initial_state_index": 28, "seed": 2026091728},
+        {"initial_state_index": 29, "seed": 2026091729}
       ]
     },
     {
@@ -32,11 +32,11 @@
       "suite": "libero_spatial",
       "task_id": 7,
       "candidate_episodes": [
-        {"initial_state_index": 20, "seed": 2026091720},
-        {"initial_state_index": 21, "seed": 2026091721},
-        {"initial_state_index": 22, "seed": 2026091722},
-        {"initial_state_index": 23, "seed": 2026091723},
-        {"initial_state_index": 24, "seed": 2026091724}
+        {"initial_state_index": 25, "seed": 2026091725},
+        {"initial_state_index": 26, "seed": 2026091726},
+        {"initial_state_index": 27, "seed": 2026091727},
+        {"initial_state_index": 28, "seed": 2026091728},
+        {"initial_state_index": 29, "seed": 2026091729}
       ]
     },
     {
@@ -44,16 +44,17 @@
       "suite": "libero_goal",
       "task_id": 2,
       "candidate_episodes": [
-        {"initial_state_index": 20, "seed": 2026091720},
-        {"initial_state_index": 21, "seed": 2026091721},
-        {"initial_state_index": 22, "seed": 2026091722},
-        {"initial_state_index": 23, "seed": 2026091723},
-        {"initial_state_index": 24, "seed": 2026091724}
+        {"initial_state_index": 25, "seed": 2026091725},
+        {"initial_state_index": 26, "seed": 2026091726},
+        {"initial_state_index": 27, "seed": 2026091727},
+        {"initial_state_index": 28, "seed": 2026091728},
+        {"initial_state_index": 29, "seed": 2026091729}
       ]
     }
   ],
   "identity_rule": {
     "candidate_episode_identities_must_be_unused": true,
+    "known_git_evidence_excludes_h1_states_10_to_14_h2_states_15_to_19_and_h2_cuda_canary_state_20": true,
     "collision_action": "NO_RUN_AND_FREEZE_NEW_IDENTITIES_BEFORE_EXECUTION",
     "same_task_reset_and_policy_seed_across_transport_conditions": true,
     "fresh_gpu_server_process_per_episode_condition": true,
