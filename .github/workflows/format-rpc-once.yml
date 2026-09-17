@@ -1,16 +1,15 @@
 name: Format RPC Once
 
-# Temporary branch-only bootstrap. Delete after Ruff writes the four RPC sources.
 on:
   push:
-    branches: ["codex/actionstream/remote-resilience-v12"]
+    branches:
+      - "codex/**"
 
 permissions:
   contents: write
 
 jobs:
   format:
-    if: ${{ contains(github.event.head_commit.message, 'style: apply ruff formatting') == false }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
