@@ -26,12 +26,11 @@ The repository has two deliberately separate surfaces:
 | H2 five-step compute budget | **NO-GO** | 61.6% fewer calls did not clear the frozen success gate |
 | RGB completion + continuous confirmation | **GO only within one predeclared LIBERO Object task protocol** | 19/19 physically completed fresh trajectories stopped correctly; one VLA noncompletion was not falsely stopped |
 | TCP RPC transport | implemented; deterministic real-socket fault contract in CI | real socket framing, deadlines, reconnects, reset invalidation and fault taxonomy |
-| Remote-host X-VLA/LIBERO RPC | **not yet executed** | no remote-GPU, real-network-jitter or multi-task claim yet |
+| Remote-host X-VLA/LIBERO RPC | **NO-RUN — insufficient fresh identities** | pre-execution audit found 0 clean identities in every family; no remote-GPU or multi-task outcome was collected |
 | Physical robot safety | **not evaluated** | no hardware safety, E-stop or real-robot claim |
 
-The newest remote-RPC execution boundary is preregistered in
-[`configs/rpc_external_validity_v1.json`](configs/rpc_external_validity_v1.json)
-and explained in [`docs/remote-rpc-validation.md`](docs/remote-rpc-validation.md).
+The remote-RPC execution boundary was preregistered in
+[`configs/rpc_external_validity_v1.json`](configs/rpc_external_validity_v1.json), but the identity preflight correctly stopped it before execution with **NO_RUN_INSUFFICIENT_FRESH_IDENTITIES**. See [`reports/rpc_external_validity_preflight_20260919/README.md`](reports/rpc_external_validity_preflight_20260919/README.md) and [`docs/remote-rpc-validation.md`](docs/remote-rpc-validation.md).
 Historical language/visual failures remain preserved rather than rewritten; see
 [`docs/embodied-development-status.md`](docs/embodied-development-status.md).
 
@@ -50,6 +49,7 @@ Historical language/visual failures remain preserved rather than rewritten; see
 - H1-R2 report: [`reports/actionstream_transport_h1_r2/report.md`](reports/actionstream_transport_h1_r2/report.md)
 - H2 report: [`reports/actionstream_transport_h2_budget_holdout/report.md`](reports/actionstream_transport_h2_budget_holdout/report.md)
 - Frozen completion acceptance: [`reports/completion_acceptance_v3_20260915/README.md`](reports/completion_acceptance_v3_20260915/README.md)
+- Remote external-validity identity preflight (NO_RUN): [`reports/rpc_external_validity_preflight_20260919/README.md`](reports/rpc_external_validity_preflight_20260919/README.md)
 - Historical upstream LeRobot proposal: [huggingface/lerobot#4466](https://github.com/huggingface/lerobot/pull/4466)
 
 ## Core runtime contract
