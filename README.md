@@ -29,9 +29,18 @@ The repository has two deliberately separate surfaces:
 | Remote-host X-VLA/LIBERO RPC | **not yet executed** | no remote-GPU, real-network-jitter or multi-task claim yet |
 | Physical robot safety | **not evaluated** | no hardware safety, E-stop or real-robot claim |
 
-The newest remote-RPC execution boundary is preregistered in
+The current remote-RPC preregistration is the separate **transport replication /
+robustness** protocol in
+[`configs/rpc_remote_transport_replication_v1.json`](configs/rpc_remote_transport_replication_v1.json):
+51 two-host episode-condition runs, with historically exposed identities disclosed.
+It is **not executed** and does not establish unseen-state or unseen-task validity.
+External-validity v1 in
 [`configs/rpc_external_validity_v1.json`](configs/rpc_external_validity_v1.json)
-and explained in [`docs/remote-rpc-validation.md`](docs/remote-rpc-validation.md).
+is preserved unchanged as an **aborted, never-executed preregistration (NO_RUN)**:
+pre-run audits found identity collisions and incomplete historical coverage.
+UNKNOWN remains UNKNOWN. No remote-RPC outcome was observed before this change.
+See [`docs/remote-rpc-validation.md`](docs/remote-rpc-validation.md) for the audit
+hashes, claim boundaries and [exact 51-run matrix](docs/rpc-remote-transport-replication-v1-matrix.md).
 Historical language/visual failures remain preserved rather than rewritten; see
 [`docs/embodied-development-status.md`](docs/embodied-development-status.md).
 

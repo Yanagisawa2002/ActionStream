@@ -105,38 +105,106 @@ uv run actionstream-libero-rpc-client \
   --output /tmp/object5-state25-no-fault
 ```
 
-This explicit client is the X-VLA/LIBERO external-validity path. It is separate
+This explicit client is the X-VLA/LIBERO transport replication path. It is separate
 from the generic `lerobot-rollout` TCP plugin surface. The generic plugin forwards
 `lerobot-rollout` robot observations and therefore requires a server worker whose
 input contract matches that robot. Do not point the generic plugin at
 `XVLARemoteWorker` and assume the observation schemas are interchangeable.
 
-## Remote GPU external-validity protocol
+## Aborted external-validity v1: preserved provenance
 
-`configs/rpc_external_validity_v1.json` preregisters the next execution boundary:
+`configs/rpc_external_validity_v1.json` is unchanged, including its historical
+preregistration status. Its disposition is **ABORTED_BEFORE_EXECUTION_NO_RUN**;
+it must not be executed. Pre-run audits found historical initialization (including
+warmups) and insufficient evidence coverage to certify other identities CLEAN.
+Changing a seed does not restore reset freshness; UNKNOWN has not been reclassified.
 
-- Object task 5, Spatial task 7 and Goal task 2;
-- five candidate no-fault episodes per family, with explicit reset indices and
-  policy seeds;
-- three candidate fault episodes per family;
-- no-fault, three application-delivery delay/jitter conditions, and periodic
-  pre-inference disconnects;
-- exact task/reset/seed reuse across transport conditions;
-- a fresh GPU server process for every episode/condition;
-- complete queue, RPC, recovery, task and GPU telemetry.
+- States 10-14: H1-R2; 15-19: H2; 20: H2 CUDA canary.
+- States 25-29: rejected after Object task 5 historical execution was confirmed.
+- States 30-34: 13 confirmed collisions, two unresolved identities.
+- States 35-49: insufficient fresh identities, including all 15 consumed on Object 5.
+- Exhaustive task audit: `NO_RUN_NO_FRESH_TASK_IDENTITIES`.
 
-The candidate packaged reset range is now 25-29. States 10-14 were consumed by
-H1-R2, states 15-19 by H2, and state 20 appears in the H2 CUDA canary, so state 20
-is explicitly excluded rather than treated as fresh. This Git-visible audit is
-still insufficient by itself: before execution, the local raw/ignored evidence
-archive must be checked as well. Any collision makes the run `NO_RUN`; replacement
-identities must be frozen before outcomes are collected.
+The exhaustive audit is retained at
+`artifacts/actionstream_rpc_task_selection_audit_20260919/` (local evidence, not
+packaged as a tracked experiment result). Its hashes are:
 
-The hard gates are mechanism gates: exact declared coverage, zero stale actions
-crossing reset, zero accepted out-of-order responses, no unexplained errors in the
-no-fault condition, exercised injected faults, recovery after faults, and hashed
-raw receipts. Task success by family is reported as an outcome rather than being
-preselected as a superiority gate.
+- `audit.json`: `a6ffb6dc3b79602431333a09f7b0c6e291ef0d740e95871e46dd22fe7af9b2e2`
+- `evidence_manifest.sha256`: `9e17bfd4dbe81d53caa1e14c8ccd24d7e9f8a2b36006d09b77034dad14f6962b`
+
+The new protocol also records the preceding audit paths/hashes. None of these
+negative conclusions is superseded or rewritten. The immutable v1 config SHA256 is
+`7d663780396e28c0bc4b867a363e087a40a09cd8bc84e1fab9d24122bc614887`.
+
+## Separate remote transport replication protocol
+
+`configs/rpc_remote_transport_replication_v1.json` is
+**PRE_REGISTERED_NOT_EXECUTED**. It changes the scientific question, not the
+freshness criterion of external-validity v1. No remote-RPC outcome had been
+observed before this protocol change, and no remote-host GPU result exists yet.
+
+**Supported question:** does the real two-host TCP implementation preserve its
+lifecycle, queue, deadline/reconnect and fault-recovery behavior while driving
+actual X-VLA/LIBERO under the declared conditions?
+
+The fixed cohort is Object (`libero_object`, task 5), Spatial (`libero_spatial`,
+task 7), and Goal (`libero_goal`, task 2). Each uses states 25-29 with policy seeds
+2026091725-2026091729 respectively. Historical execution is explicitly permitted
+and disclosed for this narrower question. There is no fresh/unseen-state claim,
+model training, finetuning, parameter update, or outcome-conditioned selection.
+Historical task success is not a selection criterion.
+
+The [complete ordered matrix](rpc-remote-transport-replication-v1-matrix.md)
+contains 15 no-fault runs (3 families x 5 identities) followed by 36 fault runs
+(3 families x states 25,26,27 x 4 conditions). Faults remain application delivery
+50 +/- 20 ms, 250 +/- 100 ms, 950 +/- 250 ms, and pre-inference disconnect every
+7 requests. The JSON freezes their original fault seeds and all 51 row identities.
+Ordering is stage, family (Object/Spatial/Goal), identity, then condition.
+
+Run 1 is Object 5/state 25/seed 2026091725/no fault. It is the formal smoke/canary
+and counts as **run 1 of 51**, never an extra run. A valid task failure counts;
+a valid negative outcome must not be discarded or repeated. Remaining runs start
+only after run 1 is structurally valid. Demonstrated installation, environment,
+schema or network setup failures can be fixed and retried with the same frozen
+parameters, preserving every invalid attempt, diagnosis and raw hashes. Declared
+fault effects or mechanism-gate failures after a valid setup are experimental
+outcomes, not excuses for infrastructure retries. Task success cannot determine
+attempt validity. Conditions cannot change based on interim results.
+
+Two distinct physical hosts and the exact same protocol commit are mandatory.
+A owns X-VLA/CUDA inference; B owns LIBERO and the ActionStream client. Before
+execution record hostname, machine-id if accessible, boot ID, GPU UUID, full
+nvidia-smi output, driver/CUDA runtime, OS/kernel, Python/uv versions, git HEAD,
+diff and status on both hosts; verify B -> A TCP port 50051. Before any rented-host
+installation/download run `source /etc/network_turbo`.
+
+Keep 20 Hz, the 300-control-step cap, no client delivery scheduler, minimum request
+interval 1, and the existing 5 s inference deadline. Existing connection/control
+and action-wait/retry defaults are explicitly frozen in `client_runtime_parameters`.
+Every episode-condition uses a fresh server process with the episode seed; no
+host reboot is required. Capture GPU telemetry on A throughout each episode,
+then stop that owned server, hash raw outputs, validate receipt/telemetry,
+stale/out-of-order/deadline/error counters and the observation/action/task contract.
+Commit the protocol before any GPU execution. Preparation stops at that commit
+for the current phase; commands above are instructions, not execution evidence.
+
+## Claims and analysis boundary
+
+Primary analysis is paired transport-condition comparison within this experiment,
+using the same suite/task/reset/seed in each compared condition. Only states 25-27
+have all four fault-condition pairs; states 28-29 contribute no-fault coverage only.
+Task success is descriptive. Do not compare against historical H1/H2 task-success
+numbers as if they formed a clean causal baseline.
+
+This experiment does **not** establish unseen-state external validity, unseen-task
+generalization, physical robot safety, packet-level Linux netem behavior, remote
+CUDA kernel preemption, ActionStream task-success superiority, or independence
+from all prior development exposure.
+
+Unchanged hard transport gates are exact episode coverage, zero stale actions
+crossing reset, zero accepted out-of-order responses, zero no-fault transport
+errors/deadlines, exercised declared faults, later-request recovery and hashed raw
+receipts/telemetry. Report these separately from task success.
 
 ## Required report structure
 
@@ -148,7 +216,12 @@ The resulting report should contain, for every family and condition:
 4. deadlines, disconnects, reconnects, stale/out-of-order rejection and recovery
    latency;
 5. GPU utilization p50/p95 and process VRAM maximum;
-6. exact task/reset/seed identities and content hashes of raw receipts.
+6. exact coverage and task/reset/seed identities, both host identities, exact code
+   commit/config hashes, and a SHA256 manifest of all raw receipts and telemetry;
+7. all attempts, including separately documented invalid infrastructure attempts.
+
+Failure completion steps equal 300. Missing metrics are unavailable with a reason,
+never zero-filled. This is a report specification, not a claim that data exists.
 
 A remote result must preserve negative outcomes and family regressions. It should
 not collapse network recovery, task success and GPU efficiency into one headline
