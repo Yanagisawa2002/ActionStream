@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "verdict": "NO_RUN_INSUFFICIENT_FRESH_IDENTITIES",
+  "experiment_started": false,
+  "protocol_modified_during_audit": false,
+  "protocol_commit_during_audit": null,
+  "audit_head": "f6fb04ea940fc809564b06552599c1872f6b4e03",
+  "audited_states_exist": 45,
+  "evidence_records_deduplicated": 2235,
+  "warmup_initialization_records": 709,
+  "task_identity_counts": {
+    "Object 5": {
+      "clean": 0,
+      "consumed": 15,
+      "unknown": []
+    },
+    "Spatial 7": {
+      "clean": 0,
+      "consumed": 13,
+      "unknown": [
+        35,
+        39
+      ]
+    },
+    "Goal 2": {
+      "clean": 0,
+      "consumed": 13,
+      "unknown": [
+        35,
+        39
+      ]
+    }
+  },
+  "object_states_35_to_49_all_consumed": true,
+  "minimum_fresh_identities_required_per_family": 5,
+  "selected_identities": [],
+  "new_seed_mapping": {},
+  "audit_json_sha256": "07a6af8b07afdce26b5b3d251f13685cbd1bf292c799e4918c50843dd625ba8a"
+}
