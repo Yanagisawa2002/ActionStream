@@ -125,18 +125,37 @@ input contract matches that robot. Do not point the generic plugin at
 - a fresh GPU server process for every episode/condition;
 - complete queue, RPC, recovery, task and GPU telemetry.
 
-The candidate packaged reset range is now 25-29. States 10-14 were consumed by
-H1-R2, states 15-19 by H2, and state 20 appears in the H2 CUDA canary, so state 20
-is explicitly excluded rather than treated as fresh. This Git-visible audit is
-still insufficient by itself: before execution, the local raw/ignored evidence
-archive must be checked as well. Any collision makes the run `NO_RUN`; replacement
-identities must be frozen before outcomes are collected.
+### Identity preflight result
 
-The hard gates are mechanism gates: exact declared coverage, zero stale actions
-crossing reset, zero accepted out-of-order responses, no unexplained errors in the
-no-fault condition, exercised injected faults, recovery after faults, and hashed
-raw receipts. Task success by family is reported as an outcome rather than being
-preselected as a superiority gate.
+The required raw-evidence collision audit has now completed, and the experiment is
+formally **NO_RUN_INSUFFICIENT_FRESH_IDENTITIES**. The frozen protocol itself was
+not modified and no experiment was launched.
+
+| Task family | CLEAN | CONSUMED | UNKNOWN |
+|---|---:|---:|---:|
+| Object 5 | 0 | 15 | 0 |
+| Spatial 7 | 0 | 13 | 2 (35, 39) |
+| Goal 2 | 0 | 13 | 2 (35, 39) |
+
+All 45 audited states exist. The audit verified 2,235 deduplicated evidence
+records, including 709 warmup initialization records; an executed warmup reset is
+treated as consumed. Object states 35–49 are all consumed, so even resolving the
+four UNKNOWN states cannot satisfy the protocol requirement of five fresh
+identities per family.
+
+No identities were selected, the new-seed mapping is empty, and no protocol
+commit was created during the audit. The audit-time HEAD was
+`f6fb04ea940fc809564b06552599c1872f6b4e03`. The recorded `audit.json`
+SHA-256 is
+`07a6af8b07afdce26b5b3d251f13685cbd1bf292c799e4918c50843dd625ba8a`.
+
+The full repository-facing summary is
+[`reports/rpc_external_validity_preflight_20260919/README.md`](../reports/rpc_external_validity_preflight_20260919/README.md).
+
+The original hard gates remain the mechanism gates for any future separately
+frozen experiment. They are not evaluated here because the identity precondition
+failed before execution. Task success, RPC recovery and GPU metrics therefore
+remain unmeasured for the planned multi-task remote-host experiment.
 
 ## Required report structure
 
