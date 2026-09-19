@@ -735,10 +735,18 @@ class ActionStreamInferenceEngine(InferenceEngine):
                     request_ordinal=request_ordinal,
                     task_revision=task_revision,
                 )
+                budget_selector = getattr(
+                    self._transport, "next_inference_timeout_s", None
+                )
+                deadline_s = (
+                    budget_selector(self._config.inference_timeout_s)
+                    if callable(budget_selector)
+                    else self._config.inference_timeout_s
+                )
                 self._emit(
                     "inference_started",
                     **identity,
-                    deadline_s=self._config.inference_timeout_s,
+                    deadline_s=deadline_s,
                 )
                 started = None
                 try:

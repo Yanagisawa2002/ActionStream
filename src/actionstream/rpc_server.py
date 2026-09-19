@@ -19,6 +19,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--host", default="0.0.0.0")
     parser.add_argument("--port", type=int, default=50051)
     parser.add_argument("--ready-file", type=Path)
+    parser.add_argument("--telemetry-jsonl", type=Path)
     parser.add_argument("--response-delay-ms", type=float, default=0.0)
     parser.add_argument("--response-jitter-ms", type=float, default=0.0)
     parser.add_argument("--stall-every-n", type=int, default=0)
@@ -49,6 +50,7 @@ def main() -> int:
         host=args.host,
         port=args.port,
         fault_profile=faults,
+        telemetry_jsonl_path=args.telemetry_jsonl,
     )
     stopping = threading.Event()
 
@@ -64,6 +66,7 @@ def main() -> int:
         "port": server.port,
         "factory": args.factory,
         "fault_profile": faults.__dict__,
+        "execution_architecture": "single_persistent_inference_executor",
     }
     if args.ready_file is not None:
         args.ready_file.write_text(
@@ -75,6 +78,10 @@ def main() -> int:
         server.serve_forever()
     finally:
         server.close()
+        print(
+            json.dumps({"server_telemetry": server.telemetry()}, sort_keys=True),
+            flush=True,
+        )
     return 0
 
 

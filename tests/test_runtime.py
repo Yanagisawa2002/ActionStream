@@ -234,6 +234,9 @@ def test_sync_hold_waits_for_first_chunk_then_advances_with_exact_hold(
     tmp_path,
     monkeypatch,
 ) -> None:
+    # This fast synthetic controller needs sub-tick timestamps. Python 3.12 on
+    # Windows can quantize monotonic() to 15.6 ms, producing a zero median step.
+    monkeypatch.setattr(time, "monotonic", time.perf_counter)
     backend = FakeRealtimeBackend()
     first_chunk = np.asarray(
         [

@@ -1,0 +1,973 @@
+{
+  "schema_version": 1,
+  "status": "PRE_REGISTERED_NOT_EXECUTED",
+  "purpose": "outcome_informed_revised_remote_transport_architecture_and_deadline_robustness",
+  "model_id": "lerobot/xvla-libero",
+  "model_revision": "12e8783e996944f5c97e490d37d4c145484ed70a",
+  "lerobot_commit": "73e1584473028a2d53ecfc856f5290db84507f90",
+  "controller_frequency_hz": 20,
+  "max_control_steps": 300,
+  "transport": {
+    "mode": "tcp",
+    "separate_client_and_gpu_hosts_required": true,
+    "delivery_scheduler_enabled": false,
+    "minimum_request_interval_steps": 1,
+    "startup_inference_timeout_s": 15.0,
+    "steady_inference_timeout_s": 5.0,
+    "execution_architecture": "single_persistent_inference_executor",
+    "max_concurrent_policy_calls": 1
+  },
+  "task_families": [
+    {
+      "family": "Object",
+      "suite": "libero_object",
+      "task_id": 5,
+      "candidate_episodes": [
+        {
+          "initial_state_index": 25,
+          "seed": 2026091725
+        },
+        {
+          "initial_state_index": 26,
+          "seed": 2026091726
+        },
+        {
+          "initial_state_index": 27,
+          "seed": 2026091727
+        },
+        {
+          "initial_state_index": 28,
+          "seed": 2026091728
+        },
+        {
+          "initial_state_index": 29,
+          "seed": 2026091729
+        }
+      ]
+    },
+    {
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "candidate_episodes": [
+        {
+          "initial_state_index": 25,
+          "seed": 2026091725
+        },
+        {
+          "initial_state_index": 26,
+          "seed": 2026091726
+        },
+        {
+          "initial_state_index": 27,
+          "seed": 2026091727
+        },
+        {
+          "initial_state_index": 28,
+          "seed": 2026091728
+        },
+        {
+          "initial_state_index": 29,
+          "seed": 2026091729
+        }
+      ]
+    },
+    {
+      "family": "Goal",
+      "suite": "libero_goal",
+      "task_id": 2,
+      "candidate_episodes": [
+        {
+          "initial_state_index": 25,
+          "seed": 2026091725
+        },
+        {
+          "initial_state_index": 26,
+          "seed": 2026091726
+        },
+        {
+          "initial_state_index": 27,
+          "seed": 2026091727
+        },
+        {
+          "initial_state_index": 28,
+          "seed": 2026091728
+        },
+        {
+          "initial_state_index": 29,
+          "seed": 2026091729
+        }
+      ]
+    }
+  ],
+  "identity_rule": {
+    "historically_executed_identities_permitted": true,
+    "freshness_required": false,
+    "unknown_is_not_reclassified_as_clean": true,
+    "identities_fixed_before_any_remote_rpc_outcome": false,
+    "historical_task_success_used_for_selection": false,
+    "outcome_conditioned_identity_selection_allowed": false,
+    "training_finetuning_or_parameter_updates_allowed": false,
+    "same_task_reset_and_policy_seed_across_transport_conditions": true,
+    "fresh_gpu_server_process_per_episode_condition": true,
+    "server_ACTIONSTREAM_RPC_SEED_equals_episode_seed": true,
+    "justification": "Same historical cohort and seeds as v1, retained unchanged after observing v1 Run 1 and postmortem results. No fresh/unseen claim, outcome-based identity replacement, training or finetuning. Task success remains descriptive.",
+    "cohort_inherited_unchanged_from_v1": true
+  },
+  "stages": [
+    {
+      "name": "remote_no_fault",
+      "episode_positions": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "conditions": [
+        {
+          "name": "tcp_no_injected_fault",
+          "response_delay_ms": 0,
+          "response_jitter_ms": 0
+        }
+      ]
+    },
+    {
+      "name": "remote_fault_matrix",
+      "episode_positions": [
+        0,
+        1,
+        2
+      ],
+      "conditions": [
+        {
+          "name": "application_delivery_jitter_50ms",
+          "response_delay_ms": 50,
+          "response_jitter_ms": 20,
+          "fault_seed": 2026091701
+        },
+        {
+          "name": "application_delivery_jitter_250ms",
+          "response_delay_ms": 250,
+          "response_jitter_ms": 100,
+          "fault_seed": 2026091702
+        },
+        {
+          "name": "application_delivery_jitter_950ms",
+          "response_delay_ms": 950,
+          "response_jitter_ms": 250,
+          "fault_seed": 2026091703
+        },
+        {
+          "name": "periodic_pre_inference_disconnect",
+          "disconnect_before_infer_every_n": 7,
+          "fault_seed": 2026091704
+        }
+      ]
+    }
+  ],
+  "required_metrics": [
+    "task_success",
+    "completion_steps_failures_equal_cap",
+    "request_rate_hz",
+    "queue_depletion_fraction",
+    "queue_age_p50_steps",
+    "queue_age_p95_steps",
+    "rpc_roundtrip_p50_ms",
+    "rpc_roundtrip_p95_ms",
+    "rpc_roundtrip_p99_ms",
+    "server_inference_p50_ms",
+    "server_inference_p95_ms",
+    "stale_response_rejections",
+    "out_of_order_response_rejections",
+    "transport_deadlines",
+    "transport_errors",
+    "transport_reconnects",
+    "recovery_latency_ms",
+    "gpu_utilization_p50",
+    "gpu_utilization_p95",
+    "process_vram_max_mib",
+    "server_queue_wait_s",
+    "server_compute_s",
+    "server_service_s",
+    "connection_id",
+    "connection_request_ordinal",
+    "global_request_ordinal",
+    "startup_deadlines",
+    "steady_deadlines",
+    "cancelled_invalidated_requests",
+    "dropped_obsolete_before_compute",
+    "invalidated_results",
+    "connections_established",
+    "reconnections"
+  ],
+  "hard_gates": {
+    "declared_episode_coverage_exact": true,
+    "stale_action_crosses_reset": 0,
+    "accepted_out_of_order_responses": 0,
+    "no_fault_transport_deadlines": 0,
+    "no_fault_transport_errors": 0,
+    "fault_condition_must_exercise_declared_fault": true,
+    "post_fault_later_request_must_recover": true,
+    "raw_receipt_and_telemetry_hashes_required": true
+  },
+  "claim_boundary": {
+    "task_success_is_descriptive_not_a_predeclared_superiority_gate": true,
+    "loopback_ci_is_not_remote_gpu_evidence": true,
+    "application_delivery_jitter_is_not_kernel_netem": true,
+    "tcp_deadline_is_not_remote_cuda_preemption": true,
+    "simulation_is_not_real_robot_safety_evidence": true,
+    "supported_question": "Does a persistent serialized inference executor with explicit connection-startup and steady request budgets preserve two-host transport lifecycle and fault recovery under X-VLA/LIBERO?",
+    "unsupported_claims": [
+      "unseen_state_external_validity",
+      "unseen_task_generalization",
+      "physical_robot_safety",
+      "packet_level_linux_netem_behavior",
+      "remote_cuda_kernel_preemption",
+      "actionstream_task_success_superiority",
+      "independence_from_all_prior_development_exposure",
+      "independent_replication_of_v1",
+      "15_second_measured_SLA",
+      "persistent_executor_has_already_removed_connection_first_cold_penalty"
+    ],
+    "primary_analysis": "Within-experiment paired transport-condition comparisons using identical suite/task/reset/policy-seed identities.",
+    "historical_h1_h2_task_success_is_not_a_clean_causal_baseline": true,
+    "external_task_generalization_established": false,
+    "outcome_informed_by_v1": true,
+    "independent_replication_of_v1": false,
+    "v1_conclusion": "v1 demonstrated that its original one-size 5 s deadline was incompatible with the observed connection-first inference path.",
+    "v2_question": "v2 evaluates a revised remote transport architecture and deadline semantics; it is a robustness/systems experiment."
+  },
+  "protocol_id": "rpc_remote_transport_replication_v2",
+  "scientific_question": "Does a persistent serialized inference executor with explicit connection-startup and steady request budgets preserve two-host transport lifecycle and fault recovery under X-VLA/LIBERO?",
+  "client_runtime_parameters": {
+    "inference_timeout_s": 5.0,
+    "connect_timeout_s": 3.0,
+    "control_timeout_s": 3.0,
+    "action_wait_timeout_s": 20.0,
+    "action_poll_s": 0.002,
+    "bounded_hold_steps": 2,
+    "retry_backoff_s": 0.05,
+    "max_consecutive_failures": 10,
+    "join_timeout_s": 3.0,
+    "latest_only_fallback": true,
+    "startup_inference_timeout_s": 15.0,
+    "steady_inference_timeout_s": 5.0
+  },
+  "seed_mapping": {
+    "25": 2026091725,
+    "26": 2026091726,
+    "27": 2026091727,
+    "28": 2026091728,
+    "29": 2026091729
+  },
+  "seed_rule": "seed = 2026091700 + initial_state_index; intentionally reused across families and paired conditions. Identity includes suite and task_id.",
+  "run_order": "stage order, then task_families order, then episode_positions order, then conditions order; run_matrix is the frozen expansion.",
+  "run_matrix": [
+    {
+      "run_id": 1,
+      "stage": "remote_no_fault",
+      "family": "Object",
+      "suite": "libero_object",
+      "task_id": 5,
+      "initial_state_index": 25,
+      "seed": 2026091725,
+      "condition": "tcp_no_injected_fault"
+    },
+    {
+      "run_id": 2,
+      "stage": "remote_no_fault",
+      "family": "Object",
+      "suite": "libero_object",
+      "task_id": 5,
+      "initial_state_index": 26,
+      "seed": 2026091726,
+      "condition": "tcp_no_injected_fault"
+    },
+    {
+      "run_id": 3,
+      "stage": "remote_no_fault",
+      "family": "Object",
+      "suite": "libero_object",
+      "task_id": 5,
+      "initial_state_index": 27,
+      "seed": 2026091727,
+      "condition": "tcp_no_injected_fault"
+    },
+    {
+      "run_id": 4,
+      "stage": "remote_no_fault",
+      "family": "Object",
+      "suite": "libero_object",
+      "task_id": 5,
+      "initial_state_index": 28,
+      "seed": 2026091728,
+      "condition": "tcp_no_injected_fault"
+    },
+    {
+      "run_id": 5,
+      "stage": "remote_no_fault",
+      "family": "Object",
+      "suite": "libero_object",
+      "task_id": 5,
+      "initial_state_index": 29,
+      "seed": 2026091729,
+      "condition": "tcp_no_injected_fault"
+    },
+    {
+      "run_id": 6,
+      "stage": "remote_no_fault",
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "initial_state_index": 25,
+      "seed": 2026091725,
+      "condition": "tcp_no_injected_fault"
+    },
+    {
+      "run_id": 7,
+      "stage": "remote_no_fault",
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "initial_state_index": 26,
+      "seed": 2026091726,
+      "condition": "tcp_no_injected_fault"
+    },
+    {
+      "run_id": 8,
+      "stage": "remote_no_fault",
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "initial_state_index": 27,
+      "seed": 2026091727,
+      "condition": "tcp_no_injected_fault"
+    },
+    {
+      "run_id": 9,
+      "stage": "remote_no_fault",
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "initial_state_index": 28,
+      "seed": 2026091728,
+      "condition": "tcp_no_injected_fault"
+    },
+    {
+      "run_id": 10,
+      "stage": "remote_no_fault",
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "initial_state_index": 29,
+      "seed": 2026091729,
+      "condition": "tcp_no_injected_fault"
+    },
+    {
+      "run_id": 11,
+      "stage": "remote_no_fault",
+      "family": "Goal",
+      "suite": "libero_goal",
+      "task_id": 2,
+      "initial_state_index": 25,
+      "seed": 2026091725,
+      "condition": "tcp_no_injected_fault"
+    },
+    {
+      "run_id": 12,
+      "stage": "remote_no_fault",
+      "family": "Goal",
+      "suite": "libero_goal",
+      "task_id": 2,
+      "initial_state_index": 26,
+      "seed": 2026091726,
+      "condition": "tcp_no_injected_fault"
+    },
+    {
+      "run_id": 13,
+      "stage": "remote_no_fault",
+      "family": "Goal",
+      "suite": "libero_goal",
+      "task_id": 2,
+      "initial_state_index": 27,
+      "seed": 2026091727,
+      "condition": "tcp_no_injected_fault"
+    },
+    {
+      "run_id": 14,
+      "stage": "remote_no_fault",
+      "family": "Goal",
+      "suite": "libero_goal",
+      "task_id": 2,
+      "initial_state_index": 28,
+      "seed": 2026091728,
+      "condition": "tcp_no_injected_fault"
+    },
+    {
+      "run_id": 15,
+      "stage": "remote_no_fault",
+      "family": "Goal",
+      "suite": "libero_goal",
+      "task_id": 2,
+      "initial_state_index": 29,
+      "seed": 2026091729,
+      "condition": "tcp_no_injected_fault"
+    },
+    {
+      "run_id": 16,
+      "stage": "remote_fault_matrix",
+      "family": "Object",
+      "suite": "libero_object",
+      "task_id": 5,
+      "initial_state_index": 25,
+      "seed": 2026091725,
+      "condition": "application_delivery_jitter_50ms"
+    },
+    {
+      "run_id": 17,
+      "stage": "remote_fault_matrix",
+      "family": "Object",
+      "suite": "libero_object",
+      "task_id": 5,
+      "initial_state_index": 25,
+      "seed": 2026091725,
+      "condition": "application_delivery_jitter_250ms"
+    },
+    {
+      "run_id": 18,
+      "stage": "remote_fault_matrix",
+      "family": "Object",
+      "suite": "libero_object",
+      "task_id": 5,
+      "initial_state_index": 25,
+      "seed": 2026091725,
+      "condition": "application_delivery_jitter_950ms"
+    },
+    {
+      "run_id": 19,
+      "stage": "remote_fault_matrix",
+      "family": "Object",
+      "suite": "libero_object",
+      "task_id": 5,
+      "initial_state_index": 25,
+      "seed": 2026091725,
+      "condition": "periodic_pre_inference_disconnect"
+    },
+    {
+      "run_id": 20,
+      "stage": "remote_fault_matrix",
+      "family": "Object",
+      "suite": "libero_object",
+      "task_id": 5,
+      "initial_state_index": 26,
+      "seed": 2026091726,
+      "condition": "application_delivery_jitter_50ms"
+    },
+    {
+      "run_id": 21,
+      "stage": "remote_fault_matrix",
+      "family": "Object",
+      "suite": "libero_object",
+      "task_id": 5,
+      "initial_state_index": 26,
+      "seed": 2026091726,
+      "condition": "application_delivery_jitter_250ms"
+    },
+    {
+      "run_id": 22,
+      "stage": "remote_fault_matrix",
+      "family": "Object",
+      "suite": "libero_object",
+      "task_id": 5,
+      "initial_state_index": 26,
+      "seed": 2026091726,
+      "condition": "application_delivery_jitter_950ms"
+    },
+    {
+      "run_id": 23,
+      "stage": "remote_fault_matrix",
+      "family": "Object",
+      "suite": "libero_object",
+      "task_id": 5,
+      "initial_state_index": 26,
+      "seed": 2026091726,
+      "condition": "periodic_pre_inference_disconnect"
+    },
+    {
+      "run_id": 24,
+      "stage": "remote_fault_matrix",
+      "family": "Object",
+      "suite": "libero_object",
+      "task_id": 5,
+      "initial_state_index": 27,
+      "seed": 2026091727,
+      "condition": "application_delivery_jitter_50ms"
+    },
+    {
+      "run_id": 25,
+      "stage": "remote_fault_matrix",
+      "family": "Object",
+      "suite": "libero_object",
+      "task_id": 5,
+      "initial_state_index": 27,
+      "seed": 2026091727,
+      "condition": "application_delivery_jitter_250ms"
+    },
+    {
+      "run_id": 26,
+      "stage": "remote_fault_matrix",
+      "family": "Object",
+      "suite": "libero_object",
+      "task_id": 5,
+      "initial_state_index": 27,
+      "seed": 2026091727,
+      "condition": "application_delivery_jitter_950ms"
+    },
+    {
+      "run_id": 27,
+      "stage": "remote_fault_matrix",
+      "family": "Object",
+      "suite": "libero_object",
+      "task_id": 5,
+      "initial_state_index": 27,
+      "seed": 2026091727,
+      "condition": "periodic_pre_inference_disconnect"
+    },
+    {
+      "run_id": 28,
+      "stage": "remote_fault_matrix",
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "initial_state_index": 25,
+      "seed": 2026091725,
+      "condition": "application_delivery_jitter_50ms"
+    },
+    {
+      "run_id": 29,
+      "stage": "remote_fault_matrix",
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "initial_state_index": 25,
+      "seed": 2026091725,
+      "condition": "application_delivery_jitter_250ms"
+    },
+    {
+      "run_id": 30,
+      "stage": "remote_fault_matrix",
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "initial_state_index": 25,
+      "seed": 2026091725,
+      "condition": "application_delivery_jitter_950ms"
+    },
+    {
+      "run_id": 31,
+      "stage": "remote_fault_matrix",
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "initial_state_index": 25,
+      "seed": 2026091725,
+      "condition": "periodic_pre_inference_disconnect"
+    },
+    {
+      "run_id": 32,
+      "stage": "remote_fault_matrix",
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "initial_state_index": 26,
+      "seed": 2026091726,
+      "condition": "application_delivery_jitter_50ms"
+    },
+    {
+      "run_id": 33,
+      "stage": "remote_fault_matrix",
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "initial_state_index": 26,
+      "seed": 2026091726,
+      "condition": "application_delivery_jitter_250ms"
+    },
+    {
+      "run_id": 34,
+      "stage": "remote_fault_matrix",
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "initial_state_index": 26,
+      "seed": 2026091726,
+      "condition": "application_delivery_jitter_950ms"
+    },
+    {
+      "run_id": 35,
+      "stage": "remote_fault_matrix",
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "initial_state_index": 26,
+      "seed": 2026091726,
+      "condition": "periodic_pre_inference_disconnect"
+    },
+    {
+      "run_id": 36,
+      "stage": "remote_fault_matrix",
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "initial_state_index": 27,
+      "seed": 2026091727,
+      "condition": "application_delivery_jitter_50ms"
+    },
+    {
+      "run_id": 37,
+      "stage": "remote_fault_matrix",
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "initial_state_index": 27,
+      "seed": 2026091727,
+      "condition": "application_delivery_jitter_250ms"
+    },
+    {
+      "run_id": 38,
+      "stage": "remote_fault_matrix",
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "initial_state_index": 27,
+      "seed": 2026091727,
+      "condition": "application_delivery_jitter_950ms"
+    },
+    {
+      "run_id": 39,
+      "stage": "remote_fault_matrix",
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "initial_state_index": 27,
+      "seed": 2026091727,
+      "condition": "periodic_pre_inference_disconnect"
+    },
+    {
+      "run_id": 40,
+      "stage": "remote_fault_matrix",
+      "family": "Goal",
+      "suite": "libero_goal",
+      "task_id": 2,
+      "initial_state_index": 25,
+      "seed": 2026091725,
+      "condition": "application_delivery_jitter_50ms"
+    },
+    {
+      "run_id": 41,
+      "stage": "remote_fault_matrix",
+      "family": "Goal",
+      "suite": "libero_goal",
+      "task_id": 2,
+      "initial_state_index": 25,
+      "seed": 2026091725,
+      "condition": "application_delivery_jitter_250ms"
+    },
+    {
+      "run_id": 42,
+      "stage": "remote_fault_matrix",
+      "family": "Goal",
+      "suite": "libero_goal",
+      "task_id": 2,
+      "initial_state_index": 25,
+      "seed": 2026091725,
+      "condition": "application_delivery_jitter_950ms"
+    },
+    {
+      "run_id": 43,
+      "stage": "remote_fault_matrix",
+      "family": "Goal",
+      "suite": "libero_goal",
+      "task_id": 2,
+      "initial_state_index": 25,
+      "seed": 2026091725,
+      "condition": "periodic_pre_inference_disconnect"
+    },
+    {
+      "run_id": 44,
+      "stage": "remote_fault_matrix",
+      "family": "Goal",
+      "suite": "libero_goal",
+      "task_id": 2,
+      "initial_state_index": 26,
+      "seed": 2026091726,
+      "condition": "application_delivery_jitter_50ms"
+    },
+    {
+      "run_id": 45,
+      "stage": "remote_fault_matrix",
+      "family": "Goal",
+      "suite": "libero_goal",
+      "task_id": 2,
+      "initial_state_index": 26,
+      "seed": 2026091726,
+      "condition": "application_delivery_jitter_250ms"
+    },
+    {
+      "run_id": 46,
+      "stage": "remote_fault_matrix",
+      "family": "Goal",
+      "suite": "libero_goal",
+      "task_id": 2,
+      "initial_state_index": 26,
+      "seed": 2026091726,
+      "condition": "application_delivery_jitter_950ms"
+    },
+    {
+      "run_id": 47,
+      "stage": "remote_fault_matrix",
+      "family": "Goal",
+      "suite": "libero_goal",
+      "task_id": 2,
+      "initial_state_index": 26,
+      "seed": 2026091726,
+      "condition": "periodic_pre_inference_disconnect"
+    },
+    {
+      "run_id": 48,
+      "stage": "remote_fault_matrix",
+      "family": "Goal",
+      "suite": "libero_goal",
+      "task_id": 2,
+      "initial_state_index": 27,
+      "seed": 2026091727,
+      "condition": "application_delivery_jitter_50ms"
+    },
+    {
+      "run_id": 49,
+      "stage": "remote_fault_matrix",
+      "family": "Goal",
+      "suite": "libero_goal",
+      "task_id": 2,
+      "initial_state_index": 27,
+      "seed": 2026091727,
+      "condition": "application_delivery_jitter_250ms"
+    },
+    {
+      "run_id": 50,
+      "stage": "remote_fault_matrix",
+      "family": "Goal",
+      "suite": "libero_goal",
+      "task_id": 2,
+      "initial_state_index": 27,
+      "seed": 2026091727,
+      "condition": "application_delivery_jitter_950ms"
+    },
+    {
+      "run_id": 51,
+      "stage": "remote_fault_matrix",
+      "family": "Goal",
+      "suite": "libero_goal",
+      "task_id": 2,
+      "initial_state_index": 27,
+      "seed": 2026091727,
+      "condition": "periodic_pre_inference_disconnect"
+    }
+  ],
+  "coverage": {
+    "no_fault": 15,
+    "fault_matrix": 36,
+    "total_episode_condition_runs": 51
+  },
+  "formal_canary": {
+    "run_id": 1,
+    "counts_toward_51": true,
+    "rerun_merely_because_called_smoke": false,
+    "remaining_runs_require_structurally_valid_run_1": true
+  },
+  "attempt_policy": {
+    "valid_negative_outcomes_preserved": true,
+    "valid_task_failure_counts": true,
+    "valid_outcome_rerun_allowed": false,
+    "invalid_infrastructure_attempts": "Only demonstrated environment, installation, schema or network setup failures may be repaired and retried with the same frozen parameters. Preserve each attempt under a unique directory with logs, hashes, diagnosis and validity decision; never overwrite it.",
+    "experimental_transport_failures_are_not_setup_failures": "Declared fault effects and hard-gate failures after a structurally valid setup remain experimental outcomes. Do not relabel them using task success or interim performance.",
+    "frozen_parameters_may_change_after_outcomes": false,
+    "classification_uses_task_success": false
+  },
+  "execution_requirements": {
+    "protocol_commit_must_exist_before_gpu_execution": true,
+    "same_exact_protocol_commit_on_both_hosts": true,
+    "hosts": {
+      "A": "X-VLA/CUDA RPC inference server",
+      "B": "LIBERO simulator and ActionStream RPC client"
+    },
+    "distinct_physical_hosts_required": true,
+    "tcp_probe_direction": "B -> A",
+    "tcp_port": 50051,
+    "before_install_or_download": "source /etc/network_turbo",
+    "pre_execution_host_receipts": [
+      "hostname",
+      "machine_id_if_accessible",
+      "boot_id",
+      "gpu_uuid",
+      "nvidia_smi_output",
+      "driver_version",
+      "cuda_runtime_information",
+      "os_kernel",
+      "python_version",
+      "uv_version",
+      "git_head",
+      "git_diff",
+      "git_status"
+    ],
+    "fresh_server_process_each_episode_condition": true,
+    "host_reboot_between_runs_required": false,
+    "gpu_telemetry_on_host_A_throughout_each_episode": true,
+    "after_each_episode": [
+      "stop_owned_server_process",
+      "hash_all_raw_outputs",
+      "validate_receipt_and_telemetry",
+      "check_stale_out_of_order_deadline_error_counters",
+      "verify_task_action_observation_contract",
+      "verify_gpu_telemetry"
+    ],
+    "missing_metrics": "unavailable with reason; never fabricated or zero-filled",
+    "report_requirements": [
+      "exact_coverage_table",
+      "all_required_metrics_by_family_and_condition",
+      "completion_steps_failures_equal_300",
+      "paired_transport_condition_comparisons",
+      "hard_transport_gates_separate_from_task_success",
+      "no_single_collapsed_score",
+      "raw_sha256_manifest",
+      "both_host_identities",
+      "exact_code_and_config_commit_hashes",
+      "all_attempts_and_invalid_setup_diagnoses"
+    ],
+    "no_unreported_inference_warmup": true,
+    "server_telemetry_jsonl_required": true,
+    "client_rpc_telemetry_jsonl_required": true,
+    "current_task_scope": "ENGINEERING_AND_PREREGISTRATION_ONLY_NO_GPU_EXECUTION",
+    "v2_run_namespace_distinct_from_v1": true
+  },
+  "provenance": {
+    "source_head": "f049925e382a1030fd1fca8450309585d3a58687",
+    "aborted_protocol": {
+      "path": "configs/rpc_external_validity_v1.json",
+      "sha256": "7d663780396e28c0bc4b867a363e087a40a09cd8bc84e1fab9d24122bc614887",
+      "disposition": "ABORTED_BEFORE_EXECUTION_NO_RUN",
+      "file_preserved_unchanged": true,
+      "reason": "Historical identity collisions, including warmup initialization, and incomplete historical evidence coverage prevented CLEAN classification."
+    },
+    "prior_audits": [
+      {
+        "path": "artifacts/actionstream_rpc_task_selection_audit_20260919/audit.json",
+        "sha256": "a6ffb6dc3b79602431333a09f7b0c6e291ef0d740e95871e46dd22fe7af9b2e2"
+      },
+      {
+        "path": "artifacts/actionstream_rpc_task_selection_audit_20260919/audit.md",
+        "sha256": "48bfbef3a9c8578f692e543e606a133263913c8a0f094d7c3fc9f34ef889210d"
+      },
+      {
+        "path": "artifacts/actionstream_rpc_task_selection_audit_20260919/evidence_manifest.sha256",
+        "sha256": "9e17bfd4dbe81d53caa1e14c8ccd24d7e9f8a2b36006d09b77034dad14f6962b"
+      },
+      {
+        "path": "artifacts/actionstream_rpc_reset_audit_20260918/audit.json",
+        "sha256": "86d4699a3b012aa43794e6a25fafe04f8d390efd30ad37bcf77a04ec859e4177",
+        "decision": "NO_RUN_COLLISION"
+      },
+      {
+        "path": "artifacts/actionstream_rpc_remaining_reset_audit_20260918/audit.json",
+        "sha256": "07a6af8b07afdce26b5b3d251f13685cbd1bf292c799e4918c50843dd625ba8a",
+        "decision": "NO_RUN_INSUFFICIENT_FRESH_IDENTITIES"
+      },
+      {
+        "path": "artifacts/actionstream_rpc_prerun_audit_20260918_171506/audit.json",
+        "sha256": "1f84b997d6a71537ea8cd713f4c043dbbdc6ff3381c10609a475c9e821611f58",
+        "decision": "NO_RUN"
+      }
+    ],
+    "historical_audit_conclusions_unchanged": true,
+    "prior_identity_history": [
+      "10-14: consumed H1-R2 identities",
+      "15-19: consumed H2 identities",
+      "20: H2 CUDA canary",
+      "25-29: rejected for external-validity v1; Object 5 historical execution confirmed",
+      "30-34: rejected with 13 confirmed collisions and two unresolved identities",
+      "35-49: insufficient fresh identities; Object 5 all consumed",
+      "all-task audit: NO_RUN_NO_FRESH_TASK_IDENTITIES; no-match identities remain UNKNOWN"
+    ],
+    "no_remote_rpc_outcome_observed_before_protocol_change": false,
+    "scientific_question_changed_not_freshness_gate_weakened": true,
+    "new_protocol_is_not_external_validity_v2": true,
+    "v1": {
+      "path": "configs/rpc_remote_transport_replication_v1.json",
+      "config_sha256": "b2fc8f8a0f7f66eb60cddbd79645647b7313435deaafc84831dd396616749019",
+      "run_1_classification": "VALID_NEGATIVE",
+      "permanent_completed_runs": 1,
+      "planned_runs": 51,
+      "evidence_manifest_sha256": "9b0e223c00b92f907a7d0c0803c94f41a07e01a46fe052d0ac28bc4f9609329d",
+      "postmortem_manifest_sha256": "f515e1f6324c34d7c0cd4933df3c437971bfe1c34e8ac399fff504aa9171a0be",
+      "diagnosis_json_sha256": "3ffa024420cc3d847c998d62ac634caada839458a00d49f654d404a5fb8217d4",
+      "config_and_evidence_preserved_unchanged": true,
+      "diagnostics_count_toward_formal_51": false
+    }
+  },
+  "deadline_semantics": {
+    "startup_request": "First inference request on every newly established TCP connection; reset/control frames do not consume the startup ordinal.",
+    "subsequent_requests": "All later inference requests on that connection use the steady budget, including after a server error response.",
+    "periodic_pre_inference_disconnect": "Next inference after reconnect receives the 15 s startup budget; latency and failures remain reported.",
+    "budget_scope": "Per admitted inference request: connect if needed, serialization, send, queue wait, worker service, injected delivery delay, receive and decode. Connect has an additional 3 s cap within this budget. CPU encode/decode are not preempted; expiry is checked before accepting results.",
+    "outer_action_wait": "20 s from waiting for an action. Covers retries/backoff cumulatively and can cancel a later retry before its individual startup budget expires. Does not guarantee recovery or completion of every retry.",
+    "legacy_inference_timeout_s": "5 s fallback for transports without explicit paired budgets; v2 TCP overrides it with the selected startup/steady budget.",
+    "startup_budget_rationale": "15 s is an outcome-informed experimental safety budget selected after observing approximately 6.6-6.9 s connection-first inference latency. It is not a measured SLA.",
+    "timeout_invalidation": "Close socket and invalidate client generation. Remote synchronous work may finish; running CUDA is not preempted.",
+    "warmup_policy": "No inference warmup or discarded bootstrap request. Report first requests and reconnect latency. If the cold penalty persists, preserve it; if it disappears, report that later as an observation, not an assumption."
+  },
+  "server_execution": {
+    "worker_instances_per_server": 1,
+    "persistent_executor_threads_per_server": 1,
+    "queue": "FIFO validated requests; one outstanding request per connection; policy inference and idle reset controls serialized on the same persistent thread.",
+    "obsolete_requests": "Drop before compute when server shutdown, connection EOF/error or handler invalidation is observed. Detection races with compute admission; an already admitted call may finish.",
+    "reset": "Preserve client generation invalidation. Active reset cancels that client request path immediately; idle reset submits worker reset to the executor. Does not globally reset other clients or preempt in-flight work.",
+    "shutdown": "Stop admission, close sockets, stop handler producers, drain queued work as obsolete, wait for active worker call, join executor. No bounded guarantee if the worker never returns.",
+    "cuda_synchronization": "No CUDA synchronization added to generic RPC transport. Existing X-VLA backend synchronization remains unchanged."
+  },
+  "response_telemetry": {
+    "server_queue_wait_s": "Monotonic elapsed time from immediately before queue insertion to executor admission after obsolete check; includes queue scheduling, excludes request decode and injected pre-inference stall.",
+    "server_compute_s": "Elapsed time immediately surrounding the actual inference callable, including its preprocessing/postprocessing; not pure GPU kernel time. No new CUDA synchronization.",
+    "server_service_s": "Executor admission to response-ready payload: callable, validation, CPU materialization and error handling; excludes queue wait, injected delivery delay, JSON serialization and socket send.",
+    "server_inference_s": "Legacy composite: queue wait plus worker/validation interval, excluding successful CPU materialization and delivery. v1 used lock wait instead of executor queue wait. Not renamed to pure compute.",
+    "server_lock_wait_s": "Omitted: there is no policy inference lock in v2. Queue wait replaces policy-lock contention; do not fabricate a measured zero.",
+    "connection_id": "Unique random ID per accepted TCP connection.",
+    "connection_request_ordinal": "1-based validated inference request count per connection; control frames excluded; injected pre-inference disconnect requests included.",
+    "global_request_ordinal": "1-based validated inference request count per fresh server; drives unchanged deterministic fault matching. request_ordinal remains its compatibility alias.",
+    "missing_timing": "Pre-compute injected errors/disconnects have no compute/service timing; mark unavailable with reason, not zero. Reset control timings are excluded from inference statistics."
+  },
+  "failure_telemetry": {
+    "client": [
+      "startup_deadlines",
+      "steady_deadlines",
+      "deadlines",
+      "transport_errors",
+      "server_errors",
+      "reconnects",
+      "connections_established",
+      "reconnections",
+      "cancellations",
+      "cancelled_invalidated_requests"
+    ],
+    "server": [
+      "executor_starts",
+      "inference_calls",
+      "reset_calls",
+      "dropped_obsolete_before_compute",
+      "invalidated_results"
+    ],
+    "compatibility": "reconnects and process_restarts retain historical connection-establishment counts including initial connection and controls. reconnections=max(0,connections_established-1). deadlines=startup_deadlines+steady_deadlines. cancellations counts explicit cancel() calls while inflight; cancelled_invalidated_requests counts inference requests ending in cancellation or deadline once each, not observed stale packets.",
+    "server_counter_scope": "dropped_obsolete_before_compute counts queued inference/reset requests dropped before execution; raw events identify kind. invalidated_results counts completed executor jobs observed obsolete before handler routing, not all possible lost/dropped responses.",
+    "durable_logs": "Client rpc_telemetry.jsonl for every attempted inference with request ID, generation, chosen budget/class, UTC start/finish, outcome and available response timing/IDs. Server --telemetry-jsonl records enqueue, completion, obsolete drops and invalidated results including late work after client deadlines; final stdout includes counters. Episode ERROR receipts include final engine/RPC snapshots and log hashes."
+  }
+}

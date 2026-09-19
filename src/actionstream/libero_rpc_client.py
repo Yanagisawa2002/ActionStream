@@ -145,11 +145,21 @@ class _ResetStub:
 
 def run_episode(args) -> dict[str, Any]:
     telemetry_path = args.output / "engine_telemetry.jsonl"
+    rpc_telemetry_path = args.output / "rpc_telemetry.jsonl"
+    startup_timeout = getattr(args, "startup_inference_timeout_s", None)
+    steady_timeout = getattr(args, "steady_inference_timeout_s", None)
+    if startup_timeout is not None and args.action_wait_timeout_s <= max(
+        startup_timeout, steady_timeout or args.inference_timeout_s
+    ):
+        raise ValueError("action wait must exceed both RPC inference budgets")
     transport = TcpInferenceTransport(
         args.host,
         args.port,
         connect_timeout_s=args.connect_timeout_s,
         control_timeout_s=args.control_timeout_s,
+        startup_inference_timeout_s=startup_timeout,
+        steady_inference_timeout_s=steady_timeout,
+        telemetry_jsonl_path=rpc_telemetry_path,
     )
     config = ActionStreamInferenceConfig(
         inference_timeout_s=args.inference_timeout_s,
@@ -198,6 +208,12 @@ def run_episode(args) -> dict[str, Any]:
         "wall_s": None,
         "instruction": None,
         "engine_config": asdict(config),
+        "rpc_deadline_parameters": {
+            "startup_inference_timeout_s": startup_timeout,
+            "steady_inference_timeout_s": steady_timeout,
+            "legacy_inference_timeout_s": args.inference_timeout_s,
+            "action_wait_timeout_s": args.action_wait_timeout_s,
+        },
     }
     started = time.perf_counter()
     try:
@@ -291,9 +307,16 @@ def run_episode(args) -> dict[str, Any]:
             engine.stop()
         except BaseException as stop_exc:
             receipt["stop_error"] = f"{type(stop_exc).__name__}: {stop_exc}"
-        env.close()
+        receipt["engine_telemetry"] = engine.telemetry.to_dict()
+        receipt["rpc_telemetry"] = transport.telemetry().to_dict()
+        try:
+            env.close()
+        except BaseException as close_exc:
+            receipt["environment_close_error"] = str(close_exc)
         if telemetry_path.exists():
             receipt["engine_telemetry_sha256"] = _sha256(telemetry_path)
+        if rpc_telemetry_path.exists():
+            receipt["rpc_telemetry_sha256"] = _sha256(rpc_telemetry_path)
         (args.output / "episode_receipt.json").write_text(
             json.dumps(receipt, indent=2, sort_keys=True, allow_nan=False) + "\n",
             encoding="utf-8",
@@ -313,6 +336,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--max-control-steps", type=int, default=300)
     parser.add_argument("--expected-frequency-hz", type=float, default=20.0)
     parser.add_argument("--inference-timeout-s", type=float, default=5.0)
+    parser.add_argument("--startup-inference-timeout-s", type=float, default=None)
+    parser.add_argument("--steady-inference-timeout-s", type=float, default=None)
     parser.add_argument("--connect-timeout-s", type=float, default=3.0)
     parser.add_argument("--control-timeout-s", type=float, default=3.0)
     parser.add_argument("--action-wait-timeout-s", type=float, default=10.0)
