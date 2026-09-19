@@ -1,0 +1,191 @@
+{
+  "scope": "Documentation/result consolidation and local CPU validation only; no new GPU, simulator, remote connection, experiment, or remote lifecycle action.",
+  "date": "2026-09-19",
+  "implementation_protocol_commit": "e33eb98c94013da14109ab2ac710414fea63ebaf",
+  "environment": {
+    "python": "3.12.11",
+    "torch": "2.11.0+cpu",
+    "existing_environment_reused": true,
+    "dependency_changes": false,
+    "worktree_import_paths": [
+      "src",
+      "integrations/lerobot/src"
+    ],
+    "fresh_locked_install": false
+  },
+  "tests": {
+    "tests": 223,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "duration_s": 33.547
+  },
+  "checks": {
+    "full_pytest": "PASS",
+    "ruff_check": "PASS",
+    "ci_ruff_format_plus_replay_script": "PASS (69 files)",
+    "compileall": "PASS",
+    "deterministic_posthoc_replay": "PASS (JSON and CSV bytes match)",
+    "strict_release_audit_without_license_bypass": "PASS",
+    "markdown_local_links": "PASS (51 local links)",
+    "git_diff_check": "PASS",
+    "protected_files_and_raw_hashes": "PASS"
+  },
+  "preservation": {
+    "status": "PASS",
+    "preserved_sources": [
+      {
+        "root": "repository",
+        "path": "configs/rpc_remote_transport_replication_v2.json",
+        "sha256": "661ee2fbcd565ec2a04deda57d8021cc088f05d2a3cb915bc59e379486fbb4f1",
+        "verified": true
+      },
+      {
+        "root": "repository",
+        "path": "configs/rpc_remote_transport_replication_v1.json",
+        "sha256": "b2fc8f8a0f7f66eb60cddbd79645647b7313435deaafc84831dd396616749019",
+        "verified": true
+      },
+      {
+        "root": "repository",
+        "path": "configs/rpc_external_validity_v1.json",
+        "sha256": "7d663780396e28c0bc4b867a363e087a40a09cd8bc84e1fab9d24122bc614887",
+        "verified": true
+      },
+      {
+        "root": "ignored_v2_evidence",
+        "path": "artifacts/rpc_remote_transport_replication_v2/experiment_manifest.json",
+        "sha256": "9c8e376f83ca4dce162b452defd2d9c42ea6bc8e44478133951846c8068fbe2f",
+        "verified": true
+      },
+      {
+        "root": "ignored_v2_evidence",
+        "path": "artifacts/rpc_remote_transport_replication_v2/experiment_evidence_manifest.sha256",
+        "sha256": "3c8cc214071455ac0ad2a10101239ec85af5e8e41a1e8aca02751c90d87f7864",
+        "verified": true,
+        "manifest_entries_verified": 2889
+      },
+      {
+        "root": "ignored_v2_evidence",
+        "path": "artifacts/rpc_remote_transport_replication_v2/run_001_object5_state25_no_fault/evidence_manifest.sha256",
+        "sha256": "9d4ad51b781679eb0481c3d498074ab1bd3548c5b86c7e9a260a9b6cbc98d4b4",
+        "verified": true,
+        "manifest_entries_verified": 140
+      },
+      {
+        "root": "ignored_v2_evidence",
+        "path": "artifacts/rpc_remote_transport_replication_v2/analysis/frozen_results.json",
+        "sha256": "99f0c3bc442fc0eec29c29d834a6cfbdf45301f1ae2141a17538b3256a008548",
+        "verified": true
+      },
+      {
+        "root": "ignored_v2_evidence",
+        "path": "artifacts/rpc_remote_transport_replication_v2/analysis/coverage.csv",
+        "sha256": "a0ef8f6fc913513e3a9aa9d60bbd15b1ebb543736cd79fdb8cb6bbf12c4f1857",
+        "verified": true
+      },
+      {
+        "root": "ignored_v2_evidence",
+        "path": "artifacts/rpc_remote_transport_replication_v2/analysis/paired_comparisons.json",
+        "sha256": "7370cdc9b628284b5633a572f1769615fc020cd7bb8db9a6e31bdf1a9591627e",
+        "verified": true
+      },
+      {
+        "root": "historical_actionstream_rpc_reset_audit_20260918_worktree",
+        "path": "artifacts/rpc_replication_run1_20260919_01/evidence_manifest.sha256",
+        "sha256": "9b0e223c00b92f907a7d0c0803c94f41a07e01a46fe052d0ac28bc4f9609329d",
+        "verified": true,
+        "manifest_entries_verified": 123
+      },
+      {
+        "root": "historical_actionstream_rpc_reset_audit_20260918_worktree",
+        "path": "artifacts/rpc_replication_run1_20260919_01/run1_report.json",
+        "sha256": "89ac74b9d09c8ae98d5f2133a62ca36e4cc33be12d925e1079f89ea3e8a32327",
+        "verified": true
+      },
+      {
+        "root": "historical_actionstream_rpc_reset_audit_20260918_worktree",
+        "path": "artifacts/rpc_replication_v1_postmortem_20260919/evidence_manifest.sha256",
+        "sha256": "f515e1f6324c34d7c0cd4933df3c437971bfe1c34e8ac399fff504aa9171a0be",
+        "verified": true,
+        "manifest_entries_verified": 77
+      },
+      {
+        "root": "historical_actionstream_rpc_reset_audit_20260918_worktree",
+        "path": "artifacts/rpc_replication_v1_postmortem_20260919/diagnosis.json",
+        "sha256": "3ffa024420cc3d847c998d62ac634caada839458a00d49f654d404a5fb8217d4",
+        "verified": true
+      }
+    ],
+    "uv_lock_sha256": "803833a9ec37bb9fd7de0fea5b3cd10eb1db060495d42525eb5f614e7e7c9e57",
+    "protected_paths_unchanged_vs_implementation": [
+      "configs",
+      "src",
+      "tests",
+      "integrations",
+      "uv.lock",
+      "pyproject.toml",
+      ".github",
+      "docs/rpc-remote-transport-replication-v1-matrix.md"
+    ],
+    "posthoc_and_frozen_summary_consistency": "PASS",
+    "tests": {
+      "tests": 223,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "duration_s": 33.547
+    }
+  },
+  "result_semantics": {
+    "original_recovery_gate": "97/100 FAIL",
+    "posthoc_opportunity_conditioned": "97/97 descriptive only",
+    "formal_verdict": "COMPLETED_PARTIAL_SUPPORT_HARD_GATE_FAIL",
+    "full_hard_gate_set": "NO-GO"
+  },
+  "line_endings": "Tracked summaries and replay outputs use LF. Coverage/paired data preserve original content modulo CRLF-to-LF normalization; source hashes refer to untouched original bytes.",
+  "local_raw_validation_logs": "artifacts/rpc_v2_result_consolidation_20260919/",
+  "changed_files": [
+    "README.md",
+    "docs/case-studies/actionstream-remote-inference-case.md",
+    "docs/remote-rpc-validation.md",
+    "docs/rpc-remote-transport-replication-v2.md",
+    "docs/rpc-replication-v2-validation.md",
+    "reports/rpc_remote_transport_replication_v2/coverage.csv",
+    "reports/rpc_remote_transport_replication_v2/final_status.json",
+    "reports/rpc_remote_transport_replication_v2/metrics.json",
+    "reports/rpc_remote_transport_replication_v2/paired_comparisons.json",
+    "reports/rpc_remote_transport_replication_v2/posthoc_events.csv",
+    "reports/rpc_remote_transport_replication_v2/posthoc_recovery.json",
+    "reports/rpc_remote_transport_replication_v2/recompute_posthoc.py",
+    "reports/rpc_remote_transport_replication_v2/report.md",
+    "reports/rpc_remote_transport_replication_v2/validation.json",
+    "reports/rpc_remote_transport_replication_v2/validation.md"
+  ],
+  "curated_files_sha256": {
+    "reports/rpc_remote_transport_replication_v2/coverage.csv": "c3967c847e49f07309c12d66901e5915d7397bb597cd16e790bc6a77bc23b323",
+    "reports/rpc_remote_transport_replication_v2/final_status.json": "8f2cf0f4ac945e8775628caea4b6d5b0546f08840d9bdeb864cda5b56af5d2da",
+    "reports/rpc_remote_transport_replication_v2/metrics.json": "dcce5a308bf3b2edc05d36d3101d0b0d97905c7f5037cf1c3f38c329d97c8bdf",
+    "reports/rpc_remote_transport_replication_v2/paired_comparisons.json": "ff92a71c084babe87478dbea30f3541e1e1a8d432813250a2b9820a05a7c306a",
+    "reports/rpc_remote_transport_replication_v2/posthoc_events.csv": "6c65c4fc09a4518d3ff6ec1c8515dd0232d14a715ac8f9dee3393f67e8ca3999",
+    "reports/rpc_remote_transport_replication_v2/posthoc_recovery.json": "59b191fd7793ff1907f5ecd6d8f7b55c83676924b58ced837bdfe4906e43f8fd",
+    "reports/rpc_remote_transport_replication_v2/recompute_posthoc.py": "36989198ca99aa2f50b83f9f02465ef46a26c22c152b9c07b6fdbe38acd75faa",
+    "reports/rpc_remote_transport_replication_v2/report.md": "2f3187449ca44e31cb08c3287a24a7246cf195bb81edc08d391ae9d7742bdcf6"
+  },
+  "strict_release_audit_technical_checks": {
+    "ci_workflow_present": true,
+    "credential_scan_clean": true,
+    "no_oversized_tracked_files": true,
+    "output_allowlist_clean": true,
+    "review_base_available": true,
+    "tracked_outputs_within_limit": true,
+    "tracked_tree_within_limit": true,
+    "uv_lock_present": true
+  },
+  "strict_release_audit_legal_checks": {
+    "license_present": true,
+    "missing_license_allowed_for_ci": false,
+    "public_release_ready": true
+  },
+  "strict_release_audit_scope": "Repository packaging, credential and license checks; not a transport gate or production-readiness verdict."
+}

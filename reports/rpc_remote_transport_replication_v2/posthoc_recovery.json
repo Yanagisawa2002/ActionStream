@@ -1,0 +1,271 @@
+{
+  "analysis_type": "POST_HOC_DESCRIPTIVE_ANALYSIS",
+  "experiment_manifest_sha256": "9c8e376f83ca4dce162b452defd2d9c42ea6bc8e44478133951846c8068fbe2f",
+  "protocol_config_sha256": "661ee2fbcd565ec2a04deda57d8021cc088f05d2a3cb915bc59e379486fbb4f1",
+  "formal_runs": 51,
+  "task_successes": 47,
+  "injected_disconnect_events": 100,
+  "connections_established_all_runs": 150,
+  "actual_reconnections": 99,
+  "later_rpc_attempt_present_events": 99,
+  "genuine_observed_response_opportunities": 97,
+  "successful_recoveries_among_opportunities": 97,
+  "terminal_edge_events": 3,
+  "terminal_events": [
+    {
+      "run_id": 23,
+      "family": "Object",
+      "state": 26,
+      "fault_global_ordinal": 77,
+      "fault_request_id": "afcdc5266de6428b8eda97927e520195",
+      "fault_finished_utc_ns": 1789812603396426308,
+      "episode_stop_utc_ns": 1789812603487304393,
+      "later_rpc_attempt_exists": true,
+      "next_request_id": "7ee646edd0c34b55a31c3c99c4caef8e",
+      "next_attempt_outcome": "cancelled",
+      "next_start_utc_ns": 1789812603447335621,
+      "next_finish_utc_ns": 1789812603487837936,
+      "next_budget_s": 15.0,
+      "connection_before": "44c93f8ec14f4671abe83df2e3e6f67f",
+      "connection_after": "655cc74223d544a3862b22ad2ef2ee73",
+      "usable_observed_response_opportunity": false,
+      "terminal_edge": true,
+      "later_success": false,
+      "cancellation_phase": "inference",
+      "classification": "terminal_edge",
+      "terminal_reason": "stop_cancelled_after_rpc_admission",
+      "source_run_manifest": "run_023_object5_state26_periodic_pre_inference_disconnect/evidence_manifest.sha256",
+      "source_run_manifest_sha256": "ff116cb0518f4ded70845e99935edbe178da275c94c5167d953877590736682f"
+    },
+    {
+      "run_id": 39,
+      "family": "Spatial",
+      "state": 27,
+      "fault_global_ordinal": 140,
+      "fault_request_id": "9afa36962acd4071b929239cea2ae91e",
+      "fault_finished_utc_ns": 1789813616400509547,
+      "episode_stop_utc_ns": 1789813616451904065,
+      "later_rpc_attempt_exists": false,
+      "next_request_id": null,
+      "next_attempt_outcome": null,
+      "next_start_utc_ns": null,
+      "next_finish_utc_ns": null,
+      "next_budget_s": null,
+      "connection_before": "581af206ed794ba0a936a7f72a606983",
+      "connection_after": null,
+      "usable_observed_response_opportunity": false,
+      "terminal_edge": true,
+      "later_success": false,
+      "cancellation_phase": "provider_reset",
+      "classification": "terminal_edge",
+      "terminal_reason": "stop_cancelled_provider_reset_before_rpc_admission",
+      "source_run_manifest": "run_039_spatial7_state27_periodic_pre_inference_disconnect/evidence_manifest.sha256",
+      "source_run_manifest_sha256": "5553ab4799114cc6055e8d05b43e95da146010cedc2e246dea4bb65f28b18ada"
+    },
+    {
+      "run_id": 47,
+      "family": "Goal",
+      "state": 26,
+      "fault_global_ordinal": 56,
+      "fault_request_id": "1a289ec5daaa42ff8fa9d42e2d7d5080",
+      "fault_finished_utc_ns": 1789814077107265545,
+      "episode_stop_utc_ns": 1789814077203459782,
+      "later_rpc_attempt_exists": true,
+      "next_request_id": "753d041ea1c447768c58636da6a23273",
+      "next_attempt_outcome": "cancelled",
+      "next_start_utc_ns": 1789814077158114079,
+      "next_finish_utc_ns": 1789814077203948394,
+      "next_budget_s": 15.0,
+      "connection_before": "287a2b1719f54a92b66fd1bab34fe480",
+      "connection_after": "5730cadf4b6a48f2a57fa2f214387f4f",
+      "usable_observed_response_opportunity": false,
+      "terminal_edge": true,
+      "later_success": false,
+      "cancellation_phase": "inference",
+      "classification": "terminal_edge",
+      "terminal_reason": "stop_cancelled_after_rpc_admission",
+      "source_run_manifest": "run_047_goal2_state26_periodic_pre_inference_disconnect/evidence_manifest.sha256",
+      "source_run_manifest_sha256": "6fd16da30b95ca577ccfed9f1e0070fbc1520b7643b674fffe32638fde266780"
+    }
+  ],
+  "task_failures": [
+    {
+      "run_id": 8,
+      "stage": "remote_no_fault",
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "initial_state_index": 27,
+      "seed": 2026091727,
+      "condition": "tcp_no_injected_fault",
+      "end_reason": "control_step_limit"
+    },
+    {
+      "run_id": 9,
+      "stage": "remote_no_fault",
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "initial_state_index": 28,
+      "seed": 2026091728,
+      "condition": "tcp_no_injected_fault",
+      "end_reason": "control_step_limit"
+    },
+    {
+      "run_id": 36,
+      "stage": "remote_fault_matrix",
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "initial_state_index": 27,
+      "seed": 2026091727,
+      "condition": "application_delivery_jitter_50ms",
+      "end_reason": "control_step_limit"
+    },
+    {
+      "run_id": 39,
+      "stage": "remote_fault_matrix",
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "initial_state_index": 27,
+      "seed": 2026091727,
+      "condition": "periodic_pre_inference_disconnect",
+      "end_reason": "control_step_limit"
+    }
+  ],
+  "original_all_fault_event_recovery": {
+    "numerator": 97,
+    "denominator": 100,
+    "gate": "FAIL"
+  },
+  "opportunity_conditioned_recovery": {
+    "numerator": 97,
+    "denominator": 97
+  },
+  "definition": {
+    "fault": "Each seventh admitted single-client inference ends in transport_error; all available global ordinals must match attempted order. Pre-inference faults precede server enqueue.",
+    "later_request": "A later admitted TCP inference attempt in rpc_telemetry.jsonl. A provider-reset cancellation before TCP admission is not counted as an RPC request.",
+    "opportunity": "At least one later non-cancelled RPC attempt finishes no later than engine_stop_requested. A completed error or deadline would remain eligible, not be excluded as failure.",
+    "terminal_edge": "No later uncancelled attempt has an observed endpoint before stop: either no RPC admission, or the only later attempt spans stop and is cancelled with reset_or_stop=true.",
+    "two_axes": "Later-request presence and terminal-edge censoring overlap for two events. Literal later-request presence is 99, not the 97 usable observed-response opportunities."
+  },
+  "limitations": [
+    "Post-hoc censoring is termination-dependent and may be informative; 97/97 is descriptive, not an unbiased recovery probability or a new gate.",
+    "A cancelled attempt's hypothetical outcome if the episode had continued is unknown; no counterfactual guarantee is inferred.",
+    "Client and engine timestamps are from the same host. No cross-host clock subtraction is needed for opportunity classification."
+  ],
+  "formal_verdict_unchanged": "COMPLETED_PARTIAL_SUPPORT_HARD_GATE_FAIL",
+  "statement": "The post-hoc opportunity-conditioned analysis helps explain the preregistered failure but does not revise the frozen gate or its NO-GO verdict.",
+  "source_files": [
+    {
+      "path": "run_019_object5_state25_periodic_pre_inference_disconnect/host_b/raw/client/rpc_telemetry.jsonl",
+      "sha256": "4076c147988a1185593fdcfb476fd5a35b642bf505d449ac089e4ef2ef94629f"
+    },
+    {
+      "path": "run_019_object5_state25_periodic_pre_inference_disconnect/host_b/raw/client/engine_telemetry.jsonl",
+      "sha256": "75386148a5867038f6ef7da4ef6b96d4edd731c2912be333480594870ffaa58c"
+    },
+    {
+      "path": "run_019_object5_state25_periodic_pre_inference_disconnect/host_b/raw/client/episode_receipt.json",
+      "sha256": "04a7116884f08b2a43a58e493a9720fe0c1b4cc02ff9f4c44015dc15813cbb04"
+    },
+    {
+      "path": "run_023_object5_state26_periodic_pre_inference_disconnect/host_b/raw/client/rpc_telemetry.jsonl",
+      "sha256": "dcae831f7b974161619724ac8b13c45822c9646e8922fd0c584fbf56393d9c11"
+    },
+    {
+      "path": "run_023_object5_state26_periodic_pre_inference_disconnect/host_b/raw/client/engine_telemetry.jsonl",
+      "sha256": "b43b6fa2399fbcd372c4d65f1fa0f25e03ad9677896adf5305b7e1415bd670b6"
+    },
+    {
+      "path": "run_023_object5_state26_periodic_pre_inference_disconnect/host_b/raw/client/episode_receipt.json",
+      "sha256": "dc6039d21d6a01aa6bfe858ec047ae36d411c7c9a138baccde506d3cfebeff7d"
+    },
+    {
+      "path": "run_027_object5_state27_periodic_pre_inference_disconnect/host_b/raw/client/rpc_telemetry.jsonl",
+      "sha256": "0bff266c83b51c5b3e9fe580f755833779648f8795049b884ff8592f66e7e21d"
+    },
+    {
+      "path": "run_027_object5_state27_periodic_pre_inference_disconnect/host_b/raw/client/engine_telemetry.jsonl",
+      "sha256": "aae96ae24fe8960bc66998892a492c47d94de0ad16b54ca29040a191e4ed5985"
+    },
+    {
+      "path": "run_027_object5_state27_periodic_pre_inference_disconnect/host_b/raw/client/episode_receipt.json",
+      "sha256": "d5950b7ce9ff751384d3b488b39786ad5784f061f5ffbac84ff1693c6c2be542"
+    },
+    {
+      "path": "run_031_spatial7_state25_periodic_pre_inference_disconnect/host_b/raw/client/rpc_telemetry.jsonl",
+      "sha256": "9d2fdbdf0428ab033c5a6a94d290a8c990a95a32434a44dc06b9fd6eb6122905"
+    },
+    {
+      "path": "run_031_spatial7_state25_periodic_pre_inference_disconnect/host_b/raw/client/engine_telemetry.jsonl",
+      "sha256": "d8bf26665d04aa90233b07696ce0163b33e8e59378b8af90f0fc08ad8bc1e81a"
+    },
+    {
+      "path": "run_031_spatial7_state25_periodic_pre_inference_disconnect/host_b/raw/client/episode_receipt.json",
+      "sha256": "109488c6fccb5945448deec275333164a588180bf829af713b75d6f3be08dfca"
+    },
+    {
+      "path": "run_035_spatial7_state26_periodic_pre_inference_disconnect/host_b/raw/client/rpc_telemetry.jsonl",
+      "sha256": "048142fab9e4676cc2b7d7dbe49d5a96e4f0896da76ef4ea6950fd042085cae9"
+    },
+    {
+      "path": "run_035_spatial7_state26_periodic_pre_inference_disconnect/host_b/raw/client/engine_telemetry.jsonl",
+      "sha256": "c7d7031dbd61d3574307ea95f89ad9a29e9eba7c85f86be2edc0f36ff19c3dc4"
+    },
+    {
+      "path": "run_035_spatial7_state26_periodic_pre_inference_disconnect/host_b/raw/client/episode_receipt.json",
+      "sha256": "8705518bccd200336614519ef53dea7c22f671e932c442c076f875735b7425b5"
+    },
+    {
+      "path": "run_039_spatial7_state27_periodic_pre_inference_disconnect/host_b/raw/client/rpc_telemetry.jsonl",
+      "sha256": "68fb6547e20afd5a5fe5873d2fa745cc4ea570995ac95fde47eb44111471c9dd"
+    },
+    {
+      "path": "run_039_spatial7_state27_periodic_pre_inference_disconnect/host_b/raw/client/engine_telemetry.jsonl",
+      "sha256": "a96d439f69b46ce27f9d277dad2abeb0e53bba531e4fbf12e4627f93ea0360e3"
+    },
+    {
+      "path": "run_039_spatial7_state27_periodic_pre_inference_disconnect/host_b/raw/client/episode_receipt.json",
+      "sha256": "52daef97543ce666c609c6f945e1dbc80170621a334f43845a988b5c7e549c0f"
+    },
+    {
+      "path": "run_043_goal2_state25_periodic_pre_inference_disconnect/host_b/raw/client/rpc_telemetry.jsonl",
+      "sha256": "0890d0613befbe9a4ef5b31b36ff2e2912c904517e7a6c4abe8fd886e594c9eb"
+    },
+    {
+      "path": "run_043_goal2_state25_periodic_pre_inference_disconnect/host_b/raw/client/engine_telemetry.jsonl",
+      "sha256": "d1d6ad75c717c4c9bed76818c20d5b244a8dd1d0a463bf2af7a6054a3c180b3b"
+    },
+    {
+      "path": "run_043_goal2_state25_periodic_pre_inference_disconnect/host_b/raw/client/episode_receipt.json",
+      "sha256": "cf1cd7d8a3f4f8e9adc14d559d6f9db734af214802f174af2e72ecb563366eeb"
+    },
+    {
+      "path": "run_047_goal2_state26_periodic_pre_inference_disconnect/host_b/raw/client/rpc_telemetry.jsonl",
+      "sha256": "da247a6d04a51ed640adce92dc5c5de0e8f3224508dc2af73a50ffbd7fedb3a6"
+    },
+    {
+      "path": "run_047_goal2_state26_periodic_pre_inference_disconnect/host_b/raw/client/engine_telemetry.jsonl",
+      "sha256": "ee66b975db9b62776f001d76ac417673e38a460cfee7b26535e5487724414261"
+    },
+    {
+      "path": "run_047_goal2_state26_periodic_pre_inference_disconnect/host_b/raw/client/episode_receipt.json",
+      "sha256": "2ebedc11d046b8419bac2b8aa5209509faf3a5382875add5258bceac6c1316a5"
+    },
+    {
+      "path": "run_051_goal2_state27_periodic_pre_inference_disconnect/host_b/raw/client/rpc_telemetry.jsonl",
+      "sha256": "0f60824d8c169d17ca7c64937a2c40e3cf283e89b9b4d79b1e15c97ee5fae152"
+    },
+    {
+      "path": "run_051_goal2_state27_periodic_pre_inference_disconnect/host_b/raw/client/engine_telemetry.jsonl",
+      "sha256": "41b0b83624efa5c9a2b08965b5a9ffd6c1c334b7c12fbe3599772e123d6e730f"
+    },
+    {
+      "path": "run_051_goal2_state27_periodic_pre_inference_disconnect/host_b/raw/client/episode_receipt.json",
+      "sha256": "ace7f2602f280139f970eca2cff2395ca16979066bfbae06865de83da814d7ff"
+    }
+  ],
+  "run_manifest_file_entries_verified": 2641
+}

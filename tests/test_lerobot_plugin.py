@@ -4,6 +4,7 @@ from types import SimpleNamespace
 from unittest.mock import MagicMock
 
 from actionstream.lerobot_inference import ActionStreamInferenceEngine
+from actionstream.rpc_transport import TcpInferenceTransport
 
 import lerobot.rollout.inference as lerobot_inference
 
@@ -40,3 +41,20 @@ def test_plugin_config_is_registered_and_factory_builds_formal_backend() -> None
     assert isinstance(engine, ActionStreamInferenceEngine)
     assert engine._config.inference_timeout_s == 1.25
     assert engine._config.bounded_hold_steps == 3
+
+
+def test_plugin_builds_tcp_transport_without_changing_core_transport_enum() -> None:
+    config = ActionStreamRolloutInferenceConfig(
+        transport_mode="tcp",
+        tcp_host="127.0.0.1",
+        tcp_port=50051,
+        minimum_request_interval_steps=4,
+    )
+
+    runtime = config.runtime_config()
+    transport = config.build_transport()
+
+    assert runtime.transport_mode == "direct"
+    assert runtime.minimum_request_interval_steps == 4
+    assert isinstance(transport, TcpInferenceTransport)
+    transport.close()

@@ -1,0 +1,875 @@
+{
+  "schema_version": 1,
+  "status": "PRE_REGISTERED_NOT_EXECUTED",
+  "purpose": "real_two_host_tcp_transport_replication_and_robustness_under_xvla_libero",
+  "model_id": "lerobot/xvla-libero",
+  "model_revision": "12e8783e996944f5c97e490d37d4c145484ed70a",
+  "lerobot_commit": "73e1584473028a2d53ecfc856f5290db84507f90",
+  "controller_frequency_hz": 20,
+  "max_control_steps": 300,
+  "transport": {
+    "mode": "tcp",
+    "separate_client_and_gpu_hosts_required": true,
+    "client_deadline_s": 5.0,
+    "delivery_scheduler_enabled": false,
+    "minimum_request_interval_steps": 1
+  },
+  "task_families": [
+    {
+      "family": "Object",
+      "suite": "libero_object",
+      "task_id": 5,
+      "candidate_episodes": [
+        {
+          "initial_state_index": 25,
+          "seed": 2026091725
+        },
+        {
+          "initial_state_index": 26,
+          "seed": 2026091726
+        },
+        {
+          "initial_state_index": 27,
+          "seed": 2026091727
+        },
+        {
+          "initial_state_index": 28,
+          "seed": 2026091728
+        },
+        {
+          "initial_state_index": 29,
+          "seed": 2026091729
+        }
+      ]
+    },
+    {
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "candidate_episodes": [
+        {
+          "initial_state_index": 25,
+          "seed": 2026091725
+        },
+        {
+          "initial_state_index": 26,
+          "seed": 2026091726
+        },
+        {
+          "initial_state_index": 27,
+          "seed": 2026091727
+        },
+        {
+          "initial_state_index": 28,
+          "seed": 2026091728
+        },
+        {
+          "initial_state_index": 29,
+          "seed": 2026091729
+        }
+      ]
+    },
+    {
+      "family": "Goal",
+      "suite": "libero_goal",
+      "task_id": 2,
+      "candidate_episodes": [
+        {
+          "initial_state_index": 25,
+          "seed": 2026091725
+        },
+        {
+          "initial_state_index": 26,
+          "seed": 2026091726
+        },
+        {
+          "initial_state_index": 27,
+          "seed": 2026091727
+        },
+        {
+          "initial_state_index": 28,
+          "seed": 2026091728
+        },
+        {
+          "initial_state_index": 29,
+          "seed": 2026091729
+        }
+      ]
+    }
+  ],
+  "identity_rule": {
+    "historically_executed_identities_permitted": true,
+    "freshness_required": false,
+    "unknown_is_not_reclassified_as_clean": true,
+    "identities_fixed_before_any_remote_rpc_outcome": true,
+    "historical_task_success_used_for_selection": false,
+    "outcome_conditioned_identity_selection_allowed": false,
+    "training_finetuning_or_parameter_updates_allowed": false,
+    "same_task_reset_and_policy_seed_across_transport_conditions": true,
+    "fresh_gpu_server_process_per_episode_condition": true,
+    "server_ACTIONSTREAM_RPC_SEED_equals_episode_seed": true,
+    "justification": "This separate transport replication discloses prior task-state execution. It does not claim fresh/unseen evaluation, external task generalization or independence from prior development exposure. Identities were fixed before remote-RPC outcomes; no training, finetuning, parameter update or outcome-conditioned selection occurs. Primary claims concern transport/lifecycle/fault behavior; task success is descriptive."
+  },
+  "stages": [
+    {
+      "name": "remote_no_fault",
+      "episode_positions": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "conditions": [
+        {
+          "name": "tcp_no_injected_fault",
+          "response_delay_ms": 0,
+          "response_jitter_ms": 0
+        }
+      ]
+    },
+    {
+      "name": "remote_fault_matrix",
+      "episode_positions": [
+        0,
+        1,
+        2
+      ],
+      "conditions": [
+        {
+          "name": "application_delivery_jitter_50ms",
+          "response_delay_ms": 50,
+          "response_jitter_ms": 20,
+          "fault_seed": 2026091701
+        },
+        {
+          "name": "application_delivery_jitter_250ms",
+          "response_delay_ms": 250,
+          "response_jitter_ms": 100,
+          "fault_seed": 2026091702
+        },
+        {
+          "name": "application_delivery_jitter_950ms",
+          "response_delay_ms": 950,
+          "response_jitter_ms": 250,
+          "fault_seed": 2026091703
+        },
+        {
+          "name": "periodic_pre_inference_disconnect",
+          "disconnect_before_infer_every_n": 7,
+          "fault_seed": 2026091704
+        }
+      ]
+    }
+  ],
+  "required_metrics": [
+    "task_success",
+    "completion_steps_failures_equal_cap",
+    "request_rate_hz",
+    "queue_depletion_fraction",
+    "queue_age_p50_steps",
+    "queue_age_p95_steps",
+    "rpc_roundtrip_p50_ms",
+    "rpc_roundtrip_p95_ms",
+    "rpc_roundtrip_p99_ms",
+    "server_inference_p50_ms",
+    "server_inference_p95_ms",
+    "stale_response_rejections",
+    "out_of_order_response_rejections",
+    "transport_deadlines",
+    "transport_errors",
+    "transport_reconnects",
+    "recovery_latency_ms",
+    "gpu_utilization_p50",
+    "gpu_utilization_p95",
+    "process_vram_max_mib"
+  ],
+  "hard_gates": {
+    "declared_episode_coverage_exact": true,
+    "stale_action_crosses_reset": 0,
+    "accepted_out_of_order_responses": 0,
+    "no_fault_transport_deadlines": 0,
+    "no_fault_transport_errors": 0,
+    "fault_condition_must_exercise_declared_fault": true,
+    "post_fault_later_request_must_recover": true,
+    "raw_receipt_and_telemetry_hashes_required": true
+  },
+  "claim_boundary": {
+    "task_success_is_descriptive_not_a_predeclared_superiority_gate": true,
+    "loopback_ci_is_not_remote_gpu_evidence": true,
+    "application_delivery_jitter_is_not_kernel_netem": true,
+    "tcp_deadline_is_not_remote_cuda_preemption": true,
+    "simulation_is_not_real_robot_safety_evidence": true,
+    "supported_question": "Does real two-host TCP transport preserve lifecycle, queue, deadline/reconnect and fault-recovery behavior under actual X-VLA/LIBERO execution?",
+    "unsupported_claims": [
+      "unseen_state_external_validity",
+      "unseen_task_generalization",
+      "physical_robot_safety",
+      "packet_level_linux_netem_behavior",
+      "remote_cuda_kernel_preemption",
+      "actionstream_task_success_superiority",
+      "independence_from_all_prior_development_exposure"
+    ],
+    "primary_analysis": "Within-experiment paired transport-condition comparisons using identical suite/task/reset/policy-seed identities.",
+    "historical_h1_h2_task_success_is_not_a_clean_causal_baseline": true,
+    "external_task_generalization_established": false
+  },
+  "protocol_id": "rpc_remote_transport_replication_v1",
+  "scientific_question": "Does real two-host TCP transport preserve lifecycle, queue, deadline/reconnect and fault-recovery behavior under actual X-VLA/LIBERO execution?",
+  "client_runtime_parameters": {
+    "inference_timeout_s": 5.0,
+    "connect_timeout_s": 3.0,
+    "control_timeout_s": 3.0,
+    "action_wait_timeout_s": 10.0,
+    "action_poll_s": 0.002,
+    "bounded_hold_steps": 2,
+    "retry_backoff_s": 0.05,
+    "max_consecutive_failures": 10,
+    "join_timeout_s": 3.0,
+    "latest_only_fallback": true
+  },
+  "seed_mapping": {
+    "25": 2026091725,
+    "26": 2026091726,
+    "27": 2026091727,
+    "28": 2026091728,
+    "29": 2026091729
+  },
+  "seed_rule": "seed = 2026091700 + initial_state_index; intentionally reused across families and paired conditions. Identity includes suite and task_id.",
+  "run_order": "stage order, then task_families order, then episode_positions order, then conditions order; run_matrix is the frozen expansion.",
+  "run_matrix": [
+    {
+      "run_id": 1,
+      "stage": "remote_no_fault",
+      "family": "Object",
+      "suite": "libero_object",
+      "task_id": 5,
+      "initial_state_index": 25,
+      "seed": 2026091725,
+      "condition": "tcp_no_injected_fault"
+    },
+    {
+      "run_id": 2,
+      "stage": "remote_no_fault",
+      "family": "Object",
+      "suite": "libero_object",
+      "task_id": 5,
+      "initial_state_index": 26,
+      "seed": 2026091726,
+      "condition": "tcp_no_injected_fault"
+    },
+    {
+      "run_id": 3,
+      "stage": "remote_no_fault",
+      "family": "Object",
+      "suite": "libero_object",
+      "task_id": 5,
+      "initial_state_index": 27,
+      "seed": 2026091727,
+      "condition": "tcp_no_injected_fault"
+    },
+    {
+      "run_id": 4,
+      "stage": "remote_no_fault",
+      "family": "Object",
+      "suite": "libero_object",
+      "task_id": 5,
+      "initial_state_index": 28,
+      "seed": 2026091728,
+      "condition": "tcp_no_injected_fault"
+    },
+    {
+      "run_id": 5,
+      "stage": "remote_no_fault",
+      "family": "Object",
+      "suite": "libero_object",
+      "task_id": 5,
+      "initial_state_index": 29,
+      "seed": 2026091729,
+      "condition": "tcp_no_injected_fault"
+    },
+    {
+      "run_id": 6,
+      "stage": "remote_no_fault",
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "initial_state_index": 25,
+      "seed": 2026091725,
+      "condition": "tcp_no_injected_fault"
+    },
+    {
+      "run_id": 7,
+      "stage": "remote_no_fault",
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "initial_state_index": 26,
+      "seed": 2026091726,
+      "condition": "tcp_no_injected_fault"
+    },
+    {
+      "run_id": 8,
+      "stage": "remote_no_fault",
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "initial_state_index": 27,
+      "seed": 2026091727,
+      "condition": "tcp_no_injected_fault"
+    },
+    {
+      "run_id": 9,
+      "stage": "remote_no_fault",
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "initial_state_index": 28,
+      "seed": 2026091728,
+      "condition": "tcp_no_injected_fault"
+    },
+    {
+      "run_id": 10,
+      "stage": "remote_no_fault",
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "initial_state_index": 29,
+      "seed": 2026091729,
+      "condition": "tcp_no_injected_fault"
+    },
+    {
+      "run_id": 11,
+      "stage": "remote_no_fault",
+      "family": "Goal",
+      "suite": "libero_goal",
+      "task_id": 2,
+      "initial_state_index": 25,
+      "seed": 2026091725,
+      "condition": "tcp_no_injected_fault"
+    },
+    {
+      "run_id": 12,
+      "stage": "remote_no_fault",
+      "family": "Goal",
+      "suite": "libero_goal",
+      "task_id": 2,
+      "initial_state_index": 26,
+      "seed": 2026091726,
+      "condition": "tcp_no_injected_fault"
+    },
+    {
+      "run_id": 13,
+      "stage": "remote_no_fault",
+      "family": "Goal",
+      "suite": "libero_goal",
+      "task_id": 2,
+      "initial_state_index": 27,
+      "seed": 2026091727,
+      "condition": "tcp_no_injected_fault"
+    },
+    {
+      "run_id": 14,
+      "stage": "remote_no_fault",
+      "family": "Goal",
+      "suite": "libero_goal",
+      "task_id": 2,
+      "initial_state_index": 28,
+      "seed": 2026091728,
+      "condition": "tcp_no_injected_fault"
+    },
+    {
+      "run_id": 15,
+      "stage": "remote_no_fault",
+      "family": "Goal",
+      "suite": "libero_goal",
+      "task_id": 2,
+      "initial_state_index": 29,
+      "seed": 2026091729,
+      "condition": "tcp_no_injected_fault"
+    },
+    {
+      "run_id": 16,
+      "stage": "remote_fault_matrix",
+      "family": "Object",
+      "suite": "libero_object",
+      "task_id": 5,
+      "initial_state_index": 25,
+      "seed": 2026091725,
+      "condition": "application_delivery_jitter_50ms"
+    },
+    {
+      "run_id": 17,
+      "stage": "remote_fault_matrix",
+      "family": "Object",
+      "suite": "libero_object",
+      "task_id": 5,
+      "initial_state_index": 25,
+      "seed": 2026091725,
+      "condition": "application_delivery_jitter_250ms"
+    },
+    {
+      "run_id": 18,
+      "stage": "remote_fault_matrix",
+      "family": "Object",
+      "suite": "libero_object",
+      "task_id": 5,
+      "initial_state_index": 25,
+      "seed": 2026091725,
+      "condition": "application_delivery_jitter_950ms"
+    },
+    {
+      "run_id": 19,
+      "stage": "remote_fault_matrix",
+      "family": "Object",
+      "suite": "libero_object",
+      "task_id": 5,
+      "initial_state_index": 25,
+      "seed": 2026091725,
+      "condition": "periodic_pre_inference_disconnect"
+    },
+    {
+      "run_id": 20,
+      "stage": "remote_fault_matrix",
+      "family": "Object",
+      "suite": "libero_object",
+      "task_id": 5,
+      "initial_state_index": 26,
+      "seed": 2026091726,
+      "condition": "application_delivery_jitter_50ms"
+    },
+    {
+      "run_id": 21,
+      "stage": "remote_fault_matrix",
+      "family": "Object",
+      "suite": "libero_object",
+      "task_id": 5,
+      "initial_state_index": 26,
+      "seed": 2026091726,
+      "condition": "application_delivery_jitter_250ms"
+    },
+    {
+      "run_id": 22,
+      "stage": "remote_fault_matrix",
+      "family": "Object",
+      "suite": "libero_object",
+      "task_id": 5,
+      "initial_state_index": 26,
+      "seed": 2026091726,
+      "condition": "application_delivery_jitter_950ms"
+    },
+    {
+      "run_id": 23,
+      "stage": "remote_fault_matrix",
+      "family": "Object",
+      "suite": "libero_object",
+      "task_id": 5,
+      "initial_state_index": 26,
+      "seed": 2026091726,
+      "condition": "periodic_pre_inference_disconnect"
+    },
+    {
+      "run_id": 24,
+      "stage": "remote_fault_matrix",
+      "family": "Object",
+      "suite": "libero_object",
+      "task_id": 5,
+      "initial_state_index": 27,
+      "seed": 2026091727,
+      "condition": "application_delivery_jitter_50ms"
+    },
+    {
+      "run_id": 25,
+      "stage": "remote_fault_matrix",
+      "family": "Object",
+      "suite": "libero_object",
+      "task_id": 5,
+      "initial_state_index": 27,
+      "seed": 2026091727,
+      "condition": "application_delivery_jitter_250ms"
+    },
+    {
+      "run_id": 26,
+      "stage": "remote_fault_matrix",
+      "family": "Object",
+      "suite": "libero_object",
+      "task_id": 5,
+      "initial_state_index": 27,
+      "seed": 2026091727,
+      "condition": "application_delivery_jitter_950ms"
+    },
+    {
+      "run_id": 27,
+      "stage": "remote_fault_matrix",
+      "family": "Object",
+      "suite": "libero_object",
+      "task_id": 5,
+      "initial_state_index": 27,
+      "seed": 2026091727,
+      "condition": "periodic_pre_inference_disconnect"
+    },
+    {
+      "run_id": 28,
+      "stage": "remote_fault_matrix",
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "initial_state_index": 25,
+      "seed": 2026091725,
+      "condition": "application_delivery_jitter_50ms"
+    },
+    {
+      "run_id": 29,
+      "stage": "remote_fault_matrix",
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "initial_state_index": 25,
+      "seed": 2026091725,
+      "condition": "application_delivery_jitter_250ms"
+    },
+    {
+      "run_id": 30,
+      "stage": "remote_fault_matrix",
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "initial_state_index": 25,
+      "seed": 2026091725,
+      "condition": "application_delivery_jitter_950ms"
+    },
+    {
+      "run_id": 31,
+      "stage": "remote_fault_matrix",
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "initial_state_index": 25,
+      "seed": 2026091725,
+      "condition": "periodic_pre_inference_disconnect"
+    },
+    {
+      "run_id": 32,
+      "stage": "remote_fault_matrix",
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "initial_state_index": 26,
+      "seed": 2026091726,
+      "condition": "application_delivery_jitter_50ms"
+    },
+    {
+      "run_id": 33,
+      "stage": "remote_fault_matrix",
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "initial_state_index": 26,
+      "seed": 2026091726,
+      "condition": "application_delivery_jitter_250ms"
+    },
+    {
+      "run_id": 34,
+      "stage": "remote_fault_matrix",
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "initial_state_index": 26,
+      "seed": 2026091726,
+      "condition": "application_delivery_jitter_950ms"
+    },
+    {
+      "run_id": 35,
+      "stage": "remote_fault_matrix",
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "initial_state_index": 26,
+      "seed": 2026091726,
+      "condition": "periodic_pre_inference_disconnect"
+    },
+    {
+      "run_id": 36,
+      "stage": "remote_fault_matrix",
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "initial_state_index": 27,
+      "seed": 2026091727,
+      "condition": "application_delivery_jitter_50ms"
+    },
+    {
+      "run_id": 37,
+      "stage": "remote_fault_matrix",
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "initial_state_index": 27,
+      "seed": 2026091727,
+      "condition": "application_delivery_jitter_250ms"
+    },
+    {
+      "run_id": 38,
+      "stage": "remote_fault_matrix",
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "initial_state_index": 27,
+      "seed": 2026091727,
+      "condition": "application_delivery_jitter_950ms"
+    },
+    {
+      "run_id": 39,
+      "stage": "remote_fault_matrix",
+      "family": "Spatial",
+      "suite": "libero_spatial",
+      "task_id": 7,
+      "initial_state_index": 27,
+      "seed": 2026091727,
+      "condition": "periodic_pre_inference_disconnect"
+    },
+    {
+      "run_id": 40,
+      "stage": "remote_fault_matrix",
+      "family": "Goal",
+      "suite": "libero_goal",
+      "task_id": 2,
+      "initial_state_index": 25,
+      "seed": 2026091725,
+      "condition": "application_delivery_jitter_50ms"
+    },
+    {
+      "run_id": 41,
+      "stage": "remote_fault_matrix",
+      "family": "Goal",
+      "suite": "libero_goal",
+      "task_id": 2,
+      "initial_state_index": 25,
+      "seed": 2026091725,
+      "condition": "application_delivery_jitter_250ms"
+    },
+    {
+      "run_id": 42,
+      "stage": "remote_fault_matrix",
+      "family": "Goal",
+      "suite": "libero_goal",
+      "task_id": 2,
+      "initial_state_index": 25,
+      "seed": 2026091725,
+      "condition": "application_delivery_jitter_950ms"
+    },
+    {
+      "run_id": 43,
+      "stage": "remote_fault_matrix",
+      "family": "Goal",
+      "suite": "libero_goal",
+      "task_id": 2,
+      "initial_state_index": 25,
+      "seed": 2026091725,
+      "condition": "periodic_pre_inference_disconnect"
+    },
+    {
+      "run_id": 44,
+      "stage": "remote_fault_matrix",
+      "family": "Goal",
+      "suite": "libero_goal",
+      "task_id": 2,
+      "initial_state_index": 26,
+      "seed": 2026091726,
+      "condition": "application_delivery_jitter_50ms"
+    },
+    {
+      "run_id": 45,
+      "stage": "remote_fault_matrix",
+      "family": "Goal",
+      "suite": "libero_goal",
+      "task_id": 2,
+      "initial_state_index": 26,
+      "seed": 2026091726,
+      "condition": "application_delivery_jitter_250ms"
+    },
+    {
+      "run_id": 46,
+      "stage": "remote_fault_matrix",
+      "family": "Goal",
+      "suite": "libero_goal",
+      "task_id": 2,
+      "initial_state_index": 26,
+      "seed": 2026091726,
+      "condition": "application_delivery_jitter_950ms"
+    },
+    {
+      "run_id": 47,
+      "stage": "remote_fault_matrix",
+      "family": "Goal",
+      "suite": "libero_goal",
+      "task_id": 2,
+      "initial_state_index": 26,
+      "seed": 2026091726,
+      "condition": "periodic_pre_inference_disconnect"
+    },
+    {
+      "run_id": 48,
+      "stage": "remote_fault_matrix",
+      "family": "Goal",
+      "suite": "libero_goal",
+      "task_id": 2,
+      "initial_state_index": 27,
+      "seed": 2026091727,
+      "condition": "application_delivery_jitter_50ms"
+    },
+    {
+      "run_id": 49,
+      "stage": "remote_fault_matrix",
+      "family": "Goal",
+      "suite": "libero_goal",
+      "task_id": 2,
+      "initial_state_index": 27,
+      "seed": 2026091727,
+      "condition": "application_delivery_jitter_250ms"
+    },
+    {
+      "run_id": 50,
+      "stage": "remote_fault_matrix",
+      "family": "Goal",
+      "suite": "libero_goal",
+      "task_id": 2,
+      "initial_state_index": 27,
+      "seed": 2026091727,
+      "condition": "application_delivery_jitter_950ms"
+    },
+    {
+      "run_id": 51,
+      "stage": "remote_fault_matrix",
+      "family": "Goal",
+      "suite": "libero_goal",
+      "task_id": 2,
+      "initial_state_index": 27,
+      "seed": 2026091727,
+      "condition": "periodic_pre_inference_disconnect"
+    }
+  ],
+  "coverage": {
+    "no_fault": 15,
+    "fault_matrix": 36,
+    "total_episode_condition_runs": 51
+  },
+  "formal_canary": {
+    "run_id": 1,
+    "counts_toward_51": true,
+    "rerun_merely_because_called_smoke": false,
+    "remaining_runs_require_structurally_valid_run_1": true
+  },
+  "attempt_policy": {
+    "valid_negative_outcomes_preserved": true,
+    "valid_task_failure_counts": true,
+    "valid_outcome_rerun_allowed": false,
+    "invalid_infrastructure_attempts": "Only demonstrated environment, installation, schema or network setup failures may be repaired and retried with the same frozen parameters. Preserve each attempt under a unique directory with logs, hashes, diagnosis and validity decision; never overwrite it.",
+    "experimental_transport_failures_are_not_setup_failures": "Declared fault effects and hard-gate failures after a structurally valid setup remain experimental outcomes. Do not relabel them using task success or interim performance.",
+    "frozen_parameters_may_change_after_outcomes": false,
+    "classification_uses_task_success": false
+  },
+  "execution_requirements": {
+    "protocol_commit_must_exist_before_gpu_execution": true,
+    "same_exact_protocol_commit_on_both_hosts": true,
+    "hosts": {
+      "A": "X-VLA/CUDA RPC inference server",
+      "B": "LIBERO simulator and ActionStream RPC client"
+    },
+    "distinct_physical_hosts_required": true,
+    "tcp_probe_direction": "B -> A",
+    "tcp_port": 50051,
+    "before_install_or_download": "source /etc/network_turbo",
+    "pre_execution_host_receipts": [
+      "hostname",
+      "machine_id_if_accessible",
+      "boot_id",
+      "gpu_uuid",
+      "nvidia_smi_output",
+      "driver_version",
+      "cuda_runtime_information",
+      "os_kernel",
+      "python_version",
+      "uv_version",
+      "git_head",
+      "git_diff",
+      "git_status"
+    ],
+    "fresh_server_process_each_episode_condition": true,
+    "host_reboot_between_runs_required": false,
+    "gpu_telemetry_on_host_A_throughout_each_episode": true,
+    "after_each_episode": [
+      "stop_owned_server_process",
+      "hash_all_raw_outputs",
+      "validate_receipt_and_telemetry",
+      "check_stale_out_of_order_deadline_error_counters",
+      "verify_task_action_observation_contract",
+      "verify_gpu_telemetry"
+    ],
+    "missing_metrics": "unavailable with reason; never fabricated or zero-filled",
+    "report_requirements": [
+      "exact_coverage_table",
+      "all_required_metrics_by_family_and_condition",
+      "completion_steps_failures_equal_300",
+      "paired_transport_condition_comparisons",
+      "hard_transport_gates_separate_from_task_success",
+      "no_single_collapsed_score",
+      "raw_sha256_manifest",
+      "both_host_identities",
+      "exact_code_and_config_commit_hashes",
+      "all_attempts_and_invalid_setup_diagnoses"
+    ]
+  },
+  "provenance": {
+    "source_head": "f6fb04ea940fc809564b06552599c1872f6b4e03",
+    "aborted_protocol": {
+      "path": "configs/rpc_external_validity_v1.json",
+      "sha256": "7d663780396e28c0bc4b867a363e087a40a09cd8bc84e1fab9d24122bc614887",
+      "disposition": "ABORTED_BEFORE_EXECUTION_NO_RUN",
+      "file_preserved_unchanged": true,
+      "reason": "Historical identity collisions, including warmup initialization, and incomplete historical evidence coverage prevented CLEAN classification."
+    },
+    "prior_audits": [
+      {
+        "path": "artifacts/actionstream_rpc_task_selection_audit_20260919/audit.json",
+        "sha256": "a6ffb6dc3b79602431333a09f7b0c6e291ef0d740e95871e46dd22fe7af9b2e2"
+      },
+      {
+        "path": "artifacts/actionstream_rpc_task_selection_audit_20260919/audit.md",
+        "sha256": "48bfbef3a9c8578f692e543e606a133263913c8a0f094d7c3fc9f34ef889210d"
+      },
+      {
+        "path": "artifacts/actionstream_rpc_task_selection_audit_20260919/evidence_manifest.sha256",
+        "sha256": "9e17bfd4dbe81d53caa1e14c8ccd24d7e9f8a2b36006d09b77034dad14f6962b"
+      },
+      {
+        "path": "artifacts/actionstream_rpc_reset_audit_20260918/audit.json",
+        "sha256": "86d4699a3b012aa43794e6a25fafe04f8d390efd30ad37bcf77a04ec859e4177",
+        "decision": "NO_RUN_COLLISION"
+      },
+      {
+        "path": "artifacts/actionstream_rpc_remaining_reset_audit_20260918/audit.json",
+        "sha256": "07a6af8b07afdce26b5b3d251f13685cbd1bf292c799e4918c50843dd625ba8a",
+        "decision": "NO_RUN_INSUFFICIENT_FRESH_IDENTITIES"
+      },
+      {
+        "path": "artifacts/actionstream_rpc_prerun_audit_20260918_171506/audit.json",
+        "sha256": "1f84b997d6a71537ea8cd713f4c043dbbdc6ff3381c10609a475c9e821611f58",
+        "decision": "NO_RUN"
+      }
+    ],
+    "historical_audit_conclusions_unchanged": true,
+    "prior_identity_history": [
+      "10-14: consumed H1-R2 identities",
+      "15-19: consumed H2 identities",
+      "20: H2 CUDA canary",
+      "25-29: rejected for external-validity v1; Object 5 historical execution confirmed",
+      "30-34: rejected with 13 confirmed collisions and two unresolved identities",
+      "35-49: insufficient fresh identities; Object 5 all consumed",
+      "all-task audit: NO_RUN_NO_FRESH_TASK_IDENTITIES; no-match identities remain UNKNOWN"
+    ],
+    "no_remote_rpc_outcome_observed_before_protocol_change": true,
+    "scientific_question_changed_not_freshness_gate_weakened": true,
+    "new_protocol_is_not_external_validity_v2": true
+  }
+}

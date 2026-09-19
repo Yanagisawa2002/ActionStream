@@ -1,0 +1,86 @@
+{
+  "cases": [
+    {
+      "deadline_ms": 500,
+      "expected_counts": {
+        "deadline": 0,
+        "server_error": 0,
+        "success": 8,
+        "transport_error": 0
+      },
+      "name": "healthy",
+      "requests": 8,
+      "synthetic_inference_ms": 2
+    },
+    {
+      "deadline_ms": 500,
+      "expected_counts": {
+        "deadline": 0,
+        "server_error": 0,
+        "success": 8,
+        "transport_error": 0
+      },
+      "fault_seed": 20260917,
+      "name": "delivery_jitter",
+      "requests": 8,
+      "response_delay_ms": 20,
+      "response_jitter_ms": 10,
+      "synthetic_inference_ms": 2
+    },
+    {
+      "deadline_ms": 80,
+      "expected_counts": {
+        "deadline": 2,
+        "server_error": 0,
+        "success": 4,
+        "transport_error": 0
+      },
+      "name": "deadline_recovery",
+      "requests": 6,
+      "stall_every_n": 3,
+      "stall_ms": 250,
+      "synthetic_inference_ms": 2
+    },
+    {
+      "deadline_ms": 300,
+      "disconnect_before_infer_every_n": 3,
+      "expected_counts": {
+        "deadline": 0,
+        "server_error": 0,
+        "success": 4,
+        "transport_error": 2
+      },
+      "name": "disconnect_recovery",
+      "requests": 6,
+      "synthetic_inference_ms": 2
+    },
+    {
+      "deadline_ms": 300,
+      "drop_response_every_n": 3,
+      "expected_counts": {
+        "deadline": 0,
+        "server_error": 0,
+        "success": 4,
+        "transport_error": 2
+      },
+      "name": "dropped_response_recovery",
+      "requests": 6,
+      "synthetic_inference_ms": 2
+    },
+    {
+      "deadline_ms": 300,
+      "expected_counts": {
+        "deadline": 0,
+        "server_error": 2,
+        "success": 4,
+        "transport_error": 0
+      },
+      "name": "server_error_taxonomy",
+      "requests": 6,
+      "server_error_every_n": 3,
+      "synthetic_inference_ms": 2
+    }
+  ],
+  "purpose": "deterministic_loopback_tcp_failure_semantics_only_not_gpu_or_robot_evidence",
+  "schema_version": 1
+}

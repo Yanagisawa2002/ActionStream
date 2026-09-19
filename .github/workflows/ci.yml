@@ -37,11 +37,20 @@ jobs:
             src/actionstream/telemetry.py \
             src/actionstream/transport_stress_fixture.py \
             src/actionstream/native_baseline.py \
+            src/actionstream/rpc_transport.py \
+            src/actionstream/rpc_server.py \
+            src/actionstream/rpc_matrix.py \
+            src/actionstream/xvla_rpc_worker.py \
+            src/actionstream/libero_rpc_client.py \
             src/actionstream/llm_vla \
             tests/test_lerobot_inference.py \
             tests/test_lerobot_lifecycle.py \
             tests/test_lerobot_lifecycle_boundaries.py \
             tests/test_lerobot_plugin.py \
+            tests/test_rpc_transport.py \
+            tests/test_rpc_executor.py \
+            tests/test_rpc_replication_v2_protocol.py \
+            tests/test_upstream_registry_contract.py \
             tests/test_clean_install.py \
             tests/test_native_baseline.py \
             tests/test_llm_vla.py \
@@ -57,7 +66,7 @@ jobs:
             scripts/release/generate_v1_1_demo.py \
             scripts/engineering \
             integrations/lerobot
-      - name: Runtime, plugin, and real CLI subprocess tests
+      - name: Runtime, plugin, RPC, and real CLI subprocess tests
         run: |
           uv run pytest \
             tests/test_lifecycle_generation.py \
@@ -65,6 +74,11 @@ jobs:
             tests/test_lerobot_lifecycle.py \
             tests/test_lerobot_lifecycle_boundaries.py \
             tests/test_lerobot_plugin.py \
+            tests/test_rpc_transport.py \
+            tests/test_rpc_executor.py \
+            tests/test_rpc_replication_protocol.py \
+            tests/test_rpc_replication_v2_protocol.py \
+            tests/test_upstream_registry_contract.py \
             tests/test_clean_install.py \
             tests/test_native_baseline.py \
             tests/test_llm_vla.py \
@@ -76,6 +90,11 @@ jobs:
             tests/test_stable_completion.py \
             tests/test_completion_confirmation.py \
             tests/test_completion_acceptance.py
+      - name: Deterministic real-socket fault matrix
+        run: |
+          uv run actionstream-rpc-matrix \
+            --config configs/rpc_fault_matrix_v1.json \
+            --output /tmp/actionstream-rpc-matrix
       - name: Strict release audit
         run: uv run python scripts/release/audit_public_release.py
       - name: Replay completion development evidence
@@ -98,7 +117,7 @@ jobs:
           enable-cache: true
       - name: Install locked root and plugin packages
         run: uv sync --locked --all-packages
-      - name: Materialize pinned upstream checkout and patch
+      - name: Materialize pinned upstream checkout and historical patch
         run: |
           git clone --filter=blob:none --no-checkout https://github.com/huggingface/lerobot.git .external/lerobot
           git -C .external/lerobot checkout 6adf51511b7625090eade8d82d9f61a1846ebe56
@@ -109,5 +128,33 @@ jobs:
           PYTHONPATH: ${{ github.workspace }}/.external/lerobot/src:${{ github.workspace }}/src:${{ github.workspace }}/integrations/lerobot/src
         run: |
           uv run --no-sync python -c "from lerobot.utils.import_utils import register_third_party_plugins; register_third_party_plugins(); from lerobot.rollout.inference import InferenceEngineConfig; assert 'actionstream' in InferenceEngineConfig.get_known_choices()"
-          uv run --no-sync pytest tests/test_lerobot_inference.py tests/test_lerobot_plugin.py tests/test_lerobot_lifecycle.py tests/test_lerobot_lifecycle_boundaries.py
+          uv run --no-sync pytest tests/test_upstream_registry_contract.py tests/test_lerobot_inference.py tests/test_lerobot_plugin.py tests/test_lerobot_lifecycle.py tests/test_lerobot_lifecycle_boundaries.py tests/test_rpc_transport.py
           uv run --no-sync pytest .external/lerobot/tests/test_rollout.py .external/lerobot/tests/test_interactive_rollout.py
+
+  upstream-current-extension-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: "0.11.32"
+          enable-cache: true
+      - name: Install dependency environment
+        run: uv sync --locked --all-packages
+      - name: Materialize LeRobot current-main snapshot and refreshed patch
+        run: |
+          git clone --filter=blob:none --no-checkout https://github.com/huggingface/lerobot.git .external/lerobot-current
+          git -C .external/lerobot-current checkout 30074f7f1358b3c015ae1750017200e86e9c4eb6
+          git -C .external/lerobot-current apply --check "$GITHUB_WORKSPACE/upstream/lerobot/0002-current-main-third-party-inference-builders.patch"
+          git -C .external/lerobot-current apply "$GITHUB_WORKSPACE/upstream/lerobot/0002-current-main-third-party-inference-builders.patch"
+      - name: Validate public builder dispatch on current main
+        env:
+          PYTHONPATH: ${{ github.workspace }}/.external/lerobot-current/src:${{ github.workspace }}/src:${{ github.workspace }}/integrations/lerobot/src
+        run: |
+          uv run --no-sync python -c "from lerobot.rollout.inference import register_inference_engine; assert callable(register_inference_engine)"
+          uv run --no-sync pytest tests/test_upstream_registry_contract.py
