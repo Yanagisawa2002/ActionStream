@@ -1,0 +1,159 @@
+{
+  "schema_version": 1,
+  "protocol_id": "rpc_remote_transport_replication_v2",
+  "implementation_protocol_commit": "e33eb98c94013da14109ab2ac710414fea63ebaf",
+  "protocol_config_sha256": "661ee2fbcd565ec2a04deda57d8021cc088f05d2a3cb915bc59e379486fbb4f1",
+  "experiment_manifest_sha256": "9c8e376f83ca4dce162b452defd2d9c42ea6bc8e44478133951846c8068fbe2f",
+  "formal_runs_completed": 51,
+  "valid_runs": 51,
+  "infrastructure_invalid_attempts": 0,
+  "task_successes": 47,
+  "hard_gates_passed": 7,
+  "hard_gates_failed": 1,
+  "overall_formal_verdict": "COMPLETED_PARTIAL_SUPPORT_HARD_GATE_FAIL",
+  "formal_support": "PARTIAL SUPPORT",
+  "full_hard_gate_set": "NO-GO",
+  "hard_gates": {
+    "declared_episode_coverage_exact": {
+      "status": "PASS",
+      "evidence": "51 exact committed identities in execution order; Run1 reused, never rerun"
+    },
+    "stale_action_crosses_reset": {
+      "status": "PASS",
+      "evidence": 0
+    },
+    "accepted_out_of_order_responses": {
+      "status": "PASS",
+      "evidence": 0
+    },
+    "no_fault_transport_deadlines": {
+      "status": "PASS",
+      "evidence": 0
+    },
+    "no_fault_transport_errors": {
+      "status": "PASS",
+      "evidence": 0
+    },
+    "every_declared_fault_exercised": {
+      "status": "PASS",
+      "evidence": {
+        "fault_episodes_exercised": 36,
+        "unexercised_run_ids": []
+      }
+    },
+    "post_fault_later_request_recovered": {
+      "status": "FAIL",
+      "evidence": [
+        23,
+        39,
+        47
+      ]
+    },
+    "raw_receipts_and_hashes_complete": {
+      "status": "PASS",
+      "evidence": "All 51 local run manifests and both-host raw manifests rehashed; receipt telemetry hashes matched"
+    }
+  },
+  "strongest_supported_mechanism": "Within the tested two-host X-VLA/LIBERO deployment, the persistent executor and startup/steady budget split removed the timeout-reconnect-cold-start amplification observed in v1. Cold compute itself remained about 7 s; successful reconnect-first compute p50/p95 was 90/113 ms.",
+  "strongest_negative_result": "The original all-fault recovery gate remains FAIL (97/100; terminal events in Runs23,39,47). The 950 ms condition also produced 87.58-88.30% post-first-action polling depletion despite task success.",
+  "claim_limitations": [
+    "Outcome-informed revised v2 protocol, historical cohort; not independent v1 replication or unseen-state generalization.",
+    "Task success is descriptive; 3 paired resets per family/condition, 5 no-fault resets; no statistical superiority claim.",
+    "Application delivery jitter and explicit pre-inference disconnect over SSH forwarding; not kernel netem.",
+    "No CUDA preemption; final stop can invalidate an in-flight result.",
+    "OS executor thread ID is not exported; persistence uses unchanged server PID, executor_starts=1 and frozen sole-thread architecture.",
+    "Approximate 1 Hz nvidia-smi sampling can miss peaks. GPU episode window uses B UTC against A sample UTC without independent clock synchronization.",
+    "Queue-depletion ratios count polling events, not fraction of physical control time. Post-first starts at first accepted valid chunk.",
+    "Warm successful steady requests exclude failed/cancelled requests, process-first and reconnect-first; failures and their elapsed times remain in raw telemetry.",
+    "Service interval non-overlap reconstruction tolerates 1 ms timestamp/logging lag; frozen serialization is the primary concurrency evidence.",
+    "Run1 PCAP lost 13 kernel packets in request direction, while all accepted action responses and durable logs were complete. Runs2-51 capture response direction only.",
+    "No additional mid-episode reset schedule was injected; reset invariants apply to the fixed initial-reset/stop lifecycle.",
+    "Server process VRAM samples include isolated 6246 MiB (Run24) and 12890 MiB (Run34) peaks. They are retained as observed; no allocator trace establishes their cause, and device/process nvidia-smi queries are sequential rather than atomic.",
+    "Post-hoc censoring is termination-dependent and may be informative; 97/97 is descriptive, not an unbiased recovery probability or a new gate.",
+    "A cancelled attempt's hypothetical outcome if the episode had continued is unknown; no counterfactual guarantee is inferred.",
+    "Client and engine timestamps are from the same host. No cross-host clock subtraction is needed for opportunity classification."
+  ],
+  "outcome_informed_by_v1": true,
+  "independent_v1_replication": false,
+  "external_validity": "NOT ESTABLISHED",
+  "physical_robot_safety": "NOT EVALUATED",
+  "posthoc_descriptive_analysis": {
+    "path": "posthoc_recovery.json",
+    "sha256": "59b191fd7793ff1907f5ecd6d8f7b55c83676924b58ced837bdfe4906e43f8fd",
+    "later_rpc_attempt_present_events": 99,
+    "observable_opportunities": 97,
+    "successful_observable_recoveries": 97,
+    "terminal_edge_events": 3,
+    "changes_formal_verdict": false
+  },
+  "source_evidence": [
+    {
+      "root": "repository",
+      "path": "configs/rpc_remote_transport_replication_v2.json",
+      "sha256": "661ee2fbcd565ec2a04deda57d8021cc088f05d2a3cb915bc59e379486fbb4f1"
+    },
+    {
+      "root": "repository",
+      "path": "configs/rpc_remote_transport_replication_v1.json",
+      "sha256": "b2fc8f8a0f7f66eb60cddbd79645647b7313435deaafc84831dd396616749019"
+    },
+    {
+      "root": "repository",
+      "path": "configs/rpc_external_validity_v1.json",
+      "sha256": "7d663780396e28c0bc4b867a363e087a40a09cd8bc84e1fab9d24122bc614887"
+    },
+    {
+      "root": "ignored_v2_evidence",
+      "path": "artifacts/rpc_remote_transport_replication_v2/experiment_manifest.json",
+      "sha256": "9c8e376f83ca4dce162b452defd2d9c42ea6bc8e44478133951846c8068fbe2f"
+    },
+    {
+      "root": "ignored_v2_evidence",
+      "path": "artifacts/rpc_remote_transport_replication_v2/experiment_evidence_manifest.sha256",
+      "sha256": "3c8cc214071455ac0ad2a10101239ec85af5e8e41a1e8aca02751c90d87f7864"
+    },
+    {
+      "root": "ignored_v2_evidence",
+      "path": "artifacts/rpc_remote_transport_replication_v2/run_001_object5_state25_no_fault/evidence_manifest.sha256",
+      "sha256": "9d4ad51b781679eb0481c3d498074ab1bd3548c5b86c7e9a260a9b6cbc98d4b4"
+    },
+    {
+      "root": "ignored_v2_evidence",
+      "path": "artifacts/rpc_remote_transport_replication_v2/analysis/frozen_results.json",
+      "sha256": "99f0c3bc442fc0eec29c29d834a6cfbdf45301f1ae2141a17538b3256a008548"
+    },
+    {
+      "root": "ignored_v2_evidence",
+      "path": "artifacts/rpc_remote_transport_replication_v2/analysis/coverage.csv",
+      "sha256": "a0ef8f6fc913513e3a9aa9d60bbd15b1ebb543736cd79fdb8cb6bbf12c4f1857"
+    },
+    {
+      "root": "ignored_v2_evidence",
+      "path": "artifacts/rpc_remote_transport_replication_v2/analysis/paired_comparisons.json",
+      "sha256": "7370cdc9b628284b5633a572f1769615fc020cd7bb8db9a6e31bdf1a9591627e"
+    },
+    {
+      "root": "historical_actionstream_rpc_reset_audit_20260918_worktree",
+      "path": "artifacts/rpc_replication_run1_20260919_01/evidence_manifest.sha256",
+      "sha256": "9b0e223c00b92f907a7d0c0803c94f41a07e01a46fe052d0ac28bc4f9609329d"
+    },
+    {
+      "root": "historical_actionstream_rpc_reset_audit_20260918_worktree",
+      "path": "artifacts/rpc_replication_run1_20260919_01/run1_report.json",
+      "sha256": "89ac74b9d09c8ae98d5f2133a62ca36e4cc33be12d925e1079f89ea3e8a32327"
+    },
+    {
+      "root": "historical_actionstream_rpc_reset_audit_20260918_worktree",
+      "path": "artifacts/rpc_replication_v1_postmortem_20260919/evidence_manifest.sha256",
+      "sha256": "f515e1f6324c34d7c0cd4933df3c437971bfe1c34e8ac399fff504aa9171a0be"
+    },
+    {
+      "root": "historical_actionstream_rpc_reset_audit_20260918_worktree",
+      "path": "artifacts/rpc_replication_v1_postmortem_20260919/diagnosis.json",
+      "sha256": "3ffa024420cc3d847c998d62ac634caada839458a00d49f654d404a5fb8217d4"
+    }
+  ],
+  "preregistration_config_status_left_unchanged": true,
+  "run_classifications_unchanged": true,
+  "raw_evidence_policy": "Raw GPU logs, captures, model/assets and archives remain ignored; tracked summaries reference verified hashes. No new GPU experiment or diagnostic was run for consolidation."
+}

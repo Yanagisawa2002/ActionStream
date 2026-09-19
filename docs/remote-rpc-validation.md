@@ -2,8 +2,14 @@
 
 ActionStream now has a real TCP transport in addition to the historical in-process
 delivery scheduler and child-process transport. This document separates what is
-already executable in CPU CI from the GPU/simulator experiment that still needs a
-separate LIBERO client host and GPU inference server.
+validated in CPU CI from the completed two-host GPU/simulator experiment.
+
+Current evidence: **v1 VALID_NEGATIVE, stopped after Run 1; postmortem completed;
+v2 COMPLETED with PARTIAL SUPPORT, 7/8 hard gates and full gate NO-GO**.
+The [completed v2 report](../reports/rpc_remote_transport_replication_v2/report.md)
+is the current result ledger. The [technical case study](case-studies/actionstream-remote-inference-case.md)
+connects the failure, profiling, revised design and remaining limitations.
+External validity is NOT ESTABLISHED; physical robot safety is NOT EVALUATED.
 
 ## What is implemented
 
@@ -21,8 +27,10 @@ The server exposes a trusted `module:factory` worker and supports deterministic:
 - response drops after inference;
 - explicit server errors.
 
-The server serializes model calls so reconnecting clients do not issue concurrent
-calls into one policy object. Reset callbacks use the same model lock.
+V2 serializes inference and idle-reset callbacks on one persistent executor,
+separate from TCP connection threads. Reconnecting does not construct a worker or
+executor. V1 used a shared model lock; its timing included waiting for that lock.
+See [v2 design and timing semantics](rpc-remote-transport-replication-v2.md).
 
 These injected delays happen around a real TCP request/response, but they are not
 Linux `tc netem` or a claim about packet-level impairment. A two-host no-fault run
@@ -58,6 +66,12 @@ responses and explicit server errors. It is transport/lifecycle evidence only. I
 is not X-VLA, LIBERO, two-host, or GPU evidence.
 
 ## Two-host X-VLA / LIBERO path
+
+The CLI examples below document the historical v1 interface and 5 s budget;
+they are not a v2 execution recipe or authorization to run another experiment.
+V2 explicitly froze startup/steady inference at 15/5 s, outer action wait at
+20 s and connect/control at 3/3 s, with separate per-run server/client telemetry.
+Both the 51-run v2 result and v1's stopped result are complete and preserved.
 
 The GPU server and the environment client intentionally have different jobs.
 
@@ -136,12 +150,16 @@ The new protocol also records the preceding audit paths/hashes. None of these
 negative conclusions is superseded or rewritten. The immutable v1 config SHA256 is
 `7d663780396e28c0bc4b867a363e087a40a09cd8bc84e1fab9d24122bc614887`.
 
-## Separate remote transport replication protocol
+## Archived v1 transport replication protocol
 
-`configs/rpc_remote_transport_replication_v1.json` is
-**PRE_REGISTERED_NOT_EXECUTED**. It changes the scientific question, not the
-freshness criterion of external-validity v1. No remote-RPC outcome had been
-observed before this protocol change, and no remote-host GPU result exists yet.
+`configs/rpc_remote_transport_replication_v1.json` retains its original
+**PRE_REGISTERED_NOT_EXECUTED** bytes, but its final disposition is
+**VALID_NEGATIVE / stopped after formal Run 1 of 51**. The remaining v1 runs
+were not executed. The text below preserves the original protocol specification;
+its future-tense instructions are historical, not the current execution state.
+V2 reused the cohort in a separate outcome-informed protocol/result namespace,
+with revised execution ownership and budgets. It completed 51 valid runs.
+Neither protocol restores external-validity freshness.
 
 **Supported question:** does the real two-host TCP implementation preserve its
 lifecycle, queue, deadline/reconnect and fault-recovery behavior while driving
@@ -221,8 +239,36 @@ The resulting report should contain, for every family and condition:
 7. all attempts, including separately documented invalid infrastructure attempts.
 
 Failure completion steps equal 300. Missing metrics are unavailable with a reason,
-never zero-filled. This is a report specification, not a claim that data exists.
+never zero-filled. The [completed v2 report](../reports/rpc_remote_transport_replication_v2/report.md)
+and its curated metrics now provide these results; v1 remains stopped after Run 1.
 
 A remote result must preserve negative outcomes and family regressions. It should
 not collapse network recovery, task success and GPU efficiency into one headline
 score.
+
+## Completed v2 negatives and metric semantics
+
+The original recovery criterion remains **97/100, FAIL**, with terminal-edge
+failures in Runs 23, 39 and 47. Recomputed post-hoc counts are 100 disconnects,
+99 actual reconnects, 97 uncensored response opportunities, 97 demonstrated
+recoveries and three terminal cases. Literal later-RPC presence is 99: two
+admitted attempts were cancelled at stop. The opportunity-conditioned 97/97 is
+descriptive and does not change the gate or full NO-GO verdict.
+
+All 51 servers reported one executor start. Cold compute remained about 7 s;
+successful reconnect-first compute p50/p95 was 90/113 ms. No-fault deadlines
+and transport errors were zero. This supports removal of the observed v1
+amplification loop within this deployment, not elimination of cold compute.
+
+Run1 raw empty-queue polling was about 95%, while post-first-action depletion
+was zero. The raw measure includes startup waiting and is retained alongside
+the post-first measure. Under 950 ± 250 ms delivery, the latter reached
+87.58–88.30%; high task success does not establish healthy queue supply.
+V2's four task failures were Spatial; historical Object failures remain separate.
+Compatibility reconnect-like counters can include initial establishment;
+explicit connections_established=150 is 51 initial + 99 actual reconnections.
+
+The evidence is historical-cohort LIBERO simulation over SSH-forwarded TCP,
+with application-level faults and approximately 1 Hz GPU sampling. It does not
+establish physical robot safety, packet-level netem behavior, CUDA preemption,
+external validity or production readiness.

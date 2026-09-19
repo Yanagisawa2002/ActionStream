@@ -2,8 +2,8 @@
 
 ActionStream is a LeRobot-compatible asynchronous inference backend for chunked
 robot policies under delayed delivery. It separates policy inference from response
-delivery, rejects stale work across lifecycle boundaries, bounds queue depletion,
-and emits telemetry that makes timing failures inspectable.
+delivery, rejects stale work across lifecycle boundaries, supports bounded holds
+during queue depletion, and emits telemetry that makes timing failures inspectable.
 
 The repository has two deliberately separate surfaces:
 
@@ -25,22 +25,35 @@ The repository has two deliberately separate surfaces:
 | H1-R2 delayed-delivery pipeline | **GO** at frozen 950 ms simulated delivery | the serialized delivery wait was a real request-supply / queue-depletion bottleneck |
 | H2 five-step compute budget | **NO-GO** | 61.6% fewer calls did not clear the frozen success gate |
 | RGB completion + continuous confirmation | **GO only within one predeclared LIBERO Object task protocol** | 19/19 physically completed fresh trajectories stopped correctly; one VLA noncompletion was not falsely stopped |
-| TCP RPC transport | implemented; deterministic real-socket fault contract in CI | real socket framing, deadlines, reconnects, reset invalidation and fault taxonomy |
-| Remote-host X-VLA/LIBERO RPC | **not yet executed** | no remote-GPU, real-network-jitter or multi-task claim yet |
-| Physical robot safety | **not evaluated** | no hardware safety, E-stop or real-robot claim |
+| TCP loopback fault contract | **VALIDATED** | deterministic real-socket framing, deadlines, reconnects and lifecycle fault contracts in CPU CI |
+| Remote transport replication v1 | **VALID_NEGATIVE / stopped after Run 1** | the original 5 s deadline failed against the observed connection-first cold path |
+| V1 postmortem | **COMPLETED** | direct/RPC/SSH timing and retained traces localized first-use work and retry/backlog amplification |
+| Remote transport replication v2 | **COMPLETED · PARTIAL SUPPORT · 7/8 hard gates · full gate set NO-GO** | 51 valid two-host runs, 47 task successes; original recovery gate remains FAIL |
+| Persistent executor mechanism | **SUPPORTED within tested two-host X-VLA/LIBERO replication** | cold compute remained about 7 s; successful reconnect-first compute was 90/113 ms p50/p95 |
+| External validity | **NOT ESTABLISHED** | historical cohort; outcome-informed v2 is not an independent v1 replication |
+| Physical robot safety | **NOT EVALUATED** | simulation does not establish hardware safety or E-stop behavior |
 
-The current remote-RPC preregistration is the separate **transport replication /
-robustness** protocol in
-[`configs/rpc_remote_transport_replication_v1.json`](configs/rpc_remote_transport_replication_v1.json):
-51 two-host episode-condition runs, with historically exposed identities disclosed.
-It is **not executed** and does not establish unseen-state or unseen-task validity.
+The completed [v2 report](reports/rpc_remote_transport_replication_v2/report.md)
+and separate [final status](reports/rpc_remote_transport_replication_v2/final_status.json)
+record the results. The frozen v1/v2 preregistration configs keep their original
+bytes and historical status fields; those fields are not the completed-result ledger.
+V1 stopped at its valid negative first run. V2 completed all 51 declared runs
+without rerunning valid outcomes or changing gates.
+
+V2 recorded **100 injected disconnects, 99 actual reconnects and 97 demonstrated
+later recoveries**. The original all-event recovery criterion is **97/100, FAIL**.
+A separate post-hoc analysis finds 97/97 uncensored observable opportunities;
+three terminal-edge events explain the missing observations but do not change
+NO-GO. Under 950 ± 250 ms application delivery, **87.58–88.30% post-first-action
+polling depletion** persisted despite high task success. All four v2 task failures
+were Spatial; historical Object failures remain in the linked reports.
+
 External-validity v1 in
 [`configs/rpc_external_validity_v1.json`](configs/rpc_external_validity_v1.json)
-is preserved unchanged as an **aborted, never-executed preregistration (NO_RUN)**:
-pre-run audits found identity collisions and incomplete historical coverage.
-UNKNOWN remains UNKNOWN. No remote-RPC outcome was observed before this change.
-See [`docs/remote-rpc-validation.md`](docs/remote-rpc-validation.md) for the audit
-hashes, claim boundaries and [exact 51-run matrix](docs/rpc-remote-transport-replication-v1-matrix.md).
+remains an **aborted, never-executed preregistration (NO_RUN)** after identity
+collisions and incomplete historical coverage. UNKNOWN remains UNKNOWN.
+See [remote-RPC evidence boundaries](docs/remote-rpc-validation.md) and the
+[technical case study](docs/case-studies/actionstream-remote-inference-case.md).
 Historical language/visual failures remain preserved rather than rewritten; see
 [`docs/embodied-development-status.md`](docs/embodied-development-status.md).
 
@@ -55,6 +68,8 @@ Historical language/visual failures remain preserved rather than rewritten; see
 - Episode ownership / lock contract: [`docs/lifecycle_contract.md`](docs/lifecycle_contract.md)
 - LeRobot plugin: [`integrations/lerobot/`](integrations/lerobot/)
 - Core failure-path tests: [`tests/test_lerobot_inference.py`](tests/test_lerobot_inference.py)
+- Completed v2 report: [`reports/rpc_remote_transport_replication_v2/report.md`](reports/rpc_remote_transport_replication_v2/report.md)
+- Remote inference case: [`docs/case-studies/actionstream-remote-inference-case.md`](docs/case-studies/actionstream-remote-inference-case.md)
 - RPC failure tests: [`tests/test_rpc_transport.py`](tests/test_rpc_transport.py)
 - H1-R2 report: [`reports/actionstream_transport_h1_r2/report.md`](reports/actionstream_transport_h1_r2/report.md)
 - H2 report: [`reports/actionstream_transport_h2_budget_holdout/report.md`](reports/actionstream_transport_h2_budget_holdout/report.md)
@@ -254,8 +269,11 @@ before outcomes are collected.
 
 - H1/H2 cover one X-VLA checkpoint in LIBERO simulation.
 - H1's 950 ms condition was simulated in-process delivery, not actual network
-  jitter; the new TCP transport exists specifically to close that evidence gap.
-- The preregistered remote-host multi-task RPC run has not yet been executed.
+  jitter; v2 measured SSH-forwarded two-host TCP with application-level faults.
+- V2 is completed with partial support and full hard-gate NO-GO. The historical
+  cohort and coupled architecture/budget revision do not establish external validity.
+- Roughly 88% post-first-action polling depletion at 950 ms remains a strong
+  negative queue result; high task success does not establish healthy supply.
 - TCP client deadlines do not terminate already-running remote CUDA kernels.
 - The completion acceptance covers one finite simulated Object task and one
   trained checkpoint.

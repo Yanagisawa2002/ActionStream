@@ -1,4 +1,10 @@
-# RPC replication v2 local validation receipt
+# RPC replication v2 historical local engineering receipt
+
+This receipt describes the engineering checkpoint before formal execution.
+V2 subsequently completed: 51 valid runs, 47 task successes, 7/8 hard gates and
+full gate **NO-GO**. See the [completed report](../reports/rpc_remote_transport_replication_v2/report.md)
+and [result-consolidation validation](../reports/rpc_remote_transport_replication_v2/validation.md).
+The engineering test counts below are historical, not a claim of a new GPU run.
 
 Date: 2026-09-19. Scope: local engineering, CPU tests, and preregistration only.
 No SSH connection, GPU benchmark, policy warmup, remote diagnostic, deployment,
@@ -96,6 +102,6 @@ V2 configuration SHA256:
 - `docs/rpc-remote-transport-replication-v2.md`: architecture, semantics and claims.
 - `docs/rpc-replication-v2-validation.md`: this validation receipt.
 
-V1 remains VALID_NEGATIVE and permanently counts as v1 Run 1/51. V2 has zero
-executed formal runs. Local engineering passes do not imply that the ~6.6 s cold
+V1 remains VALID_NEGATIVE and permanently counts as v1 Run 1/51. At this
+engineering checkpoint, v2 had zero executed formal runs. Local engineering passes do not imply that the ~6.6 s cold
 penalty has disappeared, that 15 s is an SLA, or that CUDA can be preempted.

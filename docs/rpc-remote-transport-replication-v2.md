@@ -1,7 +1,16 @@
-# Remote transport replication v2: engineering and preregistration
+# Remote transport replication v2: frozen design and completed result
 
-Status: **PRE_REGISTERED_NOT_EXECUTED**. No GPU benchmark, warmup, diagnostic,
-remote deployment, or v1 Run 2 was performed for this change.
+Current result: **COMPLETED_PARTIAL_SUPPORT_HARD_GATE_FAIL**. All 51 formal
+runs are valid, 47 tasks succeeded, and 7/8 hard gates PASS; the full gate set
+remains **NO-GO**. The recovery gate failed at the terminal boundaries of Runs
+23, 39 and 47. See the [completed report](../reports/rpc_remote_transport_replication_v2/report.md)
+and [separate status artifact](../reports/rpc_remote_transport_replication_v2/final_status.json).
+
+The design below documents the frozen protocol at
+`e33eb98c94013da14109ab2ac710414fea63ebaf`. Its config remains byte-identical,
+including the historical PRE_REGISTERED_NOT_EXECUTED field. The original local
+engineering phase ran no remote workload; later authorized execution completed
+v2. This result consolidation launches no GPU process or additional experiment.
 
 v2 is **outcome-informed by v1 and its postmortem**. v1 Run 1 remains
 **VALID_NEGATIVE**, permanently counted as **v1 Run 1/51**. v1 demonstrated that
@@ -112,9 +121,10 @@ startup selection; engine telemetry previews the selected transport budget and
 per-request RPC JSONL records the authoritative selected value.
 
 15 s is an experimental safety budget chosen after the observed ~6.6–6.9 s first
-request, **not a measured SLA**. There is no inference warmup. If persistent
-execution retains or removes the cold penalty, preserve and report the later
-experimental observation without assuming the outcome now.
+request, **not a measured SLA**. There was no inference warmup. The completed
+experiment retained cold compute p50/p95 of 7.028/7.285 s; successful reconnect-first
+compute was 90/113 ms. Cold work remained, while the repeated cold/retry failure
+loop observed in v1 was absent in this tested deployment.
 
 Client counters retain `deadlines`, `transport_errors`, `server_errors`,
 `reconnects`, and `cancellations`; new fields separate startup/steady deadlines.
@@ -156,6 +166,21 @@ engine integration and ERROR receipts. CI includes these new tests.
 
 Validation receipts and commands are recorded in
 [`rpc-replication-v2-validation.md`](rpc-replication-v2-validation.md).
-CPU and local LeRobot contracts do not establish remote GPU performance or task
-success. GPU outcomes remain unavailable/not run. Commit this protocol and
-implementation before any later authorized two-host execution.
+That receipt remains the historical local engineering checkpoint. CPU and local
+LeRobot contracts do not establish remote GPU performance or task success; the
+separate completed report now supplies the two-host evidence.
+
+## Completed evidence boundary
+
+V2 had no startup/steady deadlines or server errors. No-fault transport errors
+were zero. Each of 51 fresh server processes reported executor_starts=1. There
+were 100 injected disconnects, 99 actual reconnects and 97 successful later
+recoveries. The original 97/100 recovery gate remains FAIL. Post-hoc 97/97 counts
+only uncensored response opportunities; two of the three terminal cases had an
+admitted RPC that was cancelled at stop. It does not revise the frozen criterion.
+
+At 950 ± 250 ms delivery, post-first-action polling depletion remained
+87.58–88.30%. Task success therefore does not establish healthy action supply.
+All four v2 task failures were Spatial. External validity and physical robot
+safety remain unestablished. See the completed report for all negative outcomes,
+raw versus post-first-action metrics, counter semantics and telemetry limits.
