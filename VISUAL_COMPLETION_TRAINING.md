@@ -7,12 +7,12 @@ Training does not enable runtime acceptance or establish a general VLA result.
 **Evaluation update:** the frozen epoch-4 candidate has now been tested on the
 10 heldout trajectories, controlled failure fixtures and three real simulator
 closed loops. It remains **NO-GO**. See the
-[full evaluation and label-definition diagnosis](reports/completion_evaluation_20260915/README.md).
+[full evaluation and label-definition diagnosis](https://github.com/Yanagisawa2002/ActionStream/blob/ed05167541fc9d83c93c1f9f1b422bcb05fee54f/reports/completion_evaluation_20260915/README.md).
 
 **Separate v2 update:** released-and-stable labels, hard negatives and a temporal
 candidate were trained and evaluated on 20 newly generated VLA trajectories.
 False completions decreased substantially, but recall remains below the gate.
-See the [v2 NO-GO result and fresh evidence](reports/completion_v2_20260915/README.md).
+See the [v2 NO-GO result and fresh evidence](https://github.com/Yanagisawa2002/ActionStream/blob/ed05167541fc9d83c93c1f9f1b422bcb05fee54f/reports/completion_v2_20260915/README.md).
 
 ## Why new labels are required
 
