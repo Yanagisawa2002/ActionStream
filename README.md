@@ -137,7 +137,9 @@ For a first code review, start here:
 | Area | Entry point |
 |---|---|
 | Async inference lifecycle | [`src/actionstream/lerobot_inference.py`](src/actionstream/lerobot_inference.py) |
+| Inference config / telemetry / provenance types | [`src/actionstream/inference_types.py`](src/actionstream/inference_types.py) |
 | Transport abstraction + process isolation | [`src/actionstream/inference_transport.py`](src/actionstream/inference_transport.py) |
+| TCP wire encoding + framing | [`src/actionstream/rpc_protocol.py`](src/actionstream/rpc_protocol.py) |
 | TCP client/server + persistent executor | [`src/actionstream/rpc_transport.py`](src/actionstream/rpc_transport.py) |
 | RPC server CLI | [`src/actionstream/rpc_server.py`](src/actionstream/rpc_server.py) |
 | Deterministic real-socket fault matrix | [`src/actionstream/rpc_matrix.py`](src/actionstream/rpc_matrix.py) |
