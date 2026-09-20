@@ -589,4 +589,3 @@ class TcpInferenceTransport:
         with self._state_lock:
             self._generation += 1
             self._close_socket_locked()
-
