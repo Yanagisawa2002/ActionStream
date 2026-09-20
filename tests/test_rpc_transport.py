@@ -30,6 +30,7 @@ def test_rpc_round_trip_preserves_nested_tensor_and_array_payloads():
 
     with RpcInferenceServer(infer) as server:
         transport = TcpInferenceTransport(server.host, server.port)
+        transport.reset()
         result = transport.infer(
             {
                 "tensor": torch.arange(6, dtype=torch.float32).reshape(2, 3),
@@ -61,6 +62,7 @@ def test_rpc_timeout_closes_connection_and_next_request_reconnects():
         fault_profile=faults,
     ) as server:
         transport = TcpInferenceTransport(server.host, server.port)
+        transport.reset()
         assert transport.infer({}, "task", timeout_s=0.5).item() == 1.0
         with pytest.raises(InferenceDeadlineExceeded):
             transport.infer({}, "task", timeout_s=0.02)
@@ -80,6 +82,7 @@ def test_rpc_cancel_invalidates_inflight_generation():
 
     with RpcInferenceServer(infer) as server:
         transport = TcpInferenceTransport(server.host, server.port)
+        transport.reset()
         result = []
 
         def request():
@@ -121,6 +124,7 @@ def test_rpc_server_error_is_not_misclassified_as_network_disconnect():
         lambda observation, task: torch.tensor([1.0]), fault_profile=faults
     ) as server:
         transport = TcpInferenceTransport(server.host, server.port)
+        transport.reset()
         with pytest.raises(InferenceTransportError, match="Remote inference failed"):
             transport.infer({}, "task", timeout_s=0.5)
         telemetry = transport.telemetry()

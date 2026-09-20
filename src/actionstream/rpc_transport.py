@@ -25,6 +25,7 @@ import threading
 import time
 import uuid
 from collections.abc import Callable, Mapping
+from concurrent.futures import Future
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
@@ -242,13 +243,22 @@ class RpcTransportTelemetry:
     connections_established: int
     reconnections: int
     latest_response_telemetry: dict[str, Any]
+    reset_requests: int = 0
+    reset_successes: int = 0
+    reset_failures: int = 0
+    reset_timeouts: int = 0
+    reset_required: bool = True
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
 
 
+class RemoteResetError(InferenceTransportError):
+    """Remote state is unconfirmed; an explicit successful reset is required."""
+
+
 class TcpInferenceTransport:
-    """Persistent TCP client implementing ActionStream's transport contract."""
+    """Persistent TCP client; call reset() successfully before first inference."""
 
     def __init__(
         self,
@@ -257,6 +267,7 @@ class TcpInferenceTransport:
         *,
         connect_timeout_s: float = 3.0,
         control_timeout_s: float = 3.0,
+        reset_timeout_s: float = 20.0,
         startup_inference_timeout_s: float | None = None,
         steady_inference_timeout_s: float | None = None,
         telemetry_jsonl_path: str | Path | None = None,
@@ -268,6 +279,7 @@ class TcpInferenceTransport:
         for name, value in (
             ("connect_timeout_s", connect_timeout_s),
             ("control_timeout_s", control_timeout_s),
+            ("reset_timeout_s", reset_timeout_s),
         ):
             if not math.isfinite(value) or value <= 0:
                 raise ValueError(f"{name} must be finite and positive")
@@ -275,6 +287,7 @@ class TcpInferenceTransport:
         self._port = port
         self._connect_timeout_s = float(connect_timeout_s)
         self._control_timeout_s = float(control_timeout_s)
+        self._reset_timeout_s = float(reset_timeout_s)
         if (startup_inference_timeout_s is None) != (
             steady_inference_timeout_s is None
         ):
@@ -297,7 +310,14 @@ class TcpInferenceTransport:
         self._request_lock = threading.Lock()
         self._state_lock = threading.Lock()
         self._socket: socket.socket | None = None
+        self._resolution: Future | None = None
         self._generation = 0
+        # A new socket/client is not evidence of clean persistent worker state.
+        self._reset_required = True
+        self._reset_requests = 0
+        self._reset_successes = 0
+        self._reset_failures = 0
+        self._reset_timeouts = 0
         self._inflight = False
         self._requests_started = 0
         self._requests_completed = 0
@@ -354,6 +374,11 @@ class TcpInferenceTransport:
                 connections_established=self._reconnects,
                 reconnections=max(0, self._reconnects - 1),
                 latest_response_telemetry=dict(self._latest_response_telemetry),
+                reset_requests=self._reset_requests,
+                reset_successes=self._reset_successes,
+                reset_failures=self._reset_failures,
+                reset_timeouts=self._reset_timeouts,
+                reset_required=self._reset_required,
                 bytes_sent=self._bytes_sent,
                 bytes_received=self._bytes_received,
                 latest_connect_latency_ms=(
@@ -400,10 +425,7 @@ class TcpInferenceTransport:
             if self._socket is not None:
                 return self._socket
         started = time.monotonic()
-        connection = socket.create_connection(
-            (self._host, self._port),
-            timeout=min(self._connect_timeout_s, timeout_s),
-        )
+        connection = self._connect(started + min(self._connect_timeout_s, timeout_s))
         connection.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
         elapsed = time.monotonic() - started
         with self._state_lock:
@@ -418,6 +440,51 @@ class TcpInferenceTransport:
             self._reconnects += 1
             self._latest_connect_latency_s = elapsed
             return connection
+
+    def _connect(self, deadline: float) -> socket.socket:
+        # OS name resolution cannot be cancelled. Keep at most one outstanding
+        # lookup per client, including across timeouts, without holding up reset.
+        with self._state_lock:
+            if self._resolution is None:
+                self._resolution = Future()
+                pending = self._resolution
+
+                def resolve() -> None:
+                    try:
+                        pending.set_result(
+                            socket.getaddrinfo(
+                                self._host, self._port, type=socket.SOCK_STREAM
+                            )
+                        )
+                    except BaseException as exc:
+                        pending.set_exception(exc)
+
+                threading.Thread(
+                    target=resolve, name="ActionStreamRpcResolver", daemon=True
+                ).start()
+            pending = self._resolution
+        try:
+            addresses = pending.result(timeout=self._remaining(deadline))
+        finally:
+            with self._state_lock:
+                if pending.done() and self._resolution is pending:
+                    self._resolution = None
+        last_error: OSError = OSError("RPC hostname resolved to no stream addresses")
+        for family, kind, protocol, _, address in addresses:
+            timeout = self._remaining(deadline)
+            connection = socket.socket(family, kind, protocol)
+            try:
+                connection.settimeout(timeout)
+                connection.connect(address)
+                self._remaining(deadline)
+                return connection
+            except OSError as exc:
+                last_error = exc
+                connection.close()
+            except BaseException:
+                connection.close()
+                raise
+        raise last_error
 
     @staticmethod
     def _remaining(deadline: float) -> float:
@@ -467,10 +534,21 @@ class TcpInferenceTransport:
     ) -> torch.Tensor:
         if not math.isfinite(timeout_s) or timeout_s <= 0:
             raise ValueError("timeout_s must be finite and positive")
+        with self._state_lock:
+            if self._reset_required:
+                raise RemoteResetError(
+                    "TCP inference requires a successful remote reset"
+                )
+            generation = self._generation
         request_id = uuid.uuid4().hex
         with self._request_lock:
             with self._state_lock:
-                generation = self._generation
+                if self._reset_required:
+                    raise RemoteResetError(
+                        "TCP inference requires a successful remote reset"
+                    )
+                if generation != self._generation:
+                    raise InferenceCancelled("TCP request queued before invalidation")
                 self._inflight = True
                 self._requests_started += 1
                 startup = self._socket is None or self._connection_requests == 0
@@ -630,10 +708,20 @@ class TcpInferenceTransport:
                             + "\n"
                         )
 
-    def _control(self, kind: str) -> None:
-        deadline = time.monotonic() + self._control_timeout_s
-        with self._request_lock:
-            connection = self._ensure_socket(self._remaining(deadline))
+    def _control(
+        self, kind: str, *, deadline: float | None = None, generation: int | None = None
+    ) -> None:
+        if deadline is None:
+            deadline = time.monotonic() + self._control_timeout_s
+        if generation is None:
+            with self._state_lock:
+                generation = self._generation
+        if not self._request_lock.acquire(timeout=self._remaining(deadline)):
+            raise InferenceDeadlineExceeded(
+                f"TCP {kind} deadline waiting for client I/O"
+            )
+        try:
+            connection = self._ensure_socket(self._remaining(deadline), generation)
             request_id = uuid.uuid4().hex
             connection.settimeout(self._remaining(deadline))
             sent = _send_frame(
@@ -652,12 +740,21 @@ class TcpInferenceTransport:
             self._remaining(deadline)
             with self._state_lock:
                 self._bytes_received += received
+                if generation != self._generation:
+                    raise InferenceCancelled(f"TCP {kind} acknowledgement invalidated")
             if (
                 response.get("version") != _PROTOCOL_VERSION
                 or response.get("request_id") != request_id
-                or response.get("kind") != "ack"
             ):
                 raise InferenceTransportError(f"Invalid RPC {kind} acknowledgement")
+            if response.get("kind") == "error":
+                raise InferenceTransportError(
+                    f"Remote {kind} failed: {response.get('error_type')}: {response.get('error')}"
+                )
+            if response.get("kind") != "ack":
+                raise InferenceTransportError(f"Invalid RPC {kind} acknowledgement")
+        finally:
+            self._request_lock.release()
 
     def cancel(self) -> bool:
         with self._state_lock:
@@ -669,23 +766,45 @@ class TcpInferenceTransport:
         return was_inflight
 
     def reset(self) -> bool:
-        # If an inference is active, invalidate it immediately. The remote worker
-        # may still finish that CUDA call; its response cannot cross this generation.
-        cancelled = self.cancel()
-        if not cancelled:
-            try:
-                self._control("reset")
-            except (
-                InferenceTransportError,
-                InferenceDeadlineExceeded,
-                InferenceCancelled,
-                OSError,
-                EOFError,
-            ):
-                with self._state_lock:
+        """Invalidate immediately, then wait for executor reset completion and ACK.
+
+        The absolute reset budget includes local I/O-lock wait, connect, server
+        queue/callback and ACK. Timeout does not preempt remote compute or reset.
+        Failure poisons inference until a later explicit reset succeeds.
+        """
+        deadline = time.monotonic() + self._reset_timeout_s
+        with self._state_lock:
+            self._reset_required = True
+            self._reset_requests += 1
+            cancelled = self._inflight
+            self._generation += 1
+            generation = self._generation
+            if cancelled:
+                self._cancellations += 1
+            self._close_socket_locked()
+        try:
+            self._control("reset", deadline=deadline, generation=generation)
+            with self._state_lock:
+                if generation != self._generation:
+                    raise InferenceCancelled("TCP reset superseded by cancellation")
+                self._reset_required = False
+                self._reset_successes += 1
+            return cancelled
+        except BaseException as exc:
+            with self._state_lock:
+                self._reset_failures += 1
+                if isinstance(exc, TimeoutError):
+                    self._reset_timeouts += 1
+                # An older reset must not invalidate a newer acknowledged reset.
+                if generation == self._generation:
+                    self._reset_required = True
+                    self._generation += 1
                     self._close_socket_locked()
-                # A fresh connection is still a clean client-side generation.
-        return cancelled
+            if not isinstance(exc, Exception):
+                raise
+            raise RemoteResetError(
+                f"Remote reset was not acknowledged; inference remains blocked: {exc}"
+            ) from exc
 
     def close(self) -> None:
         with self._state_lock:
@@ -728,7 +847,12 @@ class RpcInferenceServer:
         self._infer = infer
         self._reset = reset
         self._faults = fault_profile or RpcFaultProfile()
-        self._listener = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        if reset is not None and not callable(reset):
+            raise TypeError("reset must be callable or None (stateless no-op)")
+        self.reset_capability = "callback" if reset is not None else "stateless_noop"
+        self._listener = socket.socket(
+            socket.AF_INET6 if ":" in host else socket.AF_INET, socket.SOCK_STREAM
+        )
         self._listener.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self._listener.bind((host, port))
         self._listener.listen(backlog)
@@ -749,6 +873,8 @@ class RpcInferenceServer:
             executor_starts=1,
             inference_calls=0,
             reset_calls=0,
+            reset_successes=0,
+            reset_failures=0,
             dropped_obsolete_before_compute=0,
             invalidated_results=0,
         )
@@ -826,6 +952,8 @@ class RpcInferenceServer:
                             self._count("reset_calls")
                             self._reset()
                         response["kind"] = "ack"
+                        self._count("reset_successes")
+                        self._record("reset_succeeded", job)
                         inference_finished = time.perf_counter()
                     else:
                         self._count("inference_calls")
@@ -841,6 +969,9 @@ class RpcInferenceServer:
                         inference_finished = time.perf_counter()
                         response.update(kind="ok", actions=actions.detach().cpu())
                 except BaseException as exc:
+                    if job.request["kind"] == "reset":
+                        self._count("reset_failures")
+                        self._record("reset_failed", job, error_type=type(exc).__name__)
                     inference_finished = time.perf_counter()
                     response.update(
                         kind="error", error_type=type(exc).__name__, error=str(exc)

@@ -87,6 +87,7 @@ def _run_case(case: dict[str, Any]) -> dict[str, Any]:
             connect_timeout_s=float(case.get("connect_timeout_ms", 500)) / 1000,
             control_timeout_s=0.5,
         )
+        transport.reset()  # Confirm the worker baseline before the existing matrix.
         for ordinal in range(1, int(case["requests"]) + 1):
             started = time.perf_counter()
             outcome = "success"

@@ -79,6 +79,7 @@ def test_deadline_reconnect_does_not_replace_executor_or_accept_old_result(tmp_p
     ) as server:
         executor = server._executor
         transport = TcpInferenceTransport(server.host, server.port)
+        transport.reset()
         first = launch(lambda: transport.infer({"value": 11}, "A", timeout_s=0.15))
         try:
             assert worker.entered.wait(2)
@@ -114,7 +115,9 @@ def test_obsolete_queued_request_never_enters_compute(invalidate):
     worker = GatedWorker()
     with RpcInferenceServer(worker) as server:
         first_client = TcpInferenceTransport(server.host, server.port)
+        first_client.reset()
         queued_client = TcpInferenceTransport(server.host, server.port)
+        queued_client.reset()
         first = launch(lambda: first_client.infer({}, "A", timeout_s=3))
         try:
             assert worker.entered.wait(2)
@@ -124,7 +127,10 @@ def test_obsolete_queued_request_never_enters_compute(invalidate):
                 )
             )
             wait_until(lambda: server._jobs.qsize() == 1)
-            if invalidate != "deadline":
+            resetting = None
+            if invalidate == "reset":
+                resetting = launch(queued_client.reset)
+            elif invalidate != "deadline":
                 getattr(queued_client, invalidate)()
             assert isinstance(
                 finish(*queued),
@@ -134,6 +140,8 @@ def test_obsolete_queued_request_never_enters_compute(invalidate):
             )
             worker.release.set()
             assert finish(*first).item() == 1
+            if resetting is not None:
+                assert finish(*resetting) is True
             assert (
                 queued_client.infer({"value": 3}, "new-generation", timeout_s=2).item()
                 == 3
@@ -152,6 +160,7 @@ def test_raw_disconnect_before_queued_compute_is_dropped():
     worker = GatedWorker()
     with RpcInferenceServer(worker) as server:
         client = TcpInferenceTransport(server.host, server.port)
+        client.reset()
         first = launch(lambda: client.infer({}, "A", timeout_s=3))
         try:
             assert worker.entered.wait(2)
@@ -184,7 +193,9 @@ def test_shutdown_waits_for_inflight_and_drops_queued_work():
     server = RpcInferenceServer(worker)
     acceptor = server.start_in_thread()
     one = TcpInferenceTransport(server.host, server.port)
+    one.reset()
     two = TcpInferenceTransport(server.host, server.port)
+    two.reset()
     first = launch(lambda: one.infer({}, "A", timeout_s=3))
     try:
         assert worker.entered.wait(2)
@@ -221,7 +232,9 @@ def test_reset_is_serialized_on_the_same_executor():
 
     with RpcInferenceServer(worker, reset=reset) as server:
         client = TcpInferenceTransport(server.host, server.port)
+        client.reset()
         controller = TcpInferenceTransport(server.host, server.port)
+        reset_threads.clear()  # Initial client reset precedes the ordering under test.
         first = launch(lambda: client.infer({}, "A", timeout_s=3))
         try:
             assert worker.entered.wait(2)
@@ -289,6 +302,7 @@ def test_startup_deadline_is_counted_separately():
             startup_inference_timeout_s=0.03,
             steady_inference_timeout_s=0.8,
         )
+        client.reset()
         for _ in range(2):
             with pytest.raises(InferenceDeadlineExceeded):
                 client.infer({}, "task", timeout_s=5)
@@ -306,7 +320,9 @@ def test_timing_separates_queue_compute_service_and_delivery():
         worker, fault_profile=RpcFaultProfile(response_delay_s=0.06)
     ) as server:
         one = TcpInferenceTransport(server.host, server.port)
+        one.reset()
         two = TcpInferenceTransport(server.host, server.port)
+        two.reset()
         first = launch(lambda: one.infer({}, "A", timeout_s=3))
         try:
             assert worker.entered.wait(2)
@@ -341,16 +357,18 @@ def test_cancel_during_connect_cannot_publish_socket_into_new_generation(monkeyp
     with RpcInferenceServer(lambda obs, task: torch.ones(1)) as server:
         entered = threading.Event()
         release = threading.Event()
-        create_connection = socket.create_connection
+        client = TcpInferenceTransport(server.host, server.port)
+        connect = client._connect
 
         def blocked_connect(*args, **kwargs):
-            connection = create_connection(*args, **kwargs)
+            connection = connect(*args, **kwargs)
             entered.set()
             assert release.wait(3)
             return connection
 
-        monkeypatch.setattr(socket, "create_connection", blocked_connect)
-        client = TcpInferenceTransport(server.host, server.port)
+        client.reset()
+        client.cancel()  # Exercise a new socket within the confirmed episode.
+        monkeypatch.setattr(client, "_connect", blocked_connect)
         pending = launch(lambda: client.infer({}, "old", timeout_s=2))
         try:
             assert entered.wait(2)
@@ -396,6 +414,7 @@ def test_engine_honors_transport_startup_budget_and_records_it(tmp_path):
             startup_inference_timeout_s=0.8,
             steady_inference_timeout_s=0.3,
         )
+        client.reset()
         engine = ActionStreamInferenceEngine(
             policy=stub,
             preprocessor=stub,
@@ -523,6 +542,7 @@ def test_periodic_pre_inference_disconnect_restores_startup_budget(tmp_path):
             steady_inference_timeout_s=5,
             telemetry_jsonl_path=tmp_path / "rpc.jsonl",
         )
+        client.reset()
         assert client.infer({}, "first", timeout_s=5).item() == 1
         with pytest.raises(InferenceTransportError):
             client.infer({}, "fault", timeout_s=5)
@@ -551,6 +571,7 @@ def test_worker_exception_does_not_replace_or_stop_executor():
 
     with RpcInferenceServer(worker) as server:
         client = TcpInferenceTransport(server.host, server.port)
+        client.reset()
         with pytest.raises(InferenceTransportError, match="synthetic worker failure"):
             client.infer({}, "error", timeout_s=1)
         assert client.infer({}, "recovered", timeout_s=1).item() == 1

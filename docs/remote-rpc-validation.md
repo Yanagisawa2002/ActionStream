@@ -1,5 +1,14 @@
 # Real RPC and fault-validation boundary
 
+For the **current maintained runtime**, see [listener and confirmed-reset
+semantics](rpc-runtime-hardening.md). That post-experiment maintenance defaults
+the CLI to loopback and requires explicit non-loopback exposure acknowledgement;
+reset now waits for successful executor completion and a matching ACK, with
+inference blocked until confirmation. The experiment narrative and v1 CLI
+examples below describe the historical implementation, not a recipe for rerunning
+the frozen protocol against changed code. Use the recorded implementation commit
+to inspect historical semantics. No frozen result is revised by maintenance.
+
 ActionStream now has a real TCP transport in addition to the historical in-process
 delivery scheduler and child-process transport. This document separates what is
 validated in CPU CI from the completed two-host GPU/simulator experiment.
