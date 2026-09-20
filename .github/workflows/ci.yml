@@ -38,7 +38,11 @@ jobs:
             src/actionstream/telemetry.py \
             src/actionstream/transport_stress_fixture.py \
             src/actionstream/native_baseline.py \
+            src/actionstream/rpc_client.py \
+            src/actionstream/rpc_executor.py \
             src/actionstream/rpc_protocol.py \
+            src/actionstream/rpc_server_runtime.py \
+            src/actionstream/rpc_telemetry.py \
             src/actionstream/rpc_transport.py \
             src/actionstream/rpc_server.py \
             src/actionstream/rpc_matrix.py \
