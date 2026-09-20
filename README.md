@@ -185,9 +185,12 @@ An unmerged proposal is not described here as upstream support.
 ## Evidence discipline
 
 Frozen protocols and negative outcomes remain visible. Historical result commits
-are not rewritten when the maintained runtime changes. Raw traces, full episode
-videos, model weights, simulator assets, and machine-local archives stay outside
-ordinary Git when licensing or size makes that necessary.
+are not rewritten when the maintained runtime changes. Generated `outputs/` and
+superseded development-report trees are intentionally absent from the default
+branch; the pre-slimming tree remains pinned in
+[docs/archive-history.md](docs/archive-history.md). Raw traces, full episode videos,
+model weights, simulator assets, and machine-local archives stay outside ordinary
+Git when licensing or size makes that necessary.
 
 Start with:
 
