@@ -59,10 +59,11 @@ an M4 mode recording.
 
 ## Integrity and reproducibility
 
-The validated runtime and all `outputs/m3` and `outputs/m4` artifacts remain
-byte-for-byte identical to commit
-`d84cb64e9e48b681e083828b24df5a38709c78c8`. The release integrity manifest
-records their Git object IDs.
+The validated runtime and historical `outputs/m3` and `outputs/m4` artifacts are
+pinned at commit
+[`d84cb64e9e48b681e083828b24df5a38709c78c8`](https://github.com/Yanagisawa2002/ActionStream/tree/d84cb64e9e48b681e083828b24df5a38709c78c8).
+Generated outputs are intentionally not retained on the current default branch;
+the release integrity manifest records their Git object IDs.
 
 Regenerate and verify only the release layer:
 
