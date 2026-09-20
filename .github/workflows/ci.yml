@@ -32,6 +32,9 @@ jobs:
         run: |
           uv run ruff check src tests scripts/release scripts/engineering integrations/lerobot
           uv run ruff format --check \
+            src/actionstream/action_queue.py \
+            src/actionstream/delivery_scheduler.py \
+            src/actionstream/inference_engine.py \
             src/actionstream/inference_transport.py \
             src/actionstream/inference_types.py \
             src/actionstream/lerobot_inference.py \
