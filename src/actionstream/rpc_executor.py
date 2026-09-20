@@ -152,9 +152,7 @@ class RpcExecutor:
                 except BaseException as exc:
                     if job.request["kind"] == "reset":
                         self._count("reset_failures")
-                        self._record(
-                            "reset_failed", job, error_type=type(exc).__name__
-                        )
+                        self._record("reset_failed", job, error_type=type(exc).__name__)
                     inference_finished = time.perf_counter()
                     response.update(
                         kind="error",
