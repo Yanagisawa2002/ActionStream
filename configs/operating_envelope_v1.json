@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "status": "DRAFT_NO_RUN",
+  "delay_ms": [
+    50,
+    100,
+    250,
+    500,
+    1000,
+    2000
+  ],
+  "transport_modes": [
+    "direct",
+    "process",
+    "tcp"
+  ],
+  "startup_states": [
+    "cold",
+    "warm"
+  ],
+  "tcp_disconnect_every_n": [
+    0,
+    10,
+    5
+  ],
+  "tcp_executor_modes": [
+    {
+      "name": "persistent",
+      "implemented": true
+    },
+    {
+      "name": "reconstruct_on_reconnect",
+      "implemented": false
+    }
+  ],
+  "repeats": 3,
+  "metrics": [
+    "task_success",
+    "completion_steps",
+    "inference_calls",
+    "request_rate_hz",
+    "queue_depth",
+    "queue_depletion_fraction",
+    "action_age_steps",
+    "stale_actions_discarded",
+    "roundtrip_latency_ms",
+    "server_queue_wait_ms",
+    "server_compute_ms",
+    "server_service_ms",
+    "reconnects",
+    "deadlines",
+    "transport_errors",
+    "reset_failures",
+    "recoveries",
+    "cold_start_latency_ms",
+    "reconnect_first_latency_ms",
+    "gpu_memory_mib",
+    "gpu_utilization_percent"
+  ],
+  "execution_gates": {
+    "runtime_commit_frozen": false,
+    "untouched_identities_selected": false,
+    "fault_placement_frozen": false,
+    "acceptance_rule_frozen": false,
+    "gpu_execution_authorized": false
+  }
+}
