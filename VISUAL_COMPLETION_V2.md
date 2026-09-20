@@ -1,6 +1,6 @@
 # Visual completion v2: released and stable
 
-This is a separate candidate. V1's frozen evidence and its NO-GO result remain available in [the previous evaluation](reports/completion_evaluation_20260915/README.md).
+This is a separate candidate. V1's frozen evidence and its NO-GO result remain available in [the previous evaluation](https://github.com/Yanagisawa2002/ActionStream/blob/ed05167541fc9d83c93c1f9f1b422bcb05fee54f/reports/completion_evaluation_20260915/README.md).
 
 ## Completion semantics
 
@@ -62,7 +62,7 @@ The full run completed. Development labels corrected 822 premature containment-p
 
 On 20 fresh procedural VLA trajectories and paired interventions, v2 reduced false completion from 417/988 to 4/988 negatives. Stable-positive recall fell from 812/812 to 396/812 (48.77%). All 285 camera-blackout cases abstain. The four false completions precede the required stable interval by 0.05 to 0.25 seconds. **Acceptance is NO-GO**: zero false completions and at least 80% recall were required.
 
-See the [completed evidence report](reports/completion_v2_20260915/README.md) for raw predictions, manifests, private truth journals, independent replay and limitations. No retraining or threshold changes followed holdout inspection. These trajectories are now consumed; a further candidate requires another fresh holdout. This result does not grant runtime acceptance.
+See the [completed evidence report](https://github.com/Yanagisawa2002/ActionStream/blob/ed05167541fc9d83c93c1f9f1b422bcb05fee54f/reports/completion_v2_20260915/README.md) for raw predictions, manifests, private truth journals, independent replay and limitations. No retraining or threshold changes followed holdout inspection. These trajectories are now consumed; a further candidate requires another fresh holdout. This result does not grant runtime acceptance.
 
 ## Subsequent development controls
 
