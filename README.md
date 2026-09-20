@@ -139,8 +139,11 @@ For a first code review, start here:
 | Async inference lifecycle | [`src/actionstream/lerobot_inference.py`](src/actionstream/lerobot_inference.py) |
 | Inference config / telemetry / provenance types | [`src/actionstream/inference_types.py`](src/actionstream/inference_types.py) |
 | Transport abstraction + process isolation | [`src/actionstream/inference_transport.py`](src/actionstream/inference_transport.py) |
+| TCP client connection/request/reset state | [`src/actionstream/rpc_client.py`](src/actionstream/rpc_client.py) |
+| TCP persistent executor ownership | [`src/actionstream/rpc_executor.py`](src/actionstream/rpc_executor.py) |
 | TCP wire encoding + framing | [`src/actionstream/rpc_protocol.py`](src/actionstream/rpc_protocol.py) |
-| TCP client/server + persistent executor | [`src/actionstream/rpc_transport.py`](src/actionstream/rpc_transport.py) |
+| TCP socket server + fault injection | [`src/actionstream/rpc_server_runtime.py`](src/actionstream/rpc_server_runtime.py) |
+| RPC compatibility facade | [`src/actionstream/rpc_transport.py`](src/actionstream/rpc_transport.py) |
 | RPC server CLI | [`src/actionstream/rpc_server.py`](src/actionstream/rpc_server.py) |
 | Deterministic real-socket fault matrix | [`src/actionstream/rpc_matrix.py`](src/actionstream/rpc_matrix.py) |
 | Episode ownership contract | [`docs/lifecycle_contract.md`](docs/lifecycle_contract.md) |
