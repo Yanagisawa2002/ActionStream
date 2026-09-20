@@ -1,1 +1,0 @@
-{"epoch": 1, "steps": 1, "train_loss": 1.0958466529846191, "validation_cross_entropy": 0.7376526594161987, "validation": {"samples": 747, "positive": 105, "negative": 492, "unobservable": 150, "false_complete": 0, "true_complete": 0, "missed_complete": 105, "unknown": 470, "hidden_confident": 0}, "elapsed_seconds": 1.2279436588287354}
