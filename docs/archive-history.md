@@ -13,7 +13,7 @@ Removed from the default branch in the repository-slimming change:
 - `outputs/` — generated benchmark/runtime outputs (450 tracked files);
 - `reports/blocker_diagnosis_20260915/`;
 - `reports/completion_evaluation_20260915/`;
-- `reports/completion_v2_20260915/`;
+- `reports/completion_v2_20260915/` except the compact fresh-holdout identity manifest required by current evidence replay;
 - `reports/embodied_development_20260913/`;
 - `reports/visual_completion_20260915/`.
 
@@ -27,7 +27,8 @@ review/validation surface:
 - `reports/actionstream_transport_h2_budget_holdout/`;
 - `reports/rpc_remote_transport_replication_v2/`;
 - `reports/completion_development_20260915/`;
-- `reports/completion_acceptance_v3_20260915/`.
+- `reports/completion_acceptance_v3_20260915/`;
+- `reports/completion_v2_20260915/fresh_holdout/manifest.json` — cross-generation identity fixture used by both completion replay checks.
 
 The two completion trees remain because CI replays their evidence checks. H1/H2
 and remote-RPC v2 remain because they support the headline systems claims in the
