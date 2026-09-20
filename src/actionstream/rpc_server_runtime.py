@@ -62,7 +62,6 @@ class RpcFaultProfile:
         return max(0.0, self.response_delay_s + jitter)
 
 
-
 class RpcInferenceServer:
     """Route socket connections into one persistent serialized executor."""
 
@@ -165,9 +164,7 @@ class RpcInferenceServer:
                         request_ordinal=ordinal,
                     )
                     faults = self._faults
-                    if faults._matches(
-                        ordinal, faults.disconnect_before_infer_every_n
-                    ):
+                    if faults._matches(ordinal, faults.disconnect_before_infer_every_n):
                         return
                     if faults._matches(ordinal, faults.stall_every_n):
                         if self._stop.wait(faults.stall_s):
@@ -191,9 +188,7 @@ class RpcInferenceServer:
                     if response["kind"] == "ok":
                         if self._stop.wait(faults.delay_for(ordinal)):
                             return
-                        if faults._matches(
-                            ordinal, faults.drop_response_every_n
-                        ):
+                        if faults._matches(ordinal, faults.drop_response_every_n):
                             return
                     _send_frame(connection, response)
         except (OSError, EOFError, ValueError, json.JSONDecodeError):
