@@ -113,7 +113,7 @@ The installed CLI should expose `actionstream` as an inference-engine choice.
 Run the main review checks:
 
 ```bash
-uv run ruff check src tests scripts/release scripts/engineering integrations/lerobot
+uv run ruff check src tests scripts/release scripts/engineering integrations/lerobot examples
 
 uv run pytest \
   tests/test_lerobot_inference.py \
@@ -129,6 +129,28 @@ uv run actionstream-rpc-matrix \
 
 uv run python scripts/release/audit_public_release.py
 ```
+
+## 30-second CPU review path
+
+No LIBERO environment, policy weights, or GPU is required for the core runtime
+walkthroughs.
+
+```bash
+uv run python examples/local_async_policy.py
+uv run python examples/fault_recovery.py
+```
+
+The first example demonstrates stale-prefix alignment and old-generation rejection
+across reset. The second uses real loopback TCP sockets, injects a disconnect,
+requires an acknowledged reset, and verifies that the persistent executor is not
+reconstructed.
+
+For a manual two-terminal RPC walkthrough, see
+[examples/README.md](examples/README.md). The deeper system model is in
+[ARCHITECTURE.md](ARCHITECTURE.md), and [docs/testing.md](docs/testing.md) maps
+runtime invariants directly to regression tests. The next benchmark direction is
+documented as a **DRAFT / NO_RUN** operating-envelope plan in
+[docs/operating-envelope.md](docs/operating-envelope.md).
 
 ## Review the implementation
 
@@ -149,6 +171,8 @@ For a first code review, start here:
 | RPC compatibility facade | [`src/actionstream/rpc_transport.py`](src/actionstream/rpc_transport.py) |
 | RPC server CLI | [`src/actionstream/rpc_server.py`](src/actionstream/rpc_server.py) |
 | Deterministic real-socket fault matrix | [`src/actionstream/rpc_matrix.py`](src/actionstream/rpc_matrix.py) |
+| Architecture and fault boundaries | [`ARCHITECTURE.md`](ARCHITECTURE.md) |
+| Runtime correctness test map | [`docs/testing.md`](docs/testing.md) |
 | Episode ownership contract | [`docs/lifecycle_contract.md`](docs/lifecycle_contract.md) |
 | RPC reset/security hardening | [`docs/rpc-runtime-hardening.md`](docs/rpc-runtime-hardening.md) |
 | Core failure-path tests | [`tests/test_lerobot_inference.py`](tests/test_lerobot_inference.py) |
