@@ -75,9 +75,16 @@ there is no cross-client episode lease or isolation mechanism in this patch.
 
 `TcpInferenceTransport(..., reset_timeout_s=20.0)` uses an absolute budget from
 the start of reset. It includes waiting for local request I/O to unwind,
-connection establishment, executor queue wait behind old work, callback execution,
+hostname resolution, connection establishment, executor queue wait behind old work, callback execution,
 response delivery and ACK validation. The existing connect timeout remains an
 additional connect-phase cap. Encoding and callbacks are not forcibly preempted.
+
+DNS resolution and all candidate socket addresses share that connect-phase cap
+and the remaining reset budget. The OS resolver itself is not cancellable: one
+daemon lookup per client may finish later, but cannot open or publish a socket.
+Retries reuse an outstanding lookup rather than accumulate blocked resolver
+threads. A late DNS result never clears reset-required state; explicit reset and
+its ACK are still necessary.
 
 Twenty seconds is a conservative configurable waiting allowance for one admitted
 call plus reset/transport overhead. It avoids inheriting the ordinary 3 s control

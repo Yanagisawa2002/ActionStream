@@ -25,6 +25,7 @@ import threading
 import time
 import uuid
 from collections.abc import Callable, Mapping
+from concurrent.futures import Future
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
@@ -309,6 +310,7 @@ class TcpInferenceTransport:
         self._request_lock = threading.Lock()
         self._state_lock = threading.Lock()
         self._socket: socket.socket | None = None
+        self._resolution: Future | None = None
         self._generation = 0
         # A new socket/client is not evidence of clean persistent worker state.
         self._reset_required = True
@@ -423,10 +425,7 @@ class TcpInferenceTransport:
             if self._socket is not None:
                 return self._socket
         started = time.monotonic()
-        connection = socket.create_connection(
-            (self._host, self._port),
-            timeout=min(self._connect_timeout_s, timeout_s),
-        )
+        connection = self._connect(started + min(self._connect_timeout_s, timeout_s))
         connection.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
         elapsed = time.monotonic() - started
         with self._state_lock:
@@ -441,6 +440,51 @@ class TcpInferenceTransport:
             self._reconnects += 1
             self._latest_connect_latency_s = elapsed
             return connection
+
+    def _connect(self, deadline: float) -> socket.socket:
+        # OS name resolution cannot be cancelled. Keep at most one outstanding
+        # lookup per client, including across timeouts, without holding up reset.
+        with self._state_lock:
+            if self._resolution is None:
+                self._resolution = Future()
+                pending = self._resolution
+
+                def resolve() -> None:
+                    try:
+                        pending.set_result(
+                            socket.getaddrinfo(
+                                self._host, self._port, type=socket.SOCK_STREAM
+                            )
+                        )
+                    except BaseException as exc:
+                        pending.set_exception(exc)
+
+                threading.Thread(
+                    target=resolve, name="ActionStreamRpcResolver", daemon=True
+                ).start()
+            pending = self._resolution
+        try:
+            addresses = pending.result(timeout=self._remaining(deadline))
+        finally:
+            with self._state_lock:
+                if pending.done() and self._resolution is pending:
+                    self._resolution = None
+        last_error: OSError = OSError("RPC hostname resolved to no stream addresses")
+        for family, kind, protocol, _, address in addresses:
+            timeout = self._remaining(deadline)
+            connection = socket.socket(family, kind, protocol)
+            try:
+                connection.settimeout(timeout)
+                connection.connect(address)
+                self._remaining(deadline)
+                return connection
+            except OSError as exc:
+                last_error = exc
+                connection.close()
+            except BaseException:
+                connection.close()
+                raise
+        raise last_error
 
     @staticmethod
     def _remaining(deadline: float) -> float:

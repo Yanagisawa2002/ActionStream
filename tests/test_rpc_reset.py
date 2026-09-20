@@ -323,6 +323,105 @@ def test_reset_budget_must_be_finite_positive(budget):
         TcpInferenceTransport("127.0.0.1", 50051, reset_timeout_s=budget)
 
 
+def test_dns_timeout_is_bounded_reuses_pending_lookup_and_requires_reset(monkeypatch):
+    with RpcInferenceServer(lambda obs, task: torch.ones(1)) as server:
+        entered = threading.Event()
+        release = threading.Event()
+        calls = []
+        addresses = socket.getaddrinfo(
+            server.host, server.port, type=socket.SOCK_STREAM
+        )
+
+        def blocked_lookup(*args, **kwargs):
+            calls.append(args)
+            entered.set()
+            assert release.wait(3)
+            return addresses
+
+        monkeypatch.setattr(socket, "getaddrinfo", blocked_lookup)
+        client = TcpInferenceTransport("worker.test", server.port, reset_timeout_s=0.1)
+        try:
+            for _ in range(2):
+                started = time.monotonic()
+                with pytest.raises(RemoteResetError):
+                    client.reset()
+                assert time.monotonic() - started < 1
+            assert entered.is_set()
+            assert len(calls) == 1  # No accumulating blocked DNS threads on retries.
+            assert client.telemetry().reset_timeouts == 2
+            assert client._socket is None
+            with pytest.raises(RemoteResetError):
+                client.infer({}, "unsafe", timeout_s=1)
+            pending = client._resolution
+            release.set()
+            pending.result(timeout=1)
+            assert (
+                client._socket is None
+            )  # Late DNS completion cannot publish a socket.
+            assert client.telemetry().reset_required
+            client.reset()
+            assert client.infer({}, "safe", timeout_s=1).item() == 1
+            assert len(calls) == 1
+        finally:
+            release.set()
+            client.close()
+
+
+def test_dns_error_propagates_and_later_explicit_reset_recovers(monkeypatch):
+    with RpcInferenceServer(lambda obs, task: torch.ones(1)) as server:
+        addresses = socket.getaddrinfo(
+            server.host, server.port, type=socket.SOCK_STREAM
+        )
+
+        def failed_lookup(*args, **kwargs):
+            raise socket.gaierror("synthetic DNS failure")
+
+        monkeypatch.setattr(socket, "getaddrinfo", failed_lookup)
+        client = TcpInferenceTransport("worker.test", server.port)
+        try:
+            with pytest.raises(RemoteResetError, match="synthetic DNS failure"):
+                client.reset()
+            assert client.telemetry().reset_required
+            monkeypatch.setattr(socket, "getaddrinfo", lambda *a, **kw: addresses)
+            client.reset()
+            assert client.infer({}, "safe", timeout_s=1).item() == 1
+        finally:
+            client.close()
+
+
+def test_multiple_resolved_addresses_share_one_connect_budget(monkeypatch):
+    addresses = [
+        (socket.AF_INET, socket.SOCK_STREAM, 6, "", (host, 50051))
+        for host in ("192.0.2.1", "192.0.2.2")
+    ]
+    monkeypatch.setattr(socket, "getaddrinfo", lambda *a, **kw: addresses)
+    attempts = []
+    closed = []
+
+    class SlowSocket:
+        def __init__(self, *args):
+            pass
+
+        def settimeout(self, timeout):
+            self.timeout = timeout
+
+        def connect(self, address):
+            attempts.append(address)
+            time.sleep(self.timeout + 0.01)
+            raise TimeoutError("synthetic connect timeout")
+
+        def close(self):
+            closed.append(self)
+
+    monkeypatch.setattr(socket, "socket", SlowSocket)
+    client = TcpInferenceTransport("worker.test", 50051, reset_timeout_s=0.1)
+    with pytest.raises(RemoteResetError):
+        client.reset()
+    assert len(attempts) == len(closed) == 1
+    assert client.telemetry().reset_timeouts == 1
+    assert client.telemetry().reset_required
+
+
 @pytest.mark.parametrize(
     "reply", ["eof", "wrong_id", "wrong_version", "not_ack", "error", "timeout"]
 )

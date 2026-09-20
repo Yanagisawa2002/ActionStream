@@ -58,7 +58,7 @@ A trusted `module:factory` can be exposed with:
 ```bash
 uv run actionstream-rpc-server \
   --factory my_package.worker:make_worker \
-  --host 0.0.0.0 --port 50051
+  --host 0.0.0.0 --port 50051 --allow-unauthenticated-remote
 ```
 
 The factory returns a callable `(observation, task) -> torch.Tensor`; a callable

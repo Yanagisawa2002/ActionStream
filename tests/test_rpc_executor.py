@@ -357,18 +357,18 @@ def test_cancel_during_connect_cannot_publish_socket_into_new_generation(monkeyp
     with RpcInferenceServer(lambda obs, task: torch.ones(1)) as server:
         entered = threading.Event()
         release = threading.Event()
-        create_connection = socket.create_connection
+        client = TcpInferenceTransport(server.host, server.port)
+        connect = client._connect
 
         def blocked_connect(*args, **kwargs):
-            connection = create_connection(*args, **kwargs)
+            connection = connect(*args, **kwargs)
             entered.set()
             assert release.wait(3)
             return connection
 
-        client = TcpInferenceTransport(server.host, server.port)
         client.reset()
         client.cancel()  # Exercise a new socket within the confirmed episode.
-        monkeypatch.setattr(socket, "create_connection", blocked_connect)
+        monkeypatch.setattr(client, "_connect", blocked_connect)
         pending = launch(lambda: client.infer({}, "old", timeout_s=2))
         try:
             assert entered.wait(2)

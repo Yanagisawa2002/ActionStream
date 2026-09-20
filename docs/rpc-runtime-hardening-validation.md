@@ -27,8 +27,8 @@ callback and ACK; it does not preempt remote compute or promise an SLA.
 
 | Check | Result |
 |---|---|
-| Full pytest suite | **255 passed**, 0 failures/errors/skips; 28.363 s JUnit time |
-| Focused RPC, executor, reset, plugin, lifecycle and registry contracts | **86 passed**, 0 failures/errors/skips; 9.962 s |
+| Full pytest suite | **258 passed**, 0 failures/errors/skips; 35.324 s JUnit time |
+| Focused RPC, executor, reset, plugin, lifecycle and registry contracts | **89 passed**, 0 failures/errors/skips; 11.939 s |
 | Existing deterministic loopback fault matrix | **6/6 PASS**, 40 inference requests; original expected counts unchanged |
 | Ruff lint: source/tests/release/engineering/plugin | PASS |
 | CI-configured Ruff formatting | PASS, 69 files |
@@ -36,7 +36,7 @@ callback and ACK; it does not preempt remote compute or promise an SLA.
 | Strict public-release audit without license bypass | PASS; includes staged new regression tests/docs |
 | Frozen inputs, tracked reports and sealed evidence | PASS; details below |
 
-The full suite contains 32 added parametrized cases in `tests/test_rpc_reset.py`.
+The full suite contains 35 added parametrized cases in `tests/test_rpc_reset.py`.
 They cover IPv4/IPv6 wildcard opt-in, rejection before factory/listener creation,
 startup security/capability receipts, required initial ACK, successful idle reset,
 callback failure as a wire error, active stateful ordering, reset timeout,
@@ -46,6 +46,17 @@ budget, and engine fatal-state propagation. Existing tests continue to cover one
 executor, serialized policy calls, stale-result rejection and shutdown draining.
 Old socket tests now explicitly reset new clients; the active-reset case waits
 asynchronously for remote execution instead of assuming immediate reset success.
+
+The pre-merge code review confirmed and fixed two additional findings: maintained
+remote-listener examples were missing the acknowledgement flag, and blocking DNS
+resolution escaped the advertised timeout. Three new regressions cover bounded
+DNS waits with one outstanding lookup per client, DNS failure/recovery, and a
+single shared connection budget across all resolved addresses. Late DNS completion
+cannot open a socket or clear reset-required state. The code review also checked
+generation/ACK races, persistent executor ordering, callback errors, startup
+receipts and plugin configuration. No remaining merge-blocking finding was found
+within this maintenance scope. This records an agent-led code review, not an
+independent human approval or security certification.
 
 The local environment is Python 3.12.11 / PyTorch 2.11.0+cpu. Existing dependencies
 were reused, with PYTHONPATH pointing to this worktree's `src` and
@@ -66,7 +77,7 @@ Commands (with the environment above):
 ```text
 python -m pytest -q -o faulthandler_timeout=45 --junitxml=artifacts/rpc_runtime_hardening_20260920/full.xml
 python -m pytest tests/test_rpc_reset.py tests/test_rpc_transport.py tests/test_rpc_executor.py tests/test_lerobot_plugin.py tests/test_lerobot_lifecycle.py tests/test_lerobot_lifecycle_boundaries.py tests/test_upstream_registry_contract.py -q --junitxml=artifacts/rpc_runtime_hardening_20260920/focused.xml
-python -m actionstream.rpc_matrix --config configs/rpc_fault_matrix_v1.json --output artifacts/rpc_runtime_hardening_20260920/loopback_matrix
+python -m actionstream.rpc_matrix --config configs/rpc_fault_matrix_v1.json --output artifacts/rpc_runtime_hardening_20260920/review_loopback_matrix
 python -m ruff check src tests scripts/release scripts/engineering integrations/lerobot
 python -m ruff format --check <the explicit CI path list>
 python -m compileall -q src tests integrations/lerobot/src
