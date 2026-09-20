@@ -30,7 +30,7 @@ jobs:
         run: uv sync --locked --all-packages
       - name: Lint and formatting contract
         run: |
-          uv run ruff check src tests scripts/release scripts/engineering integrations/lerobot
+          uv run ruff check src tests scripts/release scripts/engineering integrations/lerobot examples
           uv run ruff format --check \
             src/actionstream/action_queue.py \
             src/actionstream/delivery_scheduler.py \
@@ -75,7 +75,8 @@ jobs:
             scripts/release/audit_public_release.py \
             scripts/release/generate_v1_1_demo.py \
             scripts/engineering \
-            integrations/lerobot
+            integrations/lerobot \
+            examples
       - name: Runtime, plugin, RPC, and real CLI subprocess tests
         run: |
           uv run pytest \
@@ -106,6 +107,15 @@ jobs:
           uv run actionstream-rpc-matrix \
             --config configs/rpc_fault_matrix_v1.json \
             --output /tmp/actionstream-rpc-matrix
+      - name: CPU-only review examples and envelope planner
+        run: |
+          uv run python -m compileall -q examples
+          uv run python examples/local_async_policy.py
+          uv run python examples/fault_recovery.py
+          uv run python scripts/engineering/plan_operating_envelope.py \
+            --config configs/operating_envelope_v1.json \
+            --output /tmp/actionstream-operating-envelope.jsonl
+          test -s /tmp/actionstream-operating-envelope.jsonl
       - name: Strict release audit
         run: uv run python scripts/release/audit_public_release.py
       - name: Replay completion development evidence
