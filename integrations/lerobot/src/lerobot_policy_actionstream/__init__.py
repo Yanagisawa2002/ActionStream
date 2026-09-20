@@ -41,6 +41,7 @@ class ActionStreamRolloutInferenceConfig(InferenceEngineConfig):
     tcp_port: int = 50051
     tcp_connect_timeout_s: float = 3.0
     tcp_control_timeout_s: float = 3.0
+    tcp_reset_timeout_s: float = 20.0
     delivery_scheduler_enabled: bool = False
     minimum_request_interval_steps: int = 1
     telemetry_jsonl_path: str | None = None
@@ -92,6 +93,7 @@ class ActionStreamRolloutInferenceConfig(InferenceEngineConfig):
             self.tcp_port,
             connect_timeout_s=self.tcp_connect_timeout_s,
             control_timeout_s=self.tcp_control_timeout_s,
+            reset_timeout_s=self.tcp_reset_timeout_s,
         )
 
 

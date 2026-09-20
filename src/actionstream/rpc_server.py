@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 import argparse
+import ipaddress
 import json
 import signal
-import threading
 from pathlib import Path
 
 from actionstream.rpc_transport import RpcFaultProfile, RpcInferenceServer, load_worker
@@ -16,7 +16,12 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--factory", required=True, help="Trusted module:factory worker"
     )
-    parser.add_argument("--host", default="0.0.0.0")
+    parser.add_argument("--host", default="127.0.0.1")
+    parser.add_argument(
+        "--allow-unauthenticated-remote",
+        action="store_true",
+        help="Explicitly allow a non-loopback listener; this does not add authentication or encryption",
+    )
     parser.add_argument("--port", type=int, default=50051)
     parser.add_argument("--ready-file", type=Path)
     parser.add_argument("--telemetry-jsonl", type=Path)
@@ -31,8 +36,22 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def _listener_exposure(host: str) -> str:
+    try:
+        loopback = ipaddress.ip_address(host).is_loopback
+    except ValueError:
+        loopback = host.lower() == "localhost"
+    return "loopback" if loopback else "unauthenticated_remote"
+
+
 def main() -> int:
-    args = build_parser().parse_args()
+    parser = build_parser()
+    args = parser.parse_args()
+    exposure = _listener_exposure(args.host)
+    if exposure != "loopback" and not args.allow_unauthenticated_remote:
+        parser.error(
+            "Non-loopback bind requires --allow-unauthenticated-remote; authentication: none"
+        )
     worker, reset = load_worker(args.factory)
     faults = RpcFaultProfile(
         response_delay_s=args.response_delay_ms / 1000,
@@ -52,10 +71,8 @@ def main() -> int:
         fault_profile=faults,
         telemetry_jsonl_path=args.telemetry_jsonl,
     )
-    stopping = threading.Event()
 
     def stop(signum, frame):
-        stopping.set()
         server.close()
 
     signal.signal(signal.SIGTERM, stop)
@@ -67,6 +84,9 @@ def main() -> int:
         "factory": args.factory,
         "fault_profile": faults.__dict__,
         "execution_architecture": "single_persistent_inference_executor",
+        "authentication": "none",
+        "listener_exposure": exposure,
+        "reset_capability": server.reset_capability,
     }
     if args.ready_file is not None:
         args.ready_file.write_text(

@@ -49,6 +49,7 @@ jobs:
             tests/test_lerobot_plugin.py \
             tests/test_rpc_transport.py \
             tests/test_rpc_executor.py \
+            tests/test_rpc_reset.py \
             tests/test_rpc_replication_v2_protocol.py \
             tests/test_upstream_registry_contract.py \
             tests/test_clean_install.py \
@@ -76,6 +77,7 @@ jobs:
             tests/test_lerobot_plugin.py \
             tests/test_rpc_transport.py \
             tests/test_rpc_executor.py \
+            tests/test_rpc_reset.py \
             tests/test_rpc_replication_protocol.py \
             tests/test_rpc_replication_v2_protocol.py \
             tests/test_upstream_registry_contract.py \

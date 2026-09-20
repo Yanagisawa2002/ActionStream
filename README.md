@@ -126,6 +126,17 @@ inference latency. Closing the socket invalidates late responses, but does **not
 claim to terminate a CUDA kernel already running on the remote machine. See the
 remote-RPC validation document for that boundary.
 
+The **maintained runtime after frozen v2** defaults the server CLI to loopback.
+Non-loopback exposure requires `--allow-unauthenticated-remote`; authentication
+remains absent. TCP clients require a successful remote reset ACK before first
+inference and before continuing a new episode. Reset invalidates old responses
+immediately, executes through the persistent executor, and fails closed on error
+or timeout. Its separate configurable budget defaults to 20 s. Reconnection or
+client recreation cannot clear uncertain state without an acknowledged reset.
+See [maintained RPC semantics](docs/rpc-runtime-hardening.md) for migration,
+telemetry and operator responsibilities. This CPU-tested maintenance change does
+not alter v2's historical implementation, reports or full hard-gate NO-GO.
+
 ## Frozen GPU evidence
 
 The current H1/H2 reports use X-VLA on an RTX 5090, three different LIBERO task

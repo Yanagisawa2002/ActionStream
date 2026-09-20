@@ -157,6 +157,7 @@ def run_episode(args) -> dict[str, Any]:
         args.port,
         connect_timeout_s=args.connect_timeout_s,
         control_timeout_s=args.control_timeout_s,
+        reset_timeout_s=args.reset_timeout_s,
         startup_inference_timeout_s=startup_timeout,
         steady_inference_timeout_s=steady_timeout,
         telemetry_jsonl_path=rpc_telemetry_path,
@@ -340,6 +341,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--steady-inference-timeout-s", type=float, default=None)
     parser.add_argument("--connect-timeout-s", type=float, default=3.0)
     parser.add_argument("--control-timeout-s", type=float, default=3.0)
+    parser.add_argument("--reset-timeout-s", type=float, default=20.0)
     parser.add_argument("--action-wait-timeout-s", type=float, default=10.0)
     parser.add_argument("--action-poll-s", type=float, default=0.002)
     parser.add_argument("--bounded-hold-steps", type=int, default=2)

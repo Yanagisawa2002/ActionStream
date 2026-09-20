@@ -1,5 +1,14 @@
 # ActionStream backend for `lerobot-rollout`
 
+Maintained TCP runtime: the server CLI defaults to `127.0.0.1`; non-loopback
+listeners require `--allow-unauthenticated-remote` and still have no authentication.
+The plugin exposes `tcp_reset_timeout_s` (default 20 s) independently of connect,
+inference and legacy control budgets. Episode reset invalidates old responses and
+waits for a successful remote reset ACK; failure propagates and blocks inference.
+Low-level clients must also call reset before first use. See
+[`docs/rpc-runtime-hardening.md`](../../docs/rpc-runtime-hardening.md) for the full
+contract, recovery lifecycle and historical-v2 distinction.
+
 This small package registers `--inference.type=actionstream` with LeRobot's
 rollout inference factory. It depends on the generic third-party inference-engine
 registry proposed in

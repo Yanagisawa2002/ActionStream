@@ -48,6 +48,7 @@ def test_plugin_builds_tcp_transport_without_changing_core_transport_enum() -> N
         transport_mode="tcp",
         tcp_host="127.0.0.1",
         tcp_port=50051,
+        tcp_reset_timeout_s=12.5,
         minimum_request_interval_steps=4,
     )
 
@@ -57,4 +58,6 @@ def test_plugin_builds_tcp_transport_without_changing_core_transport_enum() -> N
     assert runtime.transport_mode == "direct"
     assert runtime.minimum_request_interval_steps == 4
     assert isinstance(transport, TcpInferenceTransport)
+    assert transport._reset_timeout_s == 12.5
+    assert transport.telemetry().reset_required
     transport.close()
