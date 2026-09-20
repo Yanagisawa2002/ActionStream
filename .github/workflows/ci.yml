@@ -28,6 +28,8 @@ jobs:
           enable-cache: true
       - name: Install locked root and plugin packages
         run: uv sync --locked --all-packages
+      - name: Planner formatter diff diagnostic
+        run: uv run ruff format --diff scripts/engineering/plan_operating_envelope.py
       - name: Lint and formatting contract
         run: |
           uv run ruff check src tests scripts/release scripts/engineering integrations/lerobot examples
