@@ -20,8 +20,8 @@ For the maintained runtime, start with the [repository README](../README.md), th
 | External validity | **NOT ESTABLISHED** | historical cohort; outcome-informed v2 is not an independent v1 replication |
 | Physical robot safety | **NOT EVALUATED** | simulation does not establish hardware safety or E-stop behavior |
 
-The completed [v2 report](reports/rpc_remote_transport_replication_v2/report.md)
-and separate [final status](reports/rpc_remote_transport_replication_v2/final_status.json)
+The completed [v2 report](../reports/rpc_remote_transport_replication_v2/report.md)
+and separate [final status](../reports/rpc_remote_transport_replication_v2/final_status.json)
 record the results. The frozen v1/v2 preregistration configs keep their original
 bytes and historical status fields; those fields are not the completed-result ledger.
 V1 stopped at its valid negative first run. V2 completed all 51 declared runs
@@ -36,13 +36,13 @@ polling depletion** persisted despite high task success. All four v2 task failur
 were Spatial; historical Object failures remain in the linked reports.
 
 External-validity v1 in
-[`configs/rpc_external_validity_v1.json`](configs/rpc_external_validity_v1.json)
+[`configs/rpc_external_validity_v1.json`](../configs/rpc_external_validity_v1.json)
 remains an **aborted, never-executed preregistration (NO_RUN)** after identity
 collisions and incomplete historical coverage. UNKNOWN remains UNKNOWN.
-See [remote-RPC evidence boundaries](docs/remote-rpc-validation.md) and the
-[technical case study](docs/case-studies/actionstream-remote-inference-case.md).
+See [remote-RPC evidence boundaries](remote-rpc-validation.md) and the
+[technical case study](case-studies/actionstream-remote-inference-case.md).
 Historical language/visual failures remain preserved rather than rewritten; see
-[`docs/embodied-development-status.md`](docs/embodied-development-status.md).
+[`docs/embodied-development-status.md`](embodied-development-status.md).
 
 ## Frozen GPU evidence
 
