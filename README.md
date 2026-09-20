@@ -136,8 +136,11 @@ For a first code review, start here:
 
 | Area | Entry point |
 |---|---|
-| Async inference lifecycle | [`src/actionstream/lerobot_inference.py`](src/actionstream/lerobot_inference.py) |
+| Async inference lifecycle | [`src/actionstream/inference_engine.py`](src/actionstream/inference_engine.py) |
+| Delayed response scheduling | [`src/actionstream/delivery_scheduler.py`](src/actionstream/delivery_scheduler.py) |
+| Action alignment / stale discard / fallback | [`src/actionstream/action_queue.py`](src/actionstream/action_queue.py) |
 | Inference config / telemetry / provenance types | [`src/actionstream/inference_types.py`](src/actionstream/inference_types.py) |
+| LeRobot compatibility surface | [`src/actionstream/lerobot_inference.py`](src/actionstream/lerobot_inference.py) |
 | Transport abstraction + process isolation | [`src/actionstream/inference_transport.py`](src/actionstream/inference_transport.py) |
 | TCP client connection/request/reset state | [`src/actionstream/rpc_client.py`](src/actionstream/rpc_client.py) |
 | TCP persistent executor ownership | [`src/actionstream/rpc_executor.py`](src/actionstream/rpc_executor.py) |
