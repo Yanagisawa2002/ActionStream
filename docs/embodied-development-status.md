@@ -73,7 +73,7 @@ with abstention. Failed experiments remain explicit. The historical H1/H2
 records, including H2 NO-GO, are unchanged.
 
 Machine-readable curated evidence is in
-[`reports/embodied_development_20260913`](../reports/embodied_development_20260913).
+[`reports/embodied_development_20260913`](https://github.com/Yanagisawa2002/ActionStream/blob/ed05167541fc9d83c93c1f9f1b422bcb05fee54f/reports/embodied_development_20260913/).
 It contains selected measured fields and hashes of the source receipts, not
 model weights, machine-specific environments or the complete local raw archive.
 The native and high-level reproduction documents describe the required local

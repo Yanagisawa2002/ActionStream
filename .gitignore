@@ -11,8 +11,8 @@ __pycache__/
 /ros2_ws/install/
 /ros2_ws/log/
 
-# Runtime outputs are ignored by default. The release branch force-tracks only
-# the curated paths accepted by release/public_release_manifest.json.
+# Runtime and experiment outputs never belong on the default public branch.
+# Historical frozen outputs remain reachable from pinned commits/releases.
 /outputs/**
 
 # Local transfer bundles and generated release evidence.
