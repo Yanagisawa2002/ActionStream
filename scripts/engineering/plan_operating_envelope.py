@@ -14,9 +14,7 @@ def expand(config: dict[str, Any]) -> list[dict[str, Any]]:
     executor_modes = config["tcp_executor_modes"]
 
     for transport in config["transport_modes"]:
-        disconnects = (
-            config["tcp_disconnect_every_n"] if transport == "tcp" else [0]
-        )
+        disconnects = config["tcp_disconnect_every_n"] if transport == "tcp" else [0]
         executors = (
             executor_modes
             if transport == "tcp"
