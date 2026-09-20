@@ -14,10 +14,14 @@ def expand(config: dict[str, Any]) -> list[dict[str, Any]]:
     executor_modes = config["tcp_executor_modes"]
 
     for transport in config["transport_modes"]:
-        disconnects = config["tcp_disconnect_every_n"] if transport == "tcp" else [0]
-        executors = executor_modes if transport == "tcp" else [
-            {"name": "not_applicable", "implemented": True}
-        ]
+        disconnects = (
+            config["tcp_disconnect_every_n"] if transport == "tcp" else [0]
+        )
+        executors = (
+            executor_modes
+            if transport == "tcp"
+            else [{"name": "not_applicable", "implemented": True}]
+        )
         for delay_ms in config["delay_ms"]:
             for startup in config["startup_states"]:
                 for disconnect_every_n in disconnects:
@@ -34,9 +38,11 @@ def expand(config: dict[str, Any]) -> list[dict[str, Any]]:
                                     "executor_mode": executor["name"],
                                     "repeat": repeat,
                                     "executable_now": executable,
-                                    "blocked_reason": None
-                                    if executable
-                                    else "comparison mechanism not implemented",
+                                    "blocked_reason": (
+                                        None
+                                        if executable
+                                        else "comparison mechanism not implemented"
+                                    ),
                                 }
                             )
     return rows
