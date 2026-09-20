@@ -64,7 +64,7 @@ v2 检查目标、目的地引用是否出现在原文，却不保证其余动�
 python -m pytest tests/test_visual_score_integrity.py tests/test_instruction_visual_evidence.py tests/test_grounded_language.py tests/test_llm_vla.py -p no:cacheprovider
 ```
 
-本地保留 `diagnose.py`、`diagnosis_before.json`、`diagnosis_after.json` 和 `cpu_visual_integrity.xml`；小型摘要位于 `reports/blocker_diagnosis_20260915/summary.json`。旧 raw 与冻结数据保持原位。
+本地保留 `diagnose.py`、`diagnosis_before.json`、`diagnosis_after.json` 和 `cpu_visual_integrity.xml`；小型摘要位于 [historical summary](https://github.com/Yanagisawa2002/ActionStream/blob/ed05167541fc9d83c93c1f9f1b422bcb05fee54f/reports/blocker_diagnosis_20260915/summary.json)。旧 raw 与冻结数据保持原位。
 
 ## 收敛：下一步最小实验与可主张范围
 
